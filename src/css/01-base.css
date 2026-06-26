@@ -1,0 +1,45 @@
+/* [build] 01-base.css  (design tokens :root, reset, base type) - concatenated in order by build.ps1 */
+:root{
+    --ink:#0E2235;
+    --ink-soft:#33465A;
+    --slate:#5E7185;
+    --paper:#F6F8FA;
+    --surface:#FFFFFF;
+    --line:#E2E8EE;
+    --line-strong:#CFD8E1;
+    --accent:#E0A325;
+    --accent-deep:#B97E0C;
+    --accent-wash:#FBF1D9;
+    --hot-bg:#FCE9DF; --hot-fg:#B3471B;
+    --pos-bg:#E2F1EA; --pos-fg:#1C7A57;
+    --neu-bg:#E7EEF4; --neu-fg:#2B4A63;
+    --warn-bg:#F6E9CF; --warn-fg:#8A5A12;
+
+    --font-display:'Libre Franklin', system-ui, -apple-system, sans-serif;
+    --font-body:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+
+    --maxw:1180px;
+    --radius:18px;
+    --shadow:0 1px 2px rgba(14,34,53,.04), 0 14px 32px -16px rgba(14,34,53,.18);
+    --shadow-lg:0 30px 70px -28px rgba(14,34,53,.42);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;font-family:var(--font-body);color:var(--ink);background:var(--paper);font-size:17.5px;line-height:1.62;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+  button{font-family:inherit;cursor:pointer;}
+  ::selection{background:var(--accent-wash);}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px;}
+  .section{padding:90px 0;}
+  .tinted{background:linear-gradient(180deg,#fff,#fafcfd);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+
+  h1,h2,h3,h4{font-family:var(--font-display);font-weight:800;line-height:1.08;letter-spacing:-.015em;margin:0;}
+  h1{font-size:clamp(2.5rem,5.4vw,4rem);}
+  h2{font-size:clamp(2rem,3.6vw,2.8rem);}
+  p{margin:0;}
+
+
+

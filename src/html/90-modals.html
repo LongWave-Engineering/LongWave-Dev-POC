@@ -1,0 +1,55 @@
+<!-- ============ JOB DETAIL MODAL ============ -->
+<div class="overlay" id="jobOverlay" role="dialog" aria-modal="true" aria-labelledby="mRole">
+  <div class="modal" id="jobModal">
+    <button class="modal-close" id="jobModalClose" aria-label="Close">×</button>
+    <div class="m-head">
+      <span class="avatar" id="mAvatar"></span>
+      <div><div class="m-role" id="mRole"></div><div class="m-co" id="mCo"></div></div>
+    </div>
+    <div class="m-salary" id="mSalary"></div>
+    <div class="m-tags tags" id="mTags"></div>
+    <div class="m-detail" id="mDetail"></div>
+    <div class="m-actions">
+      <button class="btn btn--primary" data-signup data-i18n="m_apply">Sign up to apply</button>
+      <a class="btn btn--ghost" id="mCompany" target="_blank" rel="noopener" data-i18n="m_company">Company site ↗</a>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SIGNUP MODAL ============ -->
+<div class="overlay" id="suOverlay" role="dialog" aria-modal="true" aria-labelledby="suTitle">
+  <div class="modal narrow" id="suModal">
+    <button class="modal-close" id="suClose" aria-label="Close">×</button>
+    <h3 class="su-title" id="suTitle" data-i18n="su_title">Sign up</h3>
+    <p class="su-intro" data-i18n="su_intro">One sign-up. We take it from there.</p>
+    <form id="suForm" autocomplete="off">
+      <div class="field"><label data-i18n="su_name">Name</label><input type="text" required></div>
+      <div class="field"><label data-i18n="su_email">Email</label><input type="email" required></div>
+      <div class="field"><label data-i18n="su_want">I want to</label>
+        <div class="selectwrap"><select id="suWant" style="width:100%">
+          <option value="job" data-i18n="su_opt_job">Find a job</option>
+          <option value="hire" data-i18n="su_opt_hire">Hire engineers</option>
+        </select></div>
+      </div>
+      <div id="jobSeekerFields">
+        <div class="field"><label data-i18n="su_resume">Resume / CV</label>
+          <input type="file" id="suResume" accept=".pdf,.doc,.docx" required>
+          <p class="form-note" data-i18n="su_resume_note">Required · PDF, DOC or DOCX</p>
+        </div>
+        <div class="field"><label data-i18n="su_linkedin">LinkedIn URL (optional)</label><input type="url" placeholder="https://linkedin.com/in/…"></div>
+        <div class="field"><label data-i18n="su_github">GitHub URL (optional)</label><input type="url" placeholder="https://github.com/…"></div>
+        <div class="cv-prompt"><span data-i18n="su_cv_q">No Japanese CV yet?</span> <a href="#/cv" data-go="cv" data-i18n="su_cv_link">Generate your rirekisho →</a></div>
+      </div>
+      <div id="hireFields" style="display:none">
+        <div class="field"><label data-i18n="su_company">Company (optional)</label><input type="text"></div>
+        <p class="form-note"><a id="suHireLink" href="#" target="_blank" rel="noopener" data-i18n="su_hire_hint">Hiring? You can also post a job →</a></p>
+      </div>
+      <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="su_submit">Sign up</button>
+      <p class="form-success" id="suSuccess" style="display:none" data-i18n="su_success">You're in. We'll be in touch shortly.</p>
+    </form>
+  </div>
+</div>
+
+<!-- Optional generated job data from the HRMOS sync (ats-connectors/generate-jobs).
+     If jobs.js is absent, the site falls back to the built-in JOBS list below. -->
+

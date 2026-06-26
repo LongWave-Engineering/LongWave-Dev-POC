@@ -1,0 +1,66 @@
+<div class="page" id="page-cv">
+  <section class="section">
+    <div class="wrap">
+      <div class="head reveal" style="margin-bottom:28px">
+        <h1 style="font-size:clamp(2rem,4vw,2.9rem)" data-i18n="cv_h1">Japanese CV generator</h1>
+        <p class="sub" data-i18n="cv_sub">Fill in your details and we'll build your 履歴書 (rirekisho) and 職務経歴書 (shokumukeirekisho). They update live, then print or save as PDF.</p>
+      </div>
+      <div class="cv-actions reveal">
+        <button class="btn btn--primary btn--xl" id="cvPrint" disabled data-i18n="cv_print">Print / Save as PDF</button>
+        <span class="cv-note" id="cvNote" data-i18n="cv_note_fill">Fill your name, furigana and date of birth to generate.</span>
+      </div>
+      <div class="cv-layout">
+        <div class="cv-form reveal" id="cvForm">
+          <h3>基本情報 / Basic info</h3>
+          <div class="cv-two">
+            <div class="cv-field"><label>氏名 <span class="en">/ Full name</span></label><input type="text" id="cv_name" placeholder="山田 太郎 / Taro Yamada"></div>
+            <div class="cv-field"><label>ふりがな <span class="en">/ Furigana</span></label><input type="text" id="cv_furi" placeholder="やまだ たろう"></div>
+          </div>
+          <div class="cv-two">
+            <div class="cv-field"><label>生年月日 <span class="en">/ Date of birth</span></label><input type="date" id="cv_dob"></div>
+            <div class="cv-field"><label>性別 <span class="en">/ Gender</span></label>
+              <select id="cv_gender"><option value="">—</option><option>男</option><option>女</option><option>その他</option></select>
+            </div>
+          </div>
+          <div class="cv-two">
+            <div class="cv-field"><label>電話 <span class="en">/ Phone</span></label><input type="tel" id="cv_phone" placeholder="090-1234-5678"></div>
+            <div class="cv-field"><label>メール <span class="en">/ Email</span></label><input type="email" id="cv_email" placeholder="taro@example.com"></div>
+          </div>
+          <div class="cv-field"><label>住所 <span class="en">/ Address</span></label><input type="text" id="cv_addr" placeholder="東京都〇〇区…"></div>
+          <div class="cv-two">
+            <div class="cv-field"><label>最寄り駅 <span class="en">/ Nearest station</span></label><input type="text" id="cv_station" placeholder="〇〇駅"></div>
+            <div class="cv-field"><label>証明写真 <span class="en">/ Photo</span></label><input type="file" id="cv_photo" accept="image/*"></div>
+          </div>
+
+          <h3>学歴・職歴 / Education &amp; work history</h3>
+          <div id="eduRows"></div>
+          <button class="cv-add" id="addEdu" type="button">+ 行を追加 / Add row</button>
+
+          <h3>免許・資格 / Licenses &amp; qualifications</h3>
+          <div id="licRows"></div>
+          <button class="cv-add" id="addLic" type="button">+ 行を追加 / Add row</button>
+
+          <h3>志望動機・希望 / Motivation &amp; requests</h3>
+          <div class="cv-field"><label>志望動機 <span class="en">/ Motivation</span></label><textarea id="cv_motiv"></textarea></div>
+          <div class="cv-field"><label>本人希望記入欄 <span class="en">/ Personal requests</span></label><textarea id="cv_request" placeholder="貴社規定に従います。"></textarea></div>
+
+          <h3>職務経歴書 / Work history (shokumukeirekisho)</h3>
+          <div class="cv-field"><label>職務要約 <span class="en">/ Career summary</span></label><textarea id="cv_summary"></textarea></div>
+          <div id="careerRows"></div>
+          <button class="cv-add" id="addCareer" type="button">+ 職歴を追加 / Add experience</button>
+          <div class="cv-field" style="margin-top:14px"><label>活かせる経験・知識・スキル <span class="en">/ Skills</span></label><textarea id="cv_skills"></textarea></div>
+          <div class="cv-field"><label>自己PR <span class="en">/ Self-PR</span></label><textarea id="cv_pr"></textarea></div>
+        </div>
+
+        <div class="cv-preview reveal">
+          <div id="cvDocs">
+            <div class="doc rirekisho" id="rirekishoOut"></div>
+            <div class="doc" id="shokumuOut"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ============ FOOTER ============ -->

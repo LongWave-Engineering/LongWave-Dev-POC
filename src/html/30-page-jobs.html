@@ -1,0 +1,62 @@
+<div class="page" id="page-jobs">
+  <section class="section">
+    <div class="wrap">
+      <div class="head reveal" style="margin-bottom:34px">
+        <h1 style="font-size:clamp(2.2rem,4.4vw,3.2rem)" data-i18n="jobs_h1">Open roles</h1>
+        <p class="sub" data-i18n="jobs_sub">Hand-picked software roles at Japan's product companies. Salary and Japanese level shown on every listing.</p>
+      </div>
+      <div class="jobs-layout">
+        <aside class="filters-side reveal" aria-label="Filters">
+          <div class="fgroup">
+            <label class="glab" data-i18n="f_grp_search">Search</label>
+            <div class="search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+              <input type="text" id="filterSearch" data-i18n-ph="filter_search_ph" placeholder="Role, company, or stack" aria-label="Search roles" />
+            </div>
+          </div>
+          <div class="fgroup">
+            <label class="glab" for="filterSpec" data-i18n="f_grp_spec">Specialty</label>
+            <div class="selectwrap"><select id="filterSpec"></select></div>
+          </div>
+          <div class="fgroup">
+            <label class="glab" for="filterStack" data-i18n="f_grp_stack">Tech stack</label>
+            <div class="selectwrap"><select id="filterStack"></select></div>
+          </div>
+          <div class="fgroup">
+            <label class="glab" for="filterJp" data-i18n="f_grp_jp">Japanese level</label>
+            <div class="selectwrap"><select id="filterJp">
+              <option value="" data-i18n="filter_jp_all">Any level</option>
+              <option value="none" data-i18n="filter_jp_none">No Japanese required</option>
+              <option value="conversational" data-i18n="filter_jp_conv">Conversational</option>
+              <option value="business" data-i18n="filter_jp_biz">Business</option>
+            </select></div>
+          </div>
+          <div class="fgroup">
+            <label class="glab" for="filterRemote" data-i18n="f_grp_rem">Work style</label>
+            <div class="selectwrap"><select id="filterRemote">
+              <option value="" data-i18n="filter_rem_all">Any work style</option>
+              <option value="full" data-i18n="filter_rem_full">Full remote</option>
+              <option value="partial" data-i18n="filter_rem_part">Hybrid</option>
+              <option value="no" data-i18n="filter_rem_no">On-site</option>
+            </select></div>
+          </div>
+          <div class="fgroup">
+            <label class="glab" for="filterLoc" data-i18n="f_grp_loc">Location</label>
+            <div class="selectwrap"><select id="filterLoc"></select></div>
+          </div>
+          <div class="fgroup">
+            <button class="fclear" id="filterClear" data-i18n="filter_clear">Clear filters</button>
+          </div>
+        </aside>
+        <div class="jobs-main">
+          <p class="result-count reveal" id="resultCount"></p>
+          <div class="job-grid reveal" id="jobGrid"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ====================================================== -->
+<!-- ============ PAGE: COMPANIES ============ -->
+<!-- ====================================================== -->
