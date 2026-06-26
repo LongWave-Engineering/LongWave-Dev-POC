@@ -1,11 +1,12 @@
 /* [build] 04-pages-hero.css  (page switching, hero, section heads) - concatenated in order by build.ps1 */
   /* ---------- pages ---------- */
   .page{display:none;}
-  .page.active{display:block;}
+  .page.active{display:block;animation:pageIn .4s cubic-bezier(.2,.7,.3,1) both;}
+  @keyframes pageIn{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
 
   /* ---------- hero ---------- */
   .hero{position:relative;overflow:hidden;}
-  .hero::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(1100px 460px at 86% -10%, rgba(224,163,37,.14), transparent 60%), radial-gradient(800px 460px at -8% 16%, rgba(43,74,99,.08), transparent 55%);}
+  .hero::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(1100px 460px at 86% -10%, rgba(255,210,63,.20), transparent 60%), radial-gradient(820px 460px at -8% 12%, rgba(31,168,224,.16), transparent 55%);}
   .hero .wrap{position:relative;z-index:1;}
   .hero-inner{max-width:880px;padding:88px 0 22px;}
   .hero h1{margin-bottom:22px;}

@@ -7,9 +7,21 @@
     --surface:#FFFFFF;
     --line:#E2E8EE;
     --line-strong:#CFD8E1;
-    --accent:#E0A325;
-    --accent-deep:#B97E0C;
-    --accent-wash:#FBF1D9;
+
+    /* ---- LongWave brand: sky blue + banana yellow ---- */
+    --sky:#1FA8E0;          /* primary brand — sky blue */
+    --sky-deep:#0B7CAE;     /* readable as text/links on white */
+    --sky-soft:#5CD0FA;     /* lighter sky for gradients */
+    --sky-wash:#E2F4FC;     /* pale sky tint backgrounds */
+    --banana:#FFD23F;       /* secondary brand — bright banana yellow */
+    --banana-deep:#E6B400;  /* deeper banana for hovers */
+    --banana-wash:#FFF6D2;  /* pale banana tint */
+
+    /* semantic accent aliases: sky drives links/CTAs (stays readable),
+       banana is the energetic pop (logo, underlines, glows). */
+    --accent:var(--sky);
+    --accent-deep:var(--sky-deep);
+    --accent-wash:var(--sky-wash);
     --hot-bg:#FCE9DF; --hot-fg:#B3471B;
     --pos-bg:#E2F1EA; --pos-fg:#1C7A57;
     --neu-bg:#E7EEF4; --neu-fg:#2B4A63;
@@ -30,7 +42,7 @@
   a{color:inherit;text-decoration:none;}
   img{max-width:100%;display:block;}
   button{font-family:inherit;cursor:pointer;}
-  ::selection{background:var(--accent-wash);}
+  ::selection{background:var(--banana-wash);}
 
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 26px;}
   .section{padding:90px 0;}

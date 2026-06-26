@@ -77,6 +77,14 @@ files are numbered. After running it, open `longwave-dev.html` in a browser.
 
 ## Editing notes
 
+- **Brand colors** are CSS variables at the top of `src/css/01-base.css`:
+  `--sky*` (sky blue — primary buttons, links, focus) and `--banana*`
+  (banana yellow — logo, nav underline, hero/CTA glows). Change them there and
+  they propagate everywhere. The SVG wave **logo** lives inline in
+  `src/html/10-header.html` and `src/html/80-footer.html`.
+- **Animations** (page transitions, modal pop, header scroll-shadow, logo
+  hover) are CSS-driven and automatically disabled under
+  `prefers-reduced-motion` (see end of `src/css/12-responsive.css`).
 - **Links** (post-a-job page, LinkedIn, company site) live at the top of
   `src/js/00-intro.js`.
 - **Job data** in `src/data/hrmos-data.js` is generated from the HRMOS sync.

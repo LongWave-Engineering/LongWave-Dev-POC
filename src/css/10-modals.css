@@ -1,10 +1,11 @@
 /* [build] 10-modals.css - concatenated in order by build.ps1 */
   /* ---------- modals ---------- */
   .overlay{position:fixed;inset:0;z-index:100;background:rgba(14,34,53,.58);display:none;align-items:flex-start;justify-content:center;padding:44px 20px;overflow-y:auto;backdrop-filter:blur(3px);}
-  .overlay.open{display:flex;}
-  .modal{background:var(--surface);border-radius:22px;max-width:640px;width:100%;box-shadow:var(--shadow-lg);padding:36px;position:relative;animation:pop .2s ease;}
+  .overlay.open{display:flex;animation:overlayIn .22s ease;}
+  @keyframes overlayIn{from{opacity:0;}to{opacity:1;}}
+  .modal{background:var(--surface);border-radius:22px;max-width:640px;width:100%;box-shadow:var(--shadow-lg);padding:36px;position:relative;animation:pop .26s cubic-bezier(.2,.7,.3,1);}
   .modal.narrow{max-width:480px;}
-  @keyframes pop{from{opacity:0;transform:translateY(16px) scale(.99);}to{opacity:1;transform:none;}}
+  @keyframes pop{from{opacity:0;transform:translateY(18px) scale(.985);}to{opacity:1;transform:none;}}
   .modal-close{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:11px;border:2px solid var(--line);background:#fff;font-size:1.4rem;color:var(--slate);}
   .modal-close:hover{color:var(--ink);}
   .modal .m-head{display:flex;gap:16px;align-items:center;padding-right:40px;}

@@ -63,6 +63,14 @@
     menuToggle.setAttribute("aria-expanded", open?"true":"false");
   });
 
+  /* ---------------- header shadow on scroll ---------------- */
+  var siteHeader=document.querySelector("header.site");
+  if(siteHeader){
+    var onScroll=function(){ siteHeader.classList.toggle("scrolled", window.scrollY>8); };
+    window.addEventListener("scroll", onScroll, {passive:true});
+    onScroll();
+  }
+
   /* ---------------- reveal ---------------- */
   function initReveal(){
     if("IntersectionObserver" in window){
