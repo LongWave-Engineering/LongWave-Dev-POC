@@ -1,0 +1,57 @@
+name: Release
+
+# CD: cut a GitHub Release when a version tag is pushed (e.g. v1.0.0), or run
+# manually with a tag input. The release is gated on the test suite passing.
+on:
+  push:
+    tags: [ 'v*' ]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag to release (e.g. v1.2.0). Created at the current commit if it does not exist.'
+        required: true
+
+permissions:
+  contents: write   # required to create releases / tags
+
+jobs:
+  release:
+    name: Test, build & publish release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Run tests (gate the release)
+        run: node --test
+
+      - name: Build the single-file site
+        run: bash build.sh
+
+      - name: Resolve the release tag
+        id: ver
+        run: |
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{ github.event.inputs.tag }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Package source + site bundle
+        run: |
+          zip -q -r "longwave-jobs-poc-${{ steps.ver.outputs.tag }}.zip" \
+            longwave-dev.html src build.sh README.md package.json
+
+      - name: Create the GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${{ steps.ver.outputs.tag }}" \
+            longwave-dev.html \
+            "longwave-jobs-poc-${{ steps.ver.outputs.tag }}.zip" \
+            --title "LongWave Dev ${{ steps.ver.outputs.tag }}" \
+            --generate-notes

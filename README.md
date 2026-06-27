@@ -1,5 +1,8 @@
 # LongWave Dev — Bilingual Jobs in Japan (POC)
 
+[![CI](https://github.com/naganami-learner/longwave-jobs-poc/actions/workflows/ci.yml/badge.svg)](https://github.com/naganami-learner/longwave-jobs-poc/actions/workflows/ci.yml)
+[![Release](https://github.com/naganami-learner/longwave-jobs-poc/actions/workflows/release.yml/badge.svg)](https://github.com/naganami-learner/longwave-jobs-poc/actions/workflows/release.yml)
+
 A bilingual (EN / 日本語) job board POC for **LongWave Dev**, connecting bilingual
 and international engineers with Japan's leading product companies. Job data is
 synced from HRMOS.
@@ -101,10 +104,31 @@ node --test
 
 No dependencies and no install step — tests use Node's built-in `node:test` +
 `node:assert` (Node 20+). They cover the pure logic in `05-logic.js` and validate
-the real HRMOS data. **CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
-runs the tests on every push/PR and **fails if `longwave-dev.html` is out of date**
-with `src/` — so a stale bundle can't be merged. Shift-left: run `npm test` before
-you commit.
+the real HRMOS data. Shift-left: run `npm test` before you commit.
+
+## CI/CD pipeline
+
+GitHub Actions, in two workflows:
+
+**CI — [`.github/workflows/ci.yml`](.github/workflows/ci.yml)** (every push to `main` + every PR):
+1. `test` — syntax-checks the bundled JS, runs the test suite (`node --test`), and
+   **fails if `longwave-dev.html` is out of date with `src/`** (so a stale bundle
+   can't be merged).
+2. `package` — on `main`, rebuilds the site and uploads `longwave-dev.html` as a
+   downloadable build artifact (90-day retention).
+
+**CD — [`.github/workflows/release.yml`](.github/workflows/release.yml)** (on a version tag):
+- Re-runs the tests, builds, and cuts a **GitHub Release** with `longwave-dev.html`
+  and a full source zip attached, plus auto-generated notes.
+
+```bash
+# Ship a release (tests must pass) — produces a downloadable Release:
+git tag v1.1.0 && git push origin v1.1.0
+```
+
+[`.github/dependabot.yml`](.github/dependabot.yml) keeps the pipeline's actions
+patched. The repo stays **private**: no public URL — the site is delivered as the
+build artifact (per push) and the Release asset (per tag).
 
 ## Editing notes
 
