@@ -32,7 +32,7 @@
     $("#careerRows").appendChild(b);
   }
   function cvVal(id){ var n=$(id); return n?n.value.trim():""; }
-  function calcAge(dob){ if(!dob) return ""; var d=new Date(dob); if(isNaN(d.getTime())) return ""; var n=new Date(), a=n.getFullYear()-d.getFullYear(); var mm=n.getMonth()-d.getMonth(); if(mm<0||(mm===0&&n.getDate()<d.getDate())) a--; return (a>=0&&a<140)?a:""; }
+  var calcAge = LW.calcAge;   /* pure, unit-tested in /test (see 05-logic.js) */
   function todayStr(){ var d=new Date(); return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"; }
   function renderCV(){
     if(!$("#rirekishoOut")) return;

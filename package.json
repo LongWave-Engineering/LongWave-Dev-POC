@@ -1,0 +1,12 @@
+{
+  "name": "longwave-jobs-poc",
+  "version": "1.0.0",
+  "private": true,
+  "description": "LongWave Dev — bilingual jobs in Japan (POC). Single-file static site built from src/.",
+  "scripts": {
+    "build": "bash build.sh",
+    "test": "node --test",
+    "test:watch": "node --test --watch"
+  },
+  "license": "UNLICENSED"
+}

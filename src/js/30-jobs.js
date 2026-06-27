@@ -2,35 +2,25 @@
   /* ---------------- jobs (full grid) ---------------- */
   var jobGrid=$("#jobGrid"), resultCount=$("#resultCount");
   var showAllJobs=false;
-  function hasActiveFilter(f){ return !!(f.q||f.jp||f.remote||f.spec||f.loc||f.stack); }
   function cardHTML(job){
     var c=COMPANIES[job.co];
     var tags = jpTag(job.jp) + '<span class="tag tag--meta">'+ esc(remoteLabel(job.remote)) +'</span>';
     if(job.abroad) tags += '<span class="tag tag--meta">'+ esc(t("lbl_abroad")) +'</span>';
     if(job.visa) tags += '<span class="tag tag--meta">'+ esc(t("lbl_visa")) +'</span>';
-    job.stack.slice(0,3).forEach(function(s){ tags += '<span class="tag tag--tech">'+ esc(s) +'</span>'; });
+    (job.stack||[]).slice(0,3).forEach(function(s){ tags += '<span class="tag tag--tech">'+ esc(s) +'</span>'; });
     return (job.hot ? '<span class="badge-hot">🔥 '+ esc(t("hot")) +'</span>' : '')+
       '<div class="jc-top">'+ avatarHTML(c) +
       '<div style="min-width:0"><div class="jc-role">'+ esc(roleL(job)) +'</div><div class="jc-co">'+ esc(c.name) +'</div></div></div>'+
-      '<div class="jc-salary">'+ esc(salaryMax(job)) +'</div>'+
+      '<div class="jc-salary">'+ esc(salaryMax(job, t("salary_neg"))) +'</div>'+
       '<div class="tags">'+ tags +'</div>'+
       '<div class="jc-foot"><span class="jc-loc">'+ esc(locL(job)) +'</span><span class="jc-link">'+ esc(t("viewrole")) +'</span></div>';
   }
   function getFilters(){ return { q:($("#filterSearch").value||"").trim().toLowerCase(), jp:$("#filterJp").value, remote:$("#filterRemote").value, spec:$("#filterSpec").value, loc:($("#filterLoc")?$("#filterLoc").value:""), stack:($("#filterStack")?$("#filterStack").value:"") }; }
-  function matches(job,f){
-    if(f.jp && job.jp!==f.jp) return false;
-    if(f.remote && job.remote!==f.remote) return false;
-    if(f.spec && job.spec!==f.spec) return false;
-    if(f.loc && job.loc!==f.loc) return false;
-    if(f.stack && (job.stack||[]).indexOf(f.stack)===-1) return false;
-    if(f.q){ var hay=(job.role+" "+(JOBS_JA[job.role]?JOBS_JA[job.role].role:"")+" "+COMPANIES[job.co].name+" "+(job.stack||[]).join(" ")+" "+job.spec).toLowerCase(); if(hay.indexOf(f.q)===-1) return false; }
-    return true;
-  }
   function renderJobs(){
     var f=getFilters();
     /* Carsensor-style: don't dump every role. Wait until the user picks a
        filter (or explicitly asks to browse all) before showing results. */
-    if(!hasActiveFilter(f) && !showAllJobs){
+    if(!LW.hasActiveFilter(f) && !showAllJobs){
       jobGrid.innerHTML="";
       var prompt=el("div","jobs-prompt",
         '<div class="jp-ic">🔍</div>'+
@@ -42,14 +32,13 @@
       resultCount.textContent = t("result_pick");
       return;
     }
-    var shown=JOBS.filter(function(j){return matches(j,f);});
-    shown.sort(function(a,b){ return (b.hot?1:0)-(a.hot?1:0); });
+    var shown=LW.filterJobs(JOBS, f);
     jobGrid.innerHTML="";
     if(shown.length===0){
       jobGrid.appendChild(el("div","",'<p style="color:var(--slate);grid-column:1/-1;padding:30px 0;font-size:1.1rem;">'+(lang==="ja"?"条件に合う求人が見つかりません。フィルターを調整してください。":"No roles match these filters yet. Try widening your search.")+'</p>'));
     } else {
       shown.forEach(function(job){
-        var idx=JOBS.indexOf(job);
+        var idx=job._i;
         var card=el("button","job-card",cardHTML(job));
         card.setAttribute("aria-label", roleL(job)+" at "+COMPANIES[job.co].name);
         card.addEventListener("click", function(){ openJob(idx); });

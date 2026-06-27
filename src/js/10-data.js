@@ -4,7 +4,7 @@
     tt:{name:"TechTouch", color:"#0ea5a4", mono:"TT", site:"https://techtouch.jp/",
         sector:{en:"Digital Adoption (DAP) · SaaS", ja:"デジタルアダプション（DAP）・SaaS"}}
   };
-  var SPECS = ["Frontend","Backend","Full-Stack","Software Engineering","Mobile","AI / ML","Data Engineering","SRE / Infra","Security","QA / Test","UI/UX & Design","Hardware & Mfg","Product Management","Project / Program Mgmt","Engineering Management","Consulting","Sales & BD","Management","Corporate & Ops","Other"];
+  var SPECS = LW.SPECS;   /* single source of truth — defined in 05-logic.js */
 
   var JOBS = [
     {co:"tt", role:"Data Engineer", spec:"Data Engineering", salary:"¥8M – ¥13M", jp:"business", remote:"partial", abroad:false, visa:false, hot:true, loc:"Tokyo · Ginza", stack:["Python","Snowflake","dbt","AWS"],

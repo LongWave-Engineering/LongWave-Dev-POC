@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Unit tests & bundle check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+
+      - name: Run unit + data tests
+        run: node --test
+
+      - name: Verify the bundle is rebuilt from source
+        run: |
+          bash build.sh
+          if ! git diff --quiet -- longwave-dev.html; then
+            echo "::error::longwave-dev.html is out of date — run ./build.sh and commit the result."
+            git --no-pager diff --stat -- longwave-dev.html
+            exit 1
+          fi
+          echo "✓ Bundle is in sync with src/."

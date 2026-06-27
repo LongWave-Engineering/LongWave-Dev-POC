@@ -46,9 +46,10 @@ src/
 │   └── 12-responsive.css    media queries (load last)
 ├── js/                  ← app logic, one IIFE split into parts (loaded in filename order)
 │   ├── 00-intro.js          IIFE open, "use strict", editable LINKS
+│   ├── 05-logic.js          ★ pure, framework-free domain logic (LW.*) — unit-tested
 │   ├── 10-data.js           built-in demo fallback data
-│   ├── 20-i18n.js           EN/JA strings, t(), language state, HRMOS data override
-│   ├── 30-jobs.js           job cards, filters, renderJobs, filter selects
+│   ├── 20-i18n.js           EN/JA strings, t(), language state, HRMOS override, job enrichment
+│   ├── 30-jobs.js           job cards, render, filter selects (filtering lives in 05-logic)
 │   ├── 40-home.js           home teaser, companies, articles, reviews
 │   ├── 50-modals.js         job-detail + sign-up modals, focus trap
 │   ├── 60-app.js            applyLang, listeners, hash router, nav, reveal
@@ -57,7 +58,22 @@ src/
 │   └── 99-outro.js          IIFE close
 └── data/
     └── hrmos-data.js        generated job data — window.__HRMOS_DATA__ (synced from HRMOS)
+
+test/                    ← Node built-in test runner (node:test) — no dependencies
+├── logic.test.js            unit tests for every pure function in 05-logic.js
+└── data.test.js             integrity checks on the real HRMOS data (enums, ids, classification)
+.github/workflows/ci.yml ← CI: runs tests + fails if longwave-dev.html is stale vs src/
+package.json             ← npm test / npm run build scripts (zero runtime deps)
 ```
+
+### Pure logic lives in `05-logic.js`
+
+Anything that's pure (no DOM, no app state) — specialty classification, address →
+prefecture, salary parsing, the filter predicate, age calc — lives in
+[`src/js/05-logic.js`](src/js/05-logic.js) as the `LW` namespace. It's written to
+work **both** inside the browser bundle *and* when `require()`'d by Node, so the
+unit tests exercise the exact code that ships. Add testable logic here, not in the
+render files.
 
 ### Why one shared IIFE split across files
 
@@ -74,6 +90,21 @@ standalone `<script>` tags individually).
 
 The build is a pure concatenation in filename order — that's why the CSS and JS
 files are numbered. After running it, open `longwave-dev.html` in a browser.
+
+## Tests
+
+```bash
+npm test          # runs the Node built-in test runner over test/
+# or directly:
+node --test
+```
+
+No dependencies and no install step — tests use Node's built-in `node:test` +
+`node:assert` (Node 20+). They cover the pure logic in `05-logic.js` and validate
+the real HRMOS data. **CI** ([`.github/workflows/ci.yml`](.github/workflows/ci.yml))
+runs the tests on every push/PR and **fails if `longwave-dev.html` is out of date**
+with `src/` — so a stale bundle can't be merged. Shift-left: run `npm test` before
+you commit.
 
 ## Editing notes
 

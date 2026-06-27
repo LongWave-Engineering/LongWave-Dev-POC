@@ -56,7 +56,7 @@
       m_about:"About the role", m_look:"What they're looking for", m_apply:"Sign up to apply", m_company:"Company site ↗",
       jd_bg:"Why they're hiring", jd_scope:"The role & scope", jd_required:"Must-have skills & experience", jd_nice:"Nice to have", jd_ideal:"Who they're looking for", jd_stack:"Tech stack", jd_team:"Team & org", jd_lang:"Language requirement", jd_office:"Office / location", jd_workstyle:"Work style", jd_hours:"Working hours", jd_comp:"Compensation details", jd_bonus:"Bonus", jd_benefits:"Benefits", jd_holiday:"Holidays & leave", jd_probation:"Probation", jd_selection:"Selection process", jd_notes:"Other notes", jd_na:"Not listed (N/A)", jd_flex:"Flex hours", jd_stock:"Stock options", jd_ot:"Incl. fixed overtime",
       lbl_remote_full:"Fully remote", lbl_remote_partial:"Partially remote", lbl_remote_no:"On-site",
-      lbl_abroad:"Apply from abroad", lbl_visa:"Visa support", lbl_salary:"Salary band",
+      lbl_abroad:"Apply from abroad", lbl_visa:"Visa support", lbl_salary:"Salary band", salary_neg:"Negotiable",
       lbl_jp_none:"No Japanese required", lbl_jp_conversational:"Conversational JP", lbl_jp_business:"Business JP",
       hot:"Hot", result:"Showing {n} of {total} roles", viewrole:"View role →",
       result_pick:"Choose a filter to see matching roles", prompt_title:"Find the roles that fit you", prompt_sub:"Pick a specialty, tech stack, Japanese level, work style or location on the left — and matching roles appear here. {total} roles are open right now.", prompt_all:"Or browse all {total} roles →"
@@ -116,7 +116,7 @@
       m_about:"求人について", m_look:"求める人物像", m_apply:"登録して応募", m_company:"企業サイト ↗",
       jd_bg:"募集背景", jd_scope:"業務内容・スコープ", jd_required:"求めるスキル・経験", jd_nice:"あると望ましい経験", jd_ideal:"求める人物像", jd_stack:"技術スタック", jd_team:"チーム・組織", jd_lang:"語学要件", jd_office:"勤務地", jd_workstyle:"働き方", jd_hours:"勤務時間", jd_comp:"給与・待遇の詳細", jd_bonus:"賞与", jd_benefits:"福利厚生", jd_holiday:"休日・休暇", jd_probation:"試用期間", jd_selection:"選考フロー", jd_notes:"備考", jd_na:"記載なし（N/A）", jd_flex:"フレックス", jd_stock:"ストックオプション", jd_ot:"固定残業代込み",
       lbl_remote_full:"フルリモート", lbl_remote_partial:"一部リモート", lbl_remote_no:"出社",
-      lbl_abroad:"海外から応募可", lbl_visa:"ビザサポート", lbl_salary:"給与レンジ",
+      lbl_abroad:"海外から応募可", lbl_visa:"ビザサポート", lbl_salary:"給与レンジ", salary_neg:"応相談",
       lbl_jp_none:"日本語不問", lbl_jp_conversational:"日常会話レベル", lbl_jp_business:"ビジネスレベル",
       hot:"注目", result:"{total}件中{n}件を表示", viewrole:"詳細を見る →",
       result_pick:"条件を選ぶと求人が表示されます", prompt_title:"あなたに合う求人を探す", prompt_sub:"左の職種・技術スタック・日本語レベル・働き方・勤務地から条件を選ぶと、合致する求人がここに表示されます。現在{total}件の求人があります。", prompt_all:"すべての求人（{total}件）を見る →"
@@ -127,19 +127,16 @@
   function t(k){ return (I18N[lang] && I18N[lang][k]!=null) ? I18N[lang][k] : (I18N.en[k]||k); }
   var $ = function(s,c){ return (c||document).querySelector(s); };
   function el(tag,cls,html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
+  /* pure helpers live in 05-logic.js (LW.*); alias the app-wide ones for brevity */
+  var esc = LW.esc, salaryMax = LW.salaryMax;
   function nl2br(s){ return esc(s).replace(/\n/g,"<br>"); }
-  function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
 
-  function jpTag(level){
-    var cls = level==="none" ? "tag--jp-none" : (level==="business" ? "tag--jp-high" : "tag--jp-mid");
-    return '<span class="tag '+cls+'">'+ esc(t("lbl_jp_"+level)) +'</span>';
-  }
+  function jpTag(level){ return '<span class="tag '+ LW.jpTagClass(level) +'">'+ esc(t("lbl_jp_"+level)) +'</span>'; }
   function remoteLabel(r){ return t("lbl_remote_"+r); }
   function roleL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].role : j.role; }
   function bodyL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].body : j.body; }
   function pointsL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].points : j.points; }
   function locL(j){ return (lang==="ja" && j.loc==="Tokyo · Ginza") ? "東京・銀座" : j.loc; }
-  function salaryMax(job){ var m=String(job.salary).match(/¥[\d.]+M/g); return (m?m[m.length-1]:String(job.salary)) + " DOE"; }
   /* company avatar: embedded logo when present, else the coloured monogram */
   function avatarHTML(c, cls){
     var k=' class="avatar'+(cls?" "+cls:"")+'"';
@@ -168,58 +165,19 @@
   }
   function blurbL(j){ var b=BLURB[j.role]; return b ? (lang==="ja"?b.ja:b.en) : ""; }
 
-  /* ---------------- specialty + location classification ----------------
-     Specialty filtering is driven by these categories (derived from the role
-     title, stack and source spec), so QA covers SDET/SET, EM is its own bucket,
-     etc. Location filtering groups roles by prefecture. Applied to every loaded
-     role below (demo or HRMOS). Tweak the keyword lists to retune.            */
-  /* location label from a full address: prefecture, plus the ward (区) when it
-     sits directly under the prefecture (Tokyo's special wards). Designated-city
-     wards (under a 市) collapse to just the prefecture. Returns "" if no
-     prefecture can be found (caller keeps the existing value). */
-  var _CITY_PREF=[["札幌","北海道"],["仙台","宮城県"],["さいたま","埼玉県"],["千葉","千葉県"],["横浜","神奈川県"],["川崎","神奈川県"],["名古屋","愛知県"],["名駅","愛知県"],["京都","京都府"],["大阪","大阪府"],["神戸","兵庫県"],["広島","広島県"],["博多","福岡県"],["福岡","福岡県"],["金沢","石川県"],["宇都宮","栃木県"],["田町","東京都"],["Tamachi","東京都"]];
-  function locFromAddr(addr){
-    var s=String(addr||"");
-    var pm=s.match(/(東京都|北海道|京都府|大阪府|[一-鿿]{2,3}県)/);
-    var pref=pm?pm[1]:"";
-    if(!pref){ for(var i=0;i<_CITY_PREF.length;i++){ if(s.indexOf(_CITY_PREF[i][0])>-1){ pref=_CITY_PREF[i][1]; break; } } }
-    if(!pref) return "";
-    /* ward only if it sits directly under THIS prefecture (anchored, so a ward
-       from another office in a multi-location listing can't attach) */
-    var wm=s.match(new RegExp(pref+"([一-鿿]{1,3}区)"));
-    return pref + (wm?wm[1]:"");
-  }
-  function classifySpec(job){
-    /* classify on the role part BEFORE the "— Division" suffix, padded so
-       leading-space keys also match at the start of the title */
-    var primary=String(job.role||"").split(/—|–/)[0];
-    var hay=(" "+primary+" "+((job.stack||[]).join(" "))+" ").toLowerCase();
-    function any(){ for(var i=0;i<arguments.length;i++){ if(hay.indexOf(arguments[i])>-1) return true; } return false; }
-    if(any("qa engineer","qa manager","qa lead","qa)"," qa ","sdet","engineer in test","quality engineer","quality assurance","test engineer","test automation")) return "QA / Test";
-    if(any("engineering manager","engineering lead","vpoe","vp of engineering","vp of technology","vpot","head of engineering","director of engineering","senior engineering manager")) return "Engineering Management";
-    if(any("ui/ux","ux design","ux)","designer","product design","communication design","web design","cg design","3d / cg","3d/cg","blender")) return "UI/UX & Design";
-    if(any("ai engineer","ml engineer","ai/ml","ml/ai","machine learning","data scientist","data science","data & ai","ml platform","ai platform","ml modeling","ai researcher","research engineer","llm","deep learning"," nlp ","agent harness","ai evaluation","ai success","ai application engineer","ai agent engineer","prompt")) return "AI / ML";
-    if(any("data engineer","analytics engineer","data analyst","data platform","data infrastructure","data enablement"," dbt"," etl")) return "Data Engineering";
-    if(any("sre","site reliability","infrastructure","platform engineer","platform microservices","cloud engineer","cloud security","cloud infrastructure","devops","dbre","network engineer","iam ","reliability engineer")) return "SRE / Infra";
-    if(any("security","ciso","vulnerab","csirt")) return "Security";
-    if(any("android","ios ","ios)","mobile engineer","flutter","react native")) return "Mobile";
-    if(any("frontend","front-end","front end")) return "Frontend";
-    if(any("full-stack","full stack","fullstack")) return "Full-Stack";
-    if(any("backend","back-end","server-side","server side")) return "Backend";
-    if(any("electrical","mechanical","hardware","robotics","image processing","circuit","plc","automation-line","inspection equipment","field engineer","x-ray","manufacturing","cg designer")) return "Hardware & Mfg";
-    if(any("product manager","product owner","product planner","head of product","chief product officer"," cpo","product lead","(pdm","pdm)"," pdm"," pmm","product management")) return "Product Management";
-    if(any("project manager","project leader","program manager","scrum master","pmo","(pjm","pjm)","project promotion")) return "Project / Program Mgmt";
-    if(any("consultant","consulting","solutions architect","solution consultant","forward deployed","(fde","fde)"," fde","deployment strategist","pre-sales","presales","pre sales")) return "Consulting";
-    if(any(" sales","(sales","sales)","account executive","account manager","account sales","business development"," bd ","(bd","inside sales","enterprise sales","headhunter","marketer","marketing")) return "Sales & BD";
-    if(any("engineer","developer","architect","programmer","swe")) return "Software Engineering";
-    if(any("recruit"," hr ","hr ","human resources","legal","complian","accounting","accountant"," finance","fp&a"," ir ","investor","corporate","labor","general affairs","administration","secretary"," planning","planner","operations","procurement","purchasing","policy","public affairs"," pr ","public relations","talent","organizational","audit","screening","customer success","customer support","support desk","liaison")) return "Corporate & Ops";
-    if(any("manager","director","head of"," officer","vp of","cfo","cao","cmo","cro","executive","lead candidate","chief","strategist")) return "Management";
-    return "Other";
-  }
+  /* ---------------- enrich every loaded job (demo or HRMOS) ----------------
+     classifySpec / locFromAddr now live in 05-logic.js (LW.*) so they are unit
+     tested. Here we apply them once and precompute, per job:
+       _i   = original index into JOBS (so render loops avoid O(n) indexOf)
+       _hay = lowercased free-text search index (so filtering never rebuilds it) */
   for (var _ji=0; _ji<JOBS.length; _ji++){
-    JOBS[_ji].spec = classifySpec(JOBS[_ji]);
-    var _nl = locFromAddr(JOBS[_ji].office || JOBS[_ji].loc);
-    if(_nl) JOBS[_ji].loc = _nl;
+    var _job = JOBS[_ji];
+    _job._i = _ji;
+    _job.spec = LW.classifySpec(_job);
+    var _nl = LW.locFromAddr(_job.office || _job.loc);
+    if(_nl) _job.loc = _nl;
+    var _jaRole = JOBS_JA[_job.role] ? JOBS_JA[_job.role].role : "";
+    _job._hay = LW.searchHay(_job, _jaRole, (COMPANIES[_job.co] || {}).name);
   }
 
 
