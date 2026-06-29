@@ -61,7 +61,8 @@
       lbl_abroad:"Apply from abroad", lbl_visa:"Visa support", lbl_salary:"Salary band", salary_neg:"Negotiable",
       lbl_jp_none:"No Japanese required", lbl_jp_conversational:"Conversational JP", lbl_jp_business:"Business JP",
       hot:"Hot", result:"Showing {n} of {total} roles", viewrole:"View role →",
-      result_pick:"Choose a filter to see matching roles", prompt_title:"Find the roles that fit you", prompt_sub:"Pick a specialty, tech stack, Japanese level, work style or location on the left — and matching roles appear here. {total} roles are open right now.", prompt_all:"Or browse all {total} roles →"
+      result_pick:"Choose a filter to see matching roles", prompt_title:"Find the roles that fit you", prompt_sub:"Pick a specialty, tech stack, Japanese level, work style or location on the left — and matching roles appear here. {total} roles are open right now.", prompt_all:"Or browse all {total} roles →",
+      sel_pick:"Select this role", sel_selected:"{n} selected", sel_apply:"Apply to selected", sel_clear:"Clear", apply_title:"Apply to {n} role(s)", apply_success:"Application sent for {n} role(s). We'll be in touch shortly."
     },
     ja:{
       nav_jobs:"求人", nav_companies:"企業", nav_articles:"記事", nav_post:"求人を掲載", nav_signup:"登録する",
@@ -123,7 +124,8 @@
       lbl_abroad:"海外から応募可", lbl_visa:"ビザサポート", lbl_salary:"給与レンジ", salary_neg:"応相談",
       lbl_jp_none:"日本語不問", lbl_jp_conversational:"日常会話レベル", lbl_jp_business:"ビジネスレベル",
       hot:"注目", result:"{total}件中{n}件を表示", viewrole:"詳細を見る →",
-      result_pick:"条件を選ぶと求人が表示されます", prompt_title:"あなたに合う求人を探す", prompt_sub:"左の職種・技術スタック・日本語レベル・働き方・勤務地から条件を選ぶと、合致する求人がここに表示されます。現在{total}件の求人があります。", prompt_all:"すべての求人（{total}件）を見る →"
+      result_pick:"条件を選ぶと求人が表示されます", prompt_title:"あなたに合う求人を探す", prompt_sub:"左の職種・技術スタック・日本語レベル・働き方・勤務地から条件を選ぶと、合致する求人がここに表示されます。現在{total}件の求人があります。", prompt_all:"すべての求人（{total}件）を見る →",
+      sel_pick:"この求人を選択", sel_selected:"{n}件選択中", sel_apply:"選択した求人に応募", sel_clear:"クリア", apply_title:"{n}件の求人に応募", apply_success:"{n}件の求人に応募しました。すぐにご連絡します。"
     }
   };
 

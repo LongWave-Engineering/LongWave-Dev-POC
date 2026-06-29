@@ -121,6 +121,7 @@
       });
       JOBS=jobs;
       enrichJobs();
+      selected={};   /* selection is keyed by the old _i indices — reset it for the new dataset */
       applyLang();   /* re-render everything (cards, selects, counts) from live data */
     });
   }

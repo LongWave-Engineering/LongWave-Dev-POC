@@ -87,6 +87,21 @@ test("salaryMax() converts Japanese 万-yen bands (imported/scraped rows) to ¥M
   assert.equal(LW.salaryMax({ salary: "¥8M – ¥13M（約1300万円）" }), "¥13M DOE");
 });
 
+test("normalizeJobIds() coerces, drops junk, de-dupes, preserves order", () => {
+  assert.deepEqual(LW.normalizeJobIds([1, 2, 2, 3]), [1, 2, 3]);
+  assert.deepEqual(LW.normalizeJobIds(["4", "5", 5]), [4, 5]);            // strings → ints, de-duped
+  assert.deepEqual(LW.normalizeJobIds([0, -1, null, undefined, "x", NaN, 7]), [7]); // junk dropped
+  assert.deepEqual(LW.normalizeJobIds("not-an-array"), []);
+  assert.deepEqual(LW.normalizeJobIds([]), []);
+});
+
+test("normalizeJobIds() caps the batch so one request can't drive unbounded DB work", () => {
+  const huge = Array.from({ length: 1000 }, (_, i) => i + 1);
+  const out = LW.normalizeJobIds(huge);
+  assert.ok(out.length <= 200, `expected <=200, got ${out.length}`);
+  assert.deepEqual(out.slice(0, 3), [1, 2, 3]); // keeps the first ids, in order
+});
+
 test("jpTagClass() maps Japanese level to a CSS class", () => {
   assert.equal(LW.jpTagClass("none"), "tag--jp-none");
   assert.equal(LW.jpTagClass("business"), "tag--jp-high");

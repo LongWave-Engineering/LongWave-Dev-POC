@@ -120,6 +120,20 @@
                  .sort(function(a,b){ return (b.hot ? 1 : 0) - (a.hot ? 1 : 0); });
     }
 
+    /* Sanitize a list of selected job ids (from the multi-apply UI or an API body):
+       coerce to positive integers, drop junk, de-dupe, preserve first-seen order.
+       Shared so the frontend builds a clean payload and the backend re-validates it. */
+    var MAX_JOB_IDS = 200;   /* caps an apply batch → bounds DB work per request */
+    function normalizeJobIds(ids){
+      if(!Array.isArray(ids)) return [];
+      var seen={}, out=[];
+      for(var i=0;i<ids.length && out.length<MAX_JOB_IDS;i++){
+        var n=parseInt(ids[i],10);
+        if(isFinite(n) && n>0 && !seen[n]){ seen[n]=1; out.push(n); }
+      }
+      return out;
+    }
+
     /* Age in whole years from an ISO date string. `now` is injectable for tests.
        Returns "" for empty/invalid/out-of-range input. */
     function calcAge(dob, now){
@@ -146,6 +160,7 @@
       hasActiveFilter: hasActiveFilter,
       matchesFilter: matchesFilter,
       filterJobs: filterJobs,
+      normalizeJobIds: normalizeJobIds,
       calcAge: calcAge
     };
   })();

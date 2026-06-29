@@ -2,6 +2,21 @@
   /* ---------------- jobs (full grid) ---------------- */
   var jobGrid=$("#jobGrid"), resultCount=$("#resultCount");
   var showAllJobs=false;
+
+  /* ---- multi-select (apply to one or many) ---- keyed by the stable original
+     index (_i) so it survives re-filtering and language toggles. ---- */
+  var selected={};
+  function isSelected(job){ return !!selected[job._i]; }
+  function setSelected(job,on){ if(on) selected[job._i]=true; else delete selected[job._i]; updateSelBar(); }
+  function selectionCount(){ var n=0; for(var k in selected) if(selected.hasOwnProperty(k)) n++; return n; }
+  function selectedDbIds(){ return LW.normalizeJobIds(JOBS.filter(function(j){return selected[j._i];}).map(function(j){return j.id;})); }
+  function clearSelection(){ selected={}; renderJobs(); }
+  function updateSelBar(){
+    var bar=$("#selectBar"); if(!bar) return;
+    var n=selectionCount();
+    bar.hidden = n===0;
+    if(n){ $("#selCount").textContent=t("sel_selected").replace("{n}",n); $("#selApply").textContent=t("sel_apply")+" ("+n+")"; }
+  }
   function cardHTML(job){
     var c=COMPANIES[job.co];
     var tags = jpTag(job.jp) + '<span class="tag tag--meta">'+ esc(remoteLabel(job.remote)) +'</span>';
@@ -39,14 +54,24 @@
     } else {
       shown.forEach(function(job,i){
         var idx=job._i;
-        var card=el("button","job-card jc-reveal",cardHTML(job));
-        /* Silky staggered entrance — cap the delay so a long list never lags. */
+        /* card = wrapper (visual + selected ring) containing a selection checkbox
+           and a clickable open-button. Two separate controls so a checkbox click
+           selects without opening the modal, and vice-versa (no nested buttons). */
+        var card=el("div","job-card jc-reveal"+(isSelected(job)?" sel":""));
         card.style.animationDelay=(Math.min(i,12)*0.045)+"s";
-        card.setAttribute("aria-label", roleL(job)+" at "+COMPANIES[job.co].name);
-        card.addEventListener("click", function(){ openJob(idx); });
+        var sel=el("label","jc-select");
+        var cb=document.createElement("input"); cb.type="checkbox"; cb.checked=isSelected(job);
+        cb.setAttribute("aria-label", t("sel_pick")+": "+roleL(job));
+        cb.addEventListener("change", function(){ setSelected(job, cb.checked); card.classList.toggle("sel", cb.checked); });
+        sel.appendChild(cb);
+        var open=el("button","jc-open",cardHTML(job));
+        open.setAttribute("aria-label", roleL(job)+" at "+COMPANIES[job.co].name);
+        open.addEventListener("click", function(){ openJob(idx); });
+        card.appendChild(sel); card.appendChild(open);
         jobGrid.appendChild(card);
       });
     }
+    updateSelBar();
     resultCount.textContent = t("result").replace("{n}",shown.length).replace("{total}",JOBS.length);
   }
   /* shared select builder: keeps the current value, shows "(count)" per option */
@@ -68,6 +93,13 @@
     var n={}; JOBS.forEach(function(j){ var p=j.loc; if(p) n[p]=(n[p]||0)+1; });
     fillSelect($("#filterLoc"), t("filter_loc_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(p){return {v:p,t:p+" ("+n[p]+")"};}));
   }
+
+  /* selection-bar actions: Clear, and batch "Apply to selected" (opens signup in
+     apply mode with the selected job ids). openSignup lives in modals.js (same IIFE). */
+  (function(){
+    var clr=$("#selClear"); if(clr) clr.addEventListener("click", clearSelection);
+    var ap=$("#selApply"); if(ap) ap.addEventListener("click", function(){ openSignup("job", selectedDbIds()); });
+  })();
 
 
 

@@ -8,8 +8,10 @@
     var body = has ? nl2br(val) : '<span style="color:var(--slate)">'+esc(t("jd_na"))+'</span>';
     return '<h4 class="m-sub">'+esc(t(labelKey))+'</h4><div class="m-body">'+body+'</div>';
   }
+  var currentJob=null;   /* the job whose detail modal is open (for "Sign up to apply") */
   function openJob(idx){
     var job=JOBS[idx], c=COMPANIES[job.co];
+    currentJob=job;
     lastFocus=document.activeElement;
     var _av=$("#mAvatar"); if(c.logo){ _av.innerHTML='<img src="'+c.logo+'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
     $("#mRole").textContent=roleL(job);
@@ -59,13 +61,20 @@
     var r=$("#suResume"); if(r) r.required=job;
   }
   $("#suWant").addEventListener("change", suToggleWant);
-  function openSignup(preset){
+  var pendingApplyJobIds=[];   /* job ids the signup will apply to (empty = plain signup) */
+  function openSignup(preset, jobIds){
     lastFocus=document.activeElement;
+    pendingApplyJobIds = Array.isArray(jobIds) ? LW.normalizeJobIds(jobIds) : [];
     $("#suSuccess").style.display="none"; $("#suForm").style.display="";
     if(preset==="hire") $("#suWant").value="hire"; else if(preset==="job") $("#suWant").value="job";
     suToggleWant();
+    var titleEl=$("#suTitle");
+    if(titleEl) titleEl.textContent = pendingApplyJobIds.length ? t("apply_title").replace("{n}",pendingApplyJobIds.length) : t("su_title");
     openOverlay(suOverlay); $("#suClose").focus();
   }
+  /* the job detail modal's "Sign up to apply" → apply to just that role */
+  var _mApply=$("#mApply");
+  if(_mApply) _mApply.addEventListener("click", function(){ openSignup("job", (currentJob && currentJob.id!=null) ? [currentJob.id] : []); });
 
   /* ---------------- overlay helpers ---------------- */
   function openOverlay(o){ o.classList.add("open"); document.body.style.overflow="hidden"; }
@@ -95,25 +104,36 @@
     if(trig){ e.preventDefault(); openSignup(trig.getAttribute("data-signup")); }
   });
 
-  /* Send the lead to the backend when the site is SERVED (POST /api/leads); when it's
-     opened as a standalone file there's no API, so we just show the success state.
-     Fire-and-forget either way — the user always sees the same confirmation. */
-  function postLead(){
-    if(!/^https?:$/.test(location.protocol)) return;   /* file:// — no backend to call */
+  function collectSignup(){
     var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : undefined; };
     var resume=$("#suResume");
-    var payload={
+    return {
       kind: $("#suWant").value,
       name: val("#suName"), email: val("#suEmail"),
       linkedin: val("#suLinkedin"), github: val("#suGithub"),
       company: val("#suCompany"),
       resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined
     };
-    fetch("/api/leads", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) }).catch(function(){});
   }
-  $("#suForm").addEventListener("submit", function(e){
-    e.preventDefault(); postLead(); $("#suForm").style.display="none"; $("#suSuccess").style.display="block";
-  });
+  /* Submit: when the site is SERVED, POST to /api/applications (applying to one or
+     many selected jobs) or /api/leads (plain signup). Opened as a standalone file →
+     no backend → just confirm. Fire-and-forget; the user always sees a success state. */
+  function submitSignup(){
+    var n=pendingApplyJobIds.length;
+    if(/^https?:$/.test(location.protocol)){
+      if(n){
+        var body=collectSignup(); body.job_ids=pendingApplyJobIds;
+        fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) }).catch(function(){});
+      } else {
+        fetch("/api/leads", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(collectSignup()) }).catch(function(){});
+      }
+    }
+    var succ=$("#suSuccess");
+    if(succ) succ.textContent = n ? t("apply_success").replace("{n}",n) : t("su_success");
+    $("#suForm").style.display="none"; if(succ) succ.style.display="block";
+    if(n) clearSelection();   /* reset the jobs picker after a batch apply */
+  }
+  $("#suForm").addEventListener("submit", function(e){ e.preventDefault(); submitSignup(); });
 
 
 
