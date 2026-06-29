@@ -1,0 +1,38 @@
+/* core/layout.css — page show/hide + fade transition, hero, section heads, avatars */
+  /* ---------- pages ---------- */
+  /* Mellow cross-page transition: a simple, gentle fade (opacity only, so it
+     never disturbs position:sticky descendants like the jobs filter rail). */
+  .page{display:none;}
+  .page.active{display:block;animation:pageFade .5s ease both;}
+  @keyframes pageFade{from{opacity:0;}to{opacity:1;}}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;overflow:hidden;}
+  .hero::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(1100px 460px at 86% -10%, rgba(255,210,63,.20), transparent 60%), radial-gradient(820px 460px at -8% 12%, rgba(1,167,227,.18), transparent 55%);}
+  .hero .wrap{position:relative;z-index:1;}
+  .hero-inner{max-width:880px;padding:96px 0 26px;}
+  .hero h1{margin-bottom:22px;}
+  .hero .lede{font-size:1.32rem;color:var(--ink-soft);max-width:38em;margin-bottom:26px;}
+  .hero-cta{display:flex;gap:15px;flex-wrap:wrap;align-items:center;}
+  .jobcount{font-size:1.02rem;color:var(--slate);font-weight:600;margin-top:22px;}
+  .jobcount b{color:var(--accent-deep);}
+  .partners{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:30px 0 84px;margin-top:30px;border-top:1px solid var(--line);position:relative;z-index:1;}
+  .partners .lab{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);font-weight:700;margin:0 0 4px;width:100%;}
+  .partners .avatar.sm{box-shadow:0 0 0 1px rgba(14,34,53,.05), var(--shadow);transition:transform .15s ease;}
+  .partners .avatar.sm:hover{transform:translateY(-2px);}
+
+  .avatar{flex:none;width:52px;height:52px;border-radius:13px;display:grid;place-items:center;font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:#fff;overflow:hidden;}
+  .avatar.sm{width:42px;height:42px;border-radius:11px;font-size:.92rem;}
+  .avatar img{width:100%;height:100%;object-fit:contain;border-radius:inherit;padding:15%;box-sizing:border-box;}
+
+  /* ---------- section head ---------- */
+  .head{max-width:44rem;margin-bottom:48px;}
+  .head.center{margin-left:auto;margin-right:auto;text-align:center;}
+  .head .sub{color:var(--slate);font-size:1.2rem;line-height:1.5;margin-top:16px;}
+  .head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:34px;}
+  .head-row h2{max-width:18em;}
+  .more{font-weight:700;font-size:1.04rem;color:var(--accent-deep);white-space:nowrap;}
+  .more:hover{color:var(--ink);}
+
+
+

@@ -3,7 +3,7 @@
    No DOM, no build step — these exercise the exact code that ships in the bundle. */
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const LW = require("../src/js/05-logic.js");
+const LW = require("../src/core/logic.js");
 
 test("esc() escapes HTML-significant characters", () => {
   assert.equal(LW.esc('<a href="x">&'), "&lt;a href=&quot;x&quot;&gt;&amp;");

@@ -1,0 +1,25 @@
+/* features/header/header.css — sticky header, nav, round LongWave logo badge */
+  /* ---------- header ---------- */
+  header.site{position:sticky;top:0;z-index:50;background:rgba(246,248,250,.9);backdrop-filter:saturate(140%) blur(12px);border-bottom:1px solid var(--line);transition:box-shadow .25s ease, background .25s ease;}
+  header.site.scrolled{box-shadow:0 10px 30px -18px rgba(14,34,53,.45);background:rgba(246,248,250,.96);}
+  .nav{display:flex;align-items:center;gap:28px;height:76px;}
+  .brand{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:900;letter-spacing:-.02em;font-size:1.26rem;}
+  /* round LongWave logo badge — the real cloud mark, on a clean disc so it reads
+     on both the light header and the dark footer */
+  .brand .logo{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none;overflow:hidden;box-shadow:0 0 0 1px rgba(29,70,112,.10), 0 6px 16px -9px rgba(29,70,112,.5);transition:transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease;}
+  .brand .logo img{width:80%;height:80%;object-fit:contain;}
+  .brand:hover .logo{transform:scale(1.06) rotate(-3deg);box-shadow:0 0 0 1px rgba(29,70,112,.16), 0 10px 22px -9px rgba(29,70,112,.6);}
+  .nav-links{display:flex;gap:24px;margin-left:8px;}
+  .nav-links a{font-size:1.04rem;color:var(--ink-soft);font-weight:600;padding:8px 0;position:relative;display:inline-flex;align-items:center;gap:5px;transition:color .15s ease;}
+  .nav-links a:hover,.nav-links a.active{color:var(--ink);}
+  .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;background:var(--banana);animation:navUnderline .3s cubic-bezier(.2,.7,.3,1);}
+  @keyframes navUnderline{from{transform:scaleX(0);opacity:0;}to{transform:scaleX(1);opacity:1;}}
+  .nav-links a .ext{font-size:.85em;color:var(--slate);}
+  .nav-right{margin-left:auto;display:flex;align-items:center;gap:14px;}
+  .lang{display:inline-flex;border:2px solid var(--line-strong);border-radius:999px;overflow:hidden;}
+  .lang button{border:0;background:transparent;padding:8px 14px;font-weight:700;font-size:.92rem;color:var(--slate);letter-spacing:.02em;}
+  .lang button.active{background:var(--ink);color:#fff;}
+  .menu-toggle{display:none;background:transparent;border:2px solid var(--line-strong);border-radius:11px;width:48px;height:44px;color:var(--ink);font-size:1.4rem;}
+
+
+

@@ -1,42 +1,82 @@
 #!/usr/bin/env bash
 #
-# build.sh — concatenate the per-feature source files in src/ back into the
-# single, self-contained longwave-dev.html that you can double-click to open.
+# build.sh — assemble the single, self-contained, double-clickable longwave-dev.html
+# from the per-feature source under src/.
 #
-# Source layout:
-#   src/html/*.html   page structure, split one file per section
-#   src/css/*.css     styles, split one file per feature (loaded in name order)
-#   src/js/*.js        app logic, one IIFE split into parts (loaded in name order)
-#   src/data/*.js      generated HRMOS job data (window.__HRMOS_DATA__)
+# Layout:
+#   src/core/                shared foundation (tokens, layout, router, i18n, data, pure logic)
+#   src/features/<feature>/  one folder per feature: its .html / .css / .js live together
 #
-# The CSS/JS files are concatenated in filename order, which is why each is
-# numbered (01-, 02-, ...). Run:  ./build.sh
+# Files are concatenated in the order of the manifests below — CSS order = cascade order,
+# JS order = load order inside one shared IIFE (core/intro.js opens it, core/outro.js closes).
+# Edit the source files, not the generated longwave-dev.html. Run:  ./build.sh
 #
 set -euo pipefail
 cd "$(dirname "$0")"
-
 OUT="longwave-dev.html"
 
+# ---- CSS (cascade order) ----
+CSS=(
+  src/core/base.css
+  src/core/buttons.css
+  src/features/header/header.css
+  src/core/layout.css
+  src/features/home/home.css
+  src/features/jobs/jobs.css
+  src/features/companies/companies.css
+  src/features/testimonials/testimonials.css
+  src/features/articles/articles.css
+  src/features/home/home-cta.css
+  src/features/footer/footer.css
+  src/features/modals/modals.css
+  src/core/motion.css
+  src/features/cv/cv.css
+  src/core/responsive.css
+)
+
+# ---- body markup (document order) ----
+BODY=(
+  src/features/header/header.html
+  src/features/home/home.html
+  src/features/jobs/jobs.html
+  src/features/companies/companies.html
+  src/features/articles/articles.html
+  src/features/post/post.html
+  src/features/cv/cv.html
+  src/features/footer/footer.html
+  src/features/modals/modals.html
+)
+
+# ---- app JS (load order; one shared IIFE) ----
+JS=(
+  src/core/intro.js
+  src/core/logic.js
+  src/core/data.js
+  src/core/i18n.js
+  src/features/jobs/jobs.js
+  src/features/home/home.js
+  src/features/companies/companies.js
+  src/features/articles/articles.js
+  src/features/testimonials/testimonials.js
+  src/features/modals/modals.js
+  src/core/app.js
+  src/features/cv/cv.js
+  src/core/init.js
+  src/core/outro.js
+)
+
 {
-  cat src/html/00-head.html
+  cat src/core/head.html
   printf '<style>\n'
-  for f in src/css/*.css; do cat "$f"; done
+  for f in "${CSS[@]}"; do cat "$f"; done
   printf '</style>\n\n</head>\n<body>\n\n'
 
-  cat src/html/10-header.html
-  cat src/html/20-page-home.html
-  cat src/html/30-page-jobs.html
-  cat src/html/40-page-companies.html
-  cat src/html/50-page-articles.html
-  cat src/html/60-page-post.html
-  cat src/html/70-page-cv.html
-  cat src/html/80-footer.html
-  cat src/html/90-modals.html
+  for f in "${BODY[@]}"; do cat "$f"; done
 
   printf '<script>\n'
-  cat src/data/hrmos-data.js
+  cat src/core/hrmos-data.js
   printf '</script>\n\n\n<script>\n'
-  for f in src/js/*.js; do cat "$f"; done
+  for f in "${JS[@]}"; do cat "$f"; done
   printf '</script>\n\n</body>\n</html>\n'
 } > "$OUT"
 

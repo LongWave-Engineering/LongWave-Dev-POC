@@ -3,11 +3,11 @@
    (bad enums, unknown company ids, unclassifiable roles) before they reach the UI. */
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const LW = require("../src/js/05-logic.js");
+const LW = require("../src/core/logic.js");
 
 // The data file does `window.__HRMOS_DATA__ = {...}`; give it a window to write to.
 globalThis.window = {};
-require("../src/data/hrmos-data.js");
+require("../src/core/hrmos-data.js");
 const DATA = globalThis.window.__HRMOS_DATA__;
 
 const JP = new Set(["none", "conversational", "business"]);

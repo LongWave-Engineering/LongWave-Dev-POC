@@ -1,0 +1,9 @@
+/* features/home/home-cta.css — home signup CTA band */
+  /* ---------- CTA band ---------- */
+  .cta-band{background:linear-gradient(140deg,var(--navy),var(--navy-deep));color:#fff;border-radius:26px;padding:64px;text-align:center;position:relative;overflow:hidden;}
+  .cta-band::before{content:"";position:absolute;inset:0;background:radial-gradient(720px 260px at 50% -30%,rgba(255,210,63,.30),transparent 62%),radial-gradient(620px 240px at 88% 125%,rgba(1,167,227,.30),transparent 60%);}
+  .cta-band>*{position:relative;}
+  .cta-band h2{color:#fff;max-width:18em;margin:0 auto 16px;}
+  .cta-band p{color:#c2cedb;font-size:1.2rem;max-width:34em;margin:0 auto 30px;}
+  .cta-band .who-line{color:#93a4b5;font-size:1.02rem;margin-top:22px;}
+

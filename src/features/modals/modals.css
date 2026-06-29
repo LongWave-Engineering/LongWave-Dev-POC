@@ -1,0 +1,30 @@
+/* features/modals/modals.css — job-detail + signup modals, overlay */
+  /* ---------- modals ---------- */
+  .overlay{position:fixed;inset:0;z-index:100;background:rgba(14,34,53,.58);display:none;align-items:flex-start;justify-content:center;padding:44px 20px;overflow-y:auto;backdrop-filter:blur(3px);}
+  .overlay.open{display:flex;animation:overlayIn .22s ease;}
+  @keyframes overlayIn{from{opacity:0;}to{opacity:1;}}
+  .modal{background:var(--surface);border-radius:22px;max-width:640px;width:100%;box-shadow:var(--shadow-lg);padding:36px;position:relative;animation:pop .26s cubic-bezier(.2,.7,.3,1);}
+  .modal.narrow{max-width:480px;}
+  @keyframes pop{from{opacity:0;transform:translateY(18px) scale(.985);}to{opacity:1;transform:none;}}
+  .modal-close{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:11px;border:2px solid var(--line);background:#fff;font-size:1.4rem;color:var(--slate);}
+  .modal-close:hover{color:var(--ink);}
+  .modal .m-head{display:flex;gap:16px;align-items:center;padding-right:40px;}
+  .modal .m-role{font-family:var(--font-display);font-weight:800;font-size:1.58rem;line-height:1.16;}
+  .modal .m-co{color:var(--slate);font-size:1.04rem;margin-top:2px;}
+  .modal .m-salary{font-family:var(--font-display);font-weight:800;font-size:1.48rem;margin:22px 0 8px;}
+  .modal .m-salary span{display:block;font-size:.94rem;font-weight:600;color:var(--slate);margin-bottom:2px;}
+  .modal .m-tags{margin:14px 0 8px;}
+  .modal h4.m-sub{font-size:1.14rem;margin:24px 0 10px;}
+  .modal p.m-body{color:var(--ink-soft);font-size:1.07rem;}
+  .modal ul.m-points{margin:0;padding-left:20px;color:var(--ink-soft);font-size:1.04rem;}
+  .modal ul.m-points li{margin:7px 0;}
+  .modal .m-actions{display:flex;gap:13px;margin-top:28px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap;}
+  .modal h3.su-title{font-size:1.7rem;margin-bottom:6px;}
+  .modal p.su-intro{color:var(--slate);margin-bottom:22px;font-size:1.06rem;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-weight:600;margin-bottom:8px;font-size:1.02rem;}
+  .field input,.field select{width:100%;border:2px solid var(--line-strong);border-radius:12px;padding:13px 15px;font-size:1.04rem;font-family:inherit;color:var(--ink);background:#fff;}
+  .form-success{color:var(--pos-fg);font-weight:700;font-size:1.06rem;margin-top:8px;}
+
+
+

@@ -1,0 +1,11 @@
+/* features/articles/articles.css — article cards */
+  /* ---------- articles ---------- */
+  .art-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  .art{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px;transition:transform .16s ease,border-color .16s ease;display:flex;flex-direction:column;gap:12px;}
+  .art:hover{transform:translateY(-3px);border-color:var(--accent);}
+  .art .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
+  .art h4{font-size:1.2rem;line-height:1.28;}
+  .art .read{margin-top:auto;color:var(--accent-deep);font-weight:700;padding-top:8px;}
+
+
+

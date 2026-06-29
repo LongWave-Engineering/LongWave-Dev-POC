@@ -1,0 +1,21 @@
+/* features/home/home.css — why-us boxes + compact job teaser */
+  /* ---------- boxes (why work with us) ---------- */
+  .boxes{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;max-width:760px;margin:0 auto;}
+  .box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:34px 30px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:13px;}
+  .box .ic{width:54px;height:54px;border-radius:14px;background:var(--accent-wash);display:grid;place-items:center;color:var(--accent-deep);}
+  .box .ic svg{width:28px;height:28px;}
+  .box h3{font-size:1.38rem;}
+  .box p{color:var(--slate);font-size:1.07rem;}
+
+  /* ---------- compact job teaser (title page) ---------- */
+  .teaser-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .jt{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;text-align:left;width:100%;color:inherit;position:relative;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;display:flex;flex-direction:column;gap:10px;min-height:172px;}
+  .jt:hover{transform:translateY(-4px);box-shadow:0 22px 44px -22px rgba(14,34,53,.38);border-color:var(--line-strong);}
+  .jt .jt-role{font-family:var(--font-display);font-weight:800;font-size:1.06rem;line-height:1.22;}
+  .jt .jt-co{font-size:.92rem;color:var(--slate);}
+  .jt .jt-sal{font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--ink);margin-top:auto;}
+  .jt .jt-blurb{color:var(--ink-soft);font-size:.92rem;line-height:1.42;margin-top:2px;}
+  .jt .badge-hot{position:absolute;top:-9px;right:14px;}
+
+
+
