@@ -1,35 +1,38 @@
-/* features/partners/partners.css — rotating partner-logo marquee
-   Used on the home hero ("Hiring with us") and the Post-a-job page.
-   A single track holds the logo set TWICE and slides left by 50%, so the loop
-   is seamless. Edge mask fades the logos in/out; hover pauses; the logos are
-   plain <span>s (no links) so clicking one does nothing, by design. */
+/* features/partners/partners.css — rotating partner-logo wall.
+   Two rows scroll in OPPOSITE directions (top drifts left, bottom drifts right) and
+   run continuously — no pause on hover, no hover animation on the chips, by request.
+   Each row holds its logo set TWICE and slides 50% so the loop is seamless. */
+
+.partner-wall{width:100%;}
+.logo-rows{display:flex; flex-direction:column; gap:18px;}
 
 .logo-marquee{
-  position:relative; width:100%; overflow:hidden; padding:6px 0;
-  -webkit-mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
-          mask-image:linear-gradient(90deg,transparent,#000 7%,#000 93%,transparent);
+  position:relative; width:100%; overflow:hidden; padding:4px 0;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
 }
-.logo-track{display:flex; width:max-content; animation:logoScroll 50s linear infinite; will-change:transform;}
-.logo-marquee:hover .logo-track{animation-play-state:paused;}   /* pause to read a logo */
+.logo-track{display:flex; width:max-content; animation:logoScroll 64s linear infinite; will-change:transform;}
+.logo-marquee--rev .logo-track{animation-direction:reverse;}   /* bottom row drifts the other way */
 @keyframes logoScroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
 
-.logo-set{display:flex; align-items:center; gap:14px; padding-right:14px; flex:none;}
+.logo-set{display:flex; align-items:center; gap:18px; padding-right:18px; flex:none;}
 
+/* bigger, calmer chips — no hover transition (logos shouldn't react to the cursor) */
 .logo-chip{
-  display:inline-flex; align-items:center; gap:11px; flex:none;
-  background:var(--surface); border:1px solid var(--line); border-radius:14px;
-  padding:11px 20px 11px 13px; box-shadow:var(--shadow);
+  display:inline-flex; align-items:center; gap:13px; flex:none;
+  background:var(--surface); border:1px solid var(--line); border-radius:16px;
+  padding:14px 24px 14px 16px; box-shadow:var(--shadow);
   user-select:none; -webkit-user-select:none; cursor:default;
-  transition:transform .5s cubic-bezier(.16,1,.3,1), box-shadow .5s cubic-bezier(.16,1,.3,1);
 }
-.logo-chip:hover{transform:translateY(-3px); box-shadow:var(--shadow-lg);}
 .lc-mark{
-  flex:none; width:34px; height:34px; border-radius:9px; display:grid; place-items:center;
-  color:#fff; font-family:var(--font-display); font-weight:800; font-size:.84rem; letter-spacing:-.01em;
+  flex:none; width:46px; height:46px; border-radius:11px; display:grid; place-items:center;
+  color:#fff; font-family:var(--font-display); font-weight:800; font-size:1rem; letter-spacing:-.01em;
 }
-.lc-word{font-family:var(--font-display); font-weight:800; font-size:1.02rem; letter-spacing:-.018em; white-space:nowrap;}
+.lc-mark--img{background:transparent;}
+.lc-mark--img img{width:100%; height:100%; object-fit:contain;}
+.lc-word{font-family:var(--font-display); font-weight:800; font-size:1.22rem; letter-spacing:-.018em; white-space:nowrap; color:var(--ink);}
 
-/* Respect reduced-motion: stop the scroll, drop the duplicate set, wrap+centre. */
+/* Respect reduced-motion: stop both scrolls, drop the duplicate set, wrap + centre. */
 @media (prefers-reduced-motion: reduce){
   .logo-track{animation:none; width:100%;}
   .logo-set{flex-wrap:wrap; justify-content:center; padding:0;}
