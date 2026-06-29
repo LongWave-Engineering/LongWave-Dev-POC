@@ -104,5 +104,26 @@
     } else { document.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); }); }
   }
 
+  /* ---------------- live data (progressive enhancement) ----------------
+     The bundle ships an embedded snapshot so it works offline as a single file.
+     When the page is SERVED by the backend, pull live jobs + companies so admin
+     edits / adds / hides show up. Any failure (offline, opened as a file, no
+     backend) silently keeps the embedded snapshot — the site never breaks. */
+  function hydrateFromApi(){
+    if(!/^https?:$/.test(location.protocol)) return;   /* opened as a file → no API */
+    var grab=function(p){ return fetch(p).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }); };
+    Promise.all([grab("/api/jobs"), grab("/api/companies")]).then(function(res){
+      var jobs=res[0], cos=res[1];
+      if(!Array.isArray(jobs) || !jobs.length) return;  /* nothing live → keep snapshot */
+      if(Array.isArray(cos)) cos.forEach(function(c){
+        COMPANIES[c.id]={ name:c.name||c.id, mono:c.mono, color:c.color, logo:c.logo, site:c.site,
+          sector:{ en:c.sector_en||"", ja:c.sector_ja||"" }, loc:c.loc };
+      });
+      JOBS=jobs;
+      enrichJobs();
+      applyLang();   /* re-render everything (cards, selects, counts) from live data */
+    });
+  }
+
 
 

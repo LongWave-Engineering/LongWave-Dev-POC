@@ -95,8 +95,24 @@
     if(trig){ e.preventDefault(); openSignup(trig.getAttribute("data-signup")); }
   });
 
+  /* Send the lead to the backend when the site is SERVED (POST /api/leads); when it's
+     opened as a standalone file there's no API, so we just show the success state.
+     Fire-and-forget either way — the user always sees the same confirmation. */
+  function postLead(){
+    if(!/^https?:$/.test(location.protocol)) return;   /* file:// — no backend to call */
+    var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : undefined; };
+    var resume=$("#suResume");
+    var payload={
+      kind: $("#suWant").value,
+      name: val("#suName"), email: val("#suEmail"),
+      linkedin: val("#suLinkedin"), github: val("#suGithub"),
+      company: val("#suCompany"),
+      resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined
+    };
+    fetch("/api/leads", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) }).catch(function(){});
+  }
   $("#suForm").addEventListener("submit", function(e){
-    e.preventDefault(); $("#suForm").style.display="none"; $("#suSuccess").style.display="block";
+    e.preventDefault(); postLead(); $("#suForm").style.display="none"; $("#suSuccess").style.display="block";
   });
 
 

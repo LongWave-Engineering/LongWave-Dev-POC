@@ -176,15 +176,18 @@
      tested. Here we apply them once and precompute, per job:
        _i   = original index into JOBS (so render loops avoid O(n) indexOf)
        _hay = lowercased free-text search index (so filtering never rebuilds it) */
-  for (var _ji=0; _ji<JOBS.length; _ji++){
-    var _job = JOBS[_ji];
-    _job._i = _ji;
-    _job.spec = LW.classifySpec(_job);
-    var _nl = LW.locFromAddr(_job.office || _job.loc);
-    if(_nl) _job.loc = _nl;
-    var _jaRole = JOBS_JA[_job.role] ? JOBS_JA[_job.role].role : "";
-    _job._hay = LW.searchHay(_job, _jaRole, (COMPANIES[_job.co] || {}).name);
+  function enrichJobs(){
+    for (var _ji=0; _ji<JOBS.length; _ji++){
+      var _job = JOBS[_ji];
+      _job._i = _ji;
+      _job.spec = LW.classifySpec(_job);
+      var _nl = LW.locFromAddr(_job.office || _job.loc);
+      if(_nl) _job.loc = _nl;
+      var _jaRole = JOBS_JA[_job.role] ? JOBS_JA[_job.role].role : "";
+      _job._hay = LW.searchHay(_job, _jaRole, (COMPANIES[_job.co] || {}).name);
+    }
   }
+  enrichJobs();   /* run once on the embedded snapshot; re-run after live hydration */
 
 
 
