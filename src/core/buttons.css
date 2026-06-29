@@ -2,8 +2,9 @@
   /* ---------- buttons ---------- */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:999px;border:2px solid transparent;font-weight:700;font-size:1.02rem;padding:13px 26px;transition:transform .18s cubic-bezier(.2,.7,.3,1), background .15s ease, border-color .15s ease, color .15s ease, box-shadow .18s ease;}
   .btn:active{transform:translateY(0) scale(.97);}
-  .btn--primary{background:var(--sky);color:#fff;box-shadow:0 10px 24px -10px rgba(1,167,227,.75);}
-  .btn--primary:hover{background:var(--sky-deep);transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(1,167,227,.85);}
+  /* deeper sky so white label clears WCAG AA (5.7:1); bright --sky stays the brand accent */
+  .btn--primary{background:var(--sky-deep);color:#fff;box-shadow:0 10px 24px -10px rgba(1,167,227,.75);}
+  .btn--primary:hover{background:#074f70;transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(1,167,227,.85);}
   .btn--banana{background:var(--banana);color:#3a2c00;box-shadow:0 10px 24px -10px rgba(255,210,63,.85);}
   .btn--banana:hover{background:var(--banana-deep);transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(255,210,63,.9);}
   .btn--dark{background:var(--ink);color:#fff;}

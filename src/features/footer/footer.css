@@ -3,12 +3,12 @@
   footer.site{background:var(--navy);color:#cdd9e4;padding:58px 0 34px;}
   .foot-top{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap;margin-bottom:36px;align-items:flex-start;}
   .foot-brand .brand{color:#fff;margin-bottom:14px;}
-  .foot-brand p{max-width:25em;color:#9fb0bf;}
+  .foot-brand p{max-width:25em;color:#aab9c8;}
   .foot-links{display:flex;gap:56px;flex-wrap:wrap;}
   .foot-col h5{font-size:1.02rem;color:#fff;margin:0 0 13px;font-weight:700;}
   .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:#a9b8c6;padding:6px 0;font-size:1.02rem;background:transparent;border:0;font-family:inherit;cursor:pointer;}
-  .foot-col a:hover,.foot-col button:hover{color:var(--accent);}
-  .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center;color:#8195a6;font-size:1rem;}
+  .foot-col a:hover,.foot-col button:hover{color:var(--sky-soft);}
+  .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center;color:#a6b6c4;font-size:1rem;}
   .foot-actions{display:flex;gap:12px;flex-wrap:wrap;}
   .foot-actions .btn{padding:11px 20px;font-size:.98rem;}
   .foot-actions .btn svg{width:18px;height:18px;}
