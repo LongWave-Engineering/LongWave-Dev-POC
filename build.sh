@@ -24,6 +24,7 @@ CSS=(
   src/features/home/home.css
   src/features/jobs/jobs.css
   src/features/companies/companies.css
+  src/features/partners/partners.css
   src/features/testimonials/testimonials.css
   src/features/articles/articles.css
   src/features/home/home-cta.css
@@ -56,6 +57,7 @@ JS=(
   src/features/jobs/jobs.js
   src/features/home/home.js
   src/features/companies/companies.js
+  src/features/partners/partners.js
   src/features/articles/articles.js
   src/features/testimonials/testimonials.js
   src/features/modals/modals.js
