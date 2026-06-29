@@ -13,13 +13,24 @@ Open **[`longwave-dev.html`](longwave-dev.html)** — double-click it and it ope
 in your browser. It's a single, self-contained file (all CSS, JS, fonts and job
 data inlined), so it needs no server and no build step to view.
 
+## Backend & admin
+
+A runnable backend + admin lives in **[`backend/`](backend/README.md)** — zero npm
+dependencies (Node 22+ built-ins: `node:http` + `node:sqlite`). It provides a Jobs/
+Articles/Leads API, an admin UI (drag-to-reorder the home 3×3, jobs/articles CRUD,
+ATS sources, resumes → Manatal export), live ATS scraping (Greenhouse/Lever public
+APIs) on a weekly schedule, and reuses this repo's `core/logic.js` to classify jobs.
+
+```bash
+cd backend && node src/seed.js && node src/server.js   # → http://localhost:8788/admin
+```
+
 ## Architecture
 
 See **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)** for how the system fits together
-today (static, single-file, no backend) and a proposed **frontend + backend** target
-architecture for production — with diagrams (HRMOS sync, the jobs API, sign-up/leads),
-tech choices, and a migration path. The pure domain logic in `core/logic.js` is designed
-to be shared by both the frontend and a future backend sync worker.
+(static frontend + the new backend) with diagrams (ATS sync, the jobs API, sign-up/leads),
+tech choices, and a migration path. The pure domain logic in `core/logic.js` is shared by
+the frontend bundle, the backend, and the tests.
 
 ## Project layout
 

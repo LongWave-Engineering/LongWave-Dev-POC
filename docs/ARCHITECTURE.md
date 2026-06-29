@@ -228,6 +228,9 @@ map). If/when the backend is built, a clean split would be:
 /docs/                 ← this file
 ```
 
-> Today everything is the frontend POC. `backend/` and `shared/` are **proposed** — the
-> quickest first step is to lift `core/logic.js` into `shared/` so the future Sync Worker
-> and the frontend import the exact same classification/parsing code.
+> **Update:** a runnable backend scaffold now exists in **[`backend/`](../backend/README.md)**
+> — Jobs/Articles/Leads API, admin UI (reorder the 3×3, CRUD, ATS sources, resumes→Manatal),
+> live Greenhouse/Lever scraping, and a scheduled worker. It already imports this repo's
+> `core/logic.js` for normalization (the "shared logic" arrow above), so lifting that file
+> into a dedicated `shared/` package is the only remaining step to fully formalize the split.
+> It uses SQLite (`node:sqlite`) for zero-setup; production would swap in Postgres.
