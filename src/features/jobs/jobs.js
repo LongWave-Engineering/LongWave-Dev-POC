@@ -35,11 +35,13 @@
     var shown=LW.filterJobs(JOBS, f);
     jobGrid.innerHTML="";
     if(shown.length===0){
-      jobGrid.appendChild(el("div","",'<p style="color:var(--slate);grid-column:1/-1;padding:30px 0;font-size:1.1rem;">'+(lang==="ja"?"条件に合う求人が見つかりません。フィルターを調整してください。":"No roles match these filters yet. Try widening your search.")+'</p>'));
+      jobGrid.appendChild(el("div","jobs-empty",'<p style="color:var(--slate);padding:30px 0;font-size:1.1rem;">'+(lang==="ja"?"条件に合う求人が見つかりません。フィルターを調整してください。":"No roles match these filters yet. Try widening your search.")+'</p>'));
     } else {
-      shown.forEach(function(job){
+      shown.forEach(function(job,i){
         var idx=job._i;
-        var card=el("button","job-card",cardHTML(job));
+        var card=el("button","job-card jc-reveal",cardHTML(job));
+        /* Silky staggered entrance — cap the delay so a long list never lags. */
+        card.style.animationDelay=(Math.min(i,12)*0.045)+"s";
         card.setAttribute("aria-label", roleL(job)+" at "+COMPANIES[job.co].name);
         card.addEventListener("click", function(){ openJob(idx); });
         jobGrid.appendChild(card);

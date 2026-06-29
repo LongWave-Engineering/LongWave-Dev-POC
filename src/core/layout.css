@@ -3,7 +3,7 @@
   /* Mellow cross-page transition: a simple, gentle fade (opacity only, so it
      never disturbs position:sticky descendants like the jobs filter rail). */
   .page{display:none;}
-  .page.active{display:block;animation:pageFade .5s ease both;}
+  .page.active{display:block;animation:pageFade .55s cubic-bezier(.16,1,.3,1) both;}
   @keyframes pageFade{from{opacity:0;}to{opacity:1;}}
 
   /* ---------- hero ---------- */

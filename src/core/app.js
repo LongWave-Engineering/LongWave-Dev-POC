@@ -15,8 +15,12 @@
   document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
 
   /* ---------------- filters listeners ---------------- */
+  /* Debounce the search box so the silky card-reveal plays once you pause typing,
+     not on every keystroke. Dropdowns fire on `change`, so they animate instantly. */
+  function debounce(fn,ms){ var tid; return function(){ var c=this,a=arguments; clearTimeout(tid); tid=setTimeout(function(){ fn.apply(c,a); }, ms); }; }
+  var renderJobsDebounced=debounce(renderJobs,170);
   ["#filterSearch","#filterJp","#filterRemote","#filterSpec","#filterStack","#filterLoc"].forEach(function(sel){
-    var n=$(sel); if(n) n.addEventListener(sel==="#filterSearch"?"input":"change", renderJobs);
+    var n=$(sel); if(n) n.addEventListener(sel==="#filterSearch"?"input":"change", sel==="#filterSearch"?renderJobsDebounced:renderJobs);
   });
   $("#filterClear").addEventListener("click", function(){
     ["#filterSearch","#filterJp","#filterRemote","#filterSpec","#filterStack","#filterLoc"].forEach(function(s){ if($(s)) $(s).value=""; });
@@ -39,7 +43,13 @@
     ["home","jobs","companies","articles","cv","post"].forEach(function(r){ $("#page-"+r).classList.toggle("active", r===route); });
     var _pg=$("#page-"+route); if(_pg){ _pg.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); }); }
     document.querySelectorAll(".nav-links a[data-go]").forEach(function(a){ var on=a.getAttribute("data-go")===route; a.classList.toggle("active", on); if(on) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
-    window.scrollTo({top:0, behavior:"auto"});
+    /* Jump to the top INSTANTLY, bypassing the global `scroll-behavior:smooth`
+       (which would otherwise animate a long scroll-up from the bottom of the
+       previous page). The new page then fades in cleanly from the top. */
+    var de=document.documentElement, prevSB=de.style.scrollBehavior;
+    de.style.scrollBehavior="auto";
+    window.scrollTo(0,0);
+    de.style.scrollBehavior=prevSB;
   }
   function go(route){
     var targetHash=ROUTES[route]||"#/";
