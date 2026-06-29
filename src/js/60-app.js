@@ -4,7 +4,7 @@
     document.documentElement.lang=lang;
     document.querySelectorAll("[data-i18n]").forEach(function(n){ var k=n.getAttribute("data-i18n"); if(I18N[lang][k]!=null) n.innerHTML=I18N[lang][k]; });
     document.querySelectorAll("[data-i18n-ph]").forEach(function(n){ var k=n.getAttribute("data-i18n-ph"); if(I18N[lang][k]!=null) n.setAttribute("placeholder", I18N[lang][k]); });
-    buildSpecSelect(); buildStackSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderCV();
+    buildSpecSelect(); buildStackSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV();
     var jc=$("#jobCount"); if(jc) jc.innerHTML = t("jobcount").replace("{n}","<b>"+JOBS.length+"</b>");
     var pj = LINKS.postAJob + (lang==="ja" ? "?lang=ja" : "?lang=en");
     if($("#postExternalCta")) $("#postExternalCta").href=pj;

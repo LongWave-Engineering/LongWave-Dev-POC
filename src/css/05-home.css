@@ -1,6 +1,6 @@
 /* [build] 05-home.css  (feature boxes, job teaser) - concatenated in order by build.ps1 */
-  /* ---------- boxes (3 points) ---------- */
-  .boxes{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  /* ---------- boxes (why work with us) ---------- */
+  .boxes{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;max-width:760px;margin:0 auto;}
   .box{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:34px 30px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:13px;}
   .box .ic{width:54px;height:54px;border-radius:14px;background:var(--accent-wash);display:grid;place-items:center;color:var(--accent-deep);}
   .box .ic svg{width:28px;height:28px;}

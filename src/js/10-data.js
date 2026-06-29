@@ -91,6 +91,16 @@
      q:{en:"I relocated from abroad. They walked me through the visa and the whole process, step by step.", ja:"海外からの移住でしたが、ビザや全体の流れを一つずつ丁寧にサポートしてくれました。"}}
   ];
 
+  /* HR / hiring-side testimonials shown on the Post-a-job page (placeholders to swap) */
+  var HR_VOICES = [
+    {init:"AN", color:"#3056d3", name:"Aya N.", role:{en:"Head of Talent, SaaS", ja:"人事責任者（SaaS）"},
+     q:{en:"LongWave only sent us candidates who fit our stack and our team. We made two hires in a month.", ja:"私たちの技術スタックとチームに合う候補者だけを紹介してくれました。1か月で2名採用できました。"}},
+    {init:"KS", color:"#0ea5a4", name:"Kenji S.", role:{en:"HR Manager, Fintech", ja:"採用マネージャー（フィンテック）"},
+     q:{en:"They handled the English–Japanese back-and-forth, so our engineers could focus on the technical interview.", ja:"英語と日本語のやり取りを巻き取ってくれたので、エンジニアは技術面接に集中できました。"}},
+    {init:"ML", color:"#b3471b", name:"Marie L.", role:{en:"Engineering Director (hiring)", ja:"エンジニアリングディレクター（採用担当）"},
+     q:{en:"Every candidate arrived pre-screened on Japanese level. No more mismatched first interviews.", ja:"候補者は全員、日本語レベルを事前確認済みで来てくれました。ミスマッチな一次面接がなくなりました。"}}
+  ];
+
   var ARTICLES = [
     {cat:{en:"Language", ja:"言語"}, title:{en:"How much Japanese do you actually need as a developer in Tokyo", ja:"東京のエンジニア職に、実際どれくらいの日本語が必要か"}},
     {cat:{en:"Job hunting", ja:"転職"}, title:{en:"Decoding a Japanese job posting: salary, levels, and what's negotiable", ja:"日本の求人票を読み解く：給与・レベル・交渉できる範囲"}},
