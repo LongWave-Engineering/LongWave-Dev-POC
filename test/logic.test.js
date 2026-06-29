@@ -1,5 +1,5 @@
-/* Unit tests for the pure domain logic in src/js/05-logic.js.
-   Run with:  npm test   (or:  node --test test/)
+/* Unit tests for the pure domain logic in src/core/logic.js.
+   Run with:  npm test   (or:  node --test)
    No DOM, no build step — these exercise the exact code that ships in the bundle. */
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
@@ -76,6 +76,15 @@ test("salaryMax() takes the top of the band, with a clean fallback for free-text
   assert.equal(LW.salaryMax({ salary: "条件は経歴により柔軟に検討" }, "Negotiable"), "Negotiable");
   assert.equal(LW.salaryMax({}), "DOE");
   assert.equal(LW.salaryMax({ salary: null }, "応相談"), "応相談");
+});
+
+test("salaryMax() converts Japanese 万-yen bands (imported/scraped rows) to ¥M", () => {
+  assert.equal(LW.salaryMax({ salary: "800万〜1300万円" }), "¥13M DOE");   // top of band
+  assert.equal(LW.salaryMax({ salary: "年収600万円" }), "¥6M DOE");
+  assert.equal(LW.salaryMax({ salary: "1,200万円" }), "¥12M DOE");          // thousands separator
+  assert.equal(LW.salaryMax({ salary: "450万〜750万" }), "¥7.5M DOE");      // non-integer millions
+  // a ¥M band still wins (the 万 branch only runs when no ¥M is present)
+  assert.equal(LW.salaryMax({ salary: "¥8M – ¥13M（約1300万円）" }), "¥13M DOE");
 });
 
 test("jpTagClass() maps Japanese level to a CSS class", () => {

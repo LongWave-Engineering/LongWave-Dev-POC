@@ -2,8 +2,10 @@
   /* ---------------- i18n apply ---------------- */
   function applyLang(){
     document.documentElement.lang=lang;
-    document.querySelectorAll("[data-i18n]").forEach(function(n){ var k=n.getAttribute("data-i18n"); if(I18N[lang][k]!=null) n.innerHTML=I18N[lang][k]; });
-    document.querySelectorAll("[data-i18n-ph]").forEach(function(n){ var k=n.getAttribute("data-i18n-ph"); if(I18N[lang][k]!=null) n.setAttribute("placeholder", I18N[lang][k]); });
+    /* Fall back to English when a key is missing in the active language — same
+       rule as t() — so the two never diverge (e.g. a JA gap shows EN, not blank). */
+    document.querySelectorAll("[data-i18n]").forEach(function(n){ var k=n.getAttribute("data-i18n"); var v=I18N[lang][k]!=null?I18N[lang][k]:I18N.en[k]; if(v!=null) n.innerHTML=v; });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function(n){ var k=n.getAttribute("data-i18n-ph"); var v=I18N[lang][k]!=null?I18N[lang][k]:I18N.en[k]; if(v!=null) n.setAttribute("placeholder", v); });
     buildSpecSelect(); buildStackSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV();
     var jc=$("#jobCount"); if(jc) jc.innerHTML = t("jobcount").replace("{n}","<b>"+JOBS.length+"</b>");
     var pj = LINKS.postAJob + (lang==="ja" ? "?lang=ja" : "?lang=en");
@@ -22,7 +24,8 @@
   ["#filterSearch","#filterJp","#filterRemote","#filterSpec","#filterStack","#filterLoc"].forEach(function(sel){
     var n=$(sel); if(n) n.addEventListener(sel==="#filterSearch"?"input":"change", sel==="#filterSearch"?renderJobsDebounced:renderJobs);
   });
-  $("#filterClear").addEventListener("click", function(){
+  var _clear=$("#filterClear");
+  if(_clear) _clear.addEventListener("click", function(){
     ["#filterSearch","#filterJp","#filterRemote","#filterSpec","#filterStack","#filterLoc"].forEach(function(s){ if($(s)) $(s).value=""; });
     showAllJobs=false;
     renderJobs();
@@ -59,7 +62,19 @@
   window.addEventListener("hashchange", router);
   document.addEventListener("click", function(e){
     var link=e.target.closest("[data-go]");
-    if(link){ e.preventDefault(); go(link.getAttribute("data-go")); if(navLinks) navLinks.classList.remove("show"); if(jobOverlay.classList.contains("open")) closeOverlay(jobOverlay); if(suOverlay.classList.contains("open")) closeOverlay(suOverlay); }
+    if(link){
+      e.preventDefault();
+      /* "View roles" on a company card → land on Jobs already filtered to that
+         company (search matches the company name in each job's search index),
+         instead of the empty pick-a-filter prompt. */
+      var co=link.getAttribute("data-co-search");
+      if(co && link.getAttribute("data-go")==="jobs"){
+        var fs=$("#filterSearch"); if(fs) fs.value=co;
+        showAllJobs=false; renderJobs();
+      }
+      go(link.getAttribute("data-go"));
+      if(navLinks) navLinks.classList.remove("show"); if(jobOverlay.classList.contains("open")) closeOverlay(jobOverlay); if(suOverlay.classList.contains("open")) closeOverlay(suOverlay);
+    }
   });
 
   /* ---------------- external links ---------------- */

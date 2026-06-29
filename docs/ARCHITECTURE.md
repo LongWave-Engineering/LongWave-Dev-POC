@@ -67,7 +67,71 @@ flowchart LR
 ```
 
 **Key trait:** data is _static at build time_. Refreshing listings = re-running the
-sync + rebuilding + redeploying. Good enough for a POC; the section below makes it live.
+sync + rebuilding + redeploying. Good enough for a static POC; the backend below makes it live.
+
+---
+
+## 1b. Backend (as built) 🟢
+
+A **runnable, zero-dependency** backend now lives in [`backend/`](../backend/README.md):
+Node built-ins only — `node:http` (server), `node:sqlite` (`DatabaseSync`), global
+`fetch` (ATS/Manatal). It serves a JSON API, an admin SPA, and the built public site,
+and it **reuses this repo's `core/logic.js`** so the backend classifies jobs identically
+to the frontend by construction.
+
+```mermaid
+flowchart TB
+    subgraph clients["Clients"]
+        site["Public site<br/>(longwave-dev.html)"]
+        admin["Admin SPA<br/>(/admin, Bearer token)"]
+    end
+    subgraph be["backend/ (node:http, zero deps)"]
+        server["server.js<br/>static + route /api"]
+        api["api.js<br/>JSON router · auth guard · CORS"]
+        models["models.js<br/>data access + normalization"]
+        logic["logic.js → core/logic.js<br/>(shared LW.* via createRequire)"]
+        importer["import.js<br/>CSV/JSON bulk import"]
+        manatal["manatal.js<br/>CRM push + CSV export"]
+        subgraph ats["ats/ (adapter registry + runSync)"]
+            live["greenhouse · lever<br/>(live public APIs)"]
+            scrape["generic (schema.org JSON-LD)<br/>+ delegators: herp/talentio/<br/>jobcan/persona/randstad/axol/wantedly"]
+            hrmos["hrmos (demo / token)"]
+        end
+        db[("SQLite<br/>jobs · companies · articles ·<br/>ats_sources · leads · sync_runs")]
+        worker["worker.js<br/>scheduled sync (weekly)"]
+    end
+    extats["External ATS boards"]
+
+    site -->|"GET /api/jobs,featured,articles · POST /api/leads"| api
+    admin -->|"CRUD · PUT /featured · POST /sources/:id/sync · import · leads→Manatal"| api
+    server --> api --> models --> db
+    api --> importer --> models
+    api --> manatal
+    api --> ats
+    worker --> ats
+    ats -->|fetch| extats
+    ats --> models
+    models --> logic
+    importer --> logic
+```
+
+| Concern | As built 🟢 |
+| --- | --- |
+| **Server** | `server.js` — `node:http`; serves `/api`, the `/admin` SPA (path-traversal-contained), and the built site at `/`. |
+| **API** | `api.js` — public reads (`jobs/featured/articles`, `POST /leads`); everything else behind `Bearer ADMIN_TOKEN`. Malformed JSON → 400, empty leads → 400, hidden jobs never leak to anon. |
+| **Data access** | `models.js` — upsert/list jobs, companies, articles, featured (gap-free ranks); normalizes spec/location through shared `LW`. SQLite via `db.js`. |
+| **ATS** | `ats/` registry + `runSync`. Greenhouse/Lever pull live public JSON; others scrape schema.org `JobPosting` via `generic.js` (thin per-provider delegators share one `_delegate.js` factory). |
+| **Import** | `import.js` — CSV/JSON portal exports, column-aliased (incl. Japanese), classified, deduped on `(source, source_ref)` namespaced per company. |
+| **CRM** | `manatal.js` — push leads to Manatal (gated by `MANATAL_API_KEY`) or export CSV (formula-injection-safe). |
+| **Scheduler** | `worker.js` — weekly per-source sync (`--once` for cron). |
+| **Tests** | `backend/test/` via `node:test` — models, import, manatal branches, ATS detect/parse, and the HTTP layer (routing/auth/validation). |
+
+### What's still 🟠 (productionizing)
+
+SQLite → **Postgres**; single shared token → **real auth**; add **resume file storage**,
+rate-limiting, a migrations framework; wire the **live HERP/HRMOS/Talentio APIs** (the
+agency portals currently come in via the bulk-import path). The diagrams in §2 are the
+target this is growing toward.
 
 ---
 
@@ -228,9 +292,7 @@ map). If/when the backend is built, a clean split would be:
 /docs/                 ← this file
 ```
 
-> **Update:** a runnable backend scaffold now exists in **[`backend/`](../backend/README.md)**
-> — Jobs/Articles/Leads API, admin UI (reorder the 3×3, CRUD, ATS sources, resumes→Manatal),
-> live Greenhouse/Lever scraping, and a scheduled worker. It already imports this repo's
-> `core/logic.js` for normalization (the "shared logic" arrow above), so lifting that file
-> into a dedicated `shared/` package is the only remaining step to fully formalize the split.
-> It uses SQLite (`node:sqlite`) for zero-setup; production would swap in Postgres.
+> **Update:** the backend scaffold described in **[§1b](#1b-backend-as-built-)** now exists in
+> **[`backend/`](../backend/README.md)** and already imports this repo's `core/logic.js` for
+> normalization (the "shared logic" arrow above), so lifting that file into a dedicated
+> `shared/` package is the only remaining step to fully formalize the split.

@@ -74,6 +74,16 @@
       var s = String(job && job.salary != null ? job.salary : "");
       var m = s.match(/¥[\d.]+M/g);
       if(m) return m[m.length-1] + " DOE";
+      /* Japanese 万-yen bands from imported/scraped rows (e.g. "800万〜1300万円").
+         100万 = ¥1M, so the band top in millions is (max 万 value / 100). */
+      var man = s.match(/[\d,]+(?=\s*万)/g);
+      if(man){
+        var top = Math.max.apply(null, man.map(function(x){ return parseFloat(x.replace(/,/g,"")); }));
+        if(isFinite(top) && top > 0){
+          var mm = top / 100;
+          return "¥" + (mm % 1 === 0 ? String(mm) : mm.toFixed(1)) + "M DOE";
+        }
+      }
       return negotiableLabel || "DOE";
     }
 

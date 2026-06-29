@@ -131,7 +131,7 @@
   function t(k){ return (I18N[lang] && I18N[lang][k]!=null) ? I18N[lang][k] : (I18N.en[k]||k); }
   var $ = function(s,c){ return (c||document).querySelector(s); };
   function el(tag,cls,html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }
-  /* pure helpers live in 05-logic.js (LW.*); alias the app-wide ones for brevity */
+  /* pure helpers live in core/logic.js (LW.*); alias the app-wide ones for brevity */
   var esc = LW.esc, salaryMax = LW.salaryMax;
   function nl2br(s){ return esc(s).replace(/\n/g,"<br>"); }
 
@@ -144,8 +144,10 @@
   /* company avatar: embedded logo when present, else the coloured monogram */
   function avatarHTML(c, cls){
     var k=' class="avatar'+(cls?" "+cls:"")+'"';
-    if(c && c.logo) return '<span'+k+' style="background:#fff"><img src="'+c.logo+'" alt=""></span>';
-    return '<span'+k+' style="background:'+((c&&c.color)||"#888")+'">'+ esc((c&&c.mono)||"?") +'</span>';
+    /* esc() the color/logo too — they can come from auto-generated HRMOS data, so
+       an unescaped value could break out of the attribute (injection surface). */
+    if(c && c.logo) return '<span'+k+' style="background:#fff"><img src="'+ esc(c.logo) +'" alt=""></span>';
+    return '<span'+k+' style="background:'+ esc((c&&c.color)||"#888") +'">'+ esc((c&&c.mono)||"?") +'</span>';
   }
   var BLURB = {
     "Data Engineer":{en:"Own the Snowflake / dbt pipelines behind a 10M-user DAP.", ja:"1,000万ユーザーのDAPを支えるSnowflake / dbt基盤を担当。"},
@@ -170,7 +172,7 @@
   function blurbL(j){ var b=BLURB[j.role]; return b ? (lang==="ja"?b.ja:b.en) : ""; }
 
   /* ---------------- enrich every loaded job (demo or HRMOS) ----------------
-     classifySpec / locFromAddr now live in 05-logic.js (LW.*) so they are unit
+     classifySpec / locFromAddr now live in core/logic.js (LW.*) so they are unit
      tested. Here we apply them once and precompute, per job:
        _i   = original index into JOBS (so render loops avoid O(n) indexOf)
        _hay = lowercased free-text search index (so filtering never rebuilds it) */
