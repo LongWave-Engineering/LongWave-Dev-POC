@@ -13,6 +13,14 @@ Open **[`longwave-dev.html`](longwave-dev.html)** — double-click it and it ope
 in your browser. It's a single, self-contained file (all CSS, JS, fonts and job
 data inlined), so it needs no server and no build step to view.
 
+## Architecture
+
+See **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)** for how the system fits together
+today (static, single-file, no backend) and a proposed **frontend + backend** target
+architecture for production — with diagrams (HRMOS sync, the jobs API, sign-up/leads),
+tech choices, and a migration path. The pure domain logic in `core/logic.js` is designed
+to be shared by both the frontend and a future backend sync worker.
+
 ## Project layout
 
 The site is **authored as small files grouped by feature** and concatenated into the
