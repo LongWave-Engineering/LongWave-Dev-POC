@@ -32,6 +32,22 @@
 .lc-mark--img img{width:100%; height:100%; object-fit:contain;}
 .lc-word{font-family:var(--font-display); font-weight:800; font-size:1.22rem; letter-spacing:-.018em; white-space:nowrap; color:var(--ink);}
 
+/* ---- curated featured showcase (Post-a-job): a few big-name clients, static ---- */
+.partner-feature{width:100%;}
+.partner-feature-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;}
+.pf-card{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
+  padding:30px 34px;min-width:170px;flex:0 1 auto;
+  transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s ease, border-color .18s ease;
+}
+.pf-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--line-strong);}
+.pf-mark{width:72px;height:72px;display:grid;place-items:center;}
+.pf-mark img{max-width:100%;max-height:100%;object-fit:contain;}
+.pf-mono{border-radius:16px;color:#fff;font-family:var(--font-display);font-weight:800;font-size:1.6rem;letter-spacing:-.01em;}
+.pf-name{font-family:var(--font-display);font-weight:800;font-size:1.1rem;letter-spacing:-.015em;color:var(--ink);white-space:nowrap;}
+@media (max-width:600px){ .pf-card{min-width:128px;padding:22px 18px;flex:1 1 40%;} .pf-mark{width:56px;height:56px;} .pf-name{font-size:1rem;} }
+
 /* Respect reduced-motion: stop both scrolls, drop the duplicate set, wrap + centre. */
 @media (prefers-reduced-motion: reduce){
   .logo-track{animation:none; width:100%;}

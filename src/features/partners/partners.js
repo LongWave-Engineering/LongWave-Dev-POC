@@ -38,10 +38,20 @@
      (lang toggle, live hydrate) must not rebuild the DOM and restart the scroll.
      data-partner-rows="1" → one row (jobs strip); "2" → two rows; default → three rows,
      each alternating scroll direction. */
+  /* a big-name client shown as a static, larger logo card (Post-a-job showcase) */
+  function featureCardHTML(p){
+    var logo = (typeof PARTNER_LOGOS !== "undefined") ? PARTNER_LOGOS[p.name] : null;
+    var mark = logo
+      ? '<span class="pf-mark"><img src="'+ esc(logo) +'" alt=""></span>'
+      : '<span class="pf-mark pf-mono" style="background:'+ esc(p.color) +'">'+ esc(p.mono) +'</span>';
+    var word = '<span class="pf-name"'+ (logo ? '' : ' style="color:'+ esc(p.color) +'"') +'>'+ esc(p.name) +'</span>';
+    return '<div class="pf-card" title="'+ esc(p.name) +'">'+ mark + word +'</div>';
+  }
+
   function renderPartners(){
-    var boxes = document.querySelectorAll("[data-partner-marquee]");
-    if(!boxes.length || typeof PARTNERS === "undefined" || !PARTNERS.length) return;
-    boxes.forEach(function(box){
+    if(typeof PARTNERS === "undefined" || !PARTNERS.length) return;
+    /* rotating marquee walls (home hero, jobs placements strip) */
+    document.querySelectorAll("[data-partner-marquee]").forEach(function(box){
       if(box.dataset.pmBuilt) return;
       var list = partnerList(box.getAttribute("data-partner-set") || "all");
       if(!list.length) return;
@@ -61,5 +71,16 @@
       box.innerHTML = '<div class="logo-rows">'+ html +'</div>';
       if(!box.getAttribute("role")) box.setAttribute("role", "group");   /* expose the aria-label (a bare div is role=generic) */
       box.dataset.pmBuilt = "1";
+    });
+    /* curated featured showcase: a few big-name clients as static cards.
+       data-partner-feature="Name1,Name2,…" (names must match the roster). */
+    document.querySelectorAll("[data-partner-feature]").forEach(function(box){
+      if(box.dataset.pfBuilt) return;
+      var names = (box.getAttribute("data-partner-feature") || "").split(",").map(function(s){ return s.trim(); }).filter(Boolean);
+      var list = names.map(function(nm){ for(var i=0;i<PARTNERS.length;i++){ if(PARTNERS[i].name===nm) return PARTNERS[i]; } return null; }).filter(Boolean);
+      if(!list.length) return;
+      box.innerHTML = '<div class="partner-feature-grid">'+ list.map(featureCardHTML).join("") +'</div>';
+      if(!box.getAttribute("role")) box.setAttribute("role", "group");
+      box.dataset.pfBuilt = "1";
     });
   }

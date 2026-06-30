@@ -4,8 +4,8 @@
     en:{
       nav_jobs:"Jobs", nav_companies:"Companies", nav_articles:"Articles", nav_post:"Post a job", nav_signup:"Sign up",
       partners_lab:"Hiring with us",
-      partners_post_h:"We're partnered with leading teams",
-      partners_post_sub:"The engineers we place join product companies like these.",
+      partners_post_h:"Teams we're helping hire",
+      partners_post_sub:"A few of the product companies building their bilingual teams with LongWave right now.",
       su_title:"Sign up to apply", su_intro:"One sign-up and a bilingual recruiter takes it from there.", su_name:"Name", su_email:"Email",
       su_submit:"Sign up", su_success:"You're in. We'll be in touch shortly.",
       su_resume:"Resume / CV", su_resume_note:"Required · PDF, DOC or DOCX",
@@ -93,8 +93,8 @@
     ja:{
       nav_jobs:"求人", nav_companies:"企業", nav_articles:"記事", nav_post:"求人を掲載", nav_signup:"登録する",
       partners_lab:"導入企業",
-      partners_post_h:"日本をリードする企業と提携しています",
-      partners_post_sub:"私たちが紹介するエンジニアは、こうしたプロダクト企業へ入社しています。",
+      partners_post_h:"採用を支援している企業",
+      partners_post_sub:"LongWaveと一緒にバイリンガルチームを増やしている企業の一例です。",
       su_title:"登録して応募", su_intro:"登録は1回だけ。あとはバイリンガルのリクルーターにお任せください。", su_name:"お名前", su_email:"メールアドレス",
       su_submit:"登録する", su_success:"登録ありがとうございます。すぐにご連絡します。",
       su_resume:"履歴書・職務経歴書", su_resume_note:"必須・PDF / DOC / DOCX",
