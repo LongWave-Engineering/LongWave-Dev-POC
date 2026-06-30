@@ -2,13 +2,9 @@
   /* ---------- companies ---------- */
   .co-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
   .co-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;}
-  .co-card.feat{grid-column:1/-1;display:grid;grid-template-columns:auto 1fr auto;gap:26px;align-items:center;}
   .co-head{display:flex;align-items:center;gap:15px;}
   .co-name{font-family:var(--font-display);font-weight:800;font-size:1.3rem;line-height:1.15;}
   .co-sector{font-size:.98rem;color:var(--slate);}
-  .co-meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--ink-soft);font-size:.98rem;}
-  .co-meta b{font-family:var(--font-display);}
-  .co-blurb{color:var(--slate);font-size:1.05rem;}
   .co-roles{font-weight:700;color:var(--accent-deep);font-size:1.02rem;}
   .co-roles.muted{color:var(--slate);}
   .co-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--pos-fg);background:var(--pos-bg);padding:4px 11px;border-radius:999px;}

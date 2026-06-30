@@ -1,6 +1,6 @@
 /* features/partners/partners.css — rotating partner-logo wall.
-   Two rows scroll in OPPOSITE directions (top drifts left, bottom drifts right) and
-   run continuously — no pause on hover, no hover animation on the chips, by request.
+   Multiple rows (three by default) scroll in ALTERNATING directions (←, →, ←) and run
+   continuously — no pause on hover, no hover animation on the chips, by request.
    Each row holds its logo set TWICE and slides 50% so the loop is seamless. */
 
 .partner-wall{width:100%;}

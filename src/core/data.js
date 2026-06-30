@@ -69,10 +69,7 @@
   /* companies we work with — TechTouch has live roles; others are partner placeholders */
   var COMPANY_LIST = [
     {mono:"TT", color:"#0ea5a4", name:"TechTouch", site:"https://techtouch.jp/", roleCo:"tt",
-     sector:{en:"Digital Adoption Platform · SaaS", ja:"デジタルアダプション（DAP）・SaaS"},
-     loc:"Tokyo · Ginza", founded:"2018", size:"232",
-     blurb:{en:"Five-time market leader in Japan's DAP space, now embedding generative AI across enterprise systems. 10M+ users.",
-            ja:"国内DAP市場で5年連続シェアNo.1。現在は生成AIをエンタープライズ全体に組み込み中。利用者数1,000万人超。"}},
+     sector:{en:"Digital Adoption Platform · SaaS", ja:"デジタルアダプション（DAP）・SaaS"}, loc:"Tokyo · Ginza"},
     {mono:"MF", color:"#0b8457", name:"Money Forward", sector:{en:"Fintech · SaaS", ja:"フィンテック・SaaS"}, loc:"Tokyo"},
     {mono:"en", color:"#1f6f5c", name:"enechain", sector:{en:"Energy · Marketplace", ja:"エネルギー・マーケットプレイス"}, loc:"Tokyo"},
     {mono:"Hu", color:"#3056d3", name:"Hubble", sector:{en:"Legal Tech · SaaS", ja:"リーガルテック・SaaS"}, loc:"Tokyo"},

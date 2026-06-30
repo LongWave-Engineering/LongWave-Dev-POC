@@ -1,5 +1,6 @@
 /* features/partners/partners.js — rotating partner-logo wall (home hero + Post-a-job).
-   Two rows scroll in opposite directions and never stop (no hover pause). Real brand
+   Multiple rows (three by default) scroll in alternating directions and never stop (no
+   hover pause). Real brand
    marks come from PARTNER_LOGOS (inlined data URIs, see partners-logos.js); any company
    without one falls back to a brand-coloured monogram. The roster PARTNERS is curated —
    the live HRMOS dump stays confidential. Logos are non-interactive (plain spans, no
@@ -35,7 +36,8 @@
 
   /* Build each wall once — logos are language-independent, so re-running applyLang()
      (lang toggle, live hydrate) must not rebuild the DOM and restart the scroll.
-     data-partner-rows="1" → one row (jobs strip); default → two opposite-scroll rows. */
+     data-partner-rows="1" → one row (jobs strip); "2" → two rows; default → three rows,
+     each alternating scroll direction. */
   function renderPartners(){
     var boxes = document.querySelectorAll("[data-partner-marquee]");
     if(!boxes.length || typeof PARTNERS === "undefined" || !PARTNERS.length) return;
@@ -43,12 +45,18 @@
       if(box.dataset.pmBuilt) return;
       var list = partnerList(box.getAttribute("data-partner-set") || "all");
       if(!list.length) return;
+      var rowsAttr = box.getAttribute("data-partner-rows");
       var html;
-      if(box.getAttribute("data-partner-rows") === "1"){
+      if(rowsAttr === "1"){
         html = partnerRowHTML(list, false);
       } else {
-        var mid = Math.ceil(list.length / 2);
-        html = partnerRowHTML(list.slice(0, mid), false) + partnerRowHTML(list.slice(mid), true);  // top←, bottom→
+        var nrows = rowsAttr === "2" ? 2 : 3;          // default: 3 rows across the roster
+        var per = Math.ceil(list.length / nrows);
+        html = "";
+        for(var ri=0; ri<nrows; ri++){
+          var slice = list.slice(ri*per, (ri+1)*per);
+          if(slice.length) html += partnerRowHTML(slice, ri % 2 === 1);   // alternate ←/→ per row
+        }
       }
       box.innerHTML = '<div class="logo-rows">'+ html +'</div>';
       if(!box.getAttribute("role")) box.setAttribute("role", "group");   /* expose the aria-label (a bare div is role=generic) */
