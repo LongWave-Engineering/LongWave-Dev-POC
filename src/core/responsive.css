@@ -50,6 +50,8 @@
     .cv-preview{position:static !important;top:auto !important;}
     #cvDocs{position:absolute;left:0;top:0;width:100%;gap:0;}
     .doc{border:0 !important;box-shadow:none !important;padding:0 !important;}
+    /* don't print the on-screen-only template placeholders / empty résumé sections */
+    .sk-sec--empty, .sk-ph{display:none !important;}
     @page{margin:14mm;}
   }
 

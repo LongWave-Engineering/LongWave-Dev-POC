@@ -101,6 +101,8 @@
   .sk-proj-name{font-weight:700;font-size:11.5px;}
   .sk-proj-desc{font-size:11.5px;color:#222;}
   .sk-qual{font-size:11.5px;margin:2px 0;}
+  /* faint placeholder shown for empty 職務経歴書 sections / header (on screen only) */
+  .sk-ph{color:#b7c0c9;font-style:italic;font-weight:500;}
 
 
 

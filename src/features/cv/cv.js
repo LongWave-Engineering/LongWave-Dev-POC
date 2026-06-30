@@ -137,7 +137,9 @@
     $("#rirekishoOut").innerHTML=rk;
 
     /* ---------------- 職務経歴書 (shokumukeirekisho, modern format) ---------------- */
-    function skSec(title,body){ return body ? '<div class="sk-sec"><h4 class="sk-h">'+title+'</h4>'+body+'</div>' : ''; }
+    /* always render the section (so the document reads as a template, never "gone");
+       empty sections show a faint placeholder on screen and are dropped when printing */
+    function skSec(title,body){ var empty=!body; return '<div class="sk-sec'+(empty?' sk-sec--empty':'')+'"><h4 class="sk-h">'+title+'</h4>'+(body||'<div class="sk-ph">（入力するとここに表示されます）</div>')+'</div>'; }
     function bulletList(arr){ return arr.length ? '<ul class="sk-bullets">'+arr.map(function(l){return '<li>'+esc(l)+'</li>';}).join("")+'</ul>' : ''; }
 
     var skills=[].map.call(document.querySelectorAll("#skillRows .cv-row"),function(r){ return {cat:r.querySelector(".sk-cat").value.trim(), items:r.querySelector(".sk-items").value.trim()}; }).filter(function(s){return s.cat||s.items;});
@@ -166,9 +168,9 @@
 
     var contactBits=[location,email,phone,linkedin,github].filter(Boolean).map(esc).join('　｜　');
     var sk='<div class="sk-head">'+
-        '<div class="sk-name">'+(name?esc(name):"&nbsp;")+(furi?'<span class="sk-furi">（'+esc(furi)+'）</span>':'')+'</div>'+
-        (jobtitle?'<div class="sk-title">'+esc(jobtitle)+'</div>':'')+
-        (contactBits?'<div class="sk-contact">'+contactBits+'</div>':'')+
+        '<div class="sk-name">'+(name?esc(name):'<span class="sk-ph">氏名 / Your name</span>')+(furi?'<span class="sk-furi">（'+esc(furi)+'）</span>':'')+'</div>'+
+        '<div class="sk-title">'+(jobtitle?esc(jobtitle):'<span class="sk-ph">職種・肩書き / Job title</span>')+'</div>'+
+        '<div class="sk-contact">'+(contactBits||'<span class="sk-ph">居住地 ｜ メール ｜ 電話</span>')+'</div>'+
       '</div>'+
       skSec("職務要約", summary?'<div class="sk-body">'+nl2br(summary)+'</div>':'')+
       skSec("スキル", skillsBody)+
