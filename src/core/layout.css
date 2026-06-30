@@ -8,7 +8,7 @@
 
   /* ---------- hero ---------- */
   .hero{position:relative;overflow:hidden;}
-  .hero::before{content:"";position:absolute;inset:0;z-index:0;background:radial-gradient(1100px 460px at 86% -10%, rgba(255,210,63,.20), transparent 60%), radial-gradient(820px 460px at -8% 12%, rgba(1,167,227,.18), transparent 55%);}
+  .hero::before{content:"";position:absolute;inset:-12% -6%;z-index:0;background:radial-gradient(1100px 460px at 86% -10%, rgba(255,210,63,.20), transparent 60%), radial-gradient(820px 460px at -8% 12%, rgba(1,167,227,.18), transparent 55%);animation:heroBreathe 20s ease-in-out infinite alternate;will-change:transform;}
   .hero .wrap{position:relative;z-index:1;}
   .hero-inner{max-width:880px;padding:96px 0 26px;}
   .hero h1{margin-bottom:22px;}

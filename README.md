@@ -48,7 +48,7 @@ src/
 │   ├── base.css                  design tokens (:root: brand colours), reset, base type
 │   ├── buttons.css               button system (sky primary, banana CTA, ghost…)
 │   ├── layout.css                page show/hide + fade transition, hero, section heads, avatars
-│   ├── motion.css                scroll-reveal animation
+│   ├── motion.css                scroll-reveal + staggered entrance (one Apple-style easing curve)
 │   ├── responsive.css            media queries, reduced-motion, print
 │   ├── intro.js / outro.js       open / close the shared IIFE
 │   ├── logic.js                  ★ pure, framework-free domain logic (LW.*) — unit-tested
@@ -62,7 +62,9 @@ src/
     ├── header/                   header.html, header.css   (nav + round logo badge)
     ├── home/                     home.html/.css/.js + home-cta.css   (hero, why-us, teaser, signup band)
     ├── jobs/                     jobs.html/.css/.js   (filters, grid, cards, pick-a-filter prompt)
-    ├── companies/                companies.html/.css/.js
+    ├── companies/                companies.html/.css/.js   (full client roster + "ask about roles" inquiry)
+    ├── partners/                 partners.css/.js + partners-logos.js (rotating partner-logo wall: home hero 3 rows, jobs placement strip; real logos inlined as data-URIs)
+    ├── waves/                    waves.css   (CSS-only LongWave wave motif: footer crest, CTA-band wave, animated heading accent)
     ├── articles/                 articles.html/.css/.js
     ├── testimonials/             testimonials.css/.js   (shared quote grid: engineers + HR voices)
     ├── post/                     post.html   (hire page; renders testimonials + HR voices)

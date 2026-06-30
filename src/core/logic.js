@@ -147,8 +147,20 @@
       return (a >= 0 && a < 140) ? a : "";
     }
 
+    /* Router mapping kept here (pure) so the route set lives in ONE place and the
+       hash→route resolution is unit-testable without a DOM. */
+    var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", articles:"#/articles", cv:"#/cv", post:"#/post" };
+    function routeFor(hash){
+      var h = String(hash == null ? "" : hash);
+      var names = ["jobs", "companies", "articles", "cv", "post"];
+      for(var i=0;i<names.length;i++){ if(h.indexOf(names[i]) > -1) return names[i]; }
+      return "home";
+    }
+
     return {
       esc: esc,
+      ROUTES: ROUTES,
+      routeFor: routeFor,
       SPECS: SPECS,
       SPEC_RULES: SPEC_RULES,
       classifySpec: classifySpec,

@@ -13,7 +13,7 @@
     var job=JOBS[idx], c=COMPANIES[job.co];
     currentJob=job;
     lastFocus=document.activeElement;
-    var _av=$("#mAvatar"); if(c.logo){ _av.innerHTML='<img src="'+c.logo+'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
+    var _av=$("#mAvatar"); if(c.logo){ _av.innerHTML='<img src="'+ esc(c.logo) +'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
     $("#mRole").textContent=roleL(job);
     $("#mCo").textContent=c.name+" · "+c.sector[lang]+(job.loc?" · "+locL(job):"");
     $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg")));

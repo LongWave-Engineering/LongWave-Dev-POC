@@ -31,6 +31,7 @@ CSS=(
   src/features/footer/footer.css
   src/features/modals/modals.css
   src/core/motion.css
+  src/features/waves/waves.css
   src/features/cv/cv.css
   src/core/responsive.css
 )

@@ -32,16 +32,10 @@
   });
 
   /* ---------------- routing ---------------- */
-  var ROUTES={home:"#/", jobs:"#/jobs", companies:"#/companies", articles:"#/articles", cv:"#/cv", post:"#/post"};
-  function routeFromHash(){
-    var h=location.hash;
-    if(h.indexOf("jobs")>-1) return "jobs";
-    if(h.indexOf("companies")>-1) return "companies";
-    if(h.indexOf("articles")>-1) return "articles";
-    if(h.indexOf("cv")>-1) return "cv";
-    if(h.indexOf("post")>-1) return "post";
-    return "home";
-  }
+  /* route set + hash→route resolution now live in core/logic.js (LW.*) so they're
+     unit-tested and defined once. */
+  var ROUTES=LW.ROUTES;
+  function routeFromHash(){ return LW.routeFor(location.hash); }
   function showRoute(route){
     ["home","jobs","companies","articles","cv","post"].forEach(function(r){ $("#page-"+r).classList.toggle("active", r===route); });
     var _pg=$("#page-"+route); if(_pg){ _pg.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); }); }

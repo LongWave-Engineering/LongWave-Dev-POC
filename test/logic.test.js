@@ -102,6 +102,20 @@ test("normalizeJobIds() caps the batch so one request can't drive unbounded DB w
   assert.deepEqual(out.slice(0, 3), [1, 2, 3]); // keeps the first ids, in order
 });
 
+test("routeFor() maps a hash to its route name (and every route round-trips)", () => {
+  assert.equal(LW.routeFor("#/"), "home");
+  assert.equal(LW.routeFor(""), "home");
+  assert.equal(LW.routeFor(null), "home");
+  assert.equal(LW.routeFor("#/jobs"), "jobs");
+  assert.equal(LW.routeFor("#/companies"), "companies");
+  assert.equal(LW.routeFor("#/articles"), "articles");
+  assert.equal(LW.routeFor("#/cv"), "cv");
+  assert.equal(LW.routeFor("#/post"), "post");
+  assert.equal(LW.routeFor("#/unknown"), "home");           // unknown → home
+  // every route in the canonical table resolves back to itself
+  for (const name of Object.keys(LW.ROUTES)) assert.equal(LW.routeFor(LW.ROUTES[name]), name, `route ${name}`);
+});
+
 test("jpTagClass() maps Japanese level to a CSS class", () => {
   assert.equal(LW.jpTagClass("none"), "tag--jp-none");
   assert.equal(LW.jpTagClass("business"), "tag--jp-high");

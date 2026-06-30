@@ -1,0 +1,45 @@
+/* features/waves/waves.css — the LongWave "wave" brand motif.
+   Pure CSS: layered, seamlessly-looping waves drawn as inlined SVG data-URIs and
+   drifted with background-position (no DOM, no external assets — stays self-contained).
+   Used as: a cresting wave atop the navy footer, a subtle wave at the foot of the navy
+   CTA band, and a small animated wave accent under centred section headings.
+   Motion is brand-blue + calm; prefers-reduced-motion freezes it (see responsive.css). */
+
+  @keyframes waveDrift{ from{ background-position-x:0; } to{ background-position-x:-280px; } }
+  @keyframes waveDriftWide{ from{ background-position-x:0; } to{ background-position-x:-320px; } }
+  @keyframes waveAccent{ from{ background-position-x:0; } to{ background-position-x:-24px; } }
+  /* ambient hero glow: the radial wash breathes slowly so the hero never feels static */
+  @keyframes heroBreathe{ from{ transform:translate3d(0,0,0) scale(1); } to{ transform:translate3d(-2.2%,1.4%,0) scale(1.06); } }
+
+  /* ---- cresting wave over the navy footer (two layers → parallax depth) ---- */
+  footer.site{position:relative;}
+  footer.site::before, footer.site::after{
+    content:""; position:absolute; left:0; right:0; pointer-events:none;
+    background-repeat:repeat-x; background-position:bottom; will-change:background-position;
+  }
+  footer.site::after{   /* back layer: deeper navy, taller, slower, drifts the other way */
+    top:-58px; height:60px; opacity:.6;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='60' viewBox='0 0 320 60' preserveAspectRatio='none'%3E%3Cpath fill='%23163758' d='M0 40 C 64 16 96 64 160 40 C 224 16 256 64 320 40 L320 60 L0 60 Z'/%3E%3C/svg%3E");
+    background-size:320px 100%; animation:waveDriftWide 19s linear infinite reverse;
+  }
+  footer.site::before{  /* front layer: brand navy crest meeting the footer top edge */
+    top:-42px; height:46px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='46' viewBox='0 0 280 46' preserveAspectRatio='none'%3E%3Cpath fill='%231D4670' d='M0 26 C 46 6 92 6 140 26 C 188 46 234 46 280 26 L280 46 L0 46 Z'/%3E%3C/svg%3E");
+    background-size:280px 100%; animation:waveDrift 13s linear infinite;
+  }
+
+  /* ---- subtle sky wave at the foot of the navy CTA band ---- */
+  .cta-band::after{
+    content:""; position:absolute; left:0; right:0; bottom:0; height:42px; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='42' viewBox='0 0 280 42' preserveAspectRatio='none'%3E%3Cpath fill='%235CD0FA' d='M0 24 C 46 6 92 6 140 24 C 188 42 234 42 280 24 L280 42 L0 42 Z'/%3E%3C/svg%3E");
+    background-repeat:repeat-x; background-position:bottom; background-size:280px 100%;
+    opacity:.16; animation:waveDrift 12s linear infinite;
+  }
+
+  /* ---- animated wave accent under centred section headings (brand signature) ---- */
+  .head.center::after{
+    content:""; display:block; width:74px; height:9px; margin:18px auto 0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='9' viewBox='0 0 24 9'%3E%3Cpath d='M0 5 C 3 2 6 2 9 5 C 12 8 15 8 18 5 C 21 2 24 2 24 5' fill='none' stroke='%2301A7E3' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:repeat-x; background-position:center; background-size:24px 100%;
+    animation:waveAccent 3.2s linear infinite;
+  }
