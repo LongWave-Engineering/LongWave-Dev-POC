@@ -40,7 +40,11 @@
   }
 
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;scroll-padding-top:92px;}   /* keep anchors clear of the sticky header */
+  /* No smooth-scroll: page navigation snaps scroll to the top INSTANTLY (while pages are
+     hidden, so it's never seen) and the new page fades in — a smooth scroll-up animation
+     here is exactly the jarring effect we don't want. scroll-padding keeps any in-page
+     anchor target clear of the sticky header. */
+  html{scroll-padding-top:92px;}
   body{margin:0;font-family:var(--font-body);color:var(--ink);background:var(--paper);font-size:17.5px;line-height:1.62;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
   a{color:inherit;text-decoration:none;}
   img{max-width:100%;display:block;}

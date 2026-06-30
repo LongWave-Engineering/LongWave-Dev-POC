@@ -36,32 +36,22 @@
      unit-tested and defined once. */
   var ROUTES=LW.ROUTES;
   function routeFromHash(){ return LW.routeFor(location.hash); }
-  function prefersReducedMotion(){ return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); }
-  /* Swap to `route`: activate its page (fades in via .page.active), reveal content, sync
-     nav, and reset scroll to the top INSTANTLY (bypassing the global smooth-scroll). When
-     this runs mid-transition the scroll jump is hidden behind the outgoing page's fade. */
-  function applyRoute(route){
-    ["home","jobs","companies","articles","cv","post"].forEach(function(r){ var p=$("#page-"+r); if(p){ p.classList.toggle("active", r===route); p.classList.remove("leaving"); } });
-    var _pg=$("#page-"+route); if(_pg){ _pg.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); }); }
-    document.querySelectorAll(".nav-links a[data-go]").forEach(function(a){ var on=a.getAttribute("data-go")===route; a.classList.toggle("active", on); if(on) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
-    var de=document.documentElement, prevSB=de.style.scrollBehavior;
-    de.style.scrollBehavior="auto"; window.scrollTo(0,0); de.style.scrollBehavior=prevSB;
-  }
-  var _leaveTimer=null, _leavingPage=null;
+  /* Show `route` with NO visible scroll motion, then fade the new page in from the top.
+     The trick: hide every page (so nothing tall is on screen) and snap scroll to 0 with
+     instant behaviour — all in one synchronous tick, before the browser paints — THEN
+     reveal the chosen page, which fades in via .page.active. You never see a scroll-up;
+     the only motion is the new page fading into its top. */
   function showRoute(route){
     var next=$("#page-"+route); if(!next) return;
-    var current=document.querySelector(".page.active");
-    /* If we're switching pages while scrolled down, gracefully fade the current page OUT
-       first, then swap+scroll-to-top while it's invisible — so you never see the ugly jump.
-       (At the top already, on first load, or reduced-motion → just swap instantly.) */
-    if(_leaveTimer){ clearTimeout(_leaveTimer); _leaveTimer=null; }
-    if(_leavingPage && _leavingPage!==next){ _leavingPage.classList.remove("leaving"); _leavingPage=null; }
-    if(current && current!==next && window.scrollY>4 && !prefersReducedMotion()){
-      _leavingPage=current; current.classList.add("leaving");
-      _leaveTimer=setTimeout(function(){ _leaveTimer=null; _leavingPage=null; applyRoute(route); }, 240);
-    } else {
-      applyRoute(route);
-    }
+    var de=document.documentElement, body=document.body;
+    var prevHtml=de.style.scrollBehavior, prevBody=body.style.scrollBehavior;
+    de.style.scrollBehavior="auto"; body.style.scrollBehavior="auto";   // force instant, beat html{scroll-behavior:smooth}
+    ["home","jobs","companies","articles","cv","post"].forEach(function(r){ var p=$("#page-"+r); if(p) p.classList.remove("active"); });
+    window.scrollTo(0,0);
+    de.style.scrollBehavior=prevHtml; body.style.scrollBehavior=prevBody;
+    next.classList.add("active");                       // fades in at the top via pageFade
+    next.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); });
+    document.querySelectorAll(".nav-links a[data-go]").forEach(function(a){ var on=a.getAttribute("data-go")===route; a.classList.toggle("active", on); if(on) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   }
   function go(route){
     var targetHash=ROUTES[route]||"#/";
