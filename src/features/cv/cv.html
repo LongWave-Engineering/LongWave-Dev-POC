@@ -3,7 +3,7 @@
     <div class="wrap">
       <div class="head reveal" style="margin-bottom:28px">
         <h1 style="font-size:clamp(2rem,4vw,2.9rem)" data-i18n="cv_h1">Japanese CV generator</h1>
-        <p class="sub" data-i18n="cv_sub">Fill in your details and we'll build your 履歴書 (rirekisho) and 職務経歴書 (shokumukeirekisho). Switch between the two — both update live — then print or save the one you need as PDF.</p>
+        <p class="sub" data-i18n="cv_sub">Fill in your details and we'll build a LongWave cover sheet plus your 履歴書 (rirekisho) and 職務経歴書 (shokumukeirekisho). Switch between the two — both update live — then print or save the one you need as PDF.</p>
       </div>
       <div class="cv-docpick reveal" role="tablist" aria-label="Document type">
         <button class="cv-doctab active" type="button" data-doc="rk" role="tab" aria-selected="true">履歴書<span class="en">Rirekisho</span></button>
@@ -11,59 +11,108 @@
       </div>
       <div class="cv-actions reveal">
         <button class="btn btn--primary btn--xl" id="cvPrint" disabled data-i18n="cv_print">Print / Save as PDF</button>
-        <span class="cv-note" id="cvNote" data-i18n="cv_note_fill">Fill your name, furigana and date of birth to generate.</span>
+        <span class="cv-note" id="cvNote" data-i18n="cv_note_fill">Enter your name to enable printing. Hover the ⓘ on any field for tips.</span>
       </div>
       <div class="cv-layout">
         <div class="cv-form reveal" id="cvForm">
+
+          <!-- ===================== RIREKISHO PAGE ===================== -->
           <div id="cvFormRk">
-          <h3>基本情報 / Basic info</h3>
-          <div class="cv-two">
-            <div class="cv-field"><label>氏名 <span class="en">/ Full name</span></label><input type="text" id="cv_name" placeholder="山田 太郎 / Taro Yamada"></div>
-            <div class="cv-field"><label>ふりがな <span class="en">/ Furigana</span></label><input type="text" id="cv_furi" placeholder="やまだ たろう"></div>
-          </div>
-          <div class="cv-two">
-            <div class="cv-field"><label>生年月日 <span class="en">/ Date of birth</span></label><input type="date" id="cv_dob"></div>
-            <div class="cv-field"><label>性別 <span class="en">/ Gender</span></label>
-              <select id="cv_gender"><option value="">—</option><option>男</option><option>女</option><option>その他</option></select>
+            <h3>LongWave サマリー <span class="en">/ Cover sheet</span></h3>
+            <div class="cv-two">
+              <div class="cv-field"><label>候補者ID <span class="en">/ Candidate ID</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="LongWave's internal candidate code (e.g. NNMS59). Leave blank if you don't have one.">i</span></label><input type="text" id="cv_candId" placeholder="NNMS59"></div>
+              <div class="cv-field"><label>担当コンサルタント <span class="en">/ LongWave contact</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your LongWave recruiter's name — shown as the point of contact on the cover sheet.">i</span></label><input type="text" id="cv_recruiter" placeholder="Neo Nishino"></div>
             </div>
-          </div>
-          <div class="cv-two">
-            <div class="cv-field"><label>電話 <span class="en">/ Phone</span></label><input type="tel" id="cv_phone" placeholder="090-1234-5678"></div>
-            <div class="cv-field"><label>メール <span class="en">/ Email</span></label><input type="email" id="cv_email" placeholder="taro@example.com"></div>
-          </div>
-          <div class="cv-field"><label>住所 <span class="en">/ Address</span></label><input type="text" id="cv_addr" placeholder="東京都〇〇区…"></div>
-          <div class="cv-two">
-            <div class="cv-field"><label>最寄り駅 <span class="en">/ Nearest station</span></label><input type="text" id="cv_station" placeholder="〇〇駅"></div>
-            <div class="cv-field"><label>証明写真 <span class="en">/ Photo</span></label><input type="file" id="cv_photo" accept="image/*"></div>
-          </div>
+            <div class="cv-field"><label>担当者メール <span class="en">/ Contact email</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="The LongWave contact email shown under the logo on the cover sheet.">i</span></label><input type="email" id="cv_recruiterEmail" placeholder="neo.nishino@longwave.co.jp"></div>
+            <div class="cv-field"><label>職歴概要 <span class="en">/ Summary — one point per line</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Headline highlights, one per line — e.g. '7+ years of QA experience', 'Test automation (Cypress, Playwright)', 'Japanese: business level'. Each line becomes a bullet on the cover.">i</span></label><textarea id="cv_coverSummary" rows="4" placeholder="7年以上のQA経験&#10;テスト自動化（Cypress、Playwright）&#10;日本語：ビジネスレベル"></textarea></div>
+            <div class="cv-two">
+              <div class="cv-field"><label>居住地 <span class="en">/ Location</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Where you're based now, e.g. Tokyo / 東京. Most roles need you to already be in Japan.">i</span></label><input type="text" id="cv_location" placeholder="Tokyo"></div>
+              <div class="cv-field"><label>現年収 <span class="en">/ Current salary</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your current annual salary (optional), e.g. ¥6,000,000. Leave blank if you'd rather not say.">i</span></label><input type="text" id="cv_salary" placeholder="¥6,000,000"></div>
+            </div>
+            <div class="cv-two">
+              <div class="cv-field"><label>在留資格 <span class="en">/ Visa status</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your residence/visa status, e.g. Work visa (Engineer/Specialist) / Permanent resident / Spouse visa / Citizen.">i</span></label><input type="text" id="cv_visa" placeholder="Work visa / PR / Citizen"></div>
+              <div class="cv-field"><label>入社可能時期 <span class="en">/ Earliest start</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="When you could start, e.g. Immediately / 1 month's notice / from April 2026.">i</span></label><input type="text" id="cv_start" placeholder="1 month's notice"></div>
+            </div>
 
-          <h3>学歴・職歴 / Education &amp; work history</h3>
-          <div id="eduRows"></div>
-          <button class="cv-add" id="addEdu" type="button">+ 行を追加 / Add row</button>
+            <h3>基本情報 <span class="en">/ Basic info</span></h3>
+            <div class="cv-two">
+              <div class="cv-field"><label>氏名 <span class="en">/ Full name</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your name as it should appear on the resume. Japanese applicants use 漢字; others can use ROMAJI in capitals, e.g. SEVINC MERT.">i</span></label><input type="text" id="cv_name" placeholder="山田 太郎 / Taro Yamada"></div>
+              <div class="cv-field"><label>ふりがな <span class="en">/ Furigana</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Reading of your name in hiragana, e.g. やまだ たろう. Foreign names: write the katakana/hiragana reading.">i</span></label><input type="text" id="cv_furi" placeholder="やまだ たろう"></div>
+            </div>
+            <div class="cv-two">
+              <div class="cv-field"><label>生年月日 <span class="en">/ Date of birth</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Used to show your age (満X歳) on the 履歴書, as is standard in Japan.">i</span></label><input type="date" id="cv_dob"></div>
+              <div class="cv-field"><label>性別 <span class="en">/ Gender</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Optional. Shown as 男・女 with your choice circled, as on a standard 履歴書.">i</span></label>
+                <select id="cv_gender"><option value="">—</option><option>男</option><option>女</option><option>その他</option></select>
+              </div>
+            </div>
+            <div class="cv-two">
+              <div class="cv-field"><label>電話 <span class="en">/ Phone</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="A reachable number, e.g. 080-1234-5678.">i</span></label><input type="tel" id="cv_phone" placeholder="090-1234-5678"></div>
+              <div class="cv-field"><label>メール <span class="en">/ Email</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your personal email — used on both documents.">i</span></label><input type="email" id="cv_email" placeholder="taro@example.com"></div>
+            </div>
+            <div class="cv-two">
+              <div class="cv-field"><label>郵便番号 <span class="en">/ Postal code</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your 〒 postal code, e.g. 187-0003.">i</span></label><input type="text" id="cv_postal" placeholder="187-0003"></div>
+              <div class="cv-field"><label>住所ふりがな <span class="en">/ Address furigana</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Optional reading of your address in hiragana (standard on a 履歴書).">i</span></label><input type="text" id="cv_addrFuri" placeholder="とうきょうと こだいらし…"></div>
+            </div>
+            <div class="cv-field"><label>現住所 <span class="en">/ Address</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your full current address. Use a second line for the building / room number.">i</span></label><textarea id="cv_addr" rows="2" placeholder="東京都小平市花小金井南町1-18-2&#10;マグノリアンハウス102号"></textarea></div>
+            <div class="cv-field"><label>証明写真 <span class="en">/ Photo</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="A formal headshot — suit, plain background. 履歴書 photos are typically 3×4cm. Optional, but expected in Japan.">i</span></label><input type="file" id="cv_photo" accept="image/*"></div>
 
-          <h3>免許・資格 / Licenses &amp; qualifications</h3>
-          <div id="licRows"></div>
-          <button class="cv-add" id="addLic" type="button">+ 行を追加 / Add row</button>
+            <h3>学歴・職歴 <span class="en">/ Education &amp; work history</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="List in date order, oldest first. Pick 学歴 (school) or 職歴 (job) per row, then year/month and the entry, e.g. '◯◯大学 入学' or '△△株式会社 入社'.">i</span></h3>
+            <div id="eduRows"></div>
+            <button class="cv-add" id="addEdu" type="button">+ 行を追加 / Add row</button>
 
-          <h3>志望動機・希望 / Motivation &amp; requests</h3>
-          <div class="cv-field"><label>志望動機 <span class="en">/ Motivation</span></label><textarea id="cv_motiv"></textarea></div>
-          <div class="cv-field"><label>本人希望記入欄 <span class="en">/ Personal requests</span></label><textarea id="cv_request" placeholder="貴社規定に従います。"></textarea></div>
+            <h3>免許・資格 <span class="en">/ Licenses &amp; qualifications</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Certifications, licenses and language tests, e.g. '日本語能力試験 N2 合格', '普通自動車第一種運転免許 取得'. These also feed the 職務経歴書's Qualifications section.">i</span></h3>
+            <div id="licRows"></div>
+            <button class="cv-add" id="addLic" type="button">+ 行を追加 / Add row</button>
 
+            <h3>志望動機・希望 <span class="en">/ Motivation &amp; requests</span></h3>
+            <div class="cv-field"><label>志望動機・特技・アピールポイント <span class="en">/ Motivation &amp; strengths</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Why this company/role, plus your standout strengths — 2–4 sentences. Be concrete about what you'd contribute.">i</span></label><textarea id="cv_motiv" rows="4"></textarea></div>
+            <div class="cv-field"><label>本人希望欄 <span class="en">/ Personal requests</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Preferences on role, location, hours or salary. If none, the standard line is 貴社規定に従います (I'll follow company policy).">i</span></label><textarea id="cv_request" placeholder="貴社規定に従います。"></textarea></div>
           </div><!-- /#cvFormRk -->
+
+          <!-- ===================== SHOKUMUKEIREKISHO PAGE ===================== -->
           <div id="cvFormSk" hidden>
-          <h3>職務経歴書 / Work history (shokumukeirekisho)</h3>
-          <div class="cv-field"><label>職務要約 <span class="en">/ Career summary</span></label><textarea id="cv_summary"></textarea></div>
-          <div id="careerRows"></div>
-          <button class="cv-add" id="addCareer" type="button">+ 職歴を追加 / Add experience</button>
-          <div class="cv-field" style="margin-top:14px"><label>活かせる経験・知識・スキル <span class="en">/ Skills</span></label><textarea id="cv_skills"></textarea></div>
-          <div class="cv-field"><label>自己PR <span class="en">/ Self-PR</span></label><textarea id="cv_pr"></textarea></div>
+            <h3>ヘッダー <span class="en">/ Header</span></h3>
+            <div class="cv-field"><label>職種・肩書き <span class="en">/ Job title</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="The headline shown under your name, e.g. 'QA Automation Engineer / SDET' or 'Backend Engineer'.">i</span></label><input type="text" id="cv_jobtitle" placeholder="QA Automation Engineer / SDET"></div>
+            <div class="cv-two">
+              <div class="cv-field"><label>LinkedIn <span class="en">/ URL (optional)</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your LinkedIn profile URL — added to the contact line at the top.">i</span></label><input type="url" id="cv_linkedin" placeholder="https://linkedin.com/in/…"></div>
+              <div class="cv-field"><label>ウェブ / GitHub <span class="en">/ optional</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="A portfolio, GitHub or personal site URL.">i</span></label><input type="url" id="cv_github" placeholder="https://github.com/…"></div>
+            </div>
+            <p class="form-note">氏名・電話・メール・居住地は「履歴書」タブの入力を使用します。 / Name, phone, email &amp; location come from the Rirekisho tab.</p>
+
+            <h3>職務要約 <span class="en">/ Career summary</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="A 3–5 line overview: years of experience, domains, key strengths. Recruiters read this first, so make it count.">i</span></h3>
+            <div class="cv-field"><textarea id="cv_summary" rows="4"></textarea></div>
+
+            <h3>スキル <span class="en">/ Skills</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Group skills by category. Left = category (e.g. 'Test management', 'Tools', 'Languages'); right = comma-separated items.">i</span></h3>
+            <div id="skillRows"></div>
+            <button class="cv-add" id="addSkill" type="button">+ カテゴリを追加 / Add category</button>
+
+            <h3>職務経歴 <span class="en">/ Work experience</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="One block per role, newest first: role title, period, company, location, then responsibilities &amp; achievements — one bullet per line.">i</span></h3>
+            <div id="careerRows"></div>
+            <button class="cv-add" id="addCareer" type="button">+ 職歴を追加 / Add experience</button>
+
+            <h3>プロジェクト・主な実績 <span class="en">/ Projects &amp; achievements</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Notable projects or wins: a name plus a short description of what you built and its impact. Optional, but powerful.">i</span></h3>
+            <div id="projRows"></div>
+            <button class="cv-add" id="addProj" type="button">+ プロジェクトを追加 / Add project</button>
+
+            <div class="cv-field" style="margin-top:14px"><label>その他の技術経験 <span class="en">/ Other technical experience</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Anything else relevant — one bullet per line (extra stacks, side work, OSS, etc.).">i</span></label><textarea id="cv_otherTech" rows="3"></textarea></div>
+
+            <h3>学歴 <span class="en">/ Education</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="School / university, period and location. One block per entry.">i</span></h3>
+            <div id="skEduRows"></div>
+            <button class="cv-add" id="addSkEdu" type="button">+ 学歴を追加 / Add education</button>
+
+            <h3>語学 <span class="en">/ Languages</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Each language and your level, e.g. 'Japanese : Business', 'English : Native'.">i</span></h3>
+            <div id="langRows"></div>
+            <button class="cv-add" id="addLang" type="button">+ 言語を追加 / Add language</button>
+            <p class="form-note">資格は「履歴書」タブの免許・資格を使用します。 / Qualifications come from the Rirekisho tab's licenses.</p>
           </div><!-- /#cvFormSk -->
+
         </div>
 
         <div class="cv-preview reveal">
           <div id="cvDocs" data-show="rk">
+            <div class="doc cover" id="coverOut"></div>
             <div class="doc rirekisho" id="rirekishoOut"></div>
-            <div class="doc doc-sk" id="shokumuOut"></div>
+            <div class="doc shokumu" id="shokumuOut"></div>
           </div>
         </div>
       </div>
