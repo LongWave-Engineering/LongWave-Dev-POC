@@ -3,7 +3,7 @@
     <div class="wrap">
       <div class="head reveal" style="margin-bottom:28px">
         <h1 style="font-size:clamp(2rem,4vw,2.9rem)" data-i18n="cv_h1">Japanese CV generator</h1>
-        <p class="sub" data-i18n="cv_sub">Fill in your details and we'll build a LongWave cover sheet plus your 履歴書 (rirekisho) and 職務経歴書 (shokumukeirekisho). Switch between the two — both update live — then print or save the one you need as PDF.</p>
+        <p class="sub" data-i18n="cv_sub">Fill in your details and we'll build your 履歴書 (rirekisho) and 職務経歴書 (shokumukeirekisho). Switch between the two — both update live — then print or save the one you need as PDF.</p>
       </div>
       <div class="cv-docpick reveal" role="tablist" aria-label="Document type">
         <button class="cv-doctab active" type="button" data-doc="rk" role="tab" aria-selected="true">履歴書<span class="en">Rirekisho</span></button>
@@ -18,22 +18,6 @@
 
           <!-- ===================== RIREKISHO PAGE ===================== -->
           <div id="cvFormRk">
-            <h3>LongWave サマリー <span class="en">/ Cover sheet</span></h3>
-            <div class="cv-two">
-              <div class="cv-field"><label>候補者ID <span class="en">/ Candidate ID</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="LongWave's internal candidate code (e.g. NNMS59). Leave blank if you don't have one.">i</span></label><input type="text" id="cv_candId" placeholder="NNMS59"></div>
-              <div class="cv-field"><label>担当コンサルタント <span class="en">/ LongWave contact</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your LongWave recruiter's name — shown as the point of contact on the cover sheet.">i</span></label><input type="text" id="cv_recruiter" placeholder="Neo Nishino"></div>
-            </div>
-            <div class="cv-field"><label>担当者メール <span class="en">/ Contact email</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="The LongWave contact email shown under the logo on the cover sheet.">i</span></label><input type="email" id="cv_recruiterEmail" placeholder="neo.nishino@longwave.co.jp"></div>
-            <div class="cv-field"><label>職歴概要 <span class="en">/ Summary — one point per line</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Headline highlights, one per line — e.g. '7+ years of QA experience', 'Test automation (Cypress, Playwright)', 'Japanese: business level'. Each line becomes a bullet on the cover.">i</span></label><textarea id="cv_coverSummary" rows="4" placeholder="7年以上のQA経験&#10;テスト自動化（Cypress、Playwright）&#10;日本語：ビジネスレベル"></textarea></div>
-            <div class="cv-two">
-              <div class="cv-field"><label>居住地 <span class="en">/ Location</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Where you're based now, e.g. Tokyo / 東京. Most roles need you to already be in Japan.">i</span></label><input type="text" id="cv_location" placeholder="Tokyo"></div>
-              <div class="cv-field"><label>現年収 <span class="en">/ Current salary</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your current annual salary (optional), e.g. ¥6,000,000. Leave blank if you'd rather not say.">i</span></label><input type="text" id="cv_salary" placeholder="¥6,000,000"></div>
-            </div>
-            <div class="cv-two">
-              <div class="cv-field"><label>在留資格 <span class="en">/ Visa status</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your residence/visa status, e.g. Work visa (Engineer/Specialist) / Permanent resident / Spouse visa / Citizen.">i</span></label><input type="text" id="cv_visa" placeholder="Work visa / PR / Citizen"></div>
-              <div class="cv-field"><label>入社可能時期 <span class="en">/ Earliest start</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="When you could start, e.g. Immediately / 1 month's notice / from April 2026.">i</span></label><input type="text" id="cv_start" placeholder="1 month's notice"></div>
-            </div>
-
             <h3>基本情報 <span class="en">/ Basic info</span></h3>
             <div class="cv-two">
               <div class="cv-field"><label>氏名 <span class="en">/ Full name</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your name as it should appear on the resume. Japanese applicants use 漢字; others can use ROMAJI in capitals, e.g. SEVINC MERT.">i</span></label><input type="text" id="cv_name" placeholder="山田 太郎 / Taro Yamada"></div>
@@ -73,6 +57,7 @@
           <div id="cvFormSk" hidden>
             <h3>ヘッダー <span class="en">/ Header</span></h3>
             <div class="cv-field"><label>職種・肩書き <span class="en">/ Job title</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="The headline shown under your name, e.g. 'QA Automation Engineer / SDET' or 'Backend Engineer'.">i</span></label><input type="text" id="cv_jobtitle" placeholder="QA Automation Engineer / SDET"></div>
+            <div class="cv-field"><label>居住地 <span class="en">/ Location</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Where you're based, shown on the contact line, e.g. Tokyo, Japan / 東京、日本.">i</span></label><input type="text" id="cv_location" placeholder="Tokyo, Japan"></div>
             <div class="cv-two">
               <div class="cv-field"><label>LinkedIn <span class="en">/ URL (optional)</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your LinkedIn profile URL — added to the contact line at the top.">i</span></label><input type="url" id="cv_linkedin" placeholder="https://linkedin.com/in/…"></div>
               <div class="cv-field"><label>ウェブ / GitHub <span class="en">/ optional</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="A portfolio, GitHub or personal site URL.">i</span></label><input type="url" id="cv_github" placeholder="https://github.com/…"></div>
@@ -110,7 +95,6 @@
 
         <div class="cv-preview reveal">
           <div id="cvDocs" data-show="rk">
-            <div class="doc cover" id="coverOut"></div>
             <div class="doc rirekisho" id="rirekishoOut"></div>
             <div class="doc shokumu" id="shokumuOut"></div>
           </div>

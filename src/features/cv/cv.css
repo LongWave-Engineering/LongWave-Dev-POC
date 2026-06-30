@@ -56,20 +56,6 @@
   .cv-tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 3px);transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink);opacity:0;visibility:hidden;transition:opacity .15s ease;z-index:6;}
   .cv-tip:hover::after,.cv-tip:focus::after,.cv-tip:hover::before,.cv-tip:focus::before{opacity:1;visibility:visible;}
 
-  /* ---------- LongWave cover sheet ---------- */
-  .cv-cover-head{text-align:center;margin-bottom:14px;}
-  .cv-cover-logo{width:62px;height:62px;margin:0 auto 6px;display:block;}
-  .cv-cover-brand{font-family:var(--font-display);font-weight:800;font-size:21px;letter-spacing:-.01em;color:var(--navy);}
-  .cv-cover-brand span{color:var(--sky);}
-  .cv-cover-mail{font-size:11px;color:#333;margin-top:4px;}
-  .cv-cover-tob{font-size:10.5px;color:#333;margin-top:6px;}
-  .cv-cover-table{width:100%;border-collapse:collapse;margin-top:6px;}
-  .cv-cover-table td{border:1px solid #444;padding:9px 12px;vertical-align:middle;font-size:12px;}
-  .cv-cover-table .cl-lbl{width:118px;text-align:center;font-weight:700;line-height:1.3;}
-  .cv-cover-table .cl-en{display:block;font-weight:500;color:#666;font-size:10px;}
-  .cv-cover-table .cl-val{text-align:center;}
-  .cv-cover-table .cl-val.cl-left{text-align:left;line-height:1.7;}
-
   /* ---------- rirekisho refinements ---------- */
   .rk-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
   .rk-top .doc-title{font-size:1.5rem;letter-spacing:.4em;margin:0;}

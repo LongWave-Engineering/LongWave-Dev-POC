@@ -50,8 +50,6 @@
     .cv-preview{position:static !important;top:auto !important;}
     #cvDocs{position:absolute;left:0;top:0;width:100%;gap:0;}
     .doc{border:0 !important;box-shadow:none !important;padding:0 !important;}
-    /* cover sheet prints as its own first page; the selected document follows */
-    #coverOut{page-break-after:always;}
     @page{margin:14mm;}
   }
 

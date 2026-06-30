@@ -79,7 +79,6 @@
   function cvVal(id){ var n=$(id); return n?n.value.trim():""; }
   var calcAge = LW.calcAge;   /* pure, unit-tested in /test (see core/logic.js) */
   function todayStr(){ var d=new Date(); return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"; }
-  function lwLogo(){ var img=document.querySelector("header.site .brand .logo img"); return img ? img.getAttribute("src") : ""; }
   /* split a textarea into trimmed non-empty lines (used for bullet lists) */
   function lines(s){ return String(s||"").split("\n").map(function(l){return l.trim();}).filter(Boolean); }
 
@@ -88,36 +87,12 @@
     var name=cvVal("#cv_name"), furi=cvVal("#cv_furi"), dob=cvVal("#cv_dob"), gender=cvVal("#cv_gender"),
         phone=cvVal("#cv_phone"), email=cvVal("#cv_email"), postal=cvVal("#cv_postal"), addrFuri=cvVal("#cv_addrFuri"),
         addr=cvVal("#cv_addr"), motiv=cvVal("#cv_motiv"), request=cvVal("#cv_request");
-    var candId=cvVal("#cv_candId"), recruiter=cvVal("#cv_recruiter"), recruiterEmail=cvVal("#cv_recruiterEmail"),
-        coverSummary=cvVal("#cv_coverSummary"), location=cvVal("#cv_location"), salary=cvVal("#cv_salary"),
-        visa=cvVal("#cv_visa"), start=cvVal("#cv_start");
+    var location=cvVal("#cv_location");
     var jobtitle=cvVal("#cv_jobtitle"), linkedin=cvVal("#cv_linkedin"), github=cvVal("#cv_github"),
         summary=cvVal("#cv_summary"), otherTech=cvVal("#cv_otherTech");
     var age=calcAge(dob);
     var dobDisp="&nbsp;";
     if(dob){ var dd=new Date(dob); if(!isNaN(dd.getTime())) dobDisp=dd.getFullYear()+"年 "+(dd.getMonth()+1)+"月 "+dd.getDate()+"日生"; }
-
-    /* ---------------- LongWave cover sheet ---------------- */
-    var logo=lwLogo();
-    function coverRow(jp,en,val,left){ return '<tr><td class="cl-lbl">'+jp+'<br><span class="cl-en">'+en+'</span></td><td class="cl-val'+(left?' cl-left':'')+'">'+(val||"&nbsp;")+'</td></tr>'; }
-    var sumHtml=lines(coverSummary).map(function(l){ return "ー"+esc(l); }).join("<br>");
-    var cover='<div class="cv-cover-head">'+
-        (logo?'<img class="cv-cover-logo" src="'+esc(logo)+'" alt="">':'')+
-        '<div class="cv-cover-brand">Long<span>Wave</span></div>'+
-        (recruiterEmail?'<div class="cv-cover-mail">'+esc(recruiterEmail)+'</div>':'')+
-        '<div class="cv-cover-tob">本候補者には、LongWaveの取引条件（Terms of Business）が適用されます。</div>'+
-      '</div>'+
-      '<table class="cv-cover-table">'+
-        coverRow("候補者 ID","Candidate ID",esc(candId))+
-        coverRow("コンタクト","Contact",esc(recruiter))+
-        coverRow("名前","Name",esc(name))+
-        coverRow("職歴概要","Summary",sumHtml,true)+
-        coverRow("居住地","Location",esc(location))+
-        coverRow("現年収","Current Salary",esc(salary))+
-        coverRow("在留資格","Visa Status",esc(visa))+
-        coverRow("入社可能時期","Start Date",esc(start))+
-      '</table>';
-    $("#coverOut").innerHTML=cover;
 
     /* ---------------- 履歴書 (rirekisho) ---------------- */
     var edu=[].map.call(document.querySelectorAll("#eduRows .cv-row"),function(r){ return {type:r.querySelector(".e-type").value, y:r.querySelector(".e-year").value, m:r.querySelector(".e-month").value, txt:r.querySelector(".e-text").value}; });
@@ -135,7 +110,7 @@
       '<table class="rk-table rk-id"><tr>'+
         '<td class="rk-idmain">'+
           '<div class="rk-furi"><span class="rk-sub">ふりがな</span>　'+esc(furi)+'</div>'+
-          '<div class="rk-namerow"><span class="rk-sub">名前</span>　<span class="rk-name">'+esc(name||"&nbsp;")+'</span></div>'+
+          '<div class="rk-namerow"><span class="rk-sub">名前</span>　<span class="rk-name">'+(name?esc(name):"&nbsp;")+'</span></div>'+
           '<div class="rk-dob">'+dobDisp+'　（満 '+(age!==""?age:"　")+' 歳）　'+genderCell+'</div>'+
         '</td>'+
         '<td class="rk-photocell"><div class="rk-photo">'+photo+'</div></td>'+
@@ -146,10 +121,10 @@
         '<tr><td class="rk-al"><span class="rk-sub">ふりがな</span></td><td class="rk-ar"><span class="rk-sub">電話</span></td></tr>'+
         '<tr><td class="rk-al"><span class="rk-sub">連絡先</span>　〒　<span class="rk-hint">（現住所以外に連絡を希望する場合のみ入力）</span></td><td class="rk-ar"><span class="rk-sub">Email</span></td></tr>'+
       '</table>'+
-      '<table class="rk-table"><tr><th style="width:62px">年</th><th style="width:46px">月</th><th>学歴・職歴</th></tr>'+(histBody||'<tr><td></td><td></td><td class="muted">（入力すると表示されます）</td></tr>')+'</table>'+
-      '<table class="rk-table"><tr><th style="width:62px">年</th><th style="width:46px">月</th><th>免許・資格</th></tr>'+(licBody||'<tr><td></td><td></td><td class="muted">—</td></tr>')+'</table>'+
+      '<table class="rk-table"><tr><th style="width:62px">年</th><th style="width:46px">月</th><th>学歴・職歴</th></tr>'+(histBody||'<tr><td>&nbsp;</td><td></td><td></td></tr>')+'</table>'+
+      '<table class="rk-table"><tr><th style="width:62px">年</th><th style="width:46px">月</th><th>免許・資格</th></tr>'+(licBody||'<tr><td>&nbsp;</td><td></td><td></td></tr>')+'</table>'+
       '<table class="rk-table"><tr><td><div class="sec-h">志望動機・特技・アピールポイントなど</div>'+(nl2br(motiv)||"&nbsp;")+'</td></tr></table>'+
-      '<table class="rk-table"><tr><td><div class="sec-h">本人希望欄（特に給料・職種・勤務時間・勤務地・その他について希望があれば記入）</div>'+(nl2br(request)||"貴社規定に従います。")+'</td></tr></table>';
+      '<table class="rk-table"><tr><td><div class="sec-h">本人希望欄（特に給料・職種・勤務時間・勤務地・その他について希望があれば記入）</div>'+(nl2br(request)||"&nbsp;")+'</td></tr></table>';
     $("#rirekishoOut").innerHTML=rk;
 
     /* ---------------- 職務経歴書 (shokumukeirekisho, modern format) ---------------- */
@@ -182,7 +157,7 @@
 
     var contactBits=[location,email,phone,linkedin,github].filter(Boolean).map(esc).join('　｜　');
     var sk='<div class="sk-head">'+
-        '<div class="sk-name">'+esc(name||"&nbsp;")+(furi?'<span class="sk-furi">（'+esc(furi)+'）</span>':'')+'</div>'+
+        '<div class="sk-name">'+(name?esc(name):"&nbsp;")+(furi?'<span class="sk-furi">（'+esc(furi)+'）</span>':'')+'</div>'+
         (jobtitle?'<div class="sk-title">'+esc(jobtitle)+'</div>':'')+
         (contactBits?'<div class="sk-contact">'+contactBits+'</div>':'')+
       '</div>'+
@@ -194,8 +169,6 @@
       skSec("学歴", eduBody)+
       skSec("資格", qualBody)+
       skSec("語学", langBody);
-    if(!summary && !skillsBody && !expBody && !projBody && !otherTech && !eduBody && !qualBody && !langBody)
-      sk+='<div class="muted" style="margin-top:14px">（職務経歴書の項目を入力すると、ここに表示されます）</div>';
     $("#shokumuOut").innerHTML=sk;
 
     var ok=!!name;
@@ -209,7 +182,7 @@
     addEduRow("学歴","","",""); addEduRow("職歴","","","");
     addLicRow("","","");
     addSkillRow("",""); addCareer("","","","",""); addProj("",""); addSkEdu("","","");
-    addLangRow("日本語",""); addLangRow("英語","");
+    addLangRow("","");
     $("#cv_photo").addEventListener("change", function(e){ var f=e.target.files&&e.target.files[0]; if(!f){ cvPhoto=""; renderCV(); return; } var r=new FileReader(); r.onload=function(){ cvPhoto=r.result; renderCV(); }; r.readAsDataURL(f); });
     $("#addEdu").addEventListener("click", function(){ addEduRow("職歴","","",""); renderCV(); });
     $("#addLic").addEventListener("click", function(){ addLicRow("","",""); renderCV(); });
