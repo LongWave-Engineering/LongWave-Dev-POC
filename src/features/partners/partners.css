@@ -11,7 +11,7 @@
   -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
           mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
 }
-.logo-track{display:flex; width:max-content; animation:logoScroll 64s linear infinite; will-change:transform;}
+.logo-track{display:flex; width:max-content; animation:logoScroll 95s linear infinite; will-change:transform;}
 .logo-marquee--rev .logo-track{animation-direction:reverse;}   /* bottom row drifts the other way */
 @keyframes logoScroll{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
 

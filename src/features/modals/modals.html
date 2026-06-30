@@ -50,6 +50,37 @@
   </div>
 </div>
 
+<!-- ============ COMPANY DETAIL + INQUIRY MODAL ============ -->
+<div class="overlay" id="coOverlay" role="dialog" aria-modal="true" aria-labelledby="coTitle">
+  <div class="modal narrow" id="coModal">
+    <button class="modal-close" id="coClose" aria-label="Close">×</button>
+    <div class="m-head">
+      <span class="avatar" id="coAvatar"></span>
+      <div><div class="m-role" id="coTitle"></div><div class="m-co" id="coIndustry"></div></div>
+    </div>
+    <p class="m-body" id="coBlurb" style="margin:18px 0 0"></p>
+    <form id="coForm" autocomplete="off" style="margin-top:22px">
+      <h4 class="m-sub" id="coFormTitle" style="margin-top:0" data-i18n="co_inq_h">Interested? Tell us a bit and we'll be in touch.</h4>
+      <div class="field"><label for="coRole" data-i18n="co_role">Which role are you interested in?</label><input type="text" id="coRole"></div>
+      <div class="field"><label for="coSource" data-i18n="co_source">Where did you come across this?</label>
+        <div class="selectwrap"><select id="coSource" style="width:100%">
+          <option value="" data-i18n="co_src_pick">Select…</option>
+          <option value="Internet / search" data-i18n="co_src_net">Internet / search</option>
+          <option value="A friend" data-i18n="co_src_friend">A friend</option>
+          <option value="LinkedIn" data-i18n="co_src_linkedin">LinkedIn</option>
+          <option value="An event" data-i18n="co_src_event">An event</option>
+          <option value="Other" data-i18n="co_src_other">Other</option>
+        </select></div>
+      </div>
+      <div class="field"><label for="coLink" data-i18n="co_link">Link to the role (optional)</label><input type="url" id="coLink" placeholder="https://…"></div>
+      <div class="field"><label for="coName" data-i18n="su_name">Name</label><input type="text" id="coName" required></div>
+      <div class="field"><label for="coEmail" data-i18n="su_email">Email</label><input type="email" id="coEmail" required></div>
+      <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="co_submit">Send to LongWave</button>
+      <p class="form-success" id="coSuccess" style="display:none"></p>
+    </form>
+  </div>
+</div>
+
 <!-- Optional generated job data from the HRMOS sync (ats-connectors/generate-jobs).
      If jobs.js is absent, the site falls back to the built-in JOBS list below. -->
 

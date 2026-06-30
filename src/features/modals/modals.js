@@ -58,31 +58,62 @@
     var job=$("#suWant").value!=="hire";
     $("#jobSeekerFields").style.display=job?"":"none";
     $("#hireFields").style.display=job?"none":"";
-    /* résumé required for job-seekers, EXCEPT a low-friction company inquiry — and this
-       must survive the user toggling the dropdown mid-modal, so it's decided here. */
-    var r=$("#suResume"); if(r) r.required = job && !pendingInquiryCo;
+    var r=$("#suResume"); if(r) r.required = job;   /* résumé required for job-seekers */
   }
   $("#suWant").addEventListener("change", suToggleWant);
   var pendingApplyJobIds=[];   /* job ids the signup will apply to (empty = plain signup) */
-  var pendingInquiryCo=null;   /* company the candidate is asking about (companies page) */
-  function openSignup(preset, jobIds, opts){
-    opts=opts||{};
+  function openSignup(preset, jobIds){
     lastFocus=document.activeElement;
     pendingApplyJobIds = Array.isArray(jobIds) ? LW.normalizeJobIds(jobIds) : [];
-    pendingInquiryCo = opts.company || null;
     $("#suSuccess").style.display="none"; $("#suForm").style.display="";
     if(preset==="hire") $("#suWant").value="hire"; else if(preset==="job") $("#suWant").value="job";
-    suToggleWant();   /* résumé requirement (incl. the inquiry exception) is decided here */
+    suToggleWant();
     var titleEl=$("#suTitle");
-    if(titleEl) titleEl.textContent =
-      pendingInquiryCo ? t("inq_title").replace("{co}", pendingInquiryCo)
-      : (pendingApplyJobIds.length ? t("apply_title").replace("{n}",pendingApplyJobIds.length) : t("su_title"));
+    if(titleEl) titleEl.textContent = pendingApplyJobIds.length ? t("apply_title").replace("{n}",pendingApplyJobIds.length) : t("su_title");
     openOverlay(suOverlay); $("#suClose").focus();
   }
-  /* companies page "Ask about roles →" → signup pre-set to that company */
+  /* ---------------- company modal (companies page) ----------------
+     Clicking a company card shows what they do + an inquiry form capturing the role
+     the candidate wants, where they came across it, and an optional link. */
+  var coOverlay=$("#coOverlay");
+  var currentCompany=null;
+  function findPartner(name){ if(typeof PARTNERS==="undefined") return null; for(var i=0;i<PARTNERS.length;i++){ if(PARTNERS[i].name===name) return PARTNERS[i]; } return null; }
+  function openCompany(name){
+    var p=findPartner(name); if(!p || !coOverlay) return;
+    currentCompany=name; lastFocus=document.activeElement;
+    var logo=(typeof PARTNER_LOGOS!=="undefined") ? PARTNER_LOGOS[name] : null;
+    var av=$("#coAvatar");
+    if(logo){ av.innerHTML='<img src="'+ esc(logo) +'" alt="">'; av.style.background="#fff"; }
+    else { av.innerHTML=""; av.textContent=p.mono||"?"; av.style.background=p.color||"#888"; }
+    $("#coTitle").textContent=name;
+    $("#coIndustry").textContent=(p.industry && p.industry[lang]) || "";
+    var blurb=(p.blurb && p.blurb[lang]) || "";
+    var b=$("#coBlurb"); b.textContent=blurb; b.style.display=blurb?"":"none";
+    $("#coForm").style.display=""; $("#coSuccess").style.display="none";
+    ["#coRole","#coLink","#coName","#coEmail"].forEach(function(s){ if($(s)) $(s).value=""; });
+    if($("#coSource")) $("#coSource").value="";
+    openOverlay(coOverlay); $("#coClose").focus();
+  }
+  function submitCompanyInquiry(){
+    var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; };
+    var role=val("#coRole"), source=val("#coSource"), link=val("#coLink");
+    var parts=["Interested in "+(role||"roles")+" at "+currentCompany];   /* captured into the lead message for the recruiter */
+    if(source) parts.push("heard via "+source);
+    if(link) parts.push("link: "+link);
+    var body={ kind:"job", name:val("#coName")||undefined, email:val("#coEmail")||undefined, message:parts.join(" · ") };
+    if(/^https?:$/.test(location.protocol)){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); }
+    var s=$("#coSuccess"); if(s){ s.textContent=t("co_success").replace("{co}",currentCompany); s.style.display="block"; }
+    $("#coForm").style.display="none";
+  }
+  if($("#coForm")) $("#coForm").addEventListener("submit", function(e){ e.preventDefault(); submitCompanyInquiry(); });
   document.addEventListener("click", function(e){
-    var inq=e.target.closest("[data-inquire]");
-    if(inq){ e.preventDefault(); openSignup("job", [], { company: inq.getAttribute("data-inquire") }); }
+    var card=e.target.closest("[data-company]");
+    if(card){ e.preventDefault(); openCompany(card.getAttribute("data-company")); }
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key!=="Enter" && e.key!==" ") return;
+    var card=e.target.closest ? e.target.closest("[data-company]") : null;
+    if(card && document.activeElement===card){ e.preventDefault(); openCompany(card.getAttribute("data-company")); }
   });
   /* the job detail modal's "Sign up to apply" → apply to just that role */
   var _mApply=$("#mApply");
@@ -95,13 +126,15 @@
   jobOverlay.addEventListener("click", function(e){ if(e.target===jobOverlay) closeOverlay(jobOverlay); });
   $("#suClose").addEventListener("click", function(){ closeOverlay(suOverlay); });
   suOverlay.addEventListener("click", function(e){ if(e.target===suOverlay) closeOverlay(suOverlay); });
+  if($("#coClose")) $("#coClose").addEventListener("click", function(){ closeOverlay(coOverlay); });
+  if(coOverlay) coOverlay.addEventListener("click", function(e){ if(e.target===coOverlay) closeOverlay(coOverlay); });
   function focusables(container){
     var list=container.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
     return Array.prototype.filter.call(list, function(n){ return n.offsetWidth>0 || n.offsetHeight>0 || n===document.activeElement; });
   }
   document.addEventListener("keydown", function(e){
     /* signup can stack on top of the job modal — handle the topmost one first */
-    var openOv = suOverlay.classList.contains("open") ? suOverlay : (jobOverlay.classList.contains("open") ? jobOverlay : null);
+    var openOv = (coOverlay && coOverlay.classList.contains("open")) ? coOverlay : (suOverlay.classList.contains("open") ? suOverlay : (jobOverlay.classList.contains("open") ? jobOverlay : null));
     if(!openOv) return;
     if(e.key==="Escape"){ closeOverlay(openOv); return; }
     if(e.key==="Tab"){
@@ -124,8 +157,6 @@
       name: val("#suName"), email: val("#suEmail"),
       linkedin: val("#suLinkedin"), github: val("#suGithub"),
       company: val("#suCompany"),
-      /* candidate asking about a specific client → capture it for the recruiter */
-      message: pendingInquiryCo ? ("Interested in roles at " + pendingInquiryCo) : undefined,
       resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined
     };
   }
@@ -143,9 +174,7 @@
       }
     }
     var succ=$("#suSuccess");
-    if(succ) succ.textContent =
-      pendingInquiryCo ? t("inq_success").replace("{co}", pendingInquiryCo)
-      : (n ? t("apply_success").replace("{n}",n) : t("su_success"));
+    if(succ) succ.textContent = n ? t("apply_success").replace("{n}",n) : t("su_success");
     $("#suForm").style.display="none"; if(succ) succ.style.display="block";
     if(n) clearSelection();   /* reset the jobs picker after a batch apply */
   }

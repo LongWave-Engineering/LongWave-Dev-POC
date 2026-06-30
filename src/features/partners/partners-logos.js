@@ -1,547 +1,1378 @@
 /* features/partners/partners-logos.js — GENERATED, do not hand-edit.
-   PARTNERS: curated client roster on the partner wall / companies page / jobs strip
-   (name + brand colour + monogram fallback; placement:true = LongWave has placed an
-   engineer there). PARTNER_LOGOS: real brand marks fetched once (favicon services) and
-   inlined as data URIs, so the single-file site works offline with no external requests.
-   96/104 have a real logo; the rest fall back to a coloured monogram.
-   Regenerate from scratchpad/roster.tsv (name⇥domain⇥color⇥mono⇥placement) + favicon
-   fetch + sips -Z 88 + this generator. build.sh only concatenates — never fetches. */
+   PARTNERS: curated client roster shown on the partner wall / companies page / jobs strip.
+   Each entry: name + brand colour + monogram (logo fallback), optional placement flag, and
+   an industry tag + 2-3 line blurb (EN/JA) used on the companies page + company modal.
+   PARTNER_LOGOS: real brand marks fetched once (favicon services) and inlined as data URIs
+   so the single-file site works offline with no external requests. Regenerate from
+   scratchpad/roster.tsv + descriptions.json + favicon fetch + this generator. */
   var PARTNERS = [
     {
       "name": "TechTouch",
       "color": "#0ea5a4",
-      "mono": "TT"
+      "mono": "TT",
+      "industry": {
+        "en": "DAP · SaaS",
+        "ja": "DAP・SaaS"
+      },
+      "blurb": {
+        "en": "Techtouch develops a no-code digital adoption platform (DAP) that overlays on-screen guidance and navigation onto existing web-based systems such as Salesforce and SAP. It helps enterprises, public-sector bodies, and other SaaS providers improve user onboarding and reduce the friction of operating complex software. The company is the leading DAP provider in the Japanese market.",
+        "ja": "Techtouchは、SalesforceやSAPなど既存のWebシステム上に操作ガイドやナビゲーションを重ねて表示するノーコードのデジタルアダプションプラットフォーム（DAP）を開発しています。大企業や官公庁、他のSaaS事業者に対し、ユーザーの定着支援や複雑なシステム操作の負担軽減を提供します。同社は日本のDAP市場で最大手の事業者です。"
+      }
     },
     {
       "name": "Money Forward",
       "color": "#0b8457",
       "mono": "MF",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "Fintech · SaaS",
+        "ja": "フィンテック・SaaS"
+      },
+      "blurb": {
+        "en": "Money Forward is a Tokyo Stock Exchange Prime-listed financial technology company founded in 2012. It offers a personal finance management app for consumers and the Money Forward Cloud suite of B2B SaaS for businesses, covering accounting, invoicing, payroll, HR, and contract management. The company serves both individual users and several hundred thousand paying corporate customers across Japan.",
+        "ja": "マネーフォワードは2012年設立、東京証券取引所プライム市場に上場するフィンテック企業です。個人向けの家計簿・資産管理アプリと、会計・請求書・給与・人事・契約管理などをカバーする法人向けSaaS「マネーフォワード クラウド」を提供しています。個人ユーザーから数十万社規模の有料法人顧客まで、日本全国で幅広く利用されています。"
+      }
     },
     {
       "name": "enechain",
       "color": "#1f6f5c",
-      "mono": "en"
+      "mono": "en",
+      "industry": {
+        "en": "Energy trading · Marketplace",
+        "ja": "エネルギー取引・マーケットプレイス"
+      },
+      "blurb": {
+        "en": "enechain operates Japan's largest wholesale energy trading marketplace, eSquare, where utilities, industrial firms, and financial institutions trade electricity, fuels, and environmental values such as carbon credits. Alongside the marketplace, it provides supporting tools including clearing, data, and risk-management software. The company aims to build fair, open markets across the energy sector.",
+        "ja": "enechainは、日本最大級の卸エネルギー取引マーケットプレイス「eSquare」を運営し、電力会社・事業会社・金融機関などが電力や燃料、カーボンクレジットといった環境価値を取引できる場を提供しています。マーケットプレイスに加え、クリアリング、データ、リスク管理ソフトウェアなどの周辺ツールも提供しています。エネルギー分野全体で公正で開かれた市場の構築を目指しています。"
+      }
     },
     {
       "name": "Hubble",
       "color": "#3056d3",
-      "mono": "Hu"
+      "mono": "Hu",
+      "industry": {
+        "en": "Legal tech · CLM",
+        "ja": "リーガルテック・契約管理"
+      },
+      "blurb": {
+        "en": "Hubble develops a cloud-based contract lifecycle management (CLM) platform that helps legal and business teams collaborate on drafting, reviewing, and managing contracts. Its features include automatic version control, draft comparison, and integrations with Microsoft Word, Slack, and e-signature services, with AI-powered tools for building searchable contract databases. The platform is used by large corporations and venture companies across Japan.",
+        "ja": "Hubbleは、契約書の作成・レビュー・管理において法務部門と事業部門の協働を支援する、クラウド型の契約ライフサイクル管理（CLM）プラットフォームを開発しています。自動バージョン管理やドラフトの比較、Microsoft WordやSlack、電子署名サービスとの連携に加え、検索可能な契約データベースを構築するAI機能も備えています。同プラットフォームは日本国内の大企業からベンチャー企業まで幅広く利用されています。"
+      }
     },
     {
       "name": "GO Inc.",
       "color": "#111827",
       "mono": "GO",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "Mobility · Ride-hailing",
+        "ja": "モビリティ・配車"
+      },
+      "blurb": {
+        "en": "GO Inc. operates GO, the most widely used taxi-hailing app in Japan, which lets users hail a cab, track the ride, and pay cashlessly in one app. Working with local taxi operators, it aggregates roughly 100,000 licensed vehicles across most of the country's prefectures. The company was formed from the merger of JapanTaxi and DeNA's mobility business and rebranded to GO in 2023.",
+        "ja": "GO株式会社は、日本で最も利用されているタクシー配車アプリ「GO」を運営しており、配車・乗車中の追跡・キャッシュレス決済を一つのアプリで完結できます。地域のタクシー事業者と連携し、全国のほとんどの都道府県で約10万台の認可車両を束ねています。同社はJapanTaxiとDeNAのモビリティ事業の統合により誕生し、2023年に「GO」へと社名を変更しました。"
+      }
     },
     {
       "name": "CBcloud",
       "color": "#d4762a",
-      "mono": "CB"
+      "mono": "CB",
+      "industry": {
+        "en": "Logistics tech · Delivery",
+        "ja": "物流テック・配送"
+      },
+      "blurb": {
+        "en": "CBcloud, founded in 2013, operates PickGo, one of Japan's largest digital delivery platforms, which directly matches shippers with freelance delivery drivers and freight operators. Vehicles can be arranged online around the clock, with matching often completed in under a minute. The company focuses on addressing driver shortages and improving working conditions in the logistics industry.",
+        "ja": "CBcloudは2013年設立で、荷主とフリーランスの配送ドライバーや運送事業者を直接マッチングする、日本最大級のデジタル配送プラットフォーム「PickGo」を運営しています。車両は24時間オンラインで手配でき、マッチングは1分以内に成立することも少なくありません。同社はドライバー不足の解消と物流業界の労働環境の改善に取り組んでいます。"
+      }
     },
     {
       "name": "Datachain",
       "color": "#5b3df5",
       "mono": "Da",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "Blockchain · Interoperability",
+        "ja": "ブロックチェーン・相互運用性"
+      },
+      "blurb": {
+        "en": "Datachain, founded in 2018, builds blockchain interoperability infrastructure that connects heterogeneous networks so they can interact as a single network. Its technologies include the YUI project (a Hyperledger Lab using Inter-Blockchain Communication) and the Cross Framework for cross-chain smart contracts. The company collaborates with partners such as NTT DATA and Progmat, including work on cross-border stablecoin settlement.",
+        "ja": "Datachainは2018年設立で、異なるブロックチェーンネットワークを接続し、それらを一つのネットワークとして扱えるようにする相互運用性インフラを構築しています。技術にはInter-Blockchain Communicationを用いたHyperledger Labのプロジェクト「YUI」や、クロスチェーンのスマートコントラクトを実現する「Cross Framework」などがあります。同社はNTTデータやProgmatといったパートナーと、国際送金向けステーブルコイン決済などの取り組みを進めています。"
+      }
     },
     {
       "name": "Pocketalk",
       "color": "#e0552b",
       "mono": "Pk",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "AI translation devices",
+        "ja": "AI翻訳デバイス"
+      },
+      "blurb": {
+        "en": "Pocketalk is a line of AI-powered voice translation devices and apps originally developed by Sourcenext, supporting real-time two-way conversation across roughly 80 languages. Its products span the handheld translator device, a mobile app, live video-call subtitles, and an enterprise fleet-management console, and are widely used by travelers, healthcare providers, and businesses serving international customers.",
+        "ja": "Pocketalkはソースネクストが開発したAI音声翻訳デバイスおよびアプリのシリーズで、約80言語に対応し、リアルタイムの双方向会話を可能にします。携帯型の翻訳機本体に加え、モバイルアプリ、ビデオ通話の字幕表示、法人向けの一括管理コンソールなどを展開し、旅行者や医療現場、海外顧客に対応する企業で広く利用されています。"
+      }
     },
     {
       "name": "Yoii",
       "color": "#e8552d",
-      "mono": "Yo"
+      "mono": "Yo",
+      "industry": {
+        "en": "Fintech · Revenue-based financing",
+        "ja": "フィンテック・レベニューベースファイナンス"
+      },
+      "blurb": {
+        "en": "Yoii is a Tokyo-based fintech that operates \"Yoii Fuel,\" a revenue-based financing (RBF) platform for startups and SMEs. It lets companies raise growth capital against future revenue through an online application, without equity dilution, personal guarantees, or collateral, and has established an RBF fund with institutional partners including Mitsubishi UFJ Trust and Banking.",
+        "ja": "Yoiiは東京を拠点とするフィンテック企業で、スタートアップや中小企業向けのレベニューベースファイナンス（RBF）プラットフォーム「Yoii Fuel」を提供しています。オンラインでの申し込みにより、株式の希薄化や個人保証・担保なしで将来の売上を基に成長資金を調達でき、三菱UFJ信託銀行などの機関投資家と組んでRBFファンドも組成しています。"
+      }
     },
     {
       "name": "LegalOn",
       "color": "#1a3a8f",
-      "mono": "Le"
+      "mono": "Le",
+      "industry": {
+        "en": "Legal tech · Contract-review AI",
+        "ja": "リーガルテック・契約審査AI"
+      },
+      "blurb": {
+        "en": "LegalOn Technologies builds AI software for contract review and management, founded in 2017 by former corporate attorneys and headquartered in Tokyo and San Francisco. In Japan it offers \"LegalForce\" for AI-assisted contract review and \"LegalForce Cabinet\" for contract lifecycle management, serving thousands of corporate legal teams across Japan, the US, and the UK.",
+        "ja": "LegalOn Technologiesは契約書の審査・管理を支援するAIソフトウェアを開発する企業で、2017年に企業法務出身の弁護士らが創業し、東京とサンフランシスコに拠点を置いています。日本国内ではAIによる契約審査サービス「LegalForce」と、契約管理サービス「LegalForce Cabinet」を提供し、日本・米国・英国の数千社の法務部門に利用されています。"
+      }
     },
     {
       "name": "Findy",
       "color": "#3b82f6",
-      "mono": "Fi"
+      "mono": "Fi",
+      "industry": {
+        "en": "HR tech · Engineer hiring",
+        "ja": "HRテック・エンジニア採用"
+      },
+      "blurb": {
+        "en": "Findy operates AI-driven hiring platforms for software engineers, using a proprietary algorithm that analyzes public GitHub and other repository activity to compute a \"skill deviation score\" (スキル偏差値). Its services include the Findy job-change platform, Findy Freelance, and Findy Global for international talent, connecting engineers with companies ranging from startups to large enterprises.",
+        "ja": "Findyはソフトウェアエンジニア向けのAI採用プラットフォームを運営し、GitHubなどの公開リポジトリの活動を独自アルゴリズムで分析して「スキル偏差値」を算出します。転職サービス「Findy」、業務委託向けの「Findy Freelance」、海外人材向けの「Findy Global」などを展開し、スタートアップから大企業まで幅広い企業とエンジニアをマッチングしています。"
+      }
     },
     {
       "name": "Finatext",
       "color": "#0f172a",
-      "mono": "Fx"
+      "mono": "Fx",
+      "industry": {
+        "en": "Fintech · Financial infrastructure",
+        "ja": "フィンテック・金融インフラ"
+      },
+      "blurb": {
+        "en": "Finatext Holdings is a Tokyo Stock Exchange-listed fintech group that provides cloud-native, API-first financial infrastructure under the tagline \"Reinvent finance as a service.\" It supplies brokerage-, insurance-, and credit-as-a-service systems that let financial and non-financial companies embed investment, insurance, and lending products, alongside fintech application development and big-data analytics businesses.",
+        "ja": "Finatext Holdingsは東京証券取引所に上場するフィンテックグループで、「金融を、サービスとして、再発明する」を掲げ、クラウドネイティブかつAPIファーストの金融インフラを提供しています。証券・保険・与信などの「○○as a Service」基盤を通じて、金融・非金融企業が投資・保険・融資サービスを組み込めるようにするほか、フィンテックアプリ開発やビッグデータ解析の事業も手がけています。"
+      }
     },
     {
       "name": "Tier IV",
       "color": "#e11d48",
       "mono": "T4",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "Autonomous driving",
+        "ja": "自動運転"
+      },
+      "blurb": {
+        "en": "Tier IV (ティアフォー) is a Japanese deep-tech company that originated Autoware, the world's first open-source software platform for autonomous driving, and is a founding member of the Autoware Foundation. It develops autonomous driving software stacks, reference vehicles, and development tools, and works on Level 4 self-driving deployments and datasets, including projects under Japanese government initiatives.",
+        "ja": "ティアフォー（Tier IV）は、世界初の自動運転向けオープンソースソフトウェア「Autoware」を生み出した日本のディープテック企業で、Autoware Foundationの創設メンバーでもあります。自動運転ソフトウェアスタックやリファレンス車両、開発ツールを開発し、日本政府のプロジェクトを含むレベル4自動運転の実証やデータセット整備に取り組んでいます。"
+      }
     },
     {
       "name": "Nature",
       "color": "#16a34a",
-      "mono": "Na"
+      "mono": "Na",
+      "industry": {
+        "en": "IoT · Smart home / energy",
+        "ja": "IoT・スマートホーム／エネルギー"
+      },
+      "blurb": {
+        "en": "Nature Inc. is a Japanese IoT company best known for \"Nature Remo,\" a smart remote that lets users control air conditioners, TVs, and other appliances from a smartphone or smart speaker. It has expanded into home energy management with \"Nature Remo E\" and operates a distributed-energy-resource platform and demand-response services aimed at supporting the shift to renewable energy.",
+        "ja": "Nature株式会社は、エアコンやテレビなどの家電をスマートフォンやスマートスピーカーから操作できるスマートリモコン「Nature Remo」で知られる日本のIoT企業です。「Nature Remo E」で家庭のエネルギーマネジメント領域にも進出し、分散型エネルギーリソース（DER）プラットフォームやデマンドレスポンスサービスを運営して、再生可能エネルギーへの移行を後押ししています。"
+      }
     },
     {
       "name": "Minttown",
       "color": "#10b981",
-      "mono": "Mt"
+      "mono": "Mt",
+      "industry": {
+        "en": "Web3 gaming · blockchain",
+        "ja": "Web3ゲーム・ブロックチェーン"
+      },
+      "blurb": {
+        "en": "Mint Town plans, develops, and operates Web3 games and platforms built on blockchain technology. Its projects include the soccer-themed blockchain game Captain Tsubasa -RIVALS- and a reward-point service that lets users earn points through free-to-play games. The company was spun off from Thirdverse in 2023 and is led by gumi founder Hironao Kunimitsu.",
+        "ja": "Mint Townは、ブロックチェーン技術を活用したWeb3ゲームやプラットフォームの企画・開発・運営を手がけています。サッカー漫画原作のブロックチェーンゲーム『キャプテン翼 -RIVALS-』や、無料ゲームを遊んでポイントを貯められるリワードサービスなどを展開しています。同社は2023年にThirdverseからスピンオフして設立され、gumi創業者の國光宏尚氏が率いています。"
+      }
     },
     {
       "name": "Kanmu",
       "color": "#f59e0b",
-      "mono": "Ka"
+      "mono": "Ka",
+      "industry": {
+        "en": "Fintech · payments",
+        "ja": "フィンテック・決済"
+      },
+      "blurb": {
+        "en": "Kanmu is a Tokyo-based fintech company best known for Vandle Card, a Visa prepaid card app that can be issued instantly and is widely used by people without traditional credit cards, including students. It also offers Pool, a credit card aimed at asset building. Kanmu joined the MUFG Group following a capital alliance announced in 2022.",
+        "ja": "カンムは東京を拠点とするフィンテック企業で、即時発行が可能なVisaプリペイドカードアプリ「バンドルカード」で知られています。学生をはじめ従来のクレジットカードを持たない層に広く利用されています。資産形成向けクレジットカード「Pool」も提供しており、2022年に発表された資本提携を経てMUFGグループの一員となりました。"
+      }
     },
     {
       "name": "LabBase",
       "color": "#2563eb",
-      "mono": "Lb"
+      "mono": "Lb",
+      "industry": {
+        "en": "HR tech · recruiting",
+        "ja": "HRテック・採用"
+      },
+      "blurb": {
+        "en": "LabBase operates a direct-recruiting platform focused on science and engineering students in Japan, connecting them with companies through scout-based hiring. Its flagship service, LabBase就職, lets employers search a database of STEM students and reach out directly, and it also runs recruiting events and content. The company was founded in 2016.",
+        "ja": "LabBaseは、日本の理系学生に特化したダイレクトリクルーティングプラットフォームを運営し、スカウト型採用を通じて学生と企業をつないでいます。主力サービス「LabBase就職」では、企業が理系学生のデータベースを検索して直接アプローチでき、採用イベントやコンテンツ制作も手がけています。同社は2016年に設立されました。"
+      }
     },
     {
       "name": "Luup",
       "color": "#0d9488",
       "mono": "Lu",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "Micromobility · sharing",
+        "ja": "マイクロモビリティ・シェアリング"
+      },
+      "blurb": {
+        "en": "Luup operates a micromobility sharing service that lets users rent e-bikes and electric kickboard scooters via a smartphone app and travel between stations across the city. It runs one of Japan's largest networks of stations, operating in major cities including Tokyo, Osaka, Yokohama, Kyoto, and Nagoya. The company launched its e-bike service in 2020 and added e-scooters in 2021.",
+        "ja": "Luupは、スマートフォンアプリで電動アシスト自転車や電動キックボードを借り、街中のポート間を移動できるマイクロモビリティのシェアリングサービスを運営しています。東京、大阪、横浜、京都、名古屋など主要都市で展開し、国内最大級のポート網を持ちます。2020年に電動自転車、2021年に電動キックボードのサービスを開始しました。"
+      }
     },
     {
       "name": "Amptalk",
       "color": "#6366f1",
-      "mono": "Am"
+      "mono": "Am",
+      "industry": {
+        "en": "Sales tech · AI / SaaS",
+        "ja": "セールステック・AI / SaaS"
+      },
+      "blurb": {
+        "en": "Amptalk builds AI-powered sales enablement tools that turn meeting and call conversations into usable data. Its core product, amptalk analysis, automatically transcribes, summarizes, and analyzes sales conversations and syncs the results to CRM and collaboration tools such as Salesforce, HubSpot, Slack, and Microsoft Teams. It also offers amptalk coach, an AI role-play tool for sales training. The company was founded in 2019 and is based in Tokyo.",
+        "ja": "amptalkは、商談や電話の会話を活用可能なデータに変えるAI搭載のセールスイネーブルメントツールを開発しています。主力製品「amptalk analysis」は商談を自動で文字起こし・要約・解析し、結果をSalesforce、HubSpot、Slack、Microsoft TeamsなどのCRMやコラボレーションツールに連携します。AIロールプレイによる営業トレーニングツール「amptalk coach」も提供しています。同社は2019年設立、東京を拠点としています。"
+      }
     },
     {
       "name": "newmo",
       "color": "#ec4899",
-      "mono": "nm"
+      "mono": "nm",
+      "industry": {
+        "en": "Mobility · ride-hailing",
+        "ja": "モビリティ・配車"
+      },
+      "blurb": {
+        "en": "newmo runs taxi and Japan-style ridesharing operations through its dispatch app, primarily in Osaka Prefecture. Because only licensed taxi operators may provide ridesharing in Japan, the company acquired existing taxi firms by M&A, building a fleet of over 1,000 vehicles, and is applying AI across its operations. It is also partnering with TIER IV to develop a domestically built autonomous-driving taxi service. The company was founded in 2024.",
+        "ja": "newmoは、配車アプリを通じてタクシー事業と日本型ライドシェア事業を、主に大阪府で展開しています。日本ではライドシェアの提供が認可タクシー事業者に限られるため、同社はM&Aで既存のタクシー会社を取得し、1,000台を超える車両を擁する規模に拡大、運行全体にAIを活用しています。さらにTIER IVと提携し、国産の自動運転タクシーサービスの開発も進めています。同社は2024年に設立されました。"
+      }
     },
     {
       "name": "Gaudiy",
       "color": "#7c3aed",
       "mono": "Ga",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "Web3 · fan community",
+        "ja": "Web3・ファンコミュニティ"
+      },
+      "blurb": {
+        "en": "Gaudiy is a Tokyo-based company that develops Gaudiy Fanlink, a fan-community platform that uses blockchain technologies such as NFTs and decentralized IDs, along with generative AI, to build dedicated communities for individual IPs and reward fans for their engagement. Entertainment rights holders including Sanrio, Sony Music Entertainment, Shueisha, and Bandai Namco Entertainment use the platform. The company was founded in 2018.",
+        "ja": "Gaudiyは東京を拠点とする企業で、NFTや分散型ID（DID）といったブロックチェーン技術と生成AIを活用したファンコミュニティプラットフォーム「Gaudiy Fanlink」を開発しています。IPごとに専用のコミュニティを構築し、ファンの貢献や熱量に応じて還元する仕組みを提供しています。サンリオ、ソニー・ミュージックエンタテインメント、集英社、バンダイナムコエンターテインメントなどのIPホルダーが導入しています。同社は2018年に設立されました。"
+      }
     },
     {
       "name": "Progate",
       "color": "#7c3aed",
-      "mono": "Pr"
+      "mono": "Pr",
+      "industry": {
+        "en": "EdTech · Coding education",
+        "ja": "EdTech・プログラミング学習"
+      },
+      "blurb": {
+        "en": "Progate is an online programming learning service that teaches coding through interactive, slide-based lessons and an in-browser coding environment, with no setup required. It covers languages and frameworks such as HTML/CSS, JavaScript, Ruby, Ruby on Rails, Python, and Java, and is aimed at beginners. The service is offered via both web and mobile apps and is used by learners in Japan and internationally.",
+        "ja": "Progateは、スライド形式のインタラクティブなレッスンとブラウザ上で動くコーディング環境を通じてプログラミングを学べるオンライン学習サービスで、環境構築は不要です。HTML/CSS、JavaScript、Ruby、Ruby on Rails、Python、Javaなどの言語・フレームワークを扱い、初心者を主な対象としています。Webとモバイルアプリの両方で提供され、国内外の学習者に利用されています。"
+      }
     },
     {
       "name": "Kauche",
       "color": "#f97316",
-      "mono": "Kc"
+      "mono": "Kc",
+      "industry": {
+        "en": "E-commerce · Social shopping",
+        "ja": "EC・ソーシャルショッピング"
+      },
+      "blurb": {
+        "en": "Kauche operates KAUCHE, a Japanese \"share-buying\" (group-buying) shopping app where users form groups with friends or other shoppers to buy products together at lower prices. Once enough people join a buying group within the time limit the discounted price applies, and if not enough join, buyers are refunded. The app sells food, daily necessities, cosmetics, and household goods.",
+        "ja": "Kaucheは、シェア買い（共同購入）アプリ「KAUCHE（カウシェ）」を運営しています。ユーザーが友人や他の利用者とグループを作って一緒に商品を購入することで、より安い価格で手に入れられる仕組みです。制限時間内に必要人数が集まればシェア買い価格が適用され、集まらなかった場合は返金されます。食品や日用品、化粧品、生活雑貨などを取り扱っています。"
+      }
     },
     {
       "name": "kickflow",
       "color": "#2563eb",
-      "mono": "kf"
+      "mono": "kf",
+      "industry": {
+        "en": "SaaS · Workflow automation",
+        "ja": "SaaS・ワークフロー"
+      },
+      "blurb": {
+        "en": "kickflow provides a cloud-based (SaaS) workflow and approval system aimed at mid-sized and large enterprises, designed to digitize the traditional Japanese ringi internal request-and-approval process. It offers no-code configuration of complex organizational structures and approval routes, plus API/webhook integrations and links to chat tools such as Slack, Microsoft Teams, and Chatwork. The product focuses on speeding up approvals and reducing administrative workload.",
+        "ja": "kickflowは、中堅・大企業向けのクラウド型（SaaS）ワークフロー・承認システムを提供し、日本企業の稟議など社内申請・承認業務のデジタル化を支援します。複雑な組織構造や承認ルートをノーコードで設定でき、API/Webhook連携やSlack、Microsoft Teams、Chatworkなどのチャットツールとの連携にも対応しています。承認スピードの向上と管理工数の削減を重視した製品です。"
+      }
     },
     {
       "name": "GA technologies",
       "color": "#0ea5e9",
-      "mono": "GA"
+      "mono": "GA",
+      "industry": {
+        "en": "Real-estate tech (PropTech)",
+        "ja": "不動産テック（PropTech）"
+      },
+      "blurb": {
+        "en": "GA technologies is a Tokyo-based real-estate technology company that operates RENOSY, an online, AI-driven real-estate investment service providing a one-stop platform for buying, managing, and selling investment properties such as condominiums, apartments, and houses. RENOSY has ranked first in Japan for investment-property sales. The company is expanding its real-estate investment business into the U.S. market.",
+        "ja": "GA technologiesは東京を拠点とする不動産テック企業で、AIを活用したオンライン不動産投資サービス「RENOSY（リノシー）」を運営しています。マンション、アパート、戸建てなどの投資用物件の購入・管理・売却をワンストップで提供するプラットフォームで、投資用不動産の売買で国内No.1の実績を持ちます。近年は不動産投資事業を米国市場にも展開しています。"
+      }
     },
     {
       "name": "Giftmall",
       "color": "#e11d48",
       "mono": "Gi",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "E-commerce · Gifting",
+        "ja": "EC・ギフト"
+      },
+      "blurb": {
+        "en": "Giftmall operates one of Japan's largest online gift marketplaces, where shoppers can search roughly a million-plus items by recipient, occasion, or category. It offers gift-specific features such as personalized engraving, special wrapping, and next-day delivery for eligible items, and uses purchase data from its large user base to power product recommendations. The service runs as both a website and a mobile app.",
+        "ja": "Giftmallは、日本最大級のオンラインギフトサービスを運営しており、贈る相手やイベント、カテゴリーなどから約100万点以上の商品を検索できます。名入れや特別なラッピング、対象商品の翌日配送など、ギフトに特化した機能を提供し、大規模なユーザーの購買データを活用した商品レコメンドも行っています。WebサイトとモバイルアプリのＡ両方で提供されています。"
+      }
     },
     {
       "name": "WeWork Japan",
       "color": "#111827",
-      "mono": "WW"
+      "mono": "WW",
+      "industry": {
+        "en": "Flexible workspace · CRE",
+        "ja": "フレキシブルオフィス・不動産"
+      },
+      "blurb": {
+        "en": "WeWork Japan provides flexible workspace, operating coworking spaces, furnished private offices, and meeting rooms across roughly 40 locations in cities including Tokyo, Osaka, Yokohama, Nagoya, Fukuoka, and Kobe. It serves freelancers, startups, and large enterprises with monthly memberships and turnkey office solutions, along with amenities and community events. It is the Japan operation of the WeWork flexible-office brand.",
+        "ja": "WeWork Japanはフレキシブルオフィス事業を展開し、東京・大阪・横浜・名古屋・福岡・神戸などの都市で約40拠点のコワーキングスペース、家具付きの専用オフィス、会議室を運営しています。月額会員制やすぐに利用できるオフィスソリューションを通じて、フリーランスからスタートアップ、大企業までを対象とし、各種アメニティやコミュニティイベントも提供しています。フレキシブルオフィスブランドWeWorkの日本法人です。"
+      }
     },
     {
       "name": "Globis",
       "color": "#1e3a8f",
-      "mono": "Gb"
+      "mono": "Gb",
+      "industry": {
+        "en": "Business education · VC",
+        "ja": "ビジネス教育・VC"
+      },
+      "blurb": {
+        "en": "Globis runs Japan's largest business graduate school, GLOBIS University, offering full-time, part-time, and online MBA programs in Japanese and English, alongside corporate training and an online learning platform. The group also operates GLOBIS Capital Partners, a venture capital arm that has invested in companies such as Mercari and SmartNews. Founded in 1992, it combines education, capital, and knowledge across multiple campuses in Japan and abroad.",
+        "ja": "Globisは、日本最大級のビジネス大学院「グロービス経営大学院」を運営し、日本語・英語による全日制・夜間・オンラインのMBAプログラムに加え、法人向け研修やオンライン学習サービスを提供しています。グループ内にはベンチャーキャピタル部門「グロービス・キャピタル・パートナーズ」があり、メルカリやスマートニュースなどへの投資実績があります。1992年創業で、教育・資本・知見を結びつけ、国内外に複数のキャンパスを展開しています。"
+      }
     },
     {
       "name": "Sun Asterisk",
       "color": "#ef4444",
-      "mono": "Sun"
+      "mono": "Sun",
+      "industry": {
+        "en": "Software dev · DX studio",
+        "ja": "ソフトウェア開発・DXスタジオ"
+      },
+      "blurb": {
+        "en": "Sun Asterisk is a digital creative studio that supports new business and product development for mainly Japanese clients, from idea generation and design through to engineering and growth. It operates large offshore development teams across Vietnam, the Philippines, and Cambodia alongside its Tokyo base, and also runs talent and engineer-training services. Founded in 2013, it employs over 2,000 people.",
+        "ja": "Sun Asterisk（サンアスタリスク）は、主に日本企業向けに新規事業・プロダクト開発を支援するデジタル・クリエイティブスタジオです。アイデア創出やデザインからエンジニアリング、グロースまでを一貫して支援し、東京を拠点にベトナム・フィリピン・カンボジアで大規模なオフショア開発チームを擁するほか、人材育成・転職支援事業も手がけます。2013年設立で、従業員数は2,000名超です。"
+      }
     },
     {
       "name": "M3",
       "color": "#dc2626",
-      "mono": "M3"
+      "mono": "M3",
+      "industry": {
+        "en": "HealthTech · medical platform",
+        "ja": "ヘルステック・医療プラットフォーム"
+      },
+      "blurb": {
+        "en": "M3 operates m3.com, a portal for medical professionals that is used by the large majority of registered physicians in Japan. Its services include pharma marketing support (such as the MR-kun e-detailing platform), medical career and recruitment services, clinical trial and treatment support, and overseas medical platforms. The company is listed on the Tokyo Stock Exchange.",
+        "ja": "エムスリーは、日本の登録医師の大多数が利用する医療従事者向けポータル「m3.com」を運営しています。MR君などの製薬マーケティング支援、医師の転職・求人サービス、治験・臨床支援、海外向け医療プラットフォームなどを展開しています。東京証券取引所に上場しています。"
+      }
     },
     {
       "name": "Sansan",
       "color": "#e11d48",
-      "mono": "Sa"
+      "mono": "Sa",
+      "industry": {
+        "en": "SaaS · business networking",
+        "ja": "SaaS・ビジネスネットワーク"
+      },
+      "blurb": {
+        "en": "Sansan develops cloud services that digitize and manage business contact and company data. Its flagship product is the corporate cloud business card and contact management service Sansan; it also offers the cloud invoice service Bill One and the personal business-card app Eight. The company is listed on the Tokyo Stock Exchange.",
+        "ja": "Sansan（サンサン）は、名刺や企業データをデジタル化・管理するクラウドサービスを開発しています。主力は法人向けクラウド名刺・顧客管理サービス「Sansan」で、ほかにインボイス管理サービス「Bill One」や個人向け名刺アプリ「Eight」も提供しています。東京証券取引所に上場しています。"
+      }
     },
     {
       "name": "CADDi",
       "color": "#0ea5e9",
-      "mono": "Ca"
+      "mono": "Ca",
+      "industry": {
+        "en": "Manufacturing tech · procurement",
+        "ja": "製造業テック・調達"
+      },
+      "blurb": {
+        "en": "CADDi builds technology for the manufacturing industry, centered on its drawing and data utilization platform CADDi Drawer, which digitizes and searches design drawings and related procurement data. It serves manufacturers and helps them streamline procurement, sourcing, and supply-chain operations. The company is headquartered in Tokyo and operates internationally.",
+        "ja": "CADDi（キャディ）は製造業向けのテクノロジーを開発する企業で、図面データ活用クラウド「CADDi Drawer」を中心に、設計図面や調達関連データのデジタル化・検索を可能にします。製造業の調達・購買・サプライチェーン業務の効率化を支援しています。東京に本社を置き、海外でも事業を展開しています。"
+      }
     },
     {
       "name": "BASE",
       "color": "#0d1f3c",
-      "mono": "BA"
+      "mono": "BA",
+      "industry": {
+        "en": "E-commerce · fintech",
+        "ja": "Eコマース・フィンテック"
+      },
+      "blurb": {
+        "en": "BASE, Inc. operates the online shop creation service BASE, which lets individuals and small businesses set up an e-commerce store easily. The group also runs the PAY ID shopping app, the online payment API service PAY.JP, and the cash-flow funding service YELL BANK. The Tokyo-based company is listed on the Tokyo Stock Exchange.",
+        "ja": "BASE（ベイス）は、誰でも簡単にネットショップを開設できるEコマースサービス「BASE」を運営する企業です。グループでは、購入者向けショッピングアプリ「PAY ID」、オンライン決済API「PAY.JP」、資金調達サービス「YELL BANK」なども提供しています。東京に本社を置き、東京証券取引所に上場しています。"
+      }
     },
     {
       "name": "Kufu Company",
       "color": "#16a34a",
-      "mono": "Ku"
+      "mono": "Ku",
+      "industry": {
+        "en": "Lifestyle media · consumer tech",
+        "ja": "生活メディア・コンシューマーテック"
+      },
+      "blurb": {
+        "en": "Kufu Company (Kufu Company Holdings) is a holding company operating a group of consumer internet services across everyday life categories. Its services include the chirashi/shopping-deals app Tokubai, the household budgeting app Zaim, plus real estate, wedding, and local-information media. It was formed in 2021 and is listed on the Tokyo Stock Exchange.",
+        "ja": "くふうカンパニー（くふうカンパニーホールディングス）は、生活領域のインターネットサービス群を運営する持株会社です。チラシ・買い物情報アプリ「トクバイ」、家計簿アプリ「Zaim」のほか、不動産、結婚式、地域情報メディアなどを展開しています。2021年に設立され、東京証券取引所に上場しています。"
+      }
     },
     {
       "name": "Oishi Kenkou",
       "color": "#22c55e",
-      "mono": "OK"
+      "mono": "OK",
+      "industry": {
+        "en": "HealthTech · nutrition AI",
+        "ja": "ヘルステック・栄養AI"
+      },
+      "blurb": {
+        "en": "Oishi Kenkou operates an AI-powered meal planning and nutrition management app (oishi-kenko.com) that offers dietitian-supervised recipes and personalized meal suggestions for 80-plus health goals and conditions, from dieting to disease management and pregnancy. It also provides Kakaris, a cloud service supporting medical institutions with chronic-disease and nutritional guidance. The Tokyo company became independent from Cookpad in 2016.",
+        "ja": "おいしい健康は、管理栄養士監修のレシピと一人ひとりに合わせた献立提案を行うAI食事管理・栄養管理アプリ（oishi-kenko.com）を運営しています。ダイエットから疾患管理、妊娠期まで80以上の健康目的・病態に対応し、医療機関向けには慢性疾患管理や栄養指導を支援するクラウドサービス「kakari」も提供しています。東京に本社を置き、2016年にクックパッドから独立しました。"
+      }
     },
     {
       "name": "Canly",
       "color": "#2563eb",
-      "mono": "Cn"
+      "mono": "Cn",
+      "industry": {
+        "en": "Store-management SaaS",
+        "ja": "店舗管理SaaS"
+      },
+      "blurb": {
+        "en": "Canly (株式会社カンリー) provides a SaaS platform that lets multi-location businesses centrally manage their store information across Google Business Profile, official websites, and social media accounts. It is used by restaurant, retail, and service chains to keep store listings consistent and improve local customer acquisition, with adoption across tens of thousands of stores.",
+        "ja": "Canly（株式会社カンリー）は、多店舗展開する企業がGoogleビジネスプロフィールや公式サイト、SNSなどの店舗情報を一元管理できるSaaSを提供しています。飲食・小売・サービス業のチェーンに導入され、店舗情報の整合性維持と地域集客の改善に使われており、国内外で数万店舗に利用されています。"
+      }
     },
     {
       "name": "Algomatic",
       "color": "#111827",
-      "mono": "Al"
+      "mono": "Al",
+      "industry": {
+        "en": "Generative AI",
+        "ja": "生成AI"
+      },
+      "blurb": {
+        "en": "Algomatic (株式会社Algomatic) is a Tokyo-based startup, founded in 2023, that builds generative-AI-native products and helps enterprises adopt AI. It runs multiple business units spanning AI transformation (AX) consulting, large language model development, and AI-powered tools for tasks such as phone-call handling and marketing content generation.",
+        "ja": "Algomatic（株式会社Algomatic）は2023年設立の東京拠点のスタートアップで、生成AIネイティブなプロダクトの開発と企業のAI活用支援を手がけています。AIトランスフォーメーション（AX）支援、大規模言語モデルの開発、電話応対やマーケティングコンテンツ生成などの業務を自動化するAIツールなど、複数の事業を展開しています。"
+      }
     },
     {
       "name": "Styleport",
       "color": "#0f766e",
-      "mono": "Sp"
+      "mono": "Sp",
+      "industry": {
+        "en": "Real-estate tech · VR",
+        "ja": "不動産テック・VR"
+      },
+      "blurb": {
+        "en": "Style Port (株式会社スタイルポート) develops ROOV, a 3D/VR communication platform for the real-estate sector. It lets buyers tour properties virtually, simulate furniture placement, and take measurements, while giving developers a cloud platform to consolidate sales documents and content. ROOV is widely used by major Japanese property developers, particularly for new condominium sales.",
+        "ja": "株式会社スタイルポートは、不動産業界向けの3D/VRコミュニケーションプラットフォーム「ROOV」を開発しています。購入検討者は物件のバーチャル内覧や家具配置シミュレーション、室内採寸ができ、デベロッパーは販売資料やコンテンツを集約するクラウド基盤として活用できます。ROOVは特に新築マンション販売で国内の大手デベロッパーに広く導入されています。"
+      }
     },
     {
       "name": "unerry",
       "color": "#f59e0b",
-      "mono": "un"
+      "mono": "un",
+      "industry": {
+        "en": "Location-data analytics",
+        "ja": "位置情報データ解析"
+      },
+      "blurb": {
+        "en": "unerry (株式会社unerry) operates Beacon Bank, a real-world behavioral data platform that aggregates GPS and beacon-based location data from smartphones across Japan. It uses this data to analyze foot traffic and consumer movement, supporting retailers, advertisers, and other businesses with marketing and store-visit analysis. The company is headquartered in Tokyo.",
+        "ja": "株式会社unerryは、全国のスマートフォンから取得したGPSおよびビーコンベースの位置情報を集約する行動データプラットフォーム「Beacon Bank」を運営しています。このデータをもとに人流や消費者の移動を分析し、小売事業者や広告主などのマーケティングや来店分析を支援しています。本社は東京にあります。"
+      }
     },
     {
       "name": "Rapyuta Robotics",
       "color": "#1d4ed8",
-      "mono": "Rr"
+      "mono": "Rr",
+      "industry": {
+        "en": "Cloud robotics · Warehouse automation",
+        "ja": "クラウドロボティクス・倉庫自動化"
+      },
+      "blurb": {
+        "en": "Rapyuta Robotics (ラピュタロボティクス) is a Tokyo-based robotics company, originally an ETH Zurich spinoff founded in 2014, specializing in cloud robotics and warehouse automation. Its core product is the Rapyuta PA-AMR, a pick-assist autonomous mobile robot that works alongside warehouse staff, built on its rapyuta.io cloud platform for multi-robot coordination. It serves logistics and distribution operations.",
+        "ja": "ラピュタロボティクス（Rapyuta Robotics）は2014年にETHチューリッヒ発で創業した東京拠点のロボティクス企業で、クラウドロボティクスと倉庫自動化を専門としています。主力製品は、倉庫作業者と協働するピッキング支援型の自律走行ロボット「Rapyuta PA-AMR」で、複数台のロボット連携を可能にするクラウド基盤「rapyuta.io」上で稼働します。物流・流通の現場に導入されています。"
+      }
     },
     {
       "name": "Xaion Data",
       "color": "#1d4ed8",
       "mono": "Xa",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "AI · Data / HR tech",
+        "ja": "AI・データ／HRテック"
+      },
+      "blurb": {
+        "en": "XAION DATA (株式会社XAION DATA) is a Tokyo-based AI and data company, founded in 2020, that collects and structures open data using proprietary technology. It offers SaaS products including AUTOHUNT, an AI-driven talent search engine for recruiting, and AUTOBOOST, a sales intelligence platform, alongside data-solution and recruitment services.",
+        "ja": "株式会社XAION DATAは2020年設立の東京拠点のAI・データ企業で、独自技術によりオープンデータの収集・構造化を行っています。採用向けのAI人材検索エンジン「AUTOHUNT」やセールスインテリジェンスプラットフォーム「AUTOBOOST」などのSaaSプロダクトに加え、データソリューションや人材紹介サービスを提供しています。"
+      }
     },
     {
       "name": "Comthink",
       "color": "#0ea5e9",
       "mono": "Co",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "IT services · DX / system development",
+        "ja": "ITサービス・DX／システム開発"
+      },
+      "blurb": {
+        "en": "Nihon Comthink (日本コムシンク株式会社) is a Japanese IT services firm, founded in 1985 and based in Osaka, that provides system design, development, and operation. It offers DX (digital transformation) consulting across a range of industries and works with technologies including IoT and AI, with an engineer-focused company culture.",
+        "ja": "日本コムシンク株式会社は1985年設立、大阪に本社を置くITサービス企業で、システムの設計・開発・運用を手がけています。幅広い業界向けにDX（デジタルトランスフォーメーション）コンサルティングを提供し、IoTやAIなどの技術も扱う、エンジニアを重視する企業文化を持つ会社です。"
+      }
     },
     {
       "name": "Sales Marker",
       "color": "#2563eb",
       "mono": "SM",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "Sales intelligence · SaaS",
+        "ja": "セールスインテリジェンス・SaaS"
+      },
+      "blurb": {
+        "en": "Sales Marker is a Tokyo-based B2B SaaS company that pioneered \"intent sales\" in Japan. Its platform combines a database of several million companies with web-behavior intent data to identify businesses with active purchase needs, then helps sales teams reach them across multiple channels. It also offers Marketing Marker for intent-based marketing strategy.",
+        "ja": "Sales Markerは、日本で「インテントセールス」を切り拓いた東京拠点のBtoB向けSaaS企業です。数百万社規模の企業データベースとWeb行動から得られるインテントデータを組み合わせ、今まさにニーズのある企業を特定し、複数チャネルでのアプローチを支援します。インテントデータを活用したマーケティング向けの「Marketing Marker」も提供しています。"
+      }
     },
     {
       "name": "Givery",
       "color": "#ef4444",
       "mono": "Gv",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "HR tech · DX services",
+        "ja": "HRテック・DX支援"
+      },
+      "blurb": {
+        "en": "Givery is a Tokyo-based technology company best known for Track, Japan's leading platform for assessing and training engineering talent through online coding tests and e-learning. It also develops AI-driven business tools (MANA) and marketing transformation services (DECA). Its engineering teams are highly international and operate largely in English.",
+        "ja": "Giveryは、エンジニアのスキル評価・育成プラットフォーム「Track」で知られる東京拠点のテクノロジー企業です。オンラインのコーディングテストやeラーニングを通じた技術力評価に加え、AIを活用した業務支援ツール「MANA」やマーケティングDX支援「DECA」などを展開しています。エンジニア組織は多国籍で、主に英語で業務を行っています。"
+      }
     },
     {
       "name": "AI TalentForce",
       "color": "#7c3aed",
       "mono": "AI",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "AI transformation (AX)",
+        "ja": "AI変革（AX）支援"
+      },
+      "blurb": {
+        "en": "AI TalentForce is a Tokyo-based AI company in the Akatsuki group; it was renamed Akatsuki AI Technologies, Inc. in January 2026. Originally focused on dispatching AI engineers, it now provides end-to-end support for corporate AI transformation, spanning generative AI, AI agents, and Physical AI. Services include building AI-powered business apps, internal tools and chatbots, creative-generation AI engines, and industry-specific AI agents.",
+        "ja": "AI TalentForceは、アカツキグループに属する東京拠点のAI企業で、2026年1月に「株式会社アカツキAIテクノロジーズ」へ社名変更しました。当初はAIエンジニアの派遣を主軸としていましたが、現在は生成AI・AIエージェント・フィジカルAIを含む企業のAI変革（AX）を一気通貫で支援しています。AI業務アプリや社内ツール・チャットボットの開発、クリエイティブ生成AIエンジン、業界特化型AIエージェントの開発などを手がけています。"
+      }
     },
     {
       "name": "LinQ",
       "color": "#06b6d4",
       "mono": "LQ",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "Consumer app · Social",
+        "ja": "コンシューマーアプリ・ソーシャル"
+      },
+      "blurb": {
+        "en": "LinQ is a Tokyo-based consumer app company that develops \"whoo,\" a location-sharing app for staying connected with close friends. The product is especially popular with Gen Z users and grew rapidly after the shutdown of the competing app Zenly. The company has raised Series A funding to expand its user base.",
+        "ja": "LinQは、親しい友人とつながり続けるための位置情報共有アプリ「whoo（フー）」を開発する東京拠点のコンシューマーアプリ企業です。同サービスはZ世代を中心に人気を集め、競合アプリ「Zenly」のサービス終了を機に急成長しました。シリーズAの資金調達を実施し、ユーザー基盤の拡大を進めています。"
+      }
     },
     {
       "name": "estie",
       "color": "#2563eb",
       "mono": "es",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "Real-estate tech · SaaS",
+        "ja": "不動産テック・SaaS"
+      },
+      "blurb": {
+        "en": "estie is a Tokyo-based real-estate tech startup, founded in 2018 with roots at the University of Tokyo, that digitizes the commercial real estate industry. It offers a SaaS platform and data products for office leasing and investment, including a comprehensive office-building database and market-research tools, plus a logistics real estate data service. Its tools support rent estimation and data-driven decision-making for real estate professionals.",
+        "ja": "estieは、商業用不動産業界のデジタル化を進める東京拠点の不動産テックスタートアップで、2018年に東京大学発で創業しました。オフィスの賃貸・投資領域向けのSaaSプラットフォームやデータプロダクトを提供し、オフィスビルの包括的なデータベースや市場調査ツール、物流不動産向けのデータサービスなどを展開しています。賃料推定やデータに基づく意思決定を支援し、不動産プロフェッショナルに利用されています。"
+      }
     },
     {
       "name": "mico",
       "color": "#ec4899",
       "mono": "mi",
-      "placement": true
+      "placement": true,
+      "industry": {
+        "en": "MarTech · CRM SaaS",
+        "ja": "マーテック・CRM SaaS"
+      },
+      "blurb": {
+        "en": "Mico Inc. is an Osaka- and Tokyo-based company specializing in LINE-based marketing and customer communication. Its flagship MicoCloud (including Mico Engage AI, BizClo business chat, the Micomii LINE mini app, and Mico Voice AI) helps B2C businesses manage customer data and run 1-to-1 messaging on LINE. The platform is used by over 1,000 clients reaching tens of millions of users.",
+        "ja": "株式会社Micoは、LINEを軸としたマーケティングと顧客コミュニケーションを専門とする大阪・東京拠点の企業です。主力の「MicoCloud」（LINEマーケティングツール「Mico Engage AI」、1to1ビジネスチャット「BizClo」、デジタル会員証のLINEミニアプリ「Micomii」、「Mico Voice AI」など）により、BtoC企業の顧客データ管理やLINE上での1to1コミュニケーションを支援します。1,000社以上に導入され、数千万人規模のユーザーにリーチしています。"
+      }
     },
     {
       "name": "Adventure",
       "color": "#f97316",
-      "mono": "Ad"
+      "mono": "Ad",
+      "industry": {
+        "en": "Online travel (OTA)",
+        "ja": "オンライン旅行（OTA）"
+      },
+      "blurb": {
+        "en": "Adventure, Inc. is a Tokyo-based online travel agency (listed on the Tokyo Stock Exchange, ticker 6030) that operates the booking platform skyticket. Starting with airline tickets, skyticket has expanded to hotels, car rentals, buses, ferries, WiFi rentals, and travel packages, and has surpassed 22 million app downloads. The company also runs the WANNATRIP travel portal and has subsidiaries across Asia and the US.",
+        "ja": "株式会社Adventureは、旅行予約プラットフォーム「skyticket（スカイチケット）」を運営する東京拠点のオンライン旅行会社（東京証券取引所上場、証券コード6030）です。航空券から始まったskyticketは、ホテル、レンタカー、高速バス、フェリー、WiFiレンタル、旅行パッケージへとサービスを拡大し、アプリのダウンロード数は2,200万を超えています。旅行ポータル「WANNATRIP」も運営し、アジアや米国に子会社を展開しています。"
+      }
     },
     {
       "name": "STRACT",
       "color": "#111827",
-      "mono": "Sr"
+      "mono": "Sr",
+      "industry": {
+        "en": "Consumer FinTech · Shopping app",
+        "ja": "消費者向けフィンテック・ショッピングアプリ"
+      },
+      "blurb": {
+        "en": "STRACT develops PLUG, a shopping-assist browser extension for Safari that automatically searches participating e-commerce malls to find the lowest price on an item and surface cashback coupons. Balances earned through cashback can be withdrawn in various ways, and a companion PLUG Wishlist feature notifies users of price drops on saved items. The company is consumer-facing, aiming to make everyday online shopping cheaper through its interface technology.",
+        "ja": "株式会社STRACTは、Safari向けのショッピングアシスト用ブラウザー拡張機能「PLUG（プラグ）」を開発しています。対象ECモールを自動で横断検索して商品の最安値を見つけ、キャッシュバッククーポンを提示するもので、獲得した残高はさまざまな方法で出金できます。登録した商品の値下げを通知する「PLUG Wishlist」も提供し、インタフェースの力で日常のオンラインショッピングをよりお得にすることを目指す消費者向けサービスです。"
+      }
     },
     {
       "name": "Facilo",
       "color": "#0d9488",
-      "mono": "Fc"
+      "mono": "Fc",
+      "industry": {
+        "en": "Real-estate tech · SaaS",
+        "ja": "不動産テック・SaaS"
+      },
+      "blurb": {
+        "en": "Facilo offers a cloud platform that it positions as an AI-driven 'sales OS' for real-estate brokerages, with dedicated products for property purchase, sale, rental, and commercial use. The tools provide customer-facing portals, automated proposal generation, and AI-assisted communication to streamline agents' workflows. Its users range from major national firms such as Mitsui no Rehouse and Nomura Real Estate to many single-branch brokerages, with thousands of store deployments across Japan.",
+        "ja": "Faciloは、不動産仲介業向けの「AI営業OS」と位置づけるクラウドプラットフォームを提供しています。売買・売却・賃貸・事業用といった用途ごとのサービスを揃え、顧客向けポータル、提案資料の自動作成、AIによるコミュニケーション支援などで営業業務の効率化を支援します。三井のリハウスや野村不動産ソリューションズといった大手から単店舗の仲介会社まで幅広く利用され、全国で数千店舗規模の導入実績があります。"
+      }
     },
     {
       "name": "Xbit",
       "color": "#2563eb",
-      "mono": "Xb"
+      "mono": "Xb",
+      "industry": {
+        "en": "HR tech · Shift-scheduling SaaS",
+        "ja": "HRテック・シフト管理SaaS"
+      },
+      "blurb": {
+        "en": "Xbit develops Rakushifu, a cloud-based shift-management system that helps companies plan and optimize staff scheduling to control labor costs without lowering service quality. It is used primarily by restaurant and retail chains, including multi-location operators such as Chimney and Sasaya. Xbit joined the SmartHR Group in 2026.",
+        "ja": "株式会社Xbitは、クラウドシフト管理システム「らくしふ」を開発しています。サービス品質を落とさずに人員を適正配置し、人件費を抑えながらシフト作成を最適化できるツールで、チムニーやささやといった多店舗を展開する飲食・小売チェーンを中心に利用されています。2026年にはSmartHRグループに加わりました。"
+      }
     },
     {
       "name": "Techocean",
       "color": "#0ea5e9",
-      "mono": "To"
+      "mono": "To",
+      "industry": {
+        "en": "HR tech · STEM recruiting",
+        "ja": "HRテック・理系採用"
+      },
+      "blurb": {
+        "en": "Tech Ocean operates TECH OFFER, a direct-recruiting (scout) platform specialized in hiring science and engineering students. It matches candidates to employers automatically based on technical keywords and student profiles, serving manufacturers and technical firms in sectors such as chemicals, electronics, and transportation. The service connects companies seeking technical talent with STEM students exploring their careers.",
+        "ja": "株式会社Techoceanは、理系学生の採用に特化したダイレクトリクルーティング（スカウト型）サービス「TECH OFFER」を運営しています。技術キーワードと学生のプロフィールをもとに候補者と企業を自動でマッチングし、化学・電機・運輸などの製造業や技術系企業に導入されています。技術人材を求める企業と、キャリアを模索する理系学生をつなぐサービスです。"
+      }
     },
     {
       "name": "Knowns",
       "color": "#111827",
-      "mono": "Kn"
+      "mono": "Kn",
+      "industry": {
+        "en": "MarTech · Consumer research SaaS",
+        "ja": "マーケティングテック・消費者リサーチSaaS"
+      },
+      "blurb": {
+        "en": "Knowns provides a consumer-research platform that lets companies run quick consumer surveys to capture awareness, impressions, and needs in near real time. Its lineup includes a self-serve research tool, a full-service Expert research option, an influencer database for identification and management, and surveys across Asian markets. Clients include major advertising agencies and consumer brands using the data for marketing, product development, and sales planning.",
+        "ja": "株式会社Knownsは、消費者調査をすばやく実施できるリサーチプラットフォームを提供しています。認知や印象、ニーズをほぼリアルタイムで把握できるセルフ型の調査ツールに加え、専門家による調査代行「Expert」、インフルエンサーの選定・管理ができるデータベース、アジア各国を対象とした調査などを展開しています。大手広告代理店や消費財ブランドなどが、マーケティングや商品開発、営業企画のデータ活用に利用しています。"
+      }
     },
     {
       "name": "Mov",
       "color": "#ef4444",
-      "mono": "Mv"
+      "mono": "Mv",
+      "industry": {
+        "en": "Inbound tourism · Local marketing SaaS",
+        "ja": "インバウンド・店舗集客SaaS"
+      },
+      "blurb": {
+        "en": "mov supports inbound tourism and store marketing in Japan. It runs Kuchikomikomu, a platform that centralizes store attraction by managing reviews and local listings across multiple online services, and Honichi Lab, a leading inbound-business media outlet paired with consulting and a solution-comparison marketplace. The company helps Japanese businesses capture demand from overseas visitors.",
+        "ja": "株式会社movは、日本のインバウンド観光と店舗集客を支援する会社です。複数のオンラインサービスにまたがる口コミや店舗情報を一元管理する店舗集客プラットフォーム「口コミコム」と、業界最大級のインバウンドビジネスメディア「訪日ラボ」を運営し、コンサルティングやソリューションの比較・資料請求サービスもあわせて提供しています。訪日客の需要を取り込みたい国内企業を支援しています。"
+      }
     },
     {
       "name": "Sun Terras",
       "color": "#f59e0b",
-      "mono": "Sn"
+      "mono": "Sn",
+      "industry": {
+        "en": "DX · Engineering services",
+        "ja": "DX・エンジニアリング支援"
+      },
+      "blurb": {
+        "en": "Sun Terras is an engineering-focused company that provides digital transformation (DX) services, with particular emphasis on digitizing analog processes and operations. As part of the Sun* Group, it combines digitization and digitalization to help client enterprises modernize operations and improve efficiency and IT literacy. It serves organizations at varying stages of digital maturity.",
+        "ja": "株式会社Sun Terrasは、エンジニアリングを軸にデジタルトランスフォーメーション（DX）支援を行う会社で、特にアナログな業務やプロセスのデジタル化（デジタイゼーション）に注力しています。Sun*グループの一員として、デジタイゼーションとデジタライゼーションを組み合わせ、クライアント企業の業務改善や効率化、ITリテラシー向上を支援します。デジタル化の進度が異なるさまざまな企業を対象としています。"
+      }
     },
     {
       "name": "Anotherball",
       "color": "#7c3aed",
-      "mono": "Ab"
+      "mono": "Ab",
+      "industry": {
+        "en": "Entertainment tech · VTuber / anime",
+        "ja": "エンタメテック・VTuber／アニメ"
+      },
+      "blurb": {
+        "en": "AnotherBall is a Tokyo-based entertainment startup that brings Japanese anime and VTuber culture to a global audience through technology. It develops Avvy, an app that lets anyone become a VTuber with a custom avatar in about a minute, and operates the in-house anime studio Mayflower, which integrates 3D and digital tools into production. The founding team previously built the family app Mamari and the VTuber agency PRISM Project.",
+        "ja": "AnotherBall（株式会社AnotherBall）は、日本のアニメやVTuber文化をテクノロジーの力で世界へ届ける東京拠点のエンタメスタートアップです。誰でも約1分で自分のアバターを使ってVTuberになれるアプリ「Avvy」を開発し、3Dやデジタルツールを制作工程に取り入れる自社アニメスタジオ「Mayflower」も運営しています。創業チームは過去にファミリー向けアプリ「ママリ」やVTuber事務所「PRISM Project」を手がけてきました。"
+      }
     },
     {
       "name": "Attuned",
       "color": "#f59e0b",
-      "mono": "At"
+      "mono": "At",
+      "industry": {
+        "en": "HR tech · employee engagement SaaS",
+        "ja": "HRテック・従業員エンゲージメントSaaS"
+      },
+      "blurb": {
+        "en": "Attuned is a Tokyo-based HR tech company offering a SaaS platform that measures employees' intrinsic motivation at the individual level. The tool produces personalized motivation reports, tracks engagement, and uses machine learning to flag turnover risk, helping managers tailor how they support each team member. It offers a Japanese-language version aimed at addressing labor and retention challenges in Japan.",
+        "ja": "Attunedは、従業員一人ひとりの内発的動機を可視化するSaaSプラットフォームを提供する東京拠点のHRテック企業です。個人ごとのモチベーションレポートの作成、エンゲージメントの追跡、機械学習による離職リスクの予測などを通じて、管理職がメンバーへの関わり方を最適化できるよう支援します。日本語版も用意し、国内の人材不足や定着の課題への対応を目指しています。"
+      }
     },
     {
       "name": "Enito Group",
       "color": "#ec4899",
-      "mono": "En"
+      "mono": "En",
+      "industry": {
+        "en": "Dating apps · matchmaking",
+        "ja": "マッチングアプリ・婚活"
+      },
+      "blurb": {
+        "en": "Enito Group is a Tokyo-based company that operates dating and matchmaking apps in Japan. It runs \"with,\" a service launched in 2015 that matches users via psychology-based personality assessments and is popular with people in their 20s, and \"Omiai,\" a long-running matchmaking app launched in 2012 with over 10 million registered members. The group is backed by Bain Capital.",
+        "ja": "株式会社エニトグループは、日本国内でマッチング・婚活アプリを運営する東京拠点の企業です。心理学に基づく性格診断で相性の良い相手を探せる2015年開始のサービス「with」と、2012年にローンチし累計1,000万人以上の会員を持つ婚活アプリ「Omiai」を運営しています。同社はベインキャピタルの出資を受けています。"
+      }
     },
     {
       "name": "HRBrain",
       "color": "#16a34a",
-      "mono": "HR"
+      "mono": "HR",
+      "industry": {
+        "en": "HR tech · talent management SaaS",
+        "ja": "HRテック・タレントマネジメントSaaS"
+      },
+      "blurb": {
+        "en": "HRBrain is a Tokyo-based HR software company founded in 2016 that provides cloud-based talent management solutions, mainly to Japanese firms. Its product suite spans personnel evaluation, talent management, organizational and pulse surveys, 360-degree reviews, labor management, stress checks, and an internal chatbot, unifying employee data in one platform. It serves thousands of companies and received a majority investment from EQT (BPEA) in 2023.",
+        "ja": "株式会社HRBrainは、2016年創業の東京拠点のHRソフトウェア企業で、主に日本企業向けにクラウド型のタレントマネジメントソリューションを提供しています。人事評価、タレントマネジメント、組織診断・パルスサーベイ、360度評価、労務管理、ストレスチェック、社内チャットボットなどを揃え、従業員データを一元管理できるプラットフォームを展開しています。数千社に導入され、2023年にはEQT（BPEA）から過半数の出資を受けました。"
+      }
     },
     {
       "name": "ABEJA",
       "color": "#111827",
-      "mono": "AB"
+      "mono": "AB",
+      "industry": {
+        "en": "AI / deep learning · DX",
+        "ja": "AI／ディープラーニング・DX"
+      },
+      "blurb": {
+        "en": "ABEJA is a Tokyo-based AI company founded in 2012 that helps large enterprises operationalize deep learning and machine learning across industries such as retail, manufacturing, logistics, and infrastructure. Its ABEJA Platform provides managed services for designing, building, operating, and improving AI-driven digital transformation, while ABEJA Insight for Retail analyzes in-store sensor and camera data for visitor counts and customer-flow analysis. Investors include Google, NVIDIA, Salesforce, and ITOCHU.",
+        "ja": "株式会社ABEJAは、2012年創業の東京拠点のAI企業で、小売・製造・物流・インフラなど幅広い業界の大企業に対し、ディープラーニングや機械学習の実装・運用を支援しています。AI活用によるDXの設計・構築・運用・改善をマネージドで提供する「ABEJA Platform」や、店舗のセンサー・カメラデータから来店者数や動線を分析する「ABEJA Insight for Retail」などを展開しています。出資企業にはGoogle、NVIDIA、Salesforce、伊藤忠商事などが名を連ねます。"
+      }
     },
     {
       "name": "Bringout",
       "color": "#7c3aed",
-      "mono": "Bo"
+      "mono": "Bo",
+      "industry": {
+        "en": "AI · sales / meeting analytics",
+        "ja": "AI・営業／商談解析"
+      },
+      "blurb": {
+        "en": "Bringout is a Tokyo-based company that provides an AI platform for analyzing business meetings and sales conversations. Its tools record and summarize meetings, score them, and turn customer dialogue into actionable insights, with features such as Salesforce integration and suggested next steps. It also offers Bringout for HR, which applies the same AI analysis to interview conversations.",
+        "ja": "株式会社ブリングアウトは、商談や営業の会話をAIで解析するプラットフォームを提供する東京拠点の企業です。商談の録音・要約・スコアリングを行い、顧客との対話を実践的なインサイトへと変換するもので、Salesforce連携や次のアクションの提案といった機能を備えています。同じAI解析を採用面接の会話に応用した「Bringout for HR」も提供しています。"
+      }
     },
     {
       "name": "Charichari",
       "color": "#e11d48",
-      "mono": "Ch"
+      "mono": "Ch",
+      "industry": {
+        "en": "Mobility · bike sharing",
+        "ja": "モビリティ・シェアサイクル"
+      },
+      "blurb": {
+        "en": "Charichari, Inc. operates a smartphone-based bike-sharing service in Japan, where users unlock its distinctive red bicycles via an app, ride, and return them to designated ports. Starting in Fukuoka, the service has expanded to cities including Nagoya, Tokyo, Kumamoto, Kyoto, and Otsu, offering both standard bikes and e-bikes charged by the minute. The company aims to address urban mobility issues and enrich cities through shared transport.",
+        "ja": "Charichari株式会社は、日本でスマートフォンを使ったシェアサイクルサービスを運営しています。利用者はアプリで特徴的な赤い自転車を解錠して乗り、専用のポートに返却する仕組みです。福岡で始まり、名古屋・東京・熊本・京都・大津などの都市へ拡大しており、通常の自転車とe-bikeを分単位の料金で提供しています。同社はシェアモビリティを通じて都市の移動課題の解決と街の豊かさの向上を目指しています。"
+      }
     },
     {
       "name": "dely",
       "color": "#ff5a3c",
-      "mono": "de"
+      "mono": "de",
+      "industry": {
+        "en": "Food tech · Recipe media",
+        "ja": "フードテック・レシピメディア"
+      },
+      "blurb": {
+        "en": "dely operates Kurashiru, one of Japan's largest recipe-video platforms, offering tens of thousands of short cooking videos supervised by registered dietitians and culinary professionals. The app helps home cooks plan daily meals and includes features such as supermarket flyer price comparison. The company also runs related lifestyle and shopping services like TRILL.",
+        "ja": "delyは、日本最大級のレシピ動画サービス「クラシル」を運営し、管理栄養士や料理の専門家が監修した数万本の料理動画を提供しています。日々の献立づくりを支援するアプリで、近隣スーパーのチラシ・価格比較などの機能も備えています。同社はライフスタイルメディア「TRILL」などの関連サービスも展開しています。"
+      }
     },
     {
       "name": "Geniee",
       "color": "#2563eb",
-      "mono": "Ge"
+      "mono": "Ge",
+      "industry": {
+        "en": "Ad tech · Marketing SaaS",
+        "ja": "アドテク・マーケティングSaaS"
+      },
+      "blurb": {
+        "en": "Geniee is a Tokyo-based advertising technology company that develops the GENIEE Ads Platform, including its own SSP and DSP for publishers and advertisers. It also offers the GENIEE Marketing Cloud, a suite of marketing SaaS tools such as MA, SFA, CRM and chatbot products. The company operates across Japan and Southeast Asia.",
+        "ja": "ジーニーは、自社開発のSSPやDSPを中心とする広告プラットフォーム「GENIEE Ads Platform」を提供する、東京を拠点としたアドテクノロジー企業です。MA・SFA・CRM・チャットボットなどのマーケティングSaaS群「GENIEE マーケティングクラウド」も展開しています。日本国内に加え、東南アジアでも事業を展開しています。"
+      }
     },
     {
       "name": "Movus Technologies",
       "color": "#dc2626",
-      "mono": "Mo"
+      "mono": "Mo",
+      "industry": {
+        "en": "Mobility · Automotive fintech",
+        "ja": "モビリティ・自動車フィンテック"
+      },
+      "blurb": {
+        "en": "Movus Technologies is a Tokyo-headquartered automotive fintech company that builds mobility infrastructure across Southeast Asia, primarily Indonesia. Using its own credit-assessment system, it provides vehicle subscription and ownership services for people who cannot access traditional car loans or leasing, including ride-share drivers.",
+        "ja": "movus technologiesは、東京に本社を置く自動車フィンテック企業で、インドネシアを中心に東南アジアでモビリティインフラを構築しています。独自の与信評価システムを用い、従来の自動車ローンやリースを利用できない人々やライドシェアドライバー向けに、車両のサブスクリプション・所有サービスを提供しています。"
+      }
     },
     {
       "name": "Plainer",
       "color": "#22c55e",
-      "mono": "Pl"
+      "mono": "Pl",
+      "industry": {
+        "en": "B2B SaaS · Sales enablement",
+        "ja": "BtoB SaaS・セールスイネーブルメント"
+      },
+      "blurb": {
+        "en": "PLAINER is a Tokyo-based SaaS company offering a no-code platform that lets companies build interactive product demos in as little as ten minutes. It is used by software and SaaS businesses to communicate product value and support sales and customer onboarding without needing engineering resources.",
+        "ja": "PLAINER（プレイナー）は、ノーコードで最短10分ほどでインタラクティブな製品デモを作成できるSaaSプラットフォームを提供する、東京拠点の企業です。ソフトウェアやSaaS企業が、エンジニアの手を借りずに製品価値を伝え、営業やオンボーディングを支援するために活用しています。"
+      }
     },
     {
       "name": "Shinsekai Technologies",
       "color": "#ec4899",
-      "mono": "Sh"
+      "mono": "Sh",
+      "industry": {
+        "en": "Community SaaS · Web3",
+        "ja": "コミュニティSaaS・Web3"
+      },
+      "blurb": {
+        "en": "SHINSEKAI Technologies develops and operates MURA, a platform for building and managing brand and enterprise communities, including features for fan engagement and creator monetization on channels such as LINE Mini Apps. The company also supports Web3 initiatives like NFT creation and wallets, with a focus on accelerating business through community.",
+        "ja": "SHINSEKAI Technologiesは、ブランドや企業のコミュニティ構築・運営を支援するプラットフォーム「MURA」を開発・運営しており、LINEミニアプリなどでのファンとの交流やクリエイターの収益化機能を備えています。NFT発行やウォレットといったWeb3関連の取り組みも支援し、コミュニティの力でビジネスを加速させることを掲げています。"
+      }
     },
     {
       "name": "Spacely",
       "color": "#ec4899",
-      "mono": "Sy"
+      "mono": "Sy",
+      "industry": {
+        "en": "Real-estate tech · VR SaaS",
+        "ja": "不動産テック・VR SaaS"
+      },
+      "blurb": {
+        "en": "Spacely provides a cloud platform that lets users create and edit 360-degree panoramic VR content from photos or 3D data without specialist skills. Its tools are used by thousands of businesses for virtual property tours, online viewings, and VR-based training, with AI features for image correction and viewer analytics. Real estate is a core market.",
+        "ja": "スペースリーは、写真や3Dデータから専門スキルなしで360度パノラマVRコンテンツを作成・編集できるクラウドプラットフォームを提供しています。数千社の企業が、不動産のVR内覧やオンライン内見、VR研修などに活用しており、画像補正や視聴分析のAI機能も備えています。不動産が主要な市場です。"
+      }
     },
     {
       "name": "Orb",
       "color": "#111827",
-      "mono": "Or"
+      "mono": "Or",
+      "industry": {
+        "en": "Fintech · Distributed ledger",
+        "ja": "フィンテック・分散台帳"
+      },
+      "blurb": {
+        "en": "Orb is a Tokyo-based fintech company that develops Orb DLT, a payment-focused distributed ledger technology offered as middleware. It is used to build community and regional currency platforms, powering local digital currencies and the digitization of premium gift certificates across dozens of Japanese municipalities. Adopters include Kyushu Electric Power and partners such as Trustbank.",
+        "ja": "株式会社Orbは、決済に特化した分散台帳技術「Orb DLT」をミドルウェアとして開発・提供する、東京拠点のフィンテック企業です。同技術はコミュニティ通貨・地域通貨プラットフォームの構築に用いられ、日本の数十の自治体で地域デジタル通貨やプレミアム付商品券の電子化を支えています。トラストバンクや九州電力などが採用しています。"
+      }
     },
     {
       "name": "KINTO Technologies",
       "color": "#111827",
-      "mono": "KT"
+      "mono": "KT",
+      "industry": {
+        "en": "Mobility · Automotive software",
+        "ja": "モビリティ・自動車ソフトウェア"
+      },
+      "blurb": {
+        "en": "KINTO Technologies is the software and technology development arm of the Toyota-affiliated KINTO group, building the systems behind Toyota's mobility services such as the KINTO ONE car subscription and KINTO car-sharing. It develops web and mobile applications, backend platforms, and data infrastructure that power these consumer-facing vehicle subscription and sharing services. The company is based in Japan and supports Toyota's shift from a carmaker toward a mobility-services provider.",
+        "ja": "KINTO Technologiesは、トヨタ系のKINTOグループにおけるソフトウェア・技術開発を担う企業で、車のサブスクリプション「KINTO ONE」やカーシェアなどのモビリティサービスを支えるシステムを開発しています。これらの消費者向けサービスを動かすWeb・モバイルアプリ、バックエンド基盤、データ基盤の開発を手がけています。日本を拠点とし、トヨタが自動車メーカーからモビリティサービス企業へ転換する取り組みを支えています。"
+      }
     },
     {
       "name": "METATEAM",
       "color": "#111827",
-      "mono": "Me"
+      "mono": "Me",
+      "industry": {
+        "en": "IT consulting · SI",
+        "ja": "ITコンサルティング・SI"
+      },
+      "blurb": {
+        "en": "METATEAM (formerly Seattle Consulting) is a Tokyo-based IT services and consulting firm founded in 2006 that combines strategy planning, on-site execution, and technology implementation. It provides DX (digital transformation) consulting, system development, infrastructure building, and operations for clients in finance, telecommunications, manufacturing, and other industries. The group has roughly 900 employees, including a subsidiary in Myanmar.",
+        "ja": "METATEAM（旧・シアトルコンサルティング）は2006年設立の東京を拠点とするITサービス・コンサルティング企業で、戦略立案から現場での実行、技術導入までを一貫して支援します。金融・通信・製造をはじめとする幅広い業界の顧客に対し、DXコンサルティング、システム開発、インフラ構築、運用保守を提供しています。ミャンマー子会社を含めグループ全体で約900名の従業員を擁します。"
+      }
     },
     {
       "name": "Tsukuruba",
       "color": "#0f766e",
-      "mono": "Ts"
+      "mono": "Ts",
+      "industry": {
+        "en": "Real-estate tech",
+        "ja": "不動産テック"
+      },
+      "blurb": {
+        "en": "Tsukuruba is a Tokyo-based company founded in 2011 that operates \"cowcamo,\" an online marketplace and brokerage platform for pre-owned and renovated condominiums and homes. The platform connects buyers and sellers while offering data-driven insights and a curated, tech-enabled alternative to traditional Japanese property brokerage. It is publicly listed in Japan.",
+        "ja": "Tsukurubaは2011年設立の東京を拠点とする企業で、リノベーション済み・中古マンションや住宅を扱うオンラインの売買仲介プラットフォーム「カウカモ（cowcamo）」を運営しています。買い手と売り手をつなぎ、データに基づく知見を提供しながら、従来の不動産仲介に代わるテクノロジー主導の体験を実現しています。日本の株式市場に上場しています。"
+      }
     },
     {
       "name": "Hakuhodo Technologies",
       "color": "#1e3a8f",
-      "mono": "Ha"
+      "mono": "Ha",
+      "industry": {
+        "en": "Marketing · AdTech",
+        "ja": "マーケティング・アドテック"
+      },
+      "blurb": {
+        "en": "Hakuhodo Technologies is the core technology arm of Hakuhodo DY Group, one of Japan's largest advertising and marketing groups. It develops data-driven marketing technology, including systems for securely linking customer, sales, and media data, and the group's \"Advertising as a Service (AaaS)\" offering. The company also works on emerging areas such as XR, the metaverse, privacy technology, and AI-driven creative.",
+        "ja": "Hakuhodo Technologiesは、日本最大級の広告・マーケティンググループである博報堂DYグループの中核を担う技術会社です。顧客データ・販売データ・メディアデータを安全に連携させる仕組みや、グループの「Advertising as a Service（AaaS）」など、データドリブンなマーケティング技術を開発しています。XR、メタバース、プライバシーテック、AIを活用したクリエイティブといった先端領域にも取り組んでいます。"
+      }
     },
     {
       "name": "asken",
       "color": "#84cc16",
-      "mono": "as"
+      "mono": "as",
+      "industry": {
+        "en": "HealthTech · Nutrition app",
+        "ja": "ヘルステック・栄養管理アプリ"
+      },
+      "blurb": {
+        "en": "asken develops \"Asken Diet\" (あすけん), a diet and nutrition-management app that lets users log meals, track calories, and analyze multiple nutrients, including via food-image recognition AI. An \"AI dietitian\" delivers personalized feedback based on guidance from licensed nutritionists, and the service has over 10 million users in Japan. asken also offers its platform to enterprises, health insurers, local governments, and medical institutions.",
+        "ja": "askenは、食事を記録してカロリーや複数の栄養素を管理できるダイエット・栄養管理アプリ「あすけん」を開発しています。食事画像認識AIによる記録に対応し、管理栄養士の知見に基づく「AI栄養士」がパーソナライズされたアドバイスを提供し、日本国内で1,000万人以上のユーザーを抱えます。企業や健康保険組合、自治体、医療機関向けにもサービスを提供しています。"
+      }
     },
     {
       "name": "dotData Japan",
       "color": "#2563eb",
-      "mono": "dD"
+      "mono": "dD",
+      "industry": {
+        "en": "AI / data-science automation",
+        "ja": "AI・データサイエンス自動化"
+      },
+      "blurb": {
+        "en": "dotData provides an enterprise platform that automates the data-science workflow, from raw business data through AI-powered feature engineering to machine learning and production deployment. Its products, including dotData Enterprise and dotData Insight, help companies build predictive models and discover insights with little or no coding, and integrate with platforms such as Snowflake. dotData operates internationally with offices in the US, Japan, and Poland, serving large enterprise customers.",
+        "ja": "dotDataは、生のビジネスデータからAIによる特徴量エンジニアリング、機械学習、本番運用までのデータサイエンス工程を自動化するエンタープライズ向けプラットフォームを提供しています。dotData EnterpriseやdotData Insightといった製品により、ほぼノーコードで予測モデルの構築や知見の発見を可能にし、Snowflakeなどのプラットフォームとも連携します。米国・日本・ポーランドに拠点を持ち、大企業の顧客を対象にグローバルに事業を展開しています。"
+      }
     },
     {
       "name": "VRAIN Solution",
       "color": "#1e3a8f",
-      "mono": "VR"
+      "mono": "VR",
+      "industry": {
+        "en": "AI for manufacturing",
+        "ja": "製造業向けAI"
+      },
+      "blurb": {
+        "en": "VRAIN Solution is a Tokyo-based company, founded in 2020, that provides AI solutions and DX support for the manufacturing industry. Its offerings include AI visual inspection, vibration and abnormal-sound inspection, production-planning optimization, and safety management, delivered through its GUI-based \"Phoenix\" application suite and end-to-end consulting from planning to operation. The company is publicly listed in Japan (ticker 135A).",
+        "ja": "VRAIN Solutionは2020年設立の東京を拠点とする企業で、製造業向けのAIソリューションとDX支援を提供しています。GUIベースのアプリ群「Phoenixシリーズ」や、企画から運用までの一貫したコンサルティングを通じて、AI外観検査、振動・異音検査、生産計画最適化、安全管理などを手がけています。日本の株式市場に上場しています（証券コード135A）。"
+      }
     },
     {
       "name": "Recustomer",
       "color": "#5b3df5",
-      "mono": "Re"
+      "mono": "Re",
+      "industry": {
+        "en": "E-commerce · Post-purchase SaaS",
+        "ja": "EC・購入後体験SaaS"
+      },
+      "blurb": {
+        "en": "Recustomer is a Japanese SaaS provider whose platform handles the post-purchase phase of e-commerce, including automated returns and exchanges, shipment tracking, pre-orders/back-orders, and \"try before you buy\" flows. It is used by retailers and brands such as Adidas, Converse, Edwin, Francfranc, and Nissin to cut customer-service costs and improve repeat-purchase rates.",
+        "ja": "Recustomerは、ECの「購入後」体験を担うSaaSを提供する日本企業です。返品・交換の自動化、配送追跡、予約・取り寄せ販売、試着後決済などの機能を備え、アディダス、コンバース、エドウイン、フランフラン、日清などの小売・ブランドが、CS対応コスト削減とリピート率向上のために導入しています。"
+      }
     },
     {
       "name": "RESTAR",
       "color": "#111827",
-      "mono": "RS"
+      "mono": "RS",
+      "industry": {
+        "en": "Real-estate tech · Proptech",
+        "ja": "不動産テック・プロップテック"
+      },
+      "blurb": {
+        "en": "RESTAR is a Tokyo-based proptech company working to make real-estate transactions faster and more data-driven. Its main product, REMETIS, is a platform for managing and analyzing real-estate and geographic data, aimed at real-estate professionals handling development, leasing, and sales.",
+        "ja": "RESTARは、不動産取引をデータとテクノロジーで加速させることを目指す東京のプロップテック企業です。主力プロダクト「REMETIS」は、不動産・地理データの管理と分析を行うプラットフォームで、開発・賃貸・売買に携わる不動産事業者向けに提供されています。"
+      }
     },
     {
       "name": "Socialgood",
       "color": "#0ea5e9",
-      "mono": "SG"
+      "mono": "SG",
+      "industry": {
+        "en": "Crypto · Rewards platform",
+        "ja": "暗号資産・リワードプラットフォーム"
+      },
+      "blurb": {
+        "en": "SocialGood operates a crypto-rewards platform built around its native SG token, which users earn through shopping, gaming, and browsing. Via a mobile app and browser extension, it offers cashback in SG tokens across a network of partner retailers, and reports a user base in the millions.",
+        "ja": "SocialGoodは、独自トークン「SG」を中心とした暗号資産リワードのプラットフォームを運営しています。モバイルアプリやブラウザ拡張機能を通じ、買い物・ゲーム・閲覧などの行動に応じて、提携小売店でのキャッシュバックをSGトークンで提供しており、利用者は数百万人規模とされています。"
+      }
     },
     {
       "name": "Soft Gear",
       "color": "#2563eb",
-      "mono": "So"
+      "mono": "So",
+      "industry": {
+        "en": "Gaming · Server middleware",
+        "ja": "ゲーム・サーバーミドルウェア"
+      },
+      "blurb": {
+        "en": "Soft Gear is a Tokyo technology company specializing in server and real-time networking technology for online games and metaverse content. Its flagship product, Strix Cloud, is a server solution for online game development, and it also offers communication/3D-space middleware along with development, QA, and engineering support services for game studios.",
+        "ja": "ソフトギアは、オンラインゲームやメタバース向けのサーバー技術・リアルタイム通信技術を専門とする東京のテクノロジー企業です。主力プロダクトのオンラインゲーム開発向けサーバーソリューション「Strix Cloud」のほか、通信・3D空間構築ミドルウェアを提供し、ゲーム開発会社向けに開発・QA・エンジニアリング支援も手がけています。"
+      }
     },
     {
       "name": "Solution Ware",
       "color": "#1d4ed8",
-      "mono": "SW"
+      "mono": "SW",
+      "industry": {
+        "en": "IT consulting · System development",
+        "ja": "ITコンサル・システム開発"
+      },
+      "blurb": {
+        "en": "Solution Ware is a Japanese IT consulting and system-development firm offering custom business software and SaaS development. Its focus areas include systems for electricity-retail companies and Salesforce-ecosystem work (Sales Cloud, Heroku, Pardot, and Tableau CRM), delivered as client-tailored projects.",
+        "ja": "Solution Wareは、受託の業務システムやSaaSの開発を手がける日本のITコンサルティング・システム開発会社です。電力小売事業者向けシステムや、Salesforce関連（Sales Cloud、Heroku、Pardot、Tableau CRMなど）の開発を得意とし、顧客ごとに最適化したプロジェクトとして提供しています。"
+      }
     },
     {
       "name": "Your Trade",
       "color": "#3b82f6",
-      "mono": "YT"
+      "mono": "YT",
+      "industry": {
+        "en": "Cross-border e-commerce · Trade tech",
+        "ja": "越境EC・貿易テック"
+      },
+      "blurb": {
+        "en": "Your Trade helps Japanese businesses sell and trade internationally using AI and data-driven tools. Its offerings include nomino, a cross-border e-commerce automation tool that handles listings, translation, shipping, and payment, plus returns management, store development, and business-matching services for overseas expansion.",
+        "ja": "Your Tradeは、AIとデータを活用したツールで、日本企業の海外販売・貿易を支援する企業です。出品・翻訳・配送・決済を自動化する越境ECツール「nomino」を中心に、返品管理、ECサイト構築、海外展開に向けたビジネスマッチングなどのサービスを提供しています。"
+      }
     },
     {
       "name": "Randstad Japan",
       "color": "#2563eb",
-      "mono": "Ra"
+      "mono": "Ra",
+      "industry": {
+        "en": "HR · Staffing & recruitment",
+        "ja": "人材・派遣・人材紹介"
+      },
+      "blurb": {
+        "en": "Randstad Japan is the Japanese arm of the global Randstad HR services group, with around 120 branches and in-house locations nationwide. It provides temporary staffing, permanent placement, on-site (in-house) staffing, specialist professional placement, and broader HR solutions to employers and job seekers across Japan.",
+        "ja": "ランスタッド（Randstad Japan）は、世界的な人材サービス企業ランスタッドの日本法人で、全国に約120の支店・常駐拠点を展開しています。人材派遣、人材紹介（正社員）、オンサイト（インハウス）派遣、専門職の人材紹介をはじめ、幅広いHRソリューションを企業と求職者に提供しています。"
+      }
     },
     {
       "name": "AIDEON",
       "color": "#6366f1",
-      "mono": "Ai"
+      "mono": "Ai",
+      "industry": {
+        "en": "AI / software (unconfirmed)",
+        "ja": "AI・ソフトウェア（詳細未確認）"
+      },
+      "blurb": {
+        "en": "AIDEON is presented as an AI and technology company, but no official domain was provided and we were unable to confirm specific products, services, or its operating entity from public sources. Details below should be verified directly with the company before publishing.",
+        "ja": "AIDEONはAI・テクノロジー関連企業とされていますが、公式ドメインの提示がなく、公開情報からは具体的な製品・サービスや運営主体を確認できませんでした。掲載前に企業へ直接確認することをおすすめします。"
+      }
     },
     {
       "name": "Akatsuki",
       "color": "#e11d48",
-      "mono": "Ak"
+      "mono": "Ak",
+      "industry": {
+        "en": "Mobile games · Entertainment",
+        "ja": "モバイルゲーム・エンタメ"
+      },
+      "blurb": {
+        "en": "Akatsuki Inc. is a Tokyo-based, TSE-listed entertainment company founded in 2010 that develops and operates mobile games. It is known for titles such as Dragon Ball Z Dokkan Battle, Romancing SaGa Re;universe, and Kaiju No. 8 THE GAME, often built with partners like Bandai Namco and Square Enix, and has expanded into adjacent entertainment and investment businesses.",
+        "ja": "株式会社アカツキは2010年設立、東証上場の東京拠点のエンタメ企業で、モバイルゲームの開発・運営を手がけています。バンダイナムコやスクウェア・エニックスなどと組んだ『ドラゴンボールZ ドッカンバトル』『ロマンシング サガ リユニバース』『怪獣8号 THE GAME』などで知られ、関連するエンタメ・投資事業にも展開しています。"
+      }
     },
     {
       "name": "Akkodis",
       "color": "#111827",
-      "mono": "Ac"
+      "mono": "Ac",
+      "industry": {
+        "en": "Digital engineering · IT services",
+        "ja": "デジタルエンジニアリング・ITサービス"
+      },
+      "blurb": {
+        "en": "Akkodis is a global digital engineering and IT services firm, part of the Adecco Group and formed from the merger of AKKA Technologies and Modis. It provides consulting, talent, training, and solutions across sectors such as automotive, aerospace, mobility, software, and data, including operations in Japan.",
+        "ja": "Akkodis（アコディス）はアデコグループ傘下のグローバルなデジタルエンジニアリング・ITサービス企業で、AKKA TechnologiesとModisの統合により誕生しました。自動車、航空宇宙、モビリティ、ソフトウェア、データなどの領域で、コンサルティング・人材・研修・ソリューションを提供し、日本でも事業を展開しています。"
+      }
     },
     {
       "name": "AVILEN",
       "color": "#2563eb",
-      "mono": "Av"
+      "mono": "Av",
+      "industry": {
+        "en": "AI / DX · AI training",
+        "ja": "AI・DX／AI人材育成"
+      },
+      "blurb": {
+        "en": "AVILEN Inc. is a Tokyo-based, TSE Growth-listed AI company founded in 2018 that builds custom machine-learning and generative-AI software for enterprises, covering areas like anomaly detection, document recognition, forecasting, and AI agents. It also runs an AI training and certification business, including high-pass-rate prep courses for Japan Deep Learning Association exams.",
+        "ja": "株式会社AVILENは2018年設立、東証グロース上場のAI企業で、異常検知、文書認識、需要予測、AIエージェントなど企業向けの機械学習・生成AIソフトウェアを開発しています。あわせて、日本ディープラーニング協会(JDLA)の資格対策など合格率の高い研修を含むAI人材育成・認定事業も展開しています。"
+      }
     },
     {
       "name": "AWL",
       "color": "#0ea5e9",
-      "mono": "AW"
+      "mono": "AW",
+      "industry": {
+        "en": "Edge AI / computer vision",
+        "ja": "エッジAI・画像認識"
+      },
+      "blurb": {
+        "en": "AWL, Inc. is a Hokkaido University-originated startup (founded 2016, with bases in Sapporo and Tokyo) that develops edge AI camera solutions for retail. Its products, such as the AWL BOX, connect to existing IP cameras to analyze shopper behavior and store conditions on-device, and it also offers AI digital signage; R&D teams operate in Vietnam and India.",
+        "ja": "AWL（アウル）株式会社は北海道大学発のスタートアップ（2016年設立、札幌・東京に拠点）で、小売向けのエッジAIカメラソリューションを開発しています。「AWL BOX」などの製品は既存のIPカメラに接続し、来店客の行動や店舗状況を端末側で解析するほか、AIデジタルサイネージも提供しており、ベトナムとインドにR&D拠点を持ちます。"
+      }
     },
     {
       "name": "Basic",
       "color": "#2563eb",
-      "mono": "Ba"
+      "mono": "Ba",
+      "industry": {
+        "en": "B2B SaaS · MarTech",
+        "ja": "BtoB SaaS・マーケティングテック"
+      },
+      "blurb": {
+        "en": "Basic Inc. is a Tokyo-based company founded in 2004 that develops B2B marketing and operations SaaS. Its products include the ferret One marketing platform (no-code CMS and lead management), the formrun form builder, and tools such as bookrun and workrun, and it operates the ferret web marketing media.",
+        "ja": "株式会社ベーシックは2004年設立、東京拠点の企業で、BtoBマーケティング・業務向けのSaaSを開発しています。ノーコードCMSとリード管理を備えたマーケティングツール「ferret One」、フォーム作成の「formrun」、「bookrun」「workrun」などを提供するほか、Webマーケティングメディア「ferret」を運営しています。"
+      }
     },
     {
       "name": "Cellid",
       "color": "#111827",
-      "mono": "Ce"
+      "mono": "Ce",
+      "industry": {
+        "en": "AR display · optics",
+        "ja": "AR用ディスプレイ・光学"
+      },
+      "blurb": {
+        "en": "Cellid Inc. is a Japanese deep-tech company developing displays and spatial-recognition engines for next-generation AR glasses. It produces thin, lightweight optical see-through waveguide display modules and supplies them to smart-glasses makers, with its waveguide technology recognized by SID's 2024 Display Component of the Year award.",
+        "ja": "Cellid株式会社は、次世代ARグラス向けのディスプレイと空間認識エンジンを開発する日本のディープテック企業です。薄型・軽量の光学シースルー型導波路(ウェーブガイド)ディスプレイモジュールを製造し、スマートグラスメーカーへ供給しており、その導波路技術はSIDの2024年Display Component of the Year賞を受賞しています。"
+      }
     },
     {
       "name": "Colorkrew",
       "color": "#f97316",
-      "mono": "Ck"
+      "mono": "Ck",
+      "industry": {
+        "en": "Work SaaS · IT services",
+        "ja": "業務SaaS・ITサービス"
+      },
+      "blurb": {
+        "en": "Colorkrew is a Tokyo-based company that develops cloud-based \"Work SaaS\" products for businesses, including the Colorkrew Biz (Mamoru Biz) office administration concierge that uses QR codes and authentication to manage assets, seating and visitors. It also offers the Mamoru PUSH security tool and goal-sharing app Goalous, alongside web/app development and cloud, authentication and payment integration services.",
+        "ja": "Colorkrewは、企業向けのクラウド型「Work SaaS」を開発する東京の企業です。QRコードや認証技術で備品・座席・来客などを管理するオフィス業務支援サービス「Colorkrew Biz（Mamoru Biz）」を中心に、セキュリティツール「Mamoru PUSH」や目標共有アプリ「Goalous」を提供するほか、Web・アプリ開発やクラウド・認証・決済の連携サービスも手がけています。"
+      }
     },
     {
       "name": "Dinii",
       "color": "#111827",
-      "mono": "Di"
+      "mono": "Di",
+      "industry": {
+        "en": "Restaurant tech · SaaS",
+        "ja": "飲食店向けSaaS"
+      },
+      "blurb": {
+        "en": "Dinii is a Tokyo startup that builds a cloud-based all-in-one platform for restaurants, combining POS registers, QR-code mobile ordering, payments and customer CRM. Founded in 2018, it helps restaurants modernize operations and engage diners, and is expanding its restaurant tech across Asia.",
+        "ja": "Diniiは、飲食店向けのクラウド型オールインワンプラットフォームを開発する東京のスタートアップです。POSレジ、QRコードによるモバイルオーダー、決済、顧客CRMを一体で提供し、2018年の創業以来、飲食店の業務効率化と顧客接点づくりを支援しています。現在はアジア各地への展開を進めています。"
+      }
     },
     {
       "name": "Doctors",
       "color": "#0ea5e9",
-      "mono": "Dr"
+      "mono": "Dr",
+      "industry": {
+        "en": "Healthcare DX · Digital health",
+        "ja": "医療DX・デジタルヘルス"
+      },
+      "blurb": {
+        "en": "Doctors Inc. is a Tokyo medical DX company that helps businesses plan, build and operate digital healthcare services, drawing on a network of over 700 specialist physicians. Its offerings include Doctors Cloud for service development, the Doctors Next marketing platform reaching medical institutions and physicians, and Doctors Station for delivering online medical care.",
+        "ja": "ドクターズ株式会社は、700名超の専門医ネットワークを活かし、企業のデジタルヘルスケア事業の企画・開発・運用を支援する東京の医療DX企業です。サービス開発を支援する「Doctors Cloud」、医療機関・医師にアプローチできるマーケティングプラットフォーム「Doctors Next」、オンライン診療を提供する「Doctors Station」などを展開しています。"
+      }
     },
     {
       "name": "Hapins",
       "color": "#f97316",
-      "mono": "Hp"
+      "mono": "Hp",
+      "industry": {
+        "en": "IT services · System development",
+        "ja": "ITサービス・システム開発"
+      },
+      "blurb": {
+        "en": "HapInS is a Tokyo-based IT company founded in 2021 that provides system engineering services (SES), contract/custom system development, and IT solution consulting for client businesses. It is strong in upstream requirements and design work, and also runs an agent service for freelance engineers.",
+        "ja": "HapInS（ハピンス）株式会社は、2021年創業の東京のIT企業で、システムエンジニアリングサービス（SES）、受託・カスタムのシステム開発、ITソリューションコンサルティングを提供しています。要件定義などの上流工程に強みを持つほか、フリーランスエンジニア向けのエージェントサービスも運営しています。"
+      }
     },
     {
       "name": "Harmo",
       "color": "#16a34a",
-      "mono": "Hm"
+      "mono": "Hm",
+      "industry": {
+        "en": "PHR · Digital health",
+        "ja": "PHR・デジタルヘルス"
+      },
+      "blurb": {
+        "en": "harmo Co., Ltd. is a CMIC Group company that develops and operates personal health record (PHR) services, centered on the \"harmo\" electronic medication notebook (okusuri techo) and the harmo Vaccine Care vaccination app. Originating from a Sony-developed service, harmo is one of Japan's largest PHR platforms, used by hundreds of thousands of consumers and thousands of pharmacies and medical institutions.",
+        "ja": "harmo（ハルモ）株式会社は、CMICグループの企業で、電子お薬手帳「harmoおくすり手帳」やワクチン接種管理アプリ「harmoワクチンケア」を中心に、個人の健康・医療情報を管理するPHR（パーソナルヘルスレコード）サービスを開発・運営しています。ソニー発祥のサービスを受け継ぎ、多数の利用者と数千の薬局・医療機関に使われる、日本有数のPHRプラットフォームです。"
+      }
     },
     {
       "name": "JapanAI",
       "color": "#dc2626",
-      "mono": "JA"
+      "mono": "JA",
+      "industry": {
+        "en": "Generative AI · SaaS",
+        "ja": "生成AI・SaaS"
+      },
+      "blurb": {
+        "en": "JAPAN AI, Inc. is a Tokyo company in the Geniee group that provides generative-AI products for enterprises. Its lineup includes JAPAN AI CHAT (a corporate ChatGPT-style tool with RAG-based internal data search), the autonomous JAPAN AI AGENT, JAPAN AI SPEECH for meeting transcription, JAPAN AI MARKETING, and AI adoption consulting.",
+        "ja": "JAPAN AI株式会社は、ジーニーグループに属する東京の企業で、企業向けの生成AIプロダクトを提供しています。RAGによる社内データ検索に対応した法人向けチャット「JAPAN AI CHAT」、自律型の「JAPAN AI AGENT」、議事録を自動生成する「JAPAN AI SPEECH」、「JAPAN AI MARKETING」、AI活用コンサルティングなどを展開しています。"
+      }
     },
     {
       "name": "JDSC",
       "color": "#1e3a8f",
-      "mono": "JD"
+      "mono": "JD",
+      "industry": {
+        "en": "AI / data science",
+        "ja": "AI・データサイエンス"
+      },
+      "blurb": {
+        "en": "JDSC (Japan Data Science Consortium) is a University of Tokyo-originated, TSE Growth-listed AI company that applies AI and data science to core industries such as logistics, manufacturing, infrastructure and the public sector. Its work spans demand forecasting, logistics optimization and healthcare (e.g. frailty detection), delivered through algorithm modules, IT system development and operation, and data-science-driven business support.",
+        "ja": "JDSC（Japan Data Science Consortium）は、東京大学発で東証グロース市場に上場するAI企業で、物流・製造・インフラ・公共などの基幹産業にAIとデータサイエンスを応用しています。需要予測や物流最適化、ヘルスケア（フレイル検知など）といった領域を、アルゴリズムモジュールの開発・提供、ITシステムの開発・運用、データサイエンスを軸とした事業支援を通じて手がけています。"
+      }
     },
     {
       "name": "KIYO Learning",
       "color": "#f59e0b",
-      "mono": "KL"
+      "mono": "KL",
+      "industry": {
+        "en": "EdTech · E-learning SaaS",
+        "ja": "EdTech・eラーニングSaaS"
+      },
+      "blurb": {
+        "en": "KIYO Learning is a Tokyo-listed e-learning company that operates two cloud platforms: STUDYing, an online course service helping individuals study for professional qualifications, and AirCourse, a corporate LMS offering ready-made video training plus tools for companies to create and distribute their own content. It serves both individual learners and enterprise HR/training teams.",
+        "ja": "KIYOラーニングは東証上場のeラーニング企業で、2つのクラウドサービスを運営しています。個人向けには資格取得を支援するオンライン講座「STUDYing（スタディング）」を、法人向けには既製の動画研修に加えて自社オリジナル教材の作成・配信ができる企業向けLMS「AirCourse」を提供しています。個人学習者と企業の人事・研修部門の双方を顧客としています。"
+      }
     },
     {
       "name": "KOMOJU",
       "color": "#16a34a",
-      "mono": "KM"
+      "mono": "KM",
+      "industry": {
+        "en": "Fintech · Payments",
+        "ja": "フィンテック・決済"
+      },
+      "blurb": {
+        "en": "KOMOJU is a payment gateway operated by Tokyo-based Degica that lets online merchants accept local payment methods across Japan and Asia through a single integration. Supported methods include credit and debit cards, bank transfers, convenience-store cash payments, digital wallets, carrier billing, and prepaid vouchers. It integrates with major e-commerce platforms such as Shopify, WooCommerce, Wix, and Magento.",
+        "ja": "KOMOJUは東京のDegica（デジカ）が運営する決済ゲートウェイで、オンライン事業者が一度の連携で日本やアジアの各種ローカル決済手段を導入できるサービスです。クレジット・デビットカード、銀行振込、コンビニ現金払い、電子ウォレット、キャリア決済、プリペイドバウチャーなどに対応しています。Shopify、WooCommerce、Wix、Magentoといった主要ECプラットフォームと連携できます。"
+      }
     },
     {
       "name": "Monstarlab",
       "color": "#e11d48",
-      "mono": "Ml"
+      "mono": "Ml",
+      "industry": {
+        "en": "Digital product · Consulting",
+        "ja": "デジタルプロダクト・コンサルティング"
+      },
+      "blurb": {
+        "en": "Monstarlab is a global digital consultancy founded in Tokyo in 2006 that designs, builds, and scales digital products and platforms for enterprise clients. Its services span product strategy, experience design, and software engineering, with teams of strategists, designers, and engineers operating across multiple countries. It positions itself as an AI and digital transformation partner.",
+        "ja": "Monstarlab（モンスターラボ）は2006年に東京で設立されたグローバルなデジタルコンサルティング企業で、エンタープライズ顧客向けにデジタルプロダクトやプラットフォームの設計・開発・拡大を手がけています。プロダクト戦略、体験デザイン、ソフトウェア開発までを提供し、ストラテジスト・デザイナー・エンジニアのチームが複数の国・地域で活動しています。AI・デジタル変革のパートナーを標榜しています。"
+      }
     },
     {
       "name": "Nowcast",
       "color": "#1d4ed8",
-      "mono": "Nc"
+      "mono": "Nc",
+      "industry": {
+        "en": "Alternative data · Fintech",
+        "ja": "オルタナティブデータ・フィンテック"
+      },
+      "blurb": {
+        "en": "Nowcast is a Japanese alternative-data company spun out of research at the University of Tokyo that turns credit card, POS, and point-card transaction data into economic indicators and analytics. It provides both raw data and an analytics layer to financial institutions, asset managers, think tanks, and government bodies in Japan and abroad. Notable work includes consumption indices built with partners such as JCB and Nikkei.",
+        "ja": "Nowcast（ナウキャスト）は東京大学の研究から生まれた日本のオルタナティブデータ企業で、クレジットカード・POS・ポイントカードの取引データを経済指標や分析データへと変換しています。金融機関、運用会社、シンクタンク、政府機関などに対し、国内外で生データと分析レイヤーの双方を提供しています。JCBや日経などとの提携による消費指数の開発などで知られています。"
+      }
     },
     {
       "name": "Outsourcing Technology",
       "color": "#f59e0b",
-      "mono": "OT"
+      "mono": "OT",
+      "industry": {
+        "en": "Engineering staffing · HR",
+        "ja": "技術者派遣・人材サービス"
+      },
+      "blurb": {
+        "en": "Outsourcing Technology (renamed BREXA Technology in July 2025) is a Japanese engineering staffing firm founded in 2004 that dispatches and contracts out technical talent to client companies. It supplies mechanical and electrical engineers to manufacturing sectors such as automotive and home appliances, as well as IT engineers for system development and infrastructure. The company operates dozens of offices nationwide with a large pool of engineers on staff.",
+        "ja": "アウトソーシングテクノロジー（2025年7月にBREXA Technologyへ社名変更）は2004年設立の日本の技術者派遣企業で、顧客企業に対し技術人材の派遣や請負を行っています。自動車・家電などの製造業向けに機械・電気系エンジニアを、またシステム開発やインフラ構築向けにITエンジニアを供給しています。全国に多数の拠点を構え、多くのエンジニアを擁しています。"
+      }
     },
     {
       "name": "Osushi",
       "color": "#f97316",
-      "mono": "Os"
+      "mono": "Os",
+      "industry": {
+        "en": "AI development · MVP",
+        "ja": "AI開発・MVP"
+      },
+      "blurb": {
+        "en": "OSUSHI Inc. is a Tokyo-based company founded in January 2025 that specializes in AI agent and AI system development. It offers contract development and operation of AI systems as well as prototype and MVP development for businesses looking to apply AI to concrete operational and management use cases. Its team includes members with backgrounds at firms such as SAP Japan, Deloitte Tohmatsu Consulting, and MUFG Bank.",
+        "ja": "株式会社OSUSHIは2025年1月に設立された東京拠点の企業で、AIエージェントやAIシステムの開発を専門としています。AIシステムの受託開発・運用に加え、AIを具体的な業務・経営課題に活用したい企業向けにプロトタイプやMVPの開発を提供しています。チームにはSAPジャパン、デロイトトーマツコンサルティング、三菱UFJ銀行などの出身メンバーが在籍しています。"
+      }
     }
   ];
 
