@@ -11,7 +11,9 @@
   .co-blurb{color:var(--slate);font-size:1.05rem;}
   .co-roles{font-weight:700;color:var(--accent-deep);font-size:1.02rem;}
   .co-roles.muted{color:var(--slate);}
-  .co-actions{display:flex;gap:12px;flex-wrap:wrap;}
+  .co-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;color:var(--pos-fg);background:var(--pos-bg);padding:4px 11px;border-radius:999px;}
+  .co-badge::before{content:"✓";font-weight:800;}
+  .co-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:auto;}
 
 
 

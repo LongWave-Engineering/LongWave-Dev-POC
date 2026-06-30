@@ -26,18 +26,32 @@
            '</div>';
   }
 
+  /* which slice of the roster a marquee shows: data-partner-set="placements" → only
+     companies where we've placed an engineer (jobs page); default → the whole roster. */
+  function partnerList(set){
+    if(set === "placements") return PARTNERS.filter(function(p){ return p.placement; });
+    return PARTNERS;
+  }
+
   /* Build each wall once — logos are language-independent, so re-running applyLang()
-     (lang toggle, live hydrate) must not rebuild the DOM and restart the scroll. */
+     (lang toggle, live hydrate) must not rebuild the DOM and restart the scroll.
+     data-partner-rows="1" → one row (jobs strip); default → two opposite-scroll rows. */
   function renderPartners(){
     var boxes = document.querySelectorAll("[data-partner-marquee]");
     if(!boxes.length || typeof PARTNERS === "undefined" || !PARTNERS.length) return;
-    var mid  = Math.ceil(PARTNERS.length / 2);
-    var rowA = PARTNERS.slice(0, mid);          // top row → drifts left
-    var rowB = PARTNERS.slice(mid);             // bottom row → drifts right
-    var html = '<div class="logo-rows">'+ partnerRowHTML(rowA, false) + partnerRowHTML(rowB, true) +'</div>';
     boxes.forEach(function(box){
       if(box.dataset.pmBuilt) return;
-      box.innerHTML = html;
+      var list = partnerList(box.getAttribute("data-partner-set") || "all");
+      if(!list.length) return;
+      var html;
+      if(box.getAttribute("data-partner-rows") === "1"){
+        html = partnerRowHTML(list, false);
+      } else {
+        var mid = Math.ceil(list.length / 2);
+        html = partnerRowHTML(list.slice(0, mid), false) + partnerRowHTML(list.slice(mid), true);  // top←, bottom→
+      }
+      box.innerHTML = '<div class="logo-rows">'+ html +'</div>';
+      if(!box.getAttribute("role")) box.setAttribute("role", "group");   /* expose the aria-label (a bare div is role=generic) */
       box.dataset.pmBuilt = "1";
     });
   }

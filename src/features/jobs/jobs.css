@@ -47,6 +47,7 @@
 
   /* sticky batch-apply bar — appears when ≥1 role is selected */
   .select-bar{position:sticky;bottom:16px;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--navy);color:#fff;padding:14px 18px;border-radius:14px;box-shadow:0 18px 40px -16px rgba(14,34,53,.55);margin-top:22px;}
+  .select-bar[hidden]{display:none;}   /* a class rule beats the [hidden] UA default — restore it so the empty bar stays hidden */
   .select-bar .sb-count{font-weight:700;}
   .select-bar .sb-actions{display:flex;gap:10px;}
   .select-bar .btn--ghost{color:#fff;background:transparent;border-color:rgba(255,255,255,.55);}

@@ -58,20 +58,32 @@
     var job=$("#suWant").value!=="hire";
     $("#jobSeekerFields").style.display=job?"":"none";
     $("#hireFields").style.display=job?"none":"";
-    var r=$("#suResume"); if(r) r.required=job;
+    /* résumé required for job-seekers, EXCEPT a low-friction company inquiry — and this
+       must survive the user toggling the dropdown mid-modal, so it's decided here. */
+    var r=$("#suResume"); if(r) r.required = job && !pendingInquiryCo;
   }
   $("#suWant").addEventListener("change", suToggleWant);
   var pendingApplyJobIds=[];   /* job ids the signup will apply to (empty = plain signup) */
-  function openSignup(preset, jobIds){
+  var pendingInquiryCo=null;   /* company the candidate is asking about (companies page) */
+  function openSignup(preset, jobIds, opts){
+    opts=opts||{};
     lastFocus=document.activeElement;
     pendingApplyJobIds = Array.isArray(jobIds) ? LW.normalizeJobIds(jobIds) : [];
+    pendingInquiryCo = opts.company || null;
     $("#suSuccess").style.display="none"; $("#suForm").style.display="";
     if(preset==="hire") $("#suWant").value="hire"; else if(preset==="job") $("#suWant").value="job";
-    suToggleWant();
+    suToggleWant();   /* résumé requirement (incl. the inquiry exception) is decided here */
     var titleEl=$("#suTitle");
-    if(titleEl) titleEl.textContent = pendingApplyJobIds.length ? t("apply_title").replace("{n}",pendingApplyJobIds.length) : t("su_title");
+    if(titleEl) titleEl.textContent =
+      pendingInquiryCo ? t("inq_title").replace("{co}", pendingInquiryCo)
+      : (pendingApplyJobIds.length ? t("apply_title").replace("{n}",pendingApplyJobIds.length) : t("su_title"));
     openOverlay(suOverlay); $("#suClose").focus();
   }
+  /* companies page "Ask about roles →" → signup pre-set to that company */
+  document.addEventListener("click", function(e){
+    var inq=e.target.closest("[data-inquire]");
+    if(inq){ e.preventDefault(); openSignup("job", [], { company: inq.getAttribute("data-inquire") }); }
+  });
   /* the job detail modal's "Sign up to apply" → apply to just that role */
   var _mApply=$("#mApply");
   if(_mApply) _mApply.addEventListener("click", function(){ openSignup("job", (currentJob && currentJob.id!=null) ? [currentJob.id] : []); });
@@ -112,6 +124,8 @@
       name: val("#suName"), email: val("#suEmail"),
       linkedin: val("#suLinkedin"), github: val("#suGithub"),
       company: val("#suCompany"),
+      /* candidate asking about a specific client → capture it for the recruiter */
+      message: pendingInquiryCo ? ("Interested in roles at " + pendingInquiryCo) : undefined,
       resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined
     };
   }
@@ -129,7 +143,9 @@
       }
     }
     var succ=$("#suSuccess");
-    if(succ) succ.textContent = n ? t("apply_success").replace("{n}",n) : t("su_success");
+    if(succ) succ.textContent =
+      pendingInquiryCo ? t("inq_success").replace("{co}", pendingInquiryCo)
+      : (n ? t("apply_success").replace("{n}",n) : t("su_success"));
     $("#suForm").style.display="none"; if(succ) succ.style.display="block";
     if(n) clearSelection();   /* reset the jobs picker after a batch apply */
   }
