@@ -7,7 +7,8 @@
 
   @keyframes waveDrift{ from{ background-position-x:0; } to{ background-position-x:-280px; } }
   @keyframes waveDriftWide{ from{ background-position-x:0; } to{ background-position-x:-320px; } }
-  @keyframes waveAccent{ from{ background-position-x:0; } to{ background-position-x:-24px; } }
+  @keyframes waveAccent{ from{ background-position-x:0; } to{ background-position-x:-28px; } }
+  @keyframes waveDivide{ from{ background-position-x:0; } to{ background-position-x:-300px; } }
   /* ambient hero glow: the radial wash breathes slowly so the hero never feels static */
   @keyframes heroBreathe{ from{ transform:translate3d(0,0,0) scale(1); } to{ transform:translate3d(-2.2%,1.4%,0) scale(1.06); } }
 
@@ -36,10 +37,21 @@
     opacity:.16; animation:waveDrift 12s linear infinite;
   }
 
-  /* ---- animated wave accent under centred section headings (brand signature) ---- */
+  /* ---- animated wave accent under centred section headings (brand signature) ----
+     A longer, calmer ribbon than a short dash, so the motif reads clearly. */
   .head.center::after{
-    content:""; display:block; width:74px; height:9px; margin:18px auto 0;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='9' viewBox='0 0 24 9'%3E%3Cpath d='M0 5 C 3 2 6 2 9 5 C 12 8 15 8 18 5 C 21 2 24 2 24 5' fill='none' stroke='%2301A7E3' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat:repeat-x; background-position:center; background-size:24px 100%;
-    animation:waveAccent 3.2s linear infinite;
+    content:""; display:block; width:clamp(120px,26vw,168px); height:10px; margin:20px auto 0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='10' viewBox='0 0 28 10'%3E%3Cpath d='M0 5 C 3.5 1.5 7 1.5 10.5 5 C 14 8.5 17.5 8.5 21 5 C 24.5 1.5 28 1.5 28 5' fill='none' stroke='%2301A7E3' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:repeat-x; background-position:center; background-size:28px 100%;
+    animation:waveAccent 4s linear infinite;
+  }
+
+  /* ---- recurring wave divider along the top edge of tinted sections ----
+     Spreads the brand motif across the whole page instead of living in one spot. */
+  .section.tinted{position:relative;}
+  .section.tinted::before{
+    content:""; position:absolute; left:0; right:0; top:0; height:24px; pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='24' viewBox='0 0 300 24' preserveAspectRatio='none'%3E%3Cpath d='M0 14 C 50 4 100 4 150 14 C 200 24 250 24 300 14' fill='none' stroke='%2301A7E3' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat:repeat-x; background-position:top center; background-size:300px 100%;
+    opacity:.10; animation:waveDivide 22s linear infinite;
   }

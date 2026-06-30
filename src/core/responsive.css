@@ -31,9 +31,14 @@
   @media print{
     body *{visibility:hidden !important;}
     #cvDocs, #cvDocs *{visibility:visible !important;}
+    /* drop the two-column grid + sticky positioning so #cvDocs (absolute) resolves
+       against the page and fills its full width, not the right-half preview column */
+    .cv-layout{display:block !important;}
+    .cv-preview{position:static !important;top:auto !important;}
     #cvDocs{position:absolute;left:0;top:0;width:100%;gap:0;}
     .doc{border:0 !important;box-shadow:none !important;padding:0 !important;}
-    .rirekisho{page-break-after:always;}
+    /* only the selected document is shown (the other is display:none), so print/PDF
+       captures exactly one — no forced trailing page break needed */
     @page{margin:14mm;}
   }
 

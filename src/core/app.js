@@ -8,9 +8,6 @@
     document.querySelectorAll("[data-i18n-ph]").forEach(function(n){ var k=n.getAttribute("data-i18n-ph"); var v=I18N[lang][k]!=null?I18N[lang][k]:I18N.en[k]; if(v!=null) n.setAttribute("placeholder", v); });
     buildSpecSelect(); buildStackSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners();
     var jc=$("#jobCount"); if(jc) jc.innerHTML = t("jobcount").replace("{n}","<b>"+JOBS.length+"</b>");
-    var pj = LINKS.postAJob + (lang==="ja" ? "?lang=ja" : "?lang=en");
-    if($("#postExternalCta")) $("#postExternalCta").href=pj;
-    if($("#suHireLink")) $("#suHireLink").href=pj;
     document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
   }
   function setLang(l){ if(l===lang) return; lang=l; applyLang(); }
@@ -72,7 +69,8 @@
         showAllJobs=false; renderJobs();
       }
       go(link.getAttribute("data-go"));
-      if(navLinks) navLinks.classList.remove("show"); if(jobOverlay.classList.contains("open")) closeOverlay(jobOverlay); if(suOverlay.classList.contains("open")) closeOverlay(suOverlay);
+      if(navLinks) navLinks.classList.remove("show");
+      [jobOverlay, suOverlay, coOverlay, ctOverlay, pjOverlay].forEach(function(o){ if(o && o.classList.contains("open")) closeOverlay(o); });
     }
   });
 

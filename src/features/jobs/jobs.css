@@ -10,6 +10,9 @@
   .badge-hot{background:var(--hot-bg);color:var(--hot-fg);font-weight:700;font-size:.86rem;padding:4px 11px;border-radius:999px;box-shadow:0 6px 14px -8px rgba(179,71,27,.5);}
 
   /* ---------- jobs page (sidebar + grid) ---------- */
+  /* a touch wider than the site default so the grid can reach its 4-column cap on large
+     monitors (with the sidebar present, a 1180 wrap would top out at ~3) */
+  #page-jobs .wrap{max-width:1380px;}
   .jobs-layout{display:grid;grid-template-columns:268px 1fr;gap:34px;align-items:start;}
   .filters-side{position:sticky;top:100px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);}
   .filters-side .fgroup{margin-bottom:20px;}
@@ -24,7 +27,10 @@
   .fclear{background:transparent;border:0;color:var(--accent-deep);font-weight:700;font-size:.98rem;padding:4px 0;}
   .fclear:hover{color:var(--ink);}
   .result-count{font-size:1.02rem;color:var(--slate);margin-bottom:20px;font-weight:600;}
-  .job-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  /* Fluid grid: 1 column when narrow, scaling up to a hard cap of 4 across when wide.
+     The minmax floor = max(230px, a quarter-row) guarantees no 5th column yet reflows
+     down to 1 as the window shrinks. */
+  .job-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill, minmax(max(230px, (100% - 54px)/4), 1fr));}
   .jobs-prompt{grid-column:1/-1;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:64px 30px;}
   .jobs-prompt .jp-ic{font-size:2.4rem;line-height:1;margin-bottom:12px;}
   .jobs-prompt h3{font-size:1.55rem;margin-bottom:12px;}
@@ -33,10 +39,17 @@
      .jc-select = the selection checkbox (separate control, no nested buttons). */
   .job-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;position:relative;}
   .jc-open{display:flex;flex-direction:column;gap:14px;width:100%;padding:24px;text-align:left;background:transparent;border:0;border-radius:var(--radius);color:inherit;font:inherit;cursor:pointer;}
-  .jc-select{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;line-height:0;}
+  /* top-right corner: save heart + selection checkbox, side by side, layered over the open-button */
+  .jc-corner{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;gap:9px;}
+  .jc-select{display:flex;align-items:center;line-height:0;}
   .jc-select input{width:21px;height:21px;margin:0;cursor:pointer;accent-color:var(--sky-deep);}
+  .jc-save{width:30px;height:30px;padding:0;display:grid;place-items:center;border:0;background:transparent;border-radius:9px;color:var(--line-strong);transition:color .15s ease, transform .15s ease, background .15s ease;}
+  .jc-save svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;}
+  .jc-save:hover{color:#ef5b7a;background:#fdeef2;transform:translateY(-1px);}
+  .jc-save.is-saved{color:#ef5b7a;}
+  .jc-save.is-saved svg{fill:#ef5b7a;stroke:#ef5b7a;}
   .job-card.sel{border-color:var(--sky);box-shadow:0 0 0 2px var(--sky), var(--shadow);}
-  .jc-top{padding-right:26px;}  /* reserve room for the checkbox on the title row */
+  .jc-top{padding-right:74px;}  /* reserve room for the corner controls on the title row */
   /* Apple-style silky entrance: cards glide up + fade + de-blur, gently staggered.
      Delay is set inline per-card in jobs.js; `both` keeps them hidden until their turn. */
   @keyframes jcReveal{from{opacity:0;transform:translateY(15px) scale(.985);filter:blur(5px);}to{opacity:1;transform:none;filter:blur(0);}}
@@ -61,6 +74,16 @@
   .jc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:2px;}
   .jc-loc{font-size:.96rem;color:var(--slate);}
   .jc-link{font-size:.98rem;font-weight:700;color:var(--accent-deep);}
+
+  /* jobs page header: title + sub on the left, the "Saved" view toggle on the right
+     (gives the previously-empty space beside the heading a purpose) */
+  .jobs-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;max-width:none;margin-bottom:30px;}
+  .jobs-head-text{max-width:44rem;}
+  .jobs-saved-toggle{flex:none;gap:9px;}
+  .jobs-saved-toggle .jst-heart{font-size:1.08em;line-height:1;color:var(--line-strong);transition:color .15s ease;}
+  .jobs-saved-toggle:hover .jst-heart{color:#ef5b7a;}
+  .jobs-saved-toggle.active{background:#fdeef2;border-color:#ef5b7a;color:#c43358;}
+  .jobs-saved-toggle.active .jst-heart{color:#ef5b7a;}
 
 
 

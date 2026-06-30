@@ -83,6 +83,15 @@
     $("#cvForm").addEventListener("input", renderCV);
     $("#cvForm").addEventListener("change", renderCV);
     $("#cvPrint").addEventListener("click", function(){ window.print(); });
+    /* document picker: show one document at a time (the other is hidden, so print/PDF
+       captures just the selected one). Both still update live from the same form. */
+    var docs=$("#cvDocs");
+    document.querySelectorAll(".cv-doctab").forEach(function(tab){
+      tab.addEventListener("click", function(){
+        if(docs) docs.setAttribute("data-show", tab.getAttribute("data-doc"));
+        document.querySelectorAll(".cv-doctab").forEach(function(o){ var on=o===tab; o.classList.toggle("active", on); o.setAttribute("aria-selected", on?"true":"false"); });
+      });
+    });
   })();
 
 

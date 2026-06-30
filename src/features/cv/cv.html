@@ -3,7 +3,7 @@
     <div class="wrap">
       <div class="head reveal" style="margin-bottom:28px">
         <h1 style="font-size:clamp(2rem,4vw,2.9rem)" data-i18n="cv_h1">Japanese CV generator</h1>
-        <p class="sub" data-i18n="cv_sub">Fill in your details and we'll build your 履歴書 (rirekisho) and 職務経歴書 (shokumukeirekisho). They update live, then print or save as PDF.</p>
+        <p class="sub" data-i18n="cv_sub">Fill in your details and we'll build your 履歴書 (rirekisho) and 職務経歴書 (shokumukeirekisho). Switch between the two — both update live — then print or save the one you need as PDF.</p>
       </div>
       <div class="cv-actions reveal">
         <button class="btn btn--primary btn--xl" id="cvPrint" disabled data-i18n="cv_print">Print / Save as PDF</button>
@@ -53,9 +53,13 @@
         </div>
 
         <div class="cv-preview reveal">
-          <div id="cvDocs">
+          <div class="cv-docpick" role="tablist" aria-label="Document">
+            <button class="cv-doctab active" type="button" data-doc="rk" role="tab" aria-selected="true">履歴書<span class="en">Rirekisho</span></button>
+            <button class="cv-doctab" type="button" data-doc="sk" role="tab" aria-selected="false">職務経歴書<span class="en">Work history</span></button>
+          </div>
+          <div id="cvDocs" data-show="rk">
             <div class="doc rirekisho" id="rirekishoOut"></div>
-            <div class="doc" id="shokumuOut"></div>
+            <div class="doc doc-sk" id="shokumuOut"></div>
           </div>
         </div>
       </div>

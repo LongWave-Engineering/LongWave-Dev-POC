@@ -49,19 +49,24 @@
     H+=jdSec("jd_notes", job.notes, false);
     $("#mDetail").innerHTML=H;
     var comp=$("#mCompany"); if(c.site){ comp.href=c.site; comp.style.display=""; } else { comp.style.display="none"; }
+    paintModalSave();
     openOverlay(jobOverlay); $("#jobModalClose").focus();
   }
-
-  /* ---------------- signup modal ---------------- */
-  var suOverlay=$("#suOverlay");
-  function suToggleWant(){
-    var job=$("#suWant").value!=="hire";
-    $("#jobSeekerFields").style.display=job?"":"none";
-    $("#hireFields").style.display=job?"none":"";
-    var r=$("#suResume"); if(r) r.required = job;   /* résumé required for job-seekers */
-    var l=$("#suLoc"); if(l) l.required = job;       /* so is the in-Japan residence gate */
+  /* the JD modal's Save button mirrors the per-card save heart (same store, see jobs.js) */
+  function paintModalSave(){
+    var b=$("#mSave"), lab=$("#mSaveLabel"); if(!b) return;
+    var on = currentJob && typeof isSaved==="function" && isSaved(currentJob);
+    b.classList.toggle("is-saved", !!on);
+    b.setAttribute("aria-pressed", on?"true":"false");
+    if(lab) lab.textContent = on ? t("sv_saved") : t("sv_save");
   }
-  $("#suWant").addEventListener("change", suToggleWant);
+  if($("#mSave")) $("#mSave").addEventListener("click", function(){ if(currentJob && typeof toggleSaved==="function"){ toggleSaved(currentJob); paintModalSave(); } });
+
+  /* ---------------- signup modal (candidates only) ----------------
+     Everyone who signs up here is a job-seeker / candidate (kind:"job"). Companies that
+     want to hire use the separate "Post a job" form (openPostJob below), so candidates
+     and companies stay two clean groups in the CRM. */
+  var suOverlay=$("#suOverlay");
   /* Visa/residence gate: base requirement is being in Japan now. We capture the status on
      every candidate submission and warn (don't hard-block) those currently abroad, since
      most roles need valid working status. */
@@ -70,13 +75,12 @@
   bindLocWarn("#suLoc","#suLocWarn");
   bindLocWarn("#coLoc","#coLocWarn");
   var pendingApplyJobIds=[];   /* job ids the signup will apply to (empty = plain signup) */
+  /* `preset` is accepted (call sites still pass "job") but ignored — the signup is always a candidate. */
   function openSignup(preset, jobIds){
     lastFocus=document.activeElement;
     pendingApplyJobIds = Array.isArray(jobIds) ? LW.normalizeJobIds(jobIds) : [];
     $("#suSuccess").style.display="none"; $("#suForm").style.display="";
     if($("#suLoc")) $("#suLoc").value=""; if($("#suLocWarn")) $("#suLocWarn").style.display="none";
-    if(preset==="hire") $("#suWant").value="hire"; else if(preset==="job") $("#suWant").value="job";
-    suToggleWant();
     var titleEl=$("#suTitle");
     if(titleEl) titleEl.textContent = pendingApplyJobIds.length ? t("apply_title").replace("{n}",pendingApplyJobIds.length) : t("su_title");
     openOverlay(suOverlay); $("#suClose").focus();
@@ -127,33 +131,77 @@
     if(card && document.activeElement===card){ e.preventDefault(); openCompany(card.getAttribute("data-company")); }
   });
 
-  /* ---------------- contact / enquiry modal ---------------- */
+  /* ---------------- contact / enquiry modal ----------------
+     Routes the lead by reason so it lands in the right CRM group: looking-for-a-job →
+     kind:"job", post-a-job/hire → kind:"hire", anything else → kind:"contact". */
   var ctOverlay=$("#ctOverlay");
-  function openContact(){
+  var CT_KIND={ job:"job", hire:"hire", other:"contact" };
+  var CT_LABEL={ job:"Looking for a job", hire:"Wants to post a job / hire", other:"General enquiry" };
+  function ctToggleCompany(){ var f=$("#ctCompanyField"); if(f) f.style.display = ($("#ctReason") && $("#ctReason").value==="hire") ? "" : "none"; }
+  if($("#ctReason")) $("#ctReason").addEventListener("change", ctToggleCompany);
+  function openContact(preset){
     if(!ctOverlay) return;
     lastFocus=document.activeElement;
     $("#ctForm").style.display=""; $("#ctSuccess").style.display="none";
-    ["#ctName","#ctEmail","#ctSubject","#ctMessage"].forEach(function(s){ if($(s)) $(s).value=""; });
+    ["#ctName","#ctEmail","#ctPhone","#ctCompany","#ctMessage"].forEach(function(s){ if($(s)) $(s).value=""; });
+    if($("#ctReason")) $("#ctReason").value = (preset==="job"||preset==="hire"||preset==="other") ? preset : "";
+    ctToggleCompany();
     openOverlay(ctOverlay); $("#ctClose").focus();
   }
   function submitContact(){
     var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; };
-    var subject=val("#ctSubject"), msg=val("#ctMessage");
-    var body={ kind:"contact", name:val("#ctName")||undefined, email:val("#ctEmail")||undefined, message:(subject?("["+subject+"] "):"")+msg };
+    var reason=val("#ctReason"), msg=val("#ctMessage"), company=val("#ctCompany");
+    var label=CT_LABEL[reason]||"General enquiry";
+    var body={ kind:CT_KIND[reason]||"contact", name:val("#ctName")||undefined, email:val("#ctEmail")||undefined,
+      phone:val("#ctPhone")||undefined, company:company||undefined, message:"["+label+"] "+msg };
     if(/^https?:$/.test(location.protocol)){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); }
     $("#ctForm").style.display="none"; var s=$("#ctSuccess"); if(s) s.style.display="block";
   }
   if($("#ctForm")) $("#ctForm").addEventListener("submit", function(e){ e.preventDefault(); submitContact(); });
   if($("#ctClose")) $("#ctClose").addEventListener("click", function(){ closeOverlay(ctOverlay); });
   if(ctOverlay) ctOverlay.addEventListener("click", function(e){ if(e.target===ctOverlay) closeOverlay(ctOverlay); });
-  document.addEventListener("click", function(e){ var c=e.target.closest("[data-contact]"); if(c){ e.preventDefault(); openContact(); } });
+  document.addEventListener("click", function(e){ var c=e.target.closest("[data-contact]"); if(c){ e.preventDefault(); openContact(c.getAttribute("data-contact")||undefined); } });
+
+  /* ---------------- post-a-job (company) modal ----------------
+     Companies that want to hire / partner with us submit here — a SEPARATE group from
+     candidates. Captured as kind:"hire" leads with phone, company and website. */
+  var pjOverlay=$("#pjOverlay");
+  function openPostJob(){
+    if(!pjOverlay) return;
+    lastFocus=document.activeElement;
+    $("#pjForm").style.display=""; $("#pjSuccess").style.display="none";
+    ["#pjCompany","#pjName","#pjRole","#pjEmail","#pjPhone","#pjSite","#pjLooking","#pjNotes"].forEach(function(s){ if($(s)) $(s).value=""; });
+    openOverlay(pjOverlay); $("#pjClose").focus();
+  }
+  function submitPostJob(){
+    var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; };
+    var looking=val("#pjLooking"), role=val("#pjRole"), site=val("#pjSite"), notes=val("#pjNotes");
+    var parts=["Hiring for: "+(looking||"(not specified)")];
+    if(role) parts.push("Contact role: "+role);
+    if(site) parts.push("Website: "+site);
+    if(notes) parts.push("Notes: "+notes);
+    var body={ kind:"hire", name:val("#pjName")||undefined, email:val("#pjEmail")||undefined,
+      phone:val("#pjPhone")||undefined, company:val("#pjCompany")||undefined, message:parts.join("\n") };
+    if(/^https?:$/.test(location.protocol)){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); }
+    $("#pjForm").style.display="none"; var s=$("#pjSuccess"); if(s) s.style.display="block";
+  }
+  if($("#pjForm")) $("#pjForm").addEventListener("submit", function(e){ e.preventDefault(); submitPostJob(); });
+  if($("#pjClose")) $("#pjClose").addEventListener("click", function(){ closeOverlay(pjOverlay); });
+  if(pjOverlay) pjOverlay.addEventListener("click", function(e){ if(e.target===pjOverlay) closeOverlay(pjOverlay); });
+  document.addEventListener("click", function(e){ var p=e.target.closest("[data-postjob]"); if(p){ e.preventDefault(); openPostJob(); } });
   /* the job detail modal's "Sign up to apply" → apply to just that role */
   var _mApply=$("#mApply");
   if(_mApply) _mApply.addEventListener("click", function(){ openSignup("job", (currentJob && currentJob.id!=null) ? [currentJob.id] : []); });
 
   /* ---------------- overlay helpers ---------------- */
   function openOverlay(o){ o.classList.add("open"); document.body.style.overflow="hidden"; }
-  function closeOverlay(o){ o.classList.remove("open"); document.body.style.overflow=""; if(lastFocus) lastFocus.focus(); }
+  function closeOverlay(o){
+    o.classList.remove("open");
+    /* only unlock body scroll once NO overlay is open — the signup can stack on the job modal */
+    var anyOpen=[jobOverlay,suOverlay,coOverlay,ctOverlay,pjOverlay].some(function(ov){ return ov && ov.classList.contains("open"); });
+    if(!anyOpen) document.body.style.overflow="";
+    if(lastFocus) lastFocus.focus();
+  }
   $("#jobModalClose").addEventListener("click", function(){ closeOverlay(jobOverlay); });
   jobOverlay.addEventListener("click", function(e){ if(e.target===jobOverlay) closeOverlay(jobOverlay); });
   $("#suClose").addEventListener("click", function(){ closeOverlay(suOverlay); });
@@ -166,7 +214,8 @@
   }
   document.addEventListener("keydown", function(e){
     /* signup can stack on top of the job modal — handle the topmost one first */
-    var openOv = (ctOverlay && ctOverlay.classList.contains("open")) ? ctOverlay
+    var openOv = (pjOverlay && pjOverlay.classList.contains("open")) ? pjOverlay
+      : (ctOverlay && ctOverlay.classList.contains("open")) ? ctOverlay
       : (coOverlay && coOverlay.classList.contains("open")) ? coOverlay
       : (suOverlay.classList.contains("open") ? suOverlay : (jobOverlay.classList.contains("open") ? jobOverlay : null));
     if(!openOv) return;
@@ -187,10 +236,9 @@
     var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : undefined; };
     var resume=$("#suResume");
     return {
-      kind: $("#suWant").value,
+      kind: "job",
       name: val("#suName"), email: val("#suEmail"),
       linkedin: val("#suLinkedin"), github: val("#suGithub"),
-      company: val("#suCompany"),
       message: ($("#suLoc") && LOC_LABEL[$("#suLoc").value]) ? ("Based: "+LOC_LABEL[$("#suLoc").value]) : undefined,
       resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined
     };

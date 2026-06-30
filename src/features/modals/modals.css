@@ -1,11 +1,14 @@
 /* features/modals/modals.css — job-detail + signup modals, overlay */
   /* ---------- modals ---------- */
-  .overlay{position:fixed;inset:0;z-index:100;background:rgba(14,34,53,.58);display:none;align-items:flex-start;justify-content:center;padding:44px 20px;overflow-y:auto;backdrop-filter:blur(3px);}
-  .overlay.open{display:flex;animation:overlayIn .22s ease;}
-  @keyframes overlayIn{from{opacity:0;}to{opacity:1;}}
-  .modal{background:var(--surface);border-radius:22px;max-width:640px;width:100%;box-shadow:var(--shadow-lg);padding:36px;position:relative;animation:pop .26s cubic-bezier(.2,.7,.3,1);}
+  /* Overlays fade in AND out via transitions. display:none can't animate, so we keep the
+     node in the layer and toggle opacity + visibility (hidden = not painted, not clickable,
+     not tabbable). closeOverlay only drops .open, so dismissing a job detail fades out
+     gently instead of vanishing. */
+  .overlay{position:fixed;inset:0;z-index:100;background:rgba(14,34,53,.58);display:flex;align-items:flex-start;justify-content:center;padding:44px 20px;overflow-y:auto;backdrop-filter:blur(3px);opacity:0;visibility:hidden;transition:opacity .32s cubic-bezier(.16,1,.3,1), visibility .32s;}
+  .overlay.open{opacity:1;visibility:visible;}
+  .modal{background:var(--surface);border-radius:22px;max-width:640px;width:100%;box-shadow:var(--shadow-lg);padding:36px;position:relative;opacity:0;transform:translateY(20px) scale(.985);transition:opacity .36s cubic-bezier(.16,1,.3,1), transform .36s cubic-bezier(.16,1,.3,1);}
+  .overlay.open .modal{opacity:1;transform:none;}
   .modal.narrow{max-width:480px;}
-  @keyframes pop{from{opacity:0;transform:translateY(18px) scale(.985);}to{opacity:1;transform:none;}}
   .modal-close{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:11px;border:2px solid var(--line);background:#fff;font-size:1.4rem;color:var(--slate);}
   .modal-close:hover{color:var(--ink);}
   .modal .m-head{display:flex;gap:16px;align-items:center;padding-right:40px;}
@@ -28,6 +31,10 @@
   .form-success{color:var(--pos-fg);font-weight:700;font-size:1.06rem;margin-top:8px;}
   /* visa/residence heads-up for applicants currently outside Japan */
   .form-warn{margin-top:9px;color:var(--warn-fg);background:var(--warn-bg);border-radius:10px;padding:9px 12px;font-weight:600;}
+  /* JD-modal Save button — mirrors the per-card save heart */
+  #mSave .m-save-ic{color:var(--line-strong);font-size:1.05em;line-height:1;transition:color .15s ease;}
+  #mSave.is-saved{border-color:#ef5b7a;color:#c43358;}
+  #mSave.is-saved .m-save-ic{color:#ef5b7a;}
 
 
 

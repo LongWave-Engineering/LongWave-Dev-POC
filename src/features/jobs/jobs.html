@@ -1,9 +1,14 @@
 <div class="page" id="page-jobs">
   <section class="section">
     <div class="wrap">
-      <div class="head reveal" style="margin-bottom:34px">
-        <h1 style="font-size:clamp(2.2rem,4.4vw,3.2rem)" data-i18n="jobs_h1">Open roles</h1>
-        <p class="sub" data-i18n="jobs_sub">Hand-picked software roles at Japan's product companies. Salary and Japanese level shown on every listing.</p>
+      <div class="head jobs-head reveal">
+        <div class="jobs-head-text">
+          <h1 style="font-size:clamp(2.2rem,4.4vw,3.2rem)" data-i18n="jobs_h1">Open roles</h1>
+          <p class="sub" data-i18n="jobs_sub">Hand-picked software roles at Japan's product companies. Salary and Japanese level shown on every listing.</p>
+        </div>
+        <button class="btn btn--ghost jobs-saved-toggle" id="savedToggle" type="button" aria-pressed="false">
+          <span class="jst-heart" aria-hidden="true">♥</span><span id="savedToggleLabel">Saved (0)</span>
+        </button>
       </div>
       <div class="jobs-layout">
         <aside class="filters-side reveal" aria-label="Filters">

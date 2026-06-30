@@ -11,6 +11,7 @@
     <div class="m-detail" id="mDetail"></div>
     <div class="m-actions">
       <button class="btn btn--primary" id="mApply" data-i18n="m_apply">Sign up to apply</button>
+      <button class="btn btn--ghost" id="mSave" type="button" aria-pressed="false"><span class="m-save-ic" aria-hidden="true">♥</span> <span id="mSaveLabel" data-i18n="sv_save">Save</span></button>
       <a class="btn btn--ghost" id="mCompany" target="_blank" rel="noopener" data-i18n="m_company">Company site ↗</a>
     </div>
   </div>
@@ -20,39 +21,27 @@
 <div class="overlay" id="suOverlay" role="dialog" aria-modal="true" aria-labelledby="suTitle">
   <div class="modal narrow" id="suModal">
     <button class="modal-close" id="suClose" aria-label="Close">×</button>
-    <h3 class="su-title" id="suTitle" data-i18n="su_title">Sign up</h3>
-    <p class="su-intro" data-i18n="su_intro">One sign-up. We take it from there.</p>
+    <h3 class="su-title" id="suTitle" data-i18n="su_title">Sign up to apply</h3>
+    <p class="su-intro" data-i18n="su_intro">One sign-up and a bilingual recruiter takes it from there.</p>
     <form id="suForm" autocomplete="off">
       <div class="field"><label data-i18n="su_name">Name</label><input type="text" id="suName" required></div>
       <div class="field"><label data-i18n="su_email">Email</label><input type="email" id="suEmail" required></div>
-      <div class="field"><label data-i18n="su_want">I want to</label>
-        <div class="selectwrap"><select id="suWant" style="width:100%">
-          <option value="job" data-i18n="su_opt_job">Find a job</option>
-          <option value="hire" data-i18n="su_opt_hire">Hire engineers</option>
+      <div class="field"><label for="suLoc" data-i18n="su_loc_q">Are you currently in Japan?</label>
+        <div class="selectwrap"><select id="suLoc" style="width:100%" required>
+          <option value="" data-i18n="su_loc_pick">Select…</option>
+          <option value="eligible" data-i18n="su_loc_eligible">Yes — I have valid work eligibility (work visa / PR / citizen)</option>
+          <option value="need_visa" data-i18n="su_loc_need">Yes — in Japan, but I'd need visa support</option>
+          <option value="abroad" data-i18n="su_loc_abroad">No — I'm currently outside Japan</option>
         </select></div>
+        <p class="form-note form-warn" id="suLocWarn" style="display:none" data-i18n="su_loc_warn">Most roles require you to already be in Japan with valid working status, so options may be limited — but we'll be honest about fit.</p>
       </div>
-      <div id="jobSeekerFields">
-        <div class="field"><label for="suLoc" data-i18n="su_loc_q">Are you currently in Japan?</label>
-          <div class="selectwrap"><select id="suLoc" style="width:100%">
-            <option value="" data-i18n="su_loc_pick">Select…</option>
-            <option value="eligible" data-i18n="su_loc_eligible">Yes — I have valid work eligibility (work visa / PR / citizen)</option>
-            <option value="need_visa" data-i18n="su_loc_need">Yes — in Japan, but I'd need visa support</option>
-            <option value="abroad" data-i18n="su_loc_abroad">No — I'm currently outside Japan</option>
-          </select></div>
-          <p class="form-note form-warn" id="suLocWarn" style="display:none" data-i18n="su_loc_warn">Most roles require you to already be in Japan with valid working status, so options may be limited — but we'll be honest about fit.</p>
-        </div>
-        <div class="field"><label data-i18n="su_resume">Resume / CV</label>
-          <input type="file" id="suResume" accept=".pdf,.doc,.docx" required>
-          <p class="form-note" data-i18n="su_resume_note">Required · PDF, DOC or DOCX</p>
-        </div>
-        <div class="field"><label data-i18n="su_linkedin">LinkedIn URL (optional)</label><input type="url" id="suLinkedin" placeholder="https://linkedin.com/in/…"></div>
-        <div class="field"><label data-i18n="su_github">GitHub URL (optional)</label><input type="url" id="suGithub" placeholder="https://github.com/…"></div>
-        <div class="cv-prompt"><span data-i18n="su_cv_q">No Japanese CV yet?</span> <a href="#/cv" data-go="cv" data-i18n="su_cv_link">Generate your rirekisho →</a></div>
+      <div class="field"><label data-i18n="su_resume">Resume / CV</label>
+        <input type="file" id="suResume" accept=".pdf,.doc,.docx" required>
+        <p class="form-note" data-i18n="su_resume_note">Required · PDF, DOC or DOCX</p>
       </div>
-      <div id="hireFields" style="display:none">
-        <div class="field"><label data-i18n="su_company">Company (optional)</label><input type="text" id="suCompany"></div>
-        <p class="form-note"><a id="suHireLink" href="#" target="_blank" rel="noopener" data-i18n="su_hire_hint">Hiring? You can also post a job →</a></p>
-      </div>
+      <div class="field"><label data-i18n="su_linkedin">LinkedIn URL (optional)</label><input type="url" id="suLinkedin" placeholder="https://linkedin.com/in/…"></div>
+      <div class="field"><label data-i18n="su_github">GitHub URL (optional)</label><input type="url" id="suGithub" placeholder="https://github.com/…"></div>
+      <div class="cv-prompt"><span data-i18n="su_cv_q">No Japanese CV yet?</span> <a href="#/cv" data-go="cv" data-i18n="su_cv_link">Generate your rirekisho →</a></div>
       <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="su_submit">Sign up</button>
       <p class="form-success" id="suSuccess" style="display:none" data-i18n="su_success">You're in. We'll be in touch shortly.</p>
     </form>
@@ -104,14 +93,44 @@
   <div class="modal narrow" id="ctModal">
     <button class="modal-close" id="ctClose" aria-label="Close">×</button>
     <h3 class="su-title" id="ctTitle" data-i18n="ct_title">Contact us</h3>
-    <p class="su-intro" data-i18n="ct_intro">A question for the LongWave team? Send it here and we'll reply by email.</p>
+    <p class="su-intro" data-i18n="ct_intro">Looking for a job, hiring, or want to book a quick chat? Tell us how to reach you and how we can help.</p>
     <form id="ctForm" autocomplete="off">
       <div class="field"><label for="ctName" data-i18n="su_name">Name</label><input type="text" id="ctName" required></div>
       <div class="field"><label for="ctEmail" data-i18n="su_email">Email</label><input type="email" id="ctEmail" required></div>
-      <div class="field"><label for="ctSubject" data-i18n="ct_subject">Subject of enquiry</label><input type="text" id="ctSubject" required></div>
-      <div class="field"><label for="ctMessage" data-i18n="ct_message">What are you enquiring about?</label><textarea id="ctMessage" rows="4" required></textarea></div>
+      <div class="field"><label for="ctPhone" data-i18n="ct_phone">Phone (optional)</label><input type="tel" id="ctPhone"></div>
+      <div class="field"><label for="ctReason" data-i18n="ct_reason">What can we help with?</label>
+        <div class="selectwrap"><select id="ctReason" style="width:100%" required>
+          <option value="" data-i18n="ct_reason_pick">Select…</option>
+          <option value="job" data-i18n="ct_reason_job">I'm looking for a job</option>
+          <option value="hire" data-i18n="ct_reason_hire">I want to post a job / hire</option>
+          <option value="other" data-i18n="ct_reason_other">Something else</option>
+        </select></div>
+      </div>
+      <div class="field" id="ctCompanyField" style="display:none"><label for="ctCompany" data-i18n="ct_company">Company name</label><input type="text" id="ctCompany"></div>
+      <div class="field"><label for="ctMessage" data-i18n="ct_message">Tell us a bit more</label><textarea id="ctMessage" rows="4" required></textarea></div>
       <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="ct_submit">Send message</button>
-      <p class="form-success" id="ctSuccess" style="display:none" data-i18n="ct_success">Thanks — we'll get back to you by email soon.</p>
+      <p class="form-success" id="ctSuccess" style="display:none" data-i18n="ct_success">Thanks — we'll get back to you soon.</p>
+    </form>
+  </div>
+</div>
+
+<!-- ============ POST-A-JOB (COMPANY) MODAL ============ -->
+<div class="overlay" id="pjOverlay" role="dialog" aria-modal="true" aria-labelledby="pjTitle">
+  <div class="modal narrow" id="pjModal">
+    <button class="modal-close" id="pjClose" aria-label="Close">×</button>
+    <h3 class="su-title" id="pjTitle" data-i18n="pj_title">Post a job</h3>
+    <p class="su-intro" data-i18n="pj_intro">Tell us who you're hiring and a bilingual recruiter brings you matched, pre-screened candidates.</p>
+    <form id="pjForm" autocomplete="off">
+      <div class="field"><label for="pjCompany" data-i18n="pj_company">Company name</label><input type="text" id="pjCompany" required></div>
+      <div class="field"><label for="pjName" data-i18n="pj_name">Your name</label><input type="text" id="pjName" required></div>
+      <div class="field"><label for="pjRole" data-i18n="pj_role">Your role / title</label><input type="text" id="pjRole" data-i18n-ph="pj_role_ph" placeholder="e.g. Hiring Manager, CTO, Talent"></div>
+      <div class="field"><label for="pjEmail" data-i18n="pj_email">Work email</label><input type="email" id="pjEmail" required></div>
+      <div class="field"><label for="pjPhone" data-i18n="pj_phone">Phone (optional)</label><input type="tel" id="pjPhone"></div>
+      <div class="field"><label for="pjSite" data-i18n="pj_site">Company website (optional)</label><input type="url" id="pjSite" placeholder="https://…"></div>
+      <div class="field"><label for="pjLooking" data-i18n="pj_looking">What roles are you hiring for?</label><textarea id="pjLooking" rows="3" required data-i18n-ph="pj_looking_ph" placeholder="e.g. 2 Backend Engineers (Go), 1 SRE — business Japanese a plus"></textarea></div>
+      <div class="field"><label for="pjNotes" data-i18n="pj_notes">Anything else we should know? (optional)</label><textarea id="pjNotes" rows="2"></textarea></div>
+      <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="pj_submit">Send to LongWave</button>
+      <p class="form-success" id="pjSuccess" style="display:none" data-i18n="pj_success">Thanks — a bilingual recruiter will reach out shortly to learn what you need.</p>
     </form>
   </div>
 </div>
