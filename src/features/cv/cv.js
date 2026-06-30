@@ -83,12 +83,17 @@
     $("#cvForm").addEventListener("input", renderCV);
     $("#cvForm").addEventListener("change", renderCV);
     $("#cvPrint").addEventListener("click", function(){ window.print(); });
-    /* document picker: show one document at a time (the other is hidden, so print/PDF
-       captures just the selected one). Both still update live from the same form. */
-    var docs=$("#cvDocs");
+    /* document toggle (like the ENG/JPN switch): flips the WHOLE page between the
+       rirekisho and shokumukeirekisho views — its own form fields AND its preview.
+       Inputs keep their values while hidden, and renderCV reads them all, so both
+       documents stay live and print/PDF captures just the selected one. */
+    var docs=$("#cvDocs"), formRk=$("#cvFormRk"), formSk=$("#cvFormSk");
     document.querySelectorAll(".cv-doctab").forEach(function(tab){
       tab.addEventListener("click", function(){
-        if(docs) docs.setAttribute("data-show", tab.getAttribute("data-doc"));
+        var d=tab.getAttribute("data-doc");
+        if(docs) docs.setAttribute("data-show", d);
+        if(formRk) formRk.hidden = (d!=="rk");
+        if(formSk) formSk.hidden = (d!=="sk");
         document.querySelectorAll(".cv-doctab").forEach(function(o){ var on=o===tab; o.classList.toggle("active", on); o.setAttribute("aria-selected", on?"true":"false"); });
       });
     });

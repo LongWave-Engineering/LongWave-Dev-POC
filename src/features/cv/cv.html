@@ -5,12 +5,17 @@
         <h1 style="font-size:clamp(2rem,4vw,2.9rem)" data-i18n="cv_h1">Japanese CV generator</h1>
         <p class="sub" data-i18n="cv_sub">Fill in your details and we'll build your 履歴書 (rirekisho) and 職務経歴書 (shokumukeirekisho). Switch between the two — both update live — then print or save the one you need as PDF.</p>
       </div>
+      <div class="cv-docpick reveal" role="tablist" aria-label="Document type">
+        <button class="cv-doctab active" type="button" data-doc="rk" role="tab" aria-selected="true">履歴書<span class="en">Rirekisho</span></button>
+        <button class="cv-doctab" type="button" data-doc="sk" role="tab" aria-selected="false">職務経歴書<span class="en">Shokumukeirekisho</span></button>
+      </div>
       <div class="cv-actions reveal">
         <button class="btn btn--primary btn--xl" id="cvPrint" disabled data-i18n="cv_print">Print / Save as PDF</button>
         <span class="cv-note" id="cvNote" data-i18n="cv_note_fill">Fill your name, furigana and date of birth to generate.</span>
       </div>
       <div class="cv-layout">
         <div class="cv-form reveal" id="cvForm">
+          <div id="cvFormRk">
           <h3>基本情報 / Basic info</h3>
           <div class="cv-two">
             <div class="cv-field"><label>氏名 <span class="en">/ Full name</span></label><input type="text" id="cv_name" placeholder="山田 太郎 / Taro Yamada"></div>
@@ -44,19 +49,18 @@
           <div class="cv-field"><label>志望動機 <span class="en">/ Motivation</span></label><textarea id="cv_motiv"></textarea></div>
           <div class="cv-field"><label>本人希望記入欄 <span class="en">/ Personal requests</span></label><textarea id="cv_request" placeholder="貴社規定に従います。"></textarea></div>
 
+          </div><!-- /#cvFormRk -->
+          <div id="cvFormSk" hidden>
           <h3>職務経歴書 / Work history (shokumukeirekisho)</h3>
           <div class="cv-field"><label>職務要約 <span class="en">/ Career summary</span></label><textarea id="cv_summary"></textarea></div>
           <div id="careerRows"></div>
           <button class="cv-add" id="addCareer" type="button">+ 職歴を追加 / Add experience</button>
           <div class="cv-field" style="margin-top:14px"><label>活かせる経験・知識・スキル <span class="en">/ Skills</span></label><textarea id="cv_skills"></textarea></div>
           <div class="cv-field"><label>自己PR <span class="en">/ Self-PR</span></label><textarea id="cv_pr"></textarea></div>
+          </div><!-- /#cvFormSk -->
         </div>
 
         <div class="cv-preview reveal">
-          <div class="cv-docpick" role="tablist" aria-label="Document">
-            <button class="cv-doctab active" type="button" data-doc="rk" role="tab" aria-selected="true">履歴書<span class="en">Rirekisho</span></button>
-            <button class="cv-doctab" type="button" data-doc="sk" role="tab" aria-selected="false">職務経歴書<span class="en">Work history</span></button>
-          </div>
           <div id="cvDocs" data-show="rk">
             <div class="doc rirekisho" id="rirekishoOut"></div>
             <div class="doc doc-sk" id="shokumuOut"></div>

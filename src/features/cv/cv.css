@@ -25,9 +25,9 @@
   .cv-actions{display:flex;gap:14px;margin:6px 0 22px;flex-wrap:wrap;align-items:center;}
   .cv-note{color:var(--slate);font-size:.96rem;}
   .cv-preview{position:sticky;top:96px;}
-  /* segmented picker: choose which document to view (Yagish-style), side by side */
-  .cv-docpick{display:flex;gap:6px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:16px;}
-  .cv-doctab{flex:1;display:flex;align-items:baseline;justify-content:center;gap:7px;border:0;background:transparent;border-radius:9px;padding:11px 12px;font-family:var(--font-display);font-weight:800;font-size:1.02rem;color:var(--slate);cursor:pointer;transition:background .2s ease,color .2s ease,box-shadow .2s ease;}
+  /* segmented page toggle (like the ENG/JPN switch): pick rirekisho vs shokumukeirekisho */
+  .cv-docpick{display:inline-flex;gap:5px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:18px;}
+  .cv-doctab{flex:0 0 auto;display:flex;align-items:baseline;gap:7px;border:0;background:transparent;border-radius:9px;padding:11px 20px;font-family:var(--font-display);font-weight:800;font-size:1.02rem;color:var(--slate);cursor:pointer;transition:background .2s ease,color .2s ease,box-shadow .2s ease;}
   .cv-doctab .en{font-family:var(--font-body);font-weight:600;font-size:.82rem;color:var(--slate);}
   .cv-doctab.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);}
   .cv-doctab.active .en{color:var(--accent-deep);}

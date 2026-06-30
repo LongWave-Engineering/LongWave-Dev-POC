@@ -4,7 +4,12 @@
     .boxes,.co-grid,.rev-grid,.art-grid{grid-template-columns:repeat(2,1fr);}
     .teaser-grid{grid-template-columns:repeat(2,1fr);}
     .jobs-layout{grid-template-columns:1fr;}
-    .filters-side{position:static;}
+    /* Once the filters sit above the grid (no sidebar), reflow them from a tall stack
+       into a compact bar that wraps + scales: search spans the full width, the rest
+       flow into as many columns as fit and shrink down to 1 on a narrow window. */
+    .filters-side{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 18px;align-items:end;}
+    .filters-side .fgroup{margin-bottom:0;}
+    .filters-side .fgroup:first-child{grid-column:1/-1;}
   }
   @media (max-width:760px){
     body{font-size:16.5px;}
@@ -30,7 +35,12 @@
     /* neutralise every entrance state so nothing is left invisible/offset/blurred */
     .reveal,.reveal.stagger>*{opacity:1 !important;transform:none !important;filter:none !important;}
   }  @media (max-width:1000px){ .cv-layout{grid-template-columns:1fr;} .cv-preview{position:static;} }
-  @media (max-width:760px){ .cv-two{grid-template-columns:1fr;} .cv-row{grid-template-columns:1fr 1fr;} }
+  @media (max-width:760px){ .cv-two{grid-template-columns:1fr;} .cv-row{grid-template-columns:1fr 1fr;}
+    /* CV doc toggle goes full-width with equal halves on phones (drop the romaji subtitle) */
+    .cv-docpick{display:flex;}
+    .cv-doctab{flex:1;justify-content:center;padding:11px 8px;}
+    .cv-doctab .en{display:none;}
+  }
   @media print{
     body *{visibility:hidden !important;}
     #cvDocs, #cvDocs *{visibility:visible !important;}
