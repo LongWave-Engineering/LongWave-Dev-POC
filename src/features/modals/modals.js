@@ -67,13 +67,21 @@
      want to hire use the separate "Post a job" form (openPostJob below), so candidates
      and companies stay two clean groups in the CRM. */
   var suOverlay=$("#suOverlay");
-  /* Visa/residence gate: base requirement is being in Japan now. We capture the status on
-     every candidate submission and warn (don't hard-block) those currently abroad, since
-     most roles need valid working status. */
+  /* Visa/residence gate: base requirement is being IN JAPAN now. Applicants currently
+     abroad are filtered out — the warning shows and the submit button is disabled, and
+     submit handlers refuse an "abroad" value as a backstop. */
   var LOC_LABEL={ eligible:"In Japan — work-eligible", need_visa:"In Japan — needs visa support", abroad:"Outside Japan" };
-  function bindLocWarn(selId, warnId){ var s=$(selId), w=$(warnId); if(!s||!w) return; s.addEventListener("change", function(){ w.style.display = (s.value==="abroad") ? "" : "none"; }); }
-  bindLocWarn("#suLoc","#suLocWarn");
-  bindLocWarn("#coLoc","#coLocWarn");
+  function isAbroad(selId){ var s=$(selId); return !!(s && s.value==="abroad"); }
+  function bindLocWarn(selId, warnId, submitId){
+    var s=$(selId), w=$(warnId), b=submitId?$(submitId):null; if(!s||!w) return;
+    s.addEventListener("change", function(){
+      var abroad = s.value==="abroad";
+      w.style.display = abroad ? "" : "none";
+      if(b) b.disabled = abroad;   /* hard gate: can't submit from outside Japan */
+    });
+  }
+  bindLocWarn("#suLoc","#suLocWarn","#suSubmit");
+  bindLocWarn("#coLoc","#coLocWarn","#coSubmit");
   var pendingApplyJobIds=[];   /* job ids the signup will apply to (empty = plain signup) */
   /* `preset` is accepted (call sites still pass "job") but ignored — the signup is always a candidate. */
   function openSignup(preset, jobIds){
@@ -81,6 +89,8 @@
     pendingApplyJobIds = Array.isArray(jobIds) ? LW.normalizeJobIds(jobIds) : [];
     $("#suSuccess").style.display="none"; $("#suForm").style.display="";
     if($("#suLoc")) $("#suLoc").value=""; if($("#suLocWarn")) $("#suLocWarn").style.display="none";
+    if($("#suSubmit")) $("#suSubmit").disabled=false;
+    if($("#suJp")) $("#suJp").value=""; if($("#suYears")) $("#suYears").value="";
     var titleEl=$("#suTitle");
     if(titleEl) titleEl.textContent = pendingApplyJobIds.length ? t("apply_title").replace("{n}",pendingApplyJobIds.length) : t("su_title");
     openOverlay(suOverlay); $("#suClose").focus();
@@ -106,9 +116,11 @@
     ["#coRole","#coLink","#coName","#coEmail"].forEach(function(s){ if($(s)) $(s).value=""; });
     if($("#coSource")) $("#coSource").value="";
     if($("#coLoc")) $("#coLoc").value=""; if($("#coLocWarn")) $("#coLocWarn").style.display="none";
+    if($("#coSubmit")) $("#coSubmit").disabled=false;
     openOverlay(coOverlay); $("#coClose").focus();
   }
   function submitCompanyInquiry(){
+    if(isAbroad("#coLoc")){ var w=$("#coLocWarn"); if(w) w.style.display=""; if($("#coSubmit")) $("#coSubmit").disabled=true; return; }
     var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; };
     var role=val("#coRole"), source=val("#coSource"), link=val("#coLink"), loc=val("#coLoc");
     var parts=["Interested in "+(role||"roles")+" at "+currentCompany];   /* captured into the lead message for the recruiter */
@@ -239,6 +251,8 @@
       kind: "job",
       name: val("#suName"), email: val("#suEmail"),
       linkedin: val("#suLinkedin"), github: val("#suGithub"),
+      jp_level: ($("#suJp") && $("#suJp").value) ? $("#suJp").value : undefined,
+      years_exp: ($("#suYears") && $("#suYears").value!=="") ? $("#suYears").value : undefined,
       message: ($("#suLoc") && LOC_LABEL[$("#suLoc").value]) ? ("Based: "+LOC_LABEL[$("#suLoc").value]) : undefined,
       resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined
     };
@@ -247,6 +261,7 @@
      many selected jobs) or /api/leads (plain signup). Opened as a standalone file →
      no backend → just confirm. Fire-and-forget; the user always sees a success state. */
   function submitSignup(){
+    if(isAbroad("#suLoc")){ var w=$("#suLocWarn"); if(w) w.style.display=""; if($("#suSubmit")) $("#suSubmit").disabled=true; return; }
     var n=pendingApplyJobIds.length;
     if(/^https?:$/.test(location.protocol)){
       if(n){

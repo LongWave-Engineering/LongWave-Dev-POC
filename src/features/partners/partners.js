@@ -6,15 +6,17 @@
    the live HRMOS dump stays confidential. Logos are non-interactive (plain spans, no
    links) so clicking one does nothing, by design. */
 
-  function partnerChipHTML(p){
+  /* A bare logo (no box) — or a brand-coloured wordmark for the few clients without a
+     real mark. Each gets a small per-index vertical offset so the scrolling band reads
+     as a balanced scatter rather than a rigid line. */
+  var LC_OFFS=[0,18,-12,9,-18,6,-8,14,-4,12,-15,3];
+  function partnerChipHTML(p, i){
     var logo = (typeof PARTNER_LOGOS !== "undefined") ? PARTNER_LOGOS[p.name] : null;
-    var mark = logo
-      ? '<span class="lc-mark lc-mark--img"><img src="'+ esc(logo) +'" alt=""></span>'
-      : '<span class="lc-mark" style="background:'+ esc(p.color) +'">'+ esc(p.mono) +'</span>';
-    /* real-logo chips: neutral wordmark (the mark carries the colour). fallback chips:
-       tint the wordmark with the brand colour so they still read as a logo. */
-    var word = '<span class="lc-word"'+ (logo ? '' : ' style="color:'+ esc(p.color) +'"') +'>'+ esc(p.name) +'</span>';
-    return '<span class="logo-chip" title="'+ esc(p.name) +'">'+ mark + word +'</span>';
+    var off = LC_OFFS[(i||0) % LC_OFFS.length];
+    var inner = logo
+      ? '<img class="lc-img" src="'+ esc(logo) +'" alt="'+ esc(p.name) +'">'
+      : '<span class="lc-word" style="color:'+ esc(p.color) +'">'+ esc(p.name) +'</span>';
+    return '<span class="logo-chip" style="transform:translateY('+ off +'px)" title="'+ esc(p.name) +'">'+ inner +'</span>';
   }
 
   function partnerRowHTML(list, rev){

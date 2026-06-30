@@ -6,8 +6,10 @@
   /* ---- multi-select (apply to one or many) ---- keyed by the stable original
      index (_i) so it survives re-filtering and language toggles. ---- */
   var selected={};
+  var MAX_APPLY=10;   /* cap how many roles can be applied to in one go */
   function isSelected(job){ return !!selected[job._i]; }
   function setSelected(job,on){ if(on) selected[job._i]=true; else delete selected[job._i]; updateSelBar(); }
+  function flashSelMax(){ var c=$("#selCount"); if(!c) return; c.classList.remove("sb-flash"); void c.offsetWidth; c.classList.add("sb-flash"); }
   function selectionCount(){ var n=0; for(var k in selected) if(selected.hasOwnProperty(k)) n++; return n; }
   function selectedDbIds(){ return LW.normalizeJobIds(JOBS.filter(function(j){return selected[j._i];}).map(function(j){return j.id;})); }
   function clearSelection(){ selected={}; renderJobs(); }
@@ -49,7 +51,7 @@
     var bar=$("#selectBar"); if(!bar) return;
     var n=selectionCount();
     bar.hidden = n===0;
-    if(n){ $("#selCount").textContent=t("sel_selected").replace("{n}",n); $("#selApply").textContent=t("sel_apply")+" ("+n+")"; }
+    if(n){ $("#selCount").textContent=t("sel_selected").replace("{n}",n)+(n>=MAX_APPLY?" · "+t("sel_max").replace("{n}",MAX_APPLY):""); $("#selApply").textContent=t("sel_apply")+" ("+n+")"; }
   }
   function cardHTML(job){
     var c=COMPANIES[job.co];
@@ -85,7 +87,10 @@
     var sel=el("label","jc-select");
     var cb=document.createElement("input"); cb.type="checkbox"; cb.checked=isSelected(job);
     cb.setAttribute("aria-label", t("sel_pick")+": "+roleL(job));
-    cb.addEventListener("change", function(){ setSelected(job, cb.checked); card.classList.toggle("sel", cb.checked); });
+    cb.addEventListener("change", function(){
+      if(cb.checked && selectionCount()>=MAX_APPLY){ cb.checked=false; updateSelBar(); flashSelMax(); return; }
+      setSelected(job, cb.checked); card.classList.toggle("sel", cb.checked);
+    });
     sel.appendChild(cb);
     corner.appendChild(save); corner.appendChild(sel);
     var open=el("button","jc-open",cardHTML(job));

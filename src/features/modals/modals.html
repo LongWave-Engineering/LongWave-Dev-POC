@@ -33,8 +33,18 @@
           <option value="need_visa" data-i18n="su_loc_need">Yes — in Japan, but I'd need visa support</option>
           <option value="abroad" data-i18n="su_loc_abroad">No — I'm currently outside Japan</option>
         </select></div>
-        <p class="form-note form-warn" id="suLocWarn" style="display:none" data-i18n="su_loc_warn">Most roles require you to already be in Japan with valid working status, so options may be limited — but we'll be honest about fit.</p>
+        <p class="form-note form-warn" id="suLocWarn" style="display:none" data-i18n="su_loc_warn">These roles require you to already be in Japan, so we can't accept applications from outside Japan right now.</p>
       </div>
+      <div class="field"><label for="suJp" data-i18n="su_jp_q">Your Japanese level</label>
+        <div class="selectwrap"><select id="suJp" style="width:100%">
+          <option value="" data-i18n="su_jp_pick">Select…</option>
+          <option value="none" data-i18n="su_jp_none">None / basic</option>
+          <option value="conversational" data-i18n="su_jp_conv">Conversational</option>
+          <option value="business" data-i18n="su_jp_biz">Business</option>
+          <option value="native" data-i18n="su_jp_native">Native / fluent</option>
+        </select></div>
+      </div>
+      <div class="field"><label for="suYears" data-i18n="su_years_q">Years of professional experience</label><input type="number" id="suYears" min="0" max="60" step="1" placeholder="5"></div>
       <div class="field"><label data-i18n="su_resume">Resume / CV</label>
         <input type="file" id="suResume" accept=".pdf,.doc,.docx" required>
         <p class="form-note" data-i18n="su_resume_note">Required · PDF, DOC or DOCX</p>
@@ -42,7 +52,7 @@
       <div class="field"><label data-i18n="su_linkedin">LinkedIn URL (optional)</label><input type="url" id="suLinkedin" placeholder="https://linkedin.com/in/…"></div>
       <div class="field"><label data-i18n="su_github">GitHub URL (optional)</label><input type="url" id="suGithub" placeholder="https://github.com/…"></div>
       <div class="cv-prompt"><span data-i18n="su_cv_q">No Japanese CV yet?</span> <a href="#/cv" data-go="cv" data-i18n="su_cv_link">Generate your rirekisho →</a></div>
-      <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="su_submit">Sign up</button>
+      <button class="btn btn--primary btn--xl btn--block" type="submit" id="suSubmit" data-i18n="su_submit">Sign up</button>
       <p class="form-success" id="suSuccess" style="display:none" data-i18n="su_success">You're in. We'll be in touch shortly.</p>
     </form>
   </div>
@@ -82,7 +92,7 @@
       </div>
       <div class="field"><label for="coName" data-i18n="su_name">Name</label><input type="text" id="coName" required></div>
       <div class="field"><label for="coEmail" data-i18n="su_email">Email</label><input type="email" id="coEmail" required></div>
-      <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="co_submit">Send to LongWave</button>
+      <button class="btn btn--primary btn--xl btn--block" type="submit" id="coSubmit" data-i18n="co_submit">Send to LongWave</button>
       <p class="form-success" id="coSuccess" style="display:none"></p>
     </form>
   </div>
