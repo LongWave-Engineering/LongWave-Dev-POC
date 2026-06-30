@@ -3,6 +3,7 @@
    always-present cover sheet, and print captures the cover + the selected doc. */
   /* ---------------- CV builder ---------------- */
   var cvPhoto="";
+  var DRAFT_KEY="lw_cv_draft";   /* a saved-in-progress draft (localStorage) */
 
   /* ---- rirekisho: 学歴・職歴 + 免許・資格 rows ---- */
   function addEduRow(type,y,m,txt){
@@ -222,18 +223,58 @@
     addLangRow("日本語","ネイティブ","");
     addLangRow("英語","ビジネスレベル","TOEIC 900");
   }
-  /* wipe everything back to a single blank row per section */
+  var CV_FIELDS=["cv_name","cv_furi","cv_dob","cv_gender","cv_phone","cv_email","cv_postal","cv_addrFuri","cv_addr","cv_motiv","cv_request","cv_jobtitle","cv_location","cv_linkedin","cv_github","cv_summary","cv_otherTech"];
+  /* wipe everything back to a single blank row per section (and drop any saved draft) */
   function clearAll(){
-    ["#cv_name","#cv_furi","#cv_dob","#cv_gender","#cv_phone","#cv_email","#cv_postal","#cv_addrFuri","#cv_addr","#cv_motiv","#cv_request","#cv_jobtitle","#cv_location","#cv_linkedin","#cv_github","#cv_summary","#cv_otherTech"].forEach(function(id){ setV(id,""); });
+    try{ localStorage.removeItem(DRAFT_KEY); }catch(e){}
+    CV_FIELDS.forEach(function(id){ setV("#"+id,""); });
     cvPhoto="";
     ["#eduRows","#licRows","#careerRows","#projRows","#skEduRows","#skillRows","#langRows"].forEach(function(id){ var c=$(id); if(c) c.innerHTML=""; });
     addEduRow("学歴","","",""); addEduRow("職歴","","",""); addLicRow("","","");
     addSkillRow("",""); addCareer("","","","",""); addProj("",""); addSkEdu("","",""); addLangRow("","","");
     renderCV();
   }
+
+  /* ---- save / resume a draft so work isn't lost if someone steps away ---- */
+  function rowsData(sel, map){ return [].map.call(document.querySelectorAll(sel), function(r){ var o={}; for(var k in map){ if(map.hasOwnProperty(k)){ var n=r.querySelector(map[k]); o[k]=n?n.value:""; } } return o; }); }
+  function serializeCV(){
+    var d={ f:{} };
+    CV_FIELDS.forEach(function(id){ var n=$("#"+id); if(n) d.f[id]=n.value; });
+    d.photo=cvPhoto||"";
+    d.edu=rowsData("#eduRows .cv-row",{type:".e-type",y:".e-year",m:".e-month",txt:".e-text"});
+    d.lic=rowsData("#licRows .cv-row",{y:".l-year",m:".l-month",txt:".l-text"});
+    d.skill=rowsData("#skillRows .cv-row",{cat:".sk-cat",items:".sk-items"});
+    d.career=rowsData("#careerRows .cv-career",{title:".c-title",co:".c-co",period:".c-period",loc:".c-loc",det:".c-det"});
+    d.proj=rowsData("#projRows .cv-career",{name:".p-name",desc:".p-desc"});
+    d.skedu=rowsData("#skEduRows .cv-career",{school:".se-school",period:".se-period",loc:".se-loc"});
+    d.lang=rowsData("#langRows .cv-row",{name:".lg-name",level:".lg-level",test:".lg-test"});
+    return d;
+  }
+  function loadDraft(){ try{ var s=localStorage.getItem(DRAFT_KEY); return s?JSON.parse(s):null; }catch(e){ return null; } }
+  function saveDraft(){
+    var ok=false;
+    try{ localStorage.setItem(DRAFT_KEY, JSON.stringify(serializeCV())); ok=true; }
+    catch(e){ try{ var d=serializeCV(); d.photo=""; localStorage.setItem(DRAFT_KEY, JSON.stringify(d)); ok=true; }catch(e2){} }
+    var b=$("#cvSave"); if(b){ b.textContent = ok ? t("cv_saved_ok") : t("cv_save_err"); b.classList.toggle("cv-saved", ok); clearTimeout(b._t); b._t=setTimeout(function(){ b.textContent=t("cv_save"); b.classList.remove("cv-saved"); }, 1800); }
+  }
+  function restoreCV(d){
+    cvPhoto = d.photo || "";
+    CV_FIELDS.forEach(function(id){ setV("#"+id, (d.f && d.f[id]!=null) ? d.f[id] : ""); });
+    ["#eduRows","#licRows","#careerRows","#projRows","#skEduRows","#skillRows","#langRows"].forEach(function(id){ var c=$(id); if(c) c.innerHTML=""; });
+    ((d.edu&&d.edu.length)?d.edu:[{type:"学歴"},{type:"職歴"}]).forEach(function(e){ addEduRow(e.type||"学歴", e.y, e.m, e.txt); });
+    ((d.lic&&d.lic.length)?d.lic:[{}]).forEach(function(l){ addLicRow(l.y,l.m,l.txt); });
+    ((d.skill&&d.skill.length)?d.skill:[{}]).forEach(function(s){ addSkillRow(s.cat,s.items); });
+    ((d.career&&d.career.length)?d.career:[{}]).forEach(function(c){ addCareer(c.title,c.period,c.co,c.loc,c.det); });
+    ((d.proj&&d.proj.length)?d.proj:[{}]).forEach(function(p){ addProj(p.name,p.desc); });
+    ((d.skedu&&d.skedu.length)?d.skedu:[{}]).forEach(function(e){ addSkEdu(e.school,e.period,e.loc); });
+    ((d.lang&&d.lang.length)?d.lang:[{}]).forEach(function(l){ addLangRow(l.name,l.level,l.test); });
+    renderCV();
+  }
   (function initCV(){
     if(!$("#cvForm")) return;
-    fillSample();
+    /* resume a saved draft if there is one; otherwise show the sample */
+    var draft=loadDraft();
+    if(draft) restoreCV(draft); else fillSample();
     $("#cv_photo").addEventListener("change", function(e){ var f=e.target.files&&e.target.files[0]; if(!f){ cvPhoto=""; renderCV(); return; } var r=new FileReader(); r.onload=function(){ cvPhoto=r.result; renderCV(); }; r.readAsDataURL(f); });
     $("#addEdu").addEventListener("click", function(){ addEduRow("職歴","","",""); renderCV(); });
     $("#addLic").addEventListener("click", function(){ addLicRow("","",""); renderCV(); });
@@ -245,6 +286,7 @@
     $("#cvForm").addEventListener("input", renderCV);
     $("#cvForm").addEventListener("change", renderCV);
     $("#cvPrint").addEventListener("click", function(){ window.print(); });
+    var sv=$("#cvSave"); if(sv) sv.addEventListener("click", saveDraft);
     var clr=$("#cvClear"); if(clr) clr.addEventListener("click", clearAll);
     /* document toggle (like the ENG/JPN switch): flips the WHOLE page between the
        rirekisho and shokumukeirekisho views — its own form fields AND its preview doc.

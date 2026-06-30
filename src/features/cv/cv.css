@@ -27,6 +27,7 @@
   .cv-career .rm{position:absolute;top:12px;right:12px;border:0;background:#f4dada;color:#a33;border-radius:8px;width:32px;height:32px;font-size:1rem;cursor:pointer;z-index:1;}
   .cv-actions{display:flex;gap:14px;margin:8px 0 26px;flex-wrap:wrap;align-items:center;}
   .cv-note{color:var(--slate);font-size:.96rem;}
+  .btn.cv-saved{background:var(--pos-bg);color:var(--pos-fg);border-color:var(--pos-fg);}
   .cv-preview{position:sticky;top:96px;}
   /* segmented page toggle (like the ENG/JPN switch): pick rirekisho vs shokumukeirekisho */
   .cv-docpick{display:inline-flex;gap:5px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:18px;}

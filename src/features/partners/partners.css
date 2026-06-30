@@ -27,11 +27,12 @@
 
 /* ---- curated featured showcase (Post-a-job): a few big-name clients, static ---- */
 .partner-feature{width:100%;}
-.partner-feature-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:20px;}
+/* 3 across, filling the full width (6 cards → 3 + 3); collapses to 2 then 1 when narrow */
+.partner-feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
 .pf-card{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
   background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
-  padding:30px 34px;min-width:170px;flex:0 1 auto;
+  padding:32px 24px;
   transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s ease, border-color .18s ease;
 }
 .pf-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--line-strong);}
@@ -39,7 +40,8 @@
 .pf-mark img{max-width:100%;max-height:100%;object-fit:contain;}
 .pf-mono{border-radius:16px;color:#fff;font-family:var(--font-display);font-weight:800;font-size:1.6rem;letter-spacing:-.01em;}
 .pf-name{font-family:var(--font-display);font-weight:800;font-size:1.1rem;letter-spacing:-.015em;color:var(--ink);white-space:nowrap;}
-@media (max-width:600px){ .pf-card{min-width:128px;padding:22px 18px;flex:1 1 40%;} .pf-mark{width:56px;height:56px;} .pf-name{font-size:1rem;} }
+@media (max-width:760px){ .partner-feature-grid{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:440px){ .partner-feature-grid{grid-template-columns:1fr;} .pf-card{padding:24px 18px;} .pf-mark{width:58px;height:58px;} }
 
 /* Respect reduced-motion: stop both scrolls, drop the duplicate set, wrap + centre. */
 @media (prefers-reduced-motion: reduce){
