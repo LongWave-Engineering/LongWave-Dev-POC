@@ -27,10 +27,11 @@
   .fclear{background:transparent;border:0;color:var(--accent-deep);font-weight:700;font-size:.98rem;padding:4px 0;}
   .fclear:hover{color:var(--ink);}
   .result-count{font-size:1.02rem;color:var(--slate);margin-bottom:20px;font-weight:600;}
-  /* Fluid grid: 1 column when narrow, scaling up to a hard cap of 4 across when wide.
-     The minmax floor = max(230px, a quarter-row) guarantees no 5th column yet reflows
-     down to 1 as the window shrinks. */
-  .job-grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill, minmax(max(230px, (100% - 54px)/4), 1fr));}
+  /* Fluid grid: 1 column when narrow, scaling up to a hard cap of 3 across when wide —
+     3 roomy cards read better than 4 cramped ones. The minmax floor = max(280px, a
+     third-row) keeps cards at least 280px wide (never scrunched) and caps at 3, while
+     still reflowing down to 2 then 1 as the window shrinks. */
+  .job-grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fill, minmax(max(280px, (100% - 44px)/3), 1fr));}
   .jobs-prompt{grid-column:1/-1;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:64px 30px;}
   .jobs-prompt .jp-ic{font-size:2.4rem;line-height:1;margin-bottom:12px;}
   .jobs-prompt h3{font-size:1.55rem;margin-bottom:12px;}
@@ -38,7 +39,7 @@
   /* card = wrapper (visual + selected ring); .jc-open = the clickable content button;
      .jc-select = the selection checkbox (separate control, no nested buttons). */
   .job-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;position:relative;}
-  .jc-open{display:flex;flex-direction:column;gap:14px;width:100%;padding:24px;text-align:left;background:transparent;border:0;border-radius:var(--radius);color:inherit;font:inherit;cursor:pointer;}
+  .jc-open{display:flex;flex-direction:column;gap:16px;width:100%;padding:26px;text-align:left;background:transparent;border:0;border-radius:var(--radius);color:inherit;font:inherit;cursor:pointer;}
   /* top-right corner: save heart + selection checkbox, side by side, layered over the open-button */
   .jc-corner{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;gap:9px;}
   .jc-select{display:flex;align-items:center;line-height:0;}
