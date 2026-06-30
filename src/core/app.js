@@ -36,17 +36,32 @@
      unit-tested and defined once. */
   var ROUTES=LW.ROUTES;
   function routeFromHash(){ return LW.routeFor(location.hash); }
-  function showRoute(route){
-    ["home","jobs","companies","articles","cv","post"].forEach(function(r){ $("#page-"+r).classList.toggle("active", r===route); });
+  function prefersReducedMotion(){ return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); }
+  /* Swap to `route`: activate its page (fades in via .page.active), reveal content, sync
+     nav, and reset scroll to the top INSTANTLY (bypassing the global smooth-scroll). When
+     this runs mid-transition the scroll jump is hidden behind the outgoing page's fade. */
+  function applyRoute(route){
+    ["home","jobs","companies","articles","cv","post"].forEach(function(r){ var p=$("#page-"+r); if(p){ p.classList.toggle("active", r===route); p.classList.remove("leaving"); } });
     var _pg=$("#page-"+route); if(_pg){ _pg.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); }); }
     document.querySelectorAll(".nav-links a[data-go]").forEach(function(a){ var on=a.getAttribute("data-go")===route; a.classList.toggle("active", on); if(on) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
-    /* Jump to the top INSTANTLY, bypassing the global `scroll-behavior:smooth`
-       (which would otherwise animate a long scroll-up from the bottom of the
-       previous page). The new page then fades in cleanly from the top. */
     var de=document.documentElement, prevSB=de.style.scrollBehavior;
-    de.style.scrollBehavior="auto";
-    window.scrollTo(0,0);
-    de.style.scrollBehavior=prevSB;
+    de.style.scrollBehavior="auto"; window.scrollTo(0,0); de.style.scrollBehavior=prevSB;
+  }
+  var _leaveTimer=null, _leavingPage=null;
+  function showRoute(route){
+    var next=$("#page-"+route); if(!next) return;
+    var current=document.querySelector(".page.active");
+    /* If we're switching pages while scrolled down, gracefully fade the current page OUT
+       first, then swap+scroll-to-top while it's invisible — so you never see the ugly jump.
+       (At the top already, on first load, or reduced-motion → just swap instantly.) */
+    if(_leaveTimer){ clearTimeout(_leaveTimer); _leaveTimer=null; }
+    if(_leavingPage && _leavingPage!==next){ _leavingPage.classList.remove("leaving"); _leavingPage=null; }
+    if(current && current!==next && window.scrollY>4 && !prefersReducedMotion()){
+      _leavingPage=current; current.classList.add("leaving");
+      _leaveTimer=setTimeout(function(){ _leaveTimer=null; _leavingPage=null; applyRoute(route); }, 240);
+    } else {
+      applyRoute(route);
+    }
   }
   function go(route){
     var targetHash=ROUTES[route]||"#/";

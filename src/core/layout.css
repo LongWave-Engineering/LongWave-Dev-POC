@@ -3,8 +3,12 @@
   /* Mellow cross-page transition: a simple, gentle fade (opacity only, so it
      never disturbs position:sticky descendants like the jobs filter rail). */
   .page{display:none;}
-  .page.active{display:block;animation:pageFade .55s cubic-bezier(.16,1,.3,1) both;}
-  @keyframes pageFade{from{opacity:0;}to{opacity:1;}}
+  .page.active{display:block;animation:pageFade .5s cubic-bezier(.16,1,.3,1) both;}
+  @keyframes pageFade{from{opacity:0;}to{opacity:1;}}   /* opacity-only: never break position:sticky descendants (e.g. the jobs filter rail) */
+  /* The outgoing page fades + lifts away while the router resets scroll behind it, so the
+     jump to the top is never visible. transform here is fine — the page is leaving. */
+  .page.leaving{display:block;animation:pageLeave .24s cubic-bezier(.4,0,1,1) both;pointer-events:none;}
+  @keyframes pageLeave{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-14px);}}
 
   /* ---------- hero ---------- */
   .hero{position:relative;overflow:hidden;}
