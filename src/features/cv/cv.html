@@ -52,7 +52,7 @@
             <button class="cv-add" id="addLic" type="button">+ 行を追加 / Add row</button>
 
             <h3>志望動機・希望 <span class="en">/ Motivation &amp; requests</span></h3>
-            <div class="cv-field"><label>志望動機・特技・アピールポイント <span class="en">/ Motivation &amp; strengths</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Why this company/role, plus your standout strengths — 2–4 sentences. Be concrete about what you'd contribute.">i</span></label><textarea id="cv_motiv" rows="4"></textarea></div>
+            <div class="cv-field"><label>志望動機・特技・アピールポイント <span class="en">/ Motivation &amp; strengths</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Why this company/role, plus your standout strengths — 2–4 sentences. Be concrete about what you'd contribute.">i</span></label><textarea id="cv_motiv" rows="4" placeholder="例：これまで〇〇の開発に携わり…。貴社の△△に、これまでの経験で貢献したいと考え志望しました。"></textarea></div>
             <div class="cv-field"><label>本人希望欄 <span class="en">/ Personal requests</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Preferences on role, location, hours or salary. If none, the standard line is 貴社規定に従います (I'll follow company policy).">i</span></label><textarea id="cv_request" placeholder="貴社規定に従います。"></textarea></div>
           </div><!-- /#cvFormRk -->
 
@@ -68,7 +68,7 @@
             <p class="form-note">氏名・電話・メール・居住地は「履歴書」タブの入力を使用します。 / Name, phone, email &amp; location come from the Rirekisho tab.</p>
 
             <h3>職務要約 <span class="en">/ Career summary</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="A 3–5 line overview: years of experience, domains, key strengths. Recruiters read this first, so make it count.">i</span></h3>
-            <div class="cv-field"><textarea id="cv_summary" rows="4"></textarea></div>
+            <div class="cv-field"><textarea id="cv_summary" rows="4" placeholder="例：Webサービスのバックエンド開発を中心に5年以上の経験。Go・TypeScriptでのAPI開発、AWSでのインフラ構築・運用を担当。"></textarea></div>
 
             <h3>スキル <span class="en">/ Skills</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Group skills by category. Left = category (e.g. 'Test management', 'Tools', 'Languages'); right = comma-separated items.">i</span></h3>
             <div id="skillRows"></div>
@@ -82,7 +82,7 @@
             <div id="projRows"></div>
             <button class="cv-add" id="addProj" type="button">+ プロジェクトを追加 / Add project</button>
 
-            <div class="cv-field" style="margin-top:14px"><label>その他の技術経験 <span class="en">/ Other technical experience</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Anything else relevant — one bullet per line (extra stacks, side work, OSS, etc.).">i</span></label><textarea id="cv_otherTech" rows="3"></textarea></div>
+            <div class="cv-field" style="margin-top:14px"><label>その他の技術経験 <span class="en">/ Other technical experience</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Anything else relevant — one bullet per line (extra stacks, side work, OSS, etc.).">i</span></label><textarea id="cv_otherTech" rows="3" placeholder="例：個人開発で React / Next.js のWebアプリを公開&#10;OSSへのコントリビュート"></textarea></div>
 
             <h3>学歴 <span class="en">/ Education</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="School / university, period and location. One block per entry.">i</span></h3>
             <div id="skEduRows"></div>

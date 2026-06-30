@@ -11,7 +11,7 @@
     row.innerHTML='<select class="e-type"><option>学歴</option><option>職歴</option></select>'+
       '<input class="e-year" placeholder="年" value="'+esc(y||"")+'">'+
       '<input class="e-month" placeholder="月" value="'+esc(m||"")+'">'+
-      '<input class="e-text" placeholder="内容 / detail" value="'+esc(txt||"")+'">'+
+      '<input class="e-text" placeholder="例：◯◯大学 入学 ／ △△株式会社 入社" value="'+esc(txt||"")+'">'+
       '<button class="rm" type="button" aria-label="remove">×</button>';
     if(type) row.querySelector(".e-type").value=type;
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
@@ -21,7 +21,7 @@
     var row=el("div","cv-row lic");
     row.innerHTML='<input class="l-year" placeholder="年" value="'+esc(y||"")+'">'+
       '<input class="l-month" placeholder="月" value="'+esc(m||"")+'">'+
-      '<input class="l-text" placeholder="免許・資格 / qualification" value="'+esc(txt||"")+'">'+
+      '<input class="l-text" placeholder="例：日本語能力試験 N1 合格" value="'+esc(txt||"")+'">'+
       '<button class="rm" type="button" aria-label="remove">×</button>';
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
     $("#licRows").appendChild(row);
@@ -32,10 +32,10 @@
     var b=el("div","cv-career");
     b.innerHTML='<button class="rm" type="button" aria-label="remove">×</button>'+
       '<div class="cv-field"><label>役職・タイトル / Role title</label><input class="c-title" placeholder="QA Engineer / QA Automation Engineer"></div>'+
-      '<div class="cv-two"><div class="cv-field"><label>会社名 / Company</label><input class="c-co"></div>'+
-      '<div class="cv-field"><label>期間 / Period</label><input class="c-period" placeholder="2019年4月 – 現在"></div></div>'+
-      '<div class="cv-field"><label>勤務地 / Location</label><input class="c-loc" placeholder="東京都、日本"></div>'+
-      '<div class="cv-field"><label>業務内容・実績（1行＝1項目）/ Responsibilities (one per line)</label><textarea class="c-det"></textarea></div>';
+      '<div class="cv-two"><div class="cv-field"><label>会社名 / Company</label><input class="c-co" placeholder="例：株式会社サンプル"></div>'+
+      '<div class="cv-field"><label>期間 / Period</label><input class="c-period" placeholder="例：2019年4月 – 現在"></div></div>'+
+      '<div class="cv-field"><label>勤務地 / Location</label><input class="c-loc" placeholder="例：東京都、日本"></div>'+
+      '<div class="cv-field"><label>業務内容・実績（1行＝1項目）/ Responsibilities (one per line)</label><textarea class="c-det" placeholder="例：決済APIを Go で設計・開発&#10;月間1,000万リクエストを安定運用"></textarea></div>';
     b.querySelector(".c-title").value=title||""; b.querySelector(".c-co").value=co||"";
     b.querySelector(".c-period").value=period||""; b.querySelector(".c-loc").value=loc||""; b.querySelector(".c-det").value=det||"";
     b.querySelector(".rm").addEventListener("click",function(){ b.remove(); renderCV(); });
@@ -44,8 +44,8 @@
   function addProj(name,desc){
     var b=el("div","cv-career");
     b.innerHTML='<button class="rm" type="button" aria-label="remove">×</button>'+
-      '<div class="cv-field"><label>プロジェクト名 / Project</label><input class="p-name"></div>'+
-      '<div class="cv-field"><label>説明 / Description</label><textarea class="p-desc"></textarea></div>';
+      '<div class="cv-field"><label>プロジェクト名 / Project</label><input class="p-name" placeholder="例：決済プラットフォーム刷新"></div>'+
+      '<div class="cv-field"><label>説明 / Description</label><textarea class="p-desc" placeholder="何を作り、どんな成果が出たか / what you built + the impact"></textarea></div>';
     b.querySelector(".p-name").value=name||""; b.querySelector(".p-desc").value=desc||"";
     b.querySelector(".rm").addEventListener("click",function(){ b.remove(); renderCV(); });
     $("#projRows").appendChild(b);
@@ -53,26 +53,26 @@
   function addSkEdu(school,period,loc){
     var b=el("div","cv-career");
     b.innerHTML='<button class="rm" type="button" aria-label="remove">×</button>'+
-      '<div class="cv-field"><label>学校・専攻 / School &amp; major</label><input class="se-school"></div>'+
-      '<div class="cv-two"><div class="cv-field"><label>期間 / Period</label><input class="se-period" placeholder="2019年4月 – 2021年3月"></div>'+
-      '<div class="cv-field"><label>所在地 / Location</label><input class="se-loc" placeholder="大阪府、日本"></div></div>';
+      '<div class="cv-field"><label>学校・専攻 / School &amp; major</label><input class="se-school" placeholder="例：◯◯大学 工学部 情報工学科"></div>'+
+      '<div class="cv-two"><div class="cv-field"><label>期間 / Period</label><input class="se-period" placeholder="例：2019年4月 – 2021年3月"></div>'+
+      '<div class="cv-field"><label>所在地 / Location</label><input class="se-loc" placeholder="例：東京都、日本"></div></div>';
     b.querySelector(".se-school").value=school||""; b.querySelector(".se-period").value=period||""; b.querySelector(".se-loc").value=loc||"";
     b.querySelector(".rm").addEventListener("click",function(){ b.remove(); renderCV(); });
     $("#skEduRows").appendChild(b);
   }
   function addSkillRow(cat,items){
     var row=el("div","cv-row skill");
-    row.innerHTML='<input class="sk-cat" placeholder="カテゴリ / Category" value="'+esc(cat||"")+'">'+
-      '<input class="sk-items" placeholder="項目（カンマ区切り）/ items, comma-separated" value="'+esc(items||"")+'">'+
+    row.innerHTML='<input class="sk-cat" placeholder="例：言語 / Category" value="'+esc(cat||"")+'">'+
+      '<input class="sk-items" placeholder="例：Go, TypeScript, Python（カンマ区切り）" value="'+esc(items||"")+'">'+
       '<button class="rm" type="button" aria-label="remove">×</button>';
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
     $("#skillRows").appendChild(row);
   }
   function addLangRow(name,level,test){
     var row=el("div","cv-row lang");
-    row.innerHTML='<input class="lg-name" placeholder="言語 / Language" value="'+esc(name||"")+'">'+
-      '<input class="lg-level" placeholder="レベル / Level" value="'+esc(level||"")+'">'+
-      '<input class="lg-test" placeholder="試験・スコア / Test or score" value="'+esc(test||"")+'">'+
+    row.innerHTML='<input class="lg-name" placeholder="例：日本語 / Language" value="'+esc(name||"")+'">'+
+      '<input class="lg-level" placeholder="例：ビジネスレベル / Level" value="'+esc(level||"")+'">'+
+      '<input class="lg-test" placeholder="例：JLPT N1 / TOEIC 900" value="'+esc(test||"")+'">'+
       '<button class="rm" type="button" aria-label="remove">×</button>';
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
     $("#langRows").appendChild(row);
@@ -186,42 +186,13 @@
   }
 
   function setV(id,v){ var n=$(id); if(n) n.value=v; }
-  /* A realistic sample candidate so the builder looks complete out of the box (edit it,
-     or hit "Clear all" to start fresh). Education/work go OLDEST→NEWEST, two lines each
-     (入学→卒業, 入社→退社/現在に至る). */
-  function fillSample(){
-    setV("#cv_name","山田 太郎"); setV("#cv_furi","やまだ たろう"); setV("#cv_dob","1994-05-12"); setV("#cv_gender","男");
-    setV("#cv_phone","090-1234-5678"); setV("#cv_email","taro.yamada@example.com");
-    setV("#cv_postal","150-0001"); setV("#cv_addrFuri","とうきょうと しぶやく じんぐうまえ");
-    setV("#cv_addr","東京都渋谷区神宮前1-2-3\nサンプルマンション101号");
-    setV("#cv_motiv","これまでWebサービスのバックエンド開発に5年以上携わり、設計から運用まで一貫して担当してきました。貴社プロダクトの成長に、これまでの経験と技術力で貢献したいと考え志望いたしました。");
-    setV("#cv_request","貴社規定に従います。");
-    addEduRow("学歴","2013","4","東京サンプル大学 工学部 情報工学科 入学");
-    addEduRow("学歴","2017","3","東京サンプル大学 工学部 情報工学科 卒業");
-    addEduRow("職歴","2017","4","株式会社サンプルソフト 入社");
-    addEduRow("職歴","2021","3","株式会社サンプルソフト 退社");
-    addEduRow("職歴","2021","4","株式会社テックウェーブ 入社");
-    addEduRow("職歴","","","現在に至る");
-    addLicRow("2016","7","日本語能力試験 N1 合格");
-    addLicRow("2018","5","基本情報技術者試験 合格");
-    addLicRow("2019","3","普通自動車第一種運転免許 取得");
-    setV("#cv_jobtitle","Software Engineer / Backend"); setV("#cv_location","東京、日本");
-    setV("#cv_linkedin","https://linkedin.com/in/taro-yamada-sample");
-    setV("#cv_summary","Webサービスのバックエンド開発を中心に5年以上の経験。Go・TypeScriptを用いたAPI開発、AWS上でのインフラ構築・運用、CI/CDの整備を担当。チームのテックリードとして設計・コードレビュー・若手育成にも従事してきました。");
-    setV("#cv_otherTech","個人開発で React / Next.js を用いたWebアプリを公開\nOSSへのコントリビュート（バグ修正・ドキュメント改善）");
-    addSkillRow("言語","Go, TypeScript, Python, SQL");
-    addSkillRow("フレームワーク","Gin, Express, Next.js");
-    addSkillRow("インフラ","AWS (ECS, RDS, Lambda), Docker, Terraform");
-    addSkillRow("ツール","Git, GitHub Actions, Datadog, Jira");
-    addCareer("バックエンドエンジニア / テックリード","2021年4月 – 現在","株式会社テックウェーブ","東京都、日本",
-      "決済サービスのバックエンドAPIを Go で設計・開発\nAWS 上のインフラを Terraform で構築し、月間1,000万リクエストを安定運用\nCI/CD を整備しデプロイ頻度を週1回から日次へ改善\n3名のチームのテックリードとして設計レビューと育成を担当");
-    addCareer("ソフトウェアエンジニア","2017年4月 – 2021年3月","株式会社サンプルソフト","東京都、日本",
-      "社内業務システムの新規開発・保守（Python / Django）\n要件定義から実装・テストまでを担当\nレガシーコードのリファクタリングで障害率を40%削減");
-    addProj("決済プラットフォーム刷新","モノリスからマイクロサービスへの移行を主導。平均レスポンスタイムを60%改善し、チームの並行開発を可能にした。");
-    addProj("社内CI/CD基盤の整備","GitHub Actions による自動テスト・自動デプロイを全社展開。リリース作業を1回あたり2時間から15分に短縮。");
-    addSkEdu("東京サンプル大学 工学部 情報工学科","2013年4月 – 2017年3月","東京都、日本");
-    addLangRow("日本語","ネイティブ","");
-    addLangRow("英語","ビジネスレベル","TOEIC 900");
+  /* A fresh, EMPTY form. Examples are shown as grey placeholder text inside each box
+     (see cv.html + the add*Row builders), so nothing has to be deleted first — typing
+     replaces the ghost. Education/work go OLDEST→NEWEST, two lines each. */
+  function addStarterRows(){
+    addEduRow("学歴","","",""); addEduRow("職歴","","","");
+    addLicRow("","","");
+    addSkillRow("",""); addCareer("","","","",""); addProj("",""); addSkEdu("","",""); addLangRow("","","");
   }
   var CV_FIELDS=["cv_name","cv_furi","cv_dob","cv_gender","cv_phone","cv_email","cv_postal","cv_addrFuri","cv_addr","cv_motiv","cv_request","cv_jobtitle","cv_location","cv_linkedin","cv_github","cv_summary","cv_otherTech"];
   /* wipe everything back to a single blank row per section (and drop any saved draft) */
@@ -230,8 +201,7 @@
     CV_FIELDS.forEach(function(id){ setV("#"+id,""); });
     cvPhoto="";
     ["#eduRows","#licRows","#careerRows","#projRows","#skEduRows","#skillRows","#langRows"].forEach(function(id){ var c=$(id); if(c) c.innerHTML=""; });
-    addEduRow("学歴","","",""); addEduRow("職歴","","",""); addLicRow("","","");
-    addSkillRow("",""); addCareer("","","","",""); addProj("",""); addSkEdu("","",""); addLangRow("","","");
+    addStarterRows();
     renderCV();
   }
 
@@ -272,9 +242,9 @@
   }
   (function initCV(){
     if(!$("#cvForm")) return;
-    /* resume a saved draft if there is one; otherwise show the sample */
+    /* resume a saved draft if there is one; otherwise a fresh blank form (placeholders) */
     var draft=loadDraft();
-    if(draft) restoreCV(draft); else fillSample();
+    if(draft) restoreCV(draft); else addStarterRows();
     $("#cv_photo").addEventListener("change", function(e){ var f=e.target.files&&e.target.files[0]; if(!f){ cvPhoto=""; renderCV(); return; } var r=new FileReader(); r.onload=function(){ cvPhoto=r.result; renderCV(); }; r.readAsDataURL(f); });
     $("#addEdu").addEventListener("click", function(){ addEduRow("職歴","","",""); renderCV(); });
     $("#addLic").addEventListener("click", function(){ addLicRow("","",""); renderCV(); });
