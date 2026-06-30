@@ -66,8 +66,10 @@
   .select-bar .btn--ghost{color:#fff;background:transparent;border-color:rgba(255,255,255,.55);}
   .select-bar .btn--ghost:hover{background:rgba(255,255,255,.12);}
   .jc-top{display:flex;gap:14px;align-items:flex-start;}
-  .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.22rem;line-height:1.2;}
-  .jc-co{font-size:.98rem;color:var(--slate);margin-top:3px;}
+  /* clamp the title to 2 lines and the company to 1 so every card header is the same
+     height — long roles no longer balloon a card or clip past its edge */
+  .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.22rem;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;}
+  .jc-co{font-size:.98rem;color:var(--slate);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
   .jc-salary{font-family:var(--font-display);font-size:1.14rem;color:var(--ink);font-weight:800;}
   .jc-blurb{color:var(--ink-soft);font-size:.97rem;line-height:1.45;margin:2px 0;}
   .job-card .badge-hot{position:absolute;top:-11px;right:18px;}
