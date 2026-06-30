@@ -23,8 +23,11 @@
   .modal p.su-intro{color:var(--slate);margin-bottom:22px;font-size:1.06rem;}
   .field{margin-bottom:18px;}
   .field label{display:block;font-weight:600;margin-bottom:8px;font-size:1.02rem;}
-  .field input,.field select{width:100%;border:2px solid var(--line-strong);border-radius:12px;padding:13px 15px;font-size:1.04rem;font-family:inherit;color:var(--ink);background:#fff;}
+  .field input,.field select,.field textarea{width:100%;border:2px solid var(--line-strong);border-radius:12px;padding:13px 15px;font-size:1.04rem;font-family:inherit;color:var(--ink);background:#fff;}
+  .field textarea{resize:vertical;min-height:96px;line-height:1.5;}
   .form-success{color:var(--pos-fg);font-weight:700;font-size:1.06rem;margin-top:8px;}
+  /* visa/residence heads-up for applicants currently outside Japan */
+  .form-warn{margin-top:9px;color:var(--warn-fg);background:var(--warn-bg);border-radius:10px;padding:9px 12px;font-weight:600;}
 
 
 

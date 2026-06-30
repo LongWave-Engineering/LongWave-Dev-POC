@@ -32,6 +32,15 @@
         </select></div>
       </div>
       <div id="jobSeekerFields">
+        <div class="field"><label for="suLoc" data-i18n="su_loc_q">Are you currently in Japan?</label>
+          <div class="selectwrap"><select id="suLoc" style="width:100%">
+            <option value="" data-i18n="su_loc_pick">Select…</option>
+            <option value="eligible" data-i18n="su_loc_eligible">Yes — I have valid work eligibility (work visa / PR / citizen)</option>
+            <option value="need_visa" data-i18n="su_loc_need">Yes — in Japan, but I'd need visa support</option>
+            <option value="abroad" data-i18n="su_loc_abroad">No — I'm currently outside Japan</option>
+          </select></div>
+          <p class="form-note form-warn" id="suLocWarn" style="display:none" data-i18n="su_loc_warn">Most roles require you to already be in Japan with valid working status, so options may be limited — but we'll be honest about fit.</p>
+        </div>
         <div class="field"><label data-i18n="su_resume">Resume / CV</label>
           <input type="file" id="suResume" accept=".pdf,.doc,.docx" required>
           <p class="form-note" data-i18n="su_resume_note">Required · PDF, DOC or DOCX</p>
@@ -73,10 +82,36 @@
         </select></div>
       </div>
       <div class="field"><label for="coLink" data-i18n="co_link">Link to the role (optional)</label><input type="url" id="coLink" placeholder="https://…"></div>
+      <div class="field"><label for="coLoc" data-i18n="su_loc_q">Are you currently in Japan?</label>
+        <div class="selectwrap"><select id="coLoc" style="width:100%" required>
+          <option value="" data-i18n="su_loc_pick">Select…</option>
+          <option value="eligible" data-i18n="su_loc_eligible">Yes — I have valid work eligibility (work visa / PR / citizen)</option>
+          <option value="need_visa" data-i18n="su_loc_need">Yes — in Japan, but I'd need visa support</option>
+          <option value="abroad" data-i18n="su_loc_abroad">No — I'm currently outside Japan</option>
+        </select></div>
+        <p class="form-note form-warn" id="coLocWarn" style="display:none" data-i18n="su_loc_warn">Most roles require you to already be in Japan with valid working status, so options may be limited — but we'll be honest about fit.</p>
+      </div>
       <div class="field"><label for="coName" data-i18n="su_name">Name</label><input type="text" id="coName" required></div>
       <div class="field"><label for="coEmail" data-i18n="su_email">Email</label><input type="email" id="coEmail" required></div>
       <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="co_submit">Send to LongWave</button>
       <p class="form-success" id="coSuccess" style="display:none"></p>
+    </form>
+  </div>
+</div>
+
+<!-- ============ CONTACT / ENQUIRY MODAL ============ -->
+<div class="overlay" id="ctOverlay" role="dialog" aria-modal="true" aria-labelledby="ctTitle">
+  <div class="modal narrow" id="ctModal">
+    <button class="modal-close" id="ctClose" aria-label="Close">×</button>
+    <h3 class="su-title" id="ctTitle" data-i18n="ct_title">Contact us</h3>
+    <p class="su-intro" data-i18n="ct_intro">A question for the LongWave team? Send it here and we'll reply by email.</p>
+    <form id="ctForm" autocomplete="off">
+      <div class="field"><label for="ctName" data-i18n="su_name">Name</label><input type="text" id="ctName" required></div>
+      <div class="field"><label for="ctEmail" data-i18n="su_email">Email</label><input type="email" id="ctEmail" required></div>
+      <div class="field"><label for="ctSubject" data-i18n="ct_subject">Subject of enquiry</label><input type="text" id="ctSubject" required></div>
+      <div class="field"><label for="ctMessage" data-i18n="ct_message">What are you enquiring about?</label><textarea id="ctMessage" rows="4" required></textarea></div>
+      <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="ct_submit">Send message</button>
+      <p class="form-success" id="ctSuccess" style="display:none" data-i18n="ct_success">Thanks — we'll get back to you by email soon.</p>
     </form>
   </div>
 </div>
