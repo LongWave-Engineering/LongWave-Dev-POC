@@ -5,26 +5,27 @@
   .form-note a{color:var(--accent-deep);font-weight:700;}
   .cv-prompt{margin-top:12px;padding-top:14px;border-top:1px solid var(--line);font-size:1rem;color:var(--ink-soft);}
   .cv-prompt a{color:var(--accent-deep);font-weight:700;}
-  .cv-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px;align-items:start;}
-  .cv-form{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);}
-  .cv-form h3{font-size:1.14rem;margin:24px 0 12px;padding-top:18px;border-top:1px solid var(--line);}
+  .cv-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start;}
+  .cv-form{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:34px;box-shadow:var(--shadow);}
+  .cv-form h3{font-size:1.16rem;margin:34px 0 16px;padding-top:26px;border-top:1px solid var(--line);}
   .cv-form h3:first-child{border-top:0;padding-top:0;margin-top:0;}
-  .cv-field{margin-bottom:14px;}
-  .cv-field label{display:block;font-weight:600;font-size:.95rem;margin-bottom:6px;}
+  .cv-field{margin-bottom:20px;}
+  .cv-field label{display:block;font-weight:600;font-size:.97rem;margin-bottom:9px;}
   .cv-field label .en{color:var(--slate);font-weight:500;}
-  .cv-field input,.cv-field select,.cv-field textarea{width:100%;border:2px solid var(--line-strong);border-radius:10px;padding:11px 13px;font-size:1rem;font-family:inherit;color:var(--ink);background:#fff;}
-  .cv-field textarea{min-height:86px;resize:vertical;}
-  .cv-two{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .cv-row{display:grid;grid-template-columns:96px 76px 70px 1fr auto;gap:8px;align-items:center;margin-bottom:8px;}
+  .cv-field input,.cv-field select,.cv-field textarea{width:100%;border:2px solid var(--line-strong);border-radius:11px;padding:13px 15px;font-size:1rem;font-family:inherit;color:var(--ink);background:#fff;}
+  .cv-field textarea{min-height:92px;resize:vertical;line-height:1.5;}
+  .cv-two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  .cv-row{display:grid;grid-template-columns:96px 76px 70px 1fr auto;gap:10px;align-items:center;margin-bottom:11px;}
   .cv-row.lic{grid-template-columns:76px 70px 1fr auto;}
   .cv-row.skill{grid-template-columns:1fr 1.6fr auto;}
-  .cv-row.lang{grid-template-columns:1fr 1fr auto;}
-  .cv-row input,.cv-row select{padding:9px 10px;border:2px solid var(--line-strong);border-radius:9px;font-family:inherit;font-size:.95rem;background:#fff;color:var(--ink);}
-  .cv-row .rm{border:0;background:#f4dada;color:#a33;border-radius:8px;width:34px;height:34px;font-size:1.1rem;cursor:pointer;}
-  .cv-add{background:var(--accent-wash);color:var(--accent-deep);border:0;border-radius:10px;padding:9px 16px;font-weight:700;font-size:.95rem;margin-top:4px;cursor:pointer;}
-  .cv-career{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;position:relative;}
-  .cv-career .rm{position:absolute;top:10px;right:10px;border:0;background:#f4dada;color:#a33;border-radius:8px;width:30px;height:30px;font-size:1rem;cursor:pointer;}
-  .cv-actions{display:flex;gap:14px;margin:6px 0 22px;flex-wrap:wrap;align-items:center;}
+  .cv-row.lang{grid-template-columns:1.1fr 1fr 1fr auto;}
+  .cv-row input,.cv-row select{padding:11px 12px;border:2px solid var(--line-strong);border-radius:10px;font-family:inherit;font-size:.95rem;background:#fff;color:var(--ink);}
+  .cv-row .rm{border:0;background:#f4dada;color:#a33;border-radius:8px;width:36px;height:36px;font-size:1.1rem;cursor:pointer;}
+  .cv-add{background:var(--accent-wash);color:var(--accent-deep);border:0;border-radius:10px;padding:11px 18px;font-weight:700;font-size:.95rem;margin-top:8px;cursor:pointer;}
+  .cv-career{border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px;position:relative;background:#fcfdfe;}
+  .cv-career .cv-field:last-child{margin-bottom:0;}
+  .cv-career .rm{position:absolute;top:12px;right:12px;border:0;background:#f4dada;color:#a33;border-radius:8px;width:32px;height:32px;font-size:1rem;cursor:pointer;z-index:1;}
+  .cv-actions{display:flex;gap:14px;margin:8px 0 26px;flex-wrap:wrap;align-items:center;}
   .cv-note{color:var(--slate);font-size:.96rem;}
   .cv-preview{position:sticky;top:96px;}
   /* segmented page toggle (like the ENG/JPN switch): pick rirekisho vs shokumukeirekisho */

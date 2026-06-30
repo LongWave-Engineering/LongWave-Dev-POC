@@ -11,7 +11,8 @@
       </div>
       <div class="cv-actions reveal">
         <button class="btn btn--primary btn--xl" id="cvPrint" disabled data-i18n="cv_print">Print / Save as PDF</button>
-        <span class="cv-note" id="cvNote" data-i18n="cv_note_fill">Enter your name to enable printing. Hover the ⓘ on any field for tips.</span>
+        <button class="btn btn--ghost" id="cvClear" type="button" data-i18n="cv_clear">Clear all / 全てクリア</button>
+        <span class="cv-note" id="cvNote" data-i18n="cv_note_fill">Pre-filled with a sample — edit it, or “Clear all” to start fresh. Hover the ⓘ on any field for tips.</span>
       </div>
       <div class="cv-layout">
         <div class="cv-form reveal" id="cvForm">
@@ -40,7 +41,8 @@
             <div class="cv-field"><label>現住所 <span class="en">/ Address</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Your full current address. Use a second line for the building / room number.">i</span></label><textarea id="cv_addr" rows="2" placeholder="東京都小平市花小金井南町1-18-2&#10;マグノリアンハウス102号"></textarea></div>
             <div class="cv-field"><label>証明写真 <span class="en">/ Photo</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="A formal headshot — suit, plain background. 履歴書 photos are typically 3×4cm. Optional, but expected in Japan.">i</span></label><input type="file" id="cv_photo" accept="image/*"></div>
 
-            <h3>学歴・職歴 <span class="en">/ Education &amp; work history</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="List in date order, oldest first. Pick 学歴 (school) or 職歴 (job) per row, then year/month and the entry, e.g. '◯◯大学 入学' or '△△株式会社 入社'.">i</span></h3>
+            <h3>学歴・職歴 <span class="en">/ Education &amp; work history</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Enter OLDEST at the top, newest at the bottom. Use TWO lines per school (入学 then 卒業) and per job (入社 then 退社 / 現在に至る). Choose 学歴 or 職歴 on each row.">i</span></h3>
+            <p class="form-note">古い順に上から（学校：入学→卒業 / 仕事：入社→退社）。Oldest at the top, newest at the bottom — two lines each.</p>
             <div id="eduRows"></div>
             <button class="cv-add" id="addEdu" type="button">+ 行を追加 / Add row</button>
 
@@ -85,7 +87,7 @@
             <div id="skEduRows"></div>
             <button class="cv-add" id="addSkEdu" type="button">+ 学歴を追加 / Add education</button>
 
-            <h3>語学 <span class="en">/ Languages</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Each language and your level, e.g. 'Japanese : Business', 'English : Native'.">i</span></h3>
+            <h3>語学 <span class="en">/ Languages</span><span class="cv-tip" tabindex="0" role="img" aria-label="tip" data-tip="Each language and your level, plus a test or score if you have one — e.g. Japanese · Business · JLPT N1, or English · Business · TOEIC 900.">i</span></h3>
             <div id="langRows"></div>
             <button class="cv-add" id="addLang" type="button">+ 言語を追加 / Add language</button>
             <p class="form-note">資格は「履歴書」タブの免許・資格を使用します。 / Qualifications come from the Rirekisho tab's licenses.</p>

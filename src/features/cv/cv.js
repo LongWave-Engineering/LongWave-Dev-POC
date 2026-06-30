@@ -67,10 +67,11 @@
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
     $("#skillRows").appendChild(row);
   }
-  function addLangRow(name,level){
+  function addLangRow(name,level,test){
     var row=el("div","cv-row lang");
     row.innerHTML='<input class="lg-name" placeholder="言語 / Language" value="'+esc(name||"")+'">'+
       '<input class="lg-level" placeholder="レベル / Level" value="'+esc(level||"")+'">'+
+      '<input class="lg-test" placeholder="試験・スコア / Test or score" value="'+esc(test||"")+'">'+
       '<button class="rm" type="button" aria-label="remove">×</button>';
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
     $("#langRows").appendChild(row);
@@ -81,6 +82,13 @@
   function todayStr(){ var d=new Date(); return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"; }
   /* split a textarea into trimmed non-empty lines (used for bullet lists) */
   function lines(s){ return String(s||"").split("\n").map(function(l){return l.trim();}).filter(Boolean); }
+  /* pad a table body with blank ruled rows up to `min` so the 履歴書 always shows a full
+     set of lines, like a real printed form */
+  function padRows(body, min){
+    var n=(body.match(/<tr/g)||[]).length, pad="";
+    for(var i=n;i<min;i++) pad+='<tr><td>&nbsp;</td><td></td><td></td></tr>';
+    return body+pad;
+  }
 
   function renderCV(){
     if(!$("#rirekishoOut")) return;
@@ -121,8 +129,8 @@
         '<tr><td class="rk-al"><span class="rk-sub">ふりがな</span></td><td class="rk-ar"><span class="rk-sub">電話</span></td></tr>'+
         '<tr><td class="rk-al"><span class="rk-sub">連絡先</span>　〒　<span class="rk-hint">（現住所以外に連絡を希望する場合のみ入力）</span></td><td class="rk-ar"><span class="rk-sub">Email</span></td></tr>'+
       '</table>'+
-      '<table class="rk-table"><tr><th style="width:62px">年</th><th style="width:46px">月</th><th>学歴・職歴</th></tr>'+(histBody||'<tr><td>&nbsp;</td><td></td><td></td></tr>')+'</table>'+
-      '<table class="rk-table"><tr><th style="width:62px">年</th><th style="width:46px">月</th><th>免許・資格</th></tr>'+(licBody||'<tr><td>&nbsp;</td><td></td><td></td></tr>')+'</table>'+
+      '<table class="rk-table"><tr><th style="width:62px">年</th><th style="width:46px">月</th><th>学歴・職歴</th></tr>'+padRows(histBody,16)+'</table>'+
+      '<table class="rk-table"><tr><th style="width:62px">年</th><th style="width:46px">月</th><th>免許・資格</th></tr>'+padRows(licBody,7)+'</table>'+
       '<table class="rk-table"><tr><td><div class="sec-h">志望動機・特技・アピールポイントなど</div>'+(nl2br(motiv)||"&nbsp;")+'</td></tr></table>'+
       '<table class="rk-table"><tr><td><div class="sec-h">本人希望欄（特に給料・職種・勤務時間・勤務地・その他について希望があれば記入）</div>'+(nl2br(request)||"&nbsp;")+'</td></tr></table>';
     $("#rirekishoOut").innerHTML=rk;
@@ -149,8 +157,8 @@
     var skEdus=[].map.call(document.querySelectorAll("#skEduRows .cv-career"),function(b){ return {school:b.querySelector(".se-school").value.trim(), period:b.querySelector(".se-period").value.trim(), loc:b.querySelector(".se-loc").value.trim()}; }).filter(function(e){return e.school||e.period||e.loc;});
     var eduBody=skEdus.map(function(e){ return '<div class="sk-job"><div class="sk-job-top"><span class="sk-job-title">'+esc(e.school)+'</span><span class="sk-job-period">'+esc(e.period)+'</span></div>'+(e.loc?'<div class="sk-job-co">'+esc(e.loc)+'</div>':'')+'</div>'; }).join("");
 
-    var langs=[].map.call(document.querySelectorAll("#langRows .cv-row"),function(r){ return {name:r.querySelector(".lg-name").value.trim(), level:r.querySelector(".lg-level").value.trim()}; }).filter(function(l){return l.name||l.level;});
-    var langBody=langs.length ? '<div class="sk-langs">'+langs.map(function(l){ return '<div class="sk-lang"><span class="sk-skill-cat">'+esc(l.name)+'</span><span class="sk-skill-val">'+esc(l.level)+'</span></div>'; }).join("")+'</div>' : '';
+    var langs=[].map.call(document.querySelectorAll("#langRows .cv-row"),function(r){ var t=r.querySelector(".lg-test"); return {name:r.querySelector(".lg-name").value.trim(), level:r.querySelector(".lg-level").value.trim(), test:(t?t.value.trim():"")}; }).filter(function(l){return l.name||l.level||l.test;});
+    var langBody=langs.length ? '<div class="sk-langs">'+langs.map(function(l){ var v=esc(l.level)+(l.test?(l.level?'　':'')+'（'+esc(l.test)+'）':''); return '<div class="sk-lang"><span class="sk-skill-cat">'+esc(l.name)+'</span><span class="sk-skill-val">'+v+'</span></div>'; }).join("")+'</div>' : '';
 
     /* qualifications come from the rirekisho licenses */
     var qualBody=lic.filter(function(l){return l.txt;}).map(function(l){ var when=(l.y||l.m)?'（'+esc(l.y)+(l.y?'年':'')+esc(l.m)+(l.m?'月':'')+'）':''; return '<div class="sk-qual">'+esc(l.txt)+when+'</div>'; }).join("");
@@ -176,13 +184,56 @@
     var note=$("#cvNote"); if(note) note.style.display=ok?"none":"";
   }
 
+  function setV(id,v){ var n=$(id); if(n) n.value=v; }
+  /* A realistic sample candidate so the builder looks complete out of the box (edit it,
+     or hit "Clear all" to start fresh). Education/work go OLDEST→NEWEST, two lines each
+     (入学→卒業, 入社→退社/現在に至る). */
+  function fillSample(){
+    setV("#cv_name","山田 太郎"); setV("#cv_furi","やまだ たろう"); setV("#cv_dob","1994-05-12"); setV("#cv_gender","男");
+    setV("#cv_phone","090-1234-5678"); setV("#cv_email","taro.yamada@example.com");
+    setV("#cv_postal","150-0001"); setV("#cv_addrFuri","とうきょうと しぶやく じんぐうまえ");
+    setV("#cv_addr","東京都渋谷区神宮前1-2-3\nサンプルマンション101号");
+    setV("#cv_motiv","これまでWebサービスのバックエンド開発に5年以上携わり、設計から運用まで一貫して担当してきました。貴社プロダクトの成長に、これまでの経験と技術力で貢献したいと考え志望いたしました。");
+    setV("#cv_request","貴社規定に従います。");
+    addEduRow("学歴","2013","4","東京サンプル大学 工学部 情報工学科 入学");
+    addEduRow("学歴","2017","3","東京サンプル大学 工学部 情報工学科 卒業");
+    addEduRow("職歴","2017","4","株式会社サンプルソフト 入社");
+    addEduRow("職歴","2021","3","株式会社サンプルソフト 退社");
+    addEduRow("職歴","2021","4","株式会社テックウェーブ 入社");
+    addEduRow("職歴","","","現在に至る");
+    addLicRow("2016","7","日本語能力試験 N1 合格");
+    addLicRow("2018","5","基本情報技術者試験 合格");
+    addLicRow("2019","3","普通自動車第一種運転免許 取得");
+    setV("#cv_jobtitle","Software Engineer / Backend"); setV("#cv_location","東京、日本");
+    setV("#cv_linkedin","https://linkedin.com/in/taro-yamada-sample");
+    setV("#cv_summary","Webサービスのバックエンド開発を中心に5年以上の経験。Go・TypeScriptを用いたAPI開発、AWS上でのインフラ構築・運用、CI/CDの整備を担当。チームのテックリードとして設計・コードレビュー・若手育成にも従事してきました。");
+    setV("#cv_otherTech","個人開発で React / Next.js を用いたWebアプリを公開\nOSSへのコントリビュート（バグ修正・ドキュメント改善）");
+    addSkillRow("言語","Go, TypeScript, Python, SQL");
+    addSkillRow("フレームワーク","Gin, Express, Next.js");
+    addSkillRow("インフラ","AWS (ECS, RDS, Lambda), Docker, Terraform");
+    addSkillRow("ツール","Git, GitHub Actions, Datadog, Jira");
+    addCareer("バックエンドエンジニア / テックリード","2021年4月 – 現在","株式会社テックウェーブ","東京都、日本",
+      "決済サービスのバックエンドAPIを Go で設計・開発\nAWS 上のインフラを Terraform で構築し、月間1,000万リクエストを安定運用\nCI/CD を整備しデプロイ頻度を週1回から日次へ改善\n3名のチームのテックリードとして設計レビューと育成を担当");
+    addCareer("ソフトウェアエンジニア","2017年4月 – 2021年3月","株式会社サンプルソフト","東京都、日本",
+      "社内業務システムの新規開発・保守（Python / Django）\n要件定義から実装・テストまでを担当\nレガシーコードのリファクタリングで障害率を40%削減");
+    addProj("決済プラットフォーム刷新","モノリスからマイクロサービスへの移行を主導。平均レスポンスタイムを60%改善し、チームの並行開発を可能にした。");
+    addProj("社内CI/CD基盤の整備","GitHub Actions による自動テスト・自動デプロイを全社展開。リリース作業を1回あたり2時間から15分に短縮。");
+    addSkEdu("東京サンプル大学 工学部 情報工学科","2013年4月 – 2017年3月","東京都、日本");
+    addLangRow("日本語","ネイティブ","");
+    addLangRow("英語","ビジネスレベル","TOEIC 900");
+  }
+  /* wipe everything back to a single blank row per section */
+  function clearAll(){
+    ["#cv_name","#cv_furi","#cv_dob","#cv_gender","#cv_phone","#cv_email","#cv_postal","#cv_addrFuri","#cv_addr","#cv_motiv","#cv_request","#cv_jobtitle","#cv_location","#cv_linkedin","#cv_github","#cv_summary","#cv_otherTech"].forEach(function(id){ setV(id,""); });
+    cvPhoto="";
+    ["#eduRows","#licRows","#careerRows","#projRows","#skEduRows","#skillRows","#langRows"].forEach(function(id){ var c=$(id); if(c) c.innerHTML=""; });
+    addEduRow("学歴","","",""); addEduRow("職歴","","",""); addLicRow("","","");
+    addSkillRow("",""); addCareer("","","","",""); addProj("",""); addSkEdu("","",""); addLangRow("","","");
+    renderCV();
+  }
   (function initCV(){
     if(!$("#cvForm")) return;
-    /* sensible starter rows */
-    addEduRow("学歴","","",""); addEduRow("職歴","","","");
-    addLicRow("","","");
-    addSkillRow("",""); addCareer("","","","",""); addProj("",""); addSkEdu("","","");
-    addLangRow("","");
+    fillSample();
     $("#cv_photo").addEventListener("change", function(e){ var f=e.target.files&&e.target.files[0]; if(!f){ cvPhoto=""; renderCV(); return; } var r=new FileReader(); r.onload=function(){ cvPhoto=r.result; renderCV(); }; r.readAsDataURL(f); });
     $("#addEdu").addEventListener("click", function(){ addEduRow("職歴","","",""); renderCV(); });
     $("#addLic").addEventListener("click", function(){ addLicRow("","",""); renderCV(); });
@@ -194,6 +245,7 @@
     $("#cvForm").addEventListener("input", renderCV);
     $("#cvForm").addEventListener("change", renderCV);
     $("#cvPrint").addEventListener("click", function(){ window.print(); });
+    var clr=$("#cvClear"); if(clr) clr.addEventListener("click", clearAll);
     /* document toggle (like the ENG/JPN switch): flips the WHOLE page between the
        rirekisho and shokumukeirekisho views — its own form fields AND its preview doc.
        The LongWave cover sheet shows above both. Inputs keep their values while hidden
