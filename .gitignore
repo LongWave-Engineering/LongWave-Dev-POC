@@ -1,3 +1,13 @@
 .DS_Store
 *.zip
 node_modules/
+
+# Secrets & real client data — MUST stay out of this now-public repo.
+.env
+.env.*
+!.env.example
+sources.local.json
+*.local.json
+backend/data/
+*.sqlite
+*.db
