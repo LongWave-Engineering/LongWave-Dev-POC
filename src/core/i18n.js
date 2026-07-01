@@ -89,7 +89,8 @@
       lbl_jp_none:"No Japanese required", lbl_jp_conversational:"Conversational JP", lbl_jp_business:"Business JP",
       hot:"Hot", result:"Showing {n} of {total} roles", viewrole:"View role →",
       result_pick:"Choose a filter to see matching roles", prompt_title:"Find the roles that fit you", prompt_sub:"Pick a specialty, tech stack, Japanese level, work style or location on the left — and matching roles appear here. {total} roles are open right now.", prompt_all:"Or browse all {total} roles →",
-      sel_pick:"Select this role", sel_selected:"{n} selected", sel_max:"max {n} at once", sel_apply:"Apply to selected", sel_clear:"Clear", apply_title:"Apply to {n} role(s)", apply_success:"Application sent for {n} role(s). We'll be in touch shortly.",
+      sel_pick:"Select this role", sel_selected:"{n} selected", sel_left:"{r} of {n} applications left", sel_apply:"Apply to selected", sel_clear:"Clear", apply_title:"Apply to {n} role(s)", apply_success:"Application sent for {n} role(s). We'll be in touch shortly.",
+      applied_badge:"Applied", m_applied:"✓ Applied", m_apply_limit:"Application limit reached", apply_limit_hit:"You've applied to your {n} roles — that's the limit, so no more applications can be sent.",
       sv_save:"Save", sv_saved:"Saved", sv_aria:"Save this role for later", sv_view:"Saved ({n})", sv_view_all:"Show all roles",
       sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later.", sv_note:"Saved in this browser so you can come back to them."
     },
@@ -181,7 +182,8 @@
       lbl_jp_none:"日本語不問", lbl_jp_conversational:"日常会話レベル", lbl_jp_business:"ビジネスレベル",
       hot:"注目", result:"{total}件中{n}件を表示", viewrole:"詳細を見る →",
       result_pick:"条件を選ぶと求人が表示されます", prompt_title:"あなたに合う求人を探す", prompt_sub:"左の職種・技術スタック・日本語レベル・働き方・勤務地から条件を選ぶと、合致する求人がここに表示されます。現在{total}件の求人があります。", prompt_all:"すべての求人（{total}件）を見る →",
-      sel_pick:"この求人を選択", sel_selected:"{n}件選択中", sel_max:"一度に最大{n}件", sel_apply:"選択した求人に応募", sel_clear:"クリア", apply_title:"{n}件の求人に応募", apply_success:"{n}件の求人に応募しました。すぐにご連絡します。",
+      sel_pick:"この求人を選択", sel_selected:"{n}件選択中", sel_left:"応募枠 残り{r}/{n}件", sel_apply:"選択した求人に応募", sel_clear:"クリア", apply_title:"{n}件の求人に応募", apply_success:"{n}件の求人に応募しました。すぐにご連絡します。",
+      applied_badge:"応募済み", m_applied:"✓ 応募済み", m_apply_limit:"応募上限に達しました", apply_limit_hit:"応募上限の{n}件に達しました。これ以上は応募できません。",
       sv_save:"保存", sv_saved:"保存済み", sv_aria:"この求人をあとで見るために保存", sv_view:"保存した求人 ({n})", sv_view_all:"すべての求人を表示",
       sv_heading:"保存した求人", sv_none:"まだ保存した求人はありません。求人の「保存」をタップすると、ここに表示されます。", sv_note:"このブラウザに保存され、あとで見返せます。"
     }

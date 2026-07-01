@@ -77,6 +77,15 @@
   .jc-salary{font-family:var(--font-display);font-size:1.12rem;color:var(--ink);font-weight:800;white-space:nowrap;}
   .jc-link{font-size:.95rem;font-weight:700;color:var(--accent-deep);white-space:nowrap;}
   .job-card .badge-hot{position:absolute;top:-11px;left:18px;}
+  /* a role you've already applied to: a static "Applied" pill (no checkbox), card muted */
+  .jc-applied{display:inline-flex;align-items:center;gap:5px;font-size:.82rem;font-weight:800;color:var(--pos-fg);background:var(--pos-bg);border-radius:999px;padding:6px 12px;white-space:nowrap;}
+  .job-card.applied{opacity:.72;}
+  .job-card.applied:hover{opacity:1;}
+  .jc-select input:disabled{cursor:not-allowed;opacity:.45;}
+  /* banner above the grid once all 10 applications are used ("one and done") */
+  .apply-notice{display:flex;align-items:center;gap:12px;background:var(--pos-bg);color:var(--pos-fg);border:1px solid var(--pos-fg);border-radius:14px;padding:14px 18px;margin-bottom:18px;font-weight:600;line-height:1.4;}
+  .apply-notice .an-ic{flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--pos-fg);color:#fff;font-weight:800;font-size:.85rem;}
+  .apply-notice[hidden]{display:none;}
   /* narrow screens: let the row wrap — salary/view drops below the title block */
   @media (max-width:640px){
     .jc-open{flex-wrap:wrap;gap:12px 16px;padding:16px 16px;}

@@ -49,7 +49,7 @@
     H+=jdSec("jd_notes", job.notes, false);
     $("#mDetail").innerHTML=H;
     var comp=$("#mCompany"); if(c.site){ comp.href=c.site; comp.style.display=""; } else { comp.style.display="none"; }
-    paintModalSave();
+    paintModalSave(); paintModalApply();
     openOverlay(jobOverlay); $("#jobModalClose").focus();
   }
   /* the JD modal's Save button mirrors the per-card save heart (same store, see jobs.js) */
@@ -59,6 +59,16 @@
     b.classList.toggle("is-saved", !!on);
     b.setAttribute("aria-pressed", on?"true":"false");
     if(lab) lab.textContent = on ? t("sv_saved") : t("sv_save");
+  }
+  /* the JD modal's Apply button reflects the hard cap: disabled + "Applied" once you've
+     applied to this role, disabled + "limit reached" once you've used all your applications. */
+  function paintModalApply(){
+    var b=$("#mApply"); if(!b) return;
+    var applied = currentJob && typeof isApplied==="function" && isApplied(currentJob);
+    var limit = typeof atApplyLimit==="function" && atApplyLimit();
+    if(applied){ b.disabled=true; b.textContent=t("m_applied"); }
+    else if(limit){ b.disabled=true; b.textContent=t("m_apply_limit").replace("{n}",MAX_APPLY); }
+    else { b.disabled=false; b.textContent=t("m_apply"); }
   }
   if($("#mSave")) $("#mSave").addEventListener("click", function(){ if(currentJob && typeof toggleSaved==="function"){ toggleSaved(currentJob); paintModalSave(); } });
 
@@ -82,17 +92,24 @@
   }
   bindLocWarn("#suLoc","#suLocWarn","#suSubmit");
   bindLocWarn("#coLoc","#coLocWarn","#coSubmit");
-  var pendingApplyJobIds=[];   /* job ids the signup will apply to (empty = plain signup) */
-  /* `preset` is accepted (call sites still pass "job") but ignored — the signup is always a candidate. */
-  function openSignup(preset, jobIds){
+  var pendingApplyJobs=[];     /* the roles (objects) the signup will apply to (empty = plain signup) */
+  var pendingApplyJobIds=[];   /* their DB ids, for the backend (jobs may lack one offline) */
+  /* `preset` is accepted (call sites still pass "job") but ignored — the signup is always a candidate.
+     `jobs` is an array of job OBJECTS (so we can mark them against the cap even without a DB id). */
+  function openSignup(preset, jobs){
     lastFocus=document.activeElement;
-    pendingApplyJobIds = Array.isArray(jobIds) ? LW.normalizeJobIds(jobIds) : [];
+    var arr = Array.isArray(jobs) ? jobs.filter(Boolean) : [];
+    /* hard cap safety-net: never carry more than the applications left, even if a control
+       slips through — the picker/modal already gate this; this is defence-in-depth. */
+    if(arr.length && typeof remainingApplies==="function") arr = arr.slice(0, remainingApplies());
+    pendingApplyJobs = arr;
+    pendingApplyJobIds = LW.normalizeJobIds(arr.map(function(j){ return j.id; }));
     $("#suSuccess").style.display="none"; $("#suForm").style.display="";
     if($("#suLoc")) $("#suLoc").value=""; if($("#suLocWarn")) $("#suLocWarn").style.display="none";
     if($("#suSubmit")) $("#suSubmit").disabled=false;
     if($("#suJp")) $("#suJp").value=""; if($("#suYears")) $("#suYears").value="";
     var titleEl=$("#suTitle");
-    if(titleEl) titleEl.textContent = pendingApplyJobIds.length ? t("apply_title").replace("{n}",pendingApplyJobIds.length) : t("su_title");
+    if(titleEl) titleEl.textContent = pendingApplyJobs.length ? t("apply_title").replace("{n}",pendingApplyJobs.length) : t("su_title");
     openOverlay(suOverlay); $("#suClose").focus();
   }
   /* ---------------- company modal (companies page) ----------------
@@ -203,7 +220,7 @@
   document.addEventListener("click", function(e){ var p=e.target.closest("[data-postjob]"); if(p){ e.preventDefault(); openPostJob(); } });
   /* the job detail modal's "Sign up to apply" → apply to just that role */
   var _mApply=$("#mApply");
-  if(_mApply) _mApply.addEventListener("click", function(){ openSignup("job", (currentJob && currentJob.id!=null) ? [currentJob.id] : []); });
+  if(_mApply) _mApply.addEventListener("click", function(){ if(_mApply.disabled) return; openSignup("job", currentJob ? [currentJob] : []); });
 
   /* ---------------- overlay helpers ---------------- */
   function openOverlay(o){ o.classList.add("open"); document.body.style.overflow="hidden"; }
@@ -262,11 +279,16 @@
      no backend → just confirm. Fire-and-forget; the user always sees a success state. */
   function submitSignup(){
     if(isAbroad("#suLoc")){ var w=$("#suLocWarn"); if(w) w.style.display=""; if($("#suSubmit")) $("#suSubmit").disabled=true; return; }
-    var n=pendingApplyJobIds.length;
+    var n=pendingApplyJobs.length;
+    var appliedJobs=pendingApplyJobs.slice();   /* snapshot: markAppliedJobs/clearSelection reset the live array */
     if(/^https?:$/.test(location.protocol)){
-      if(n){
+      if(pendingApplyJobIds.length){
         var body=collectSignup(); body.job_ids=pendingApplyJobIds;
-        fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) }).catch(function(){});
+        /* read the response so we can honour the backend's authoritative remaining count */
+        fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) })
+          .then(function(r){ return r.ok ? r.json() : null; })
+          .then(function(d){ if(d && typeof syncAppliesFromServer==="function") syncAppliesFromServer(d.remaining); })
+          .catch(function(){});
       } else {
         fetch("/api/leads", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(collectSignup()) }).catch(function(){});
       }
@@ -274,7 +296,8 @@
     var succ=$("#suSuccess");
     if(succ) succ.textContent = n ? t("apply_success").replace("{n}",n) : t("su_success");
     $("#suForm").style.display="none"; if(succ) succ.style.display="block";
-    if(n) clearSelection();   /* reset the jobs picker after a batch apply */
+    /* record the applied roles against the lifetime cap (also re-renders the grid) */
+    if(n && typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs);
   }
   $("#suForm").addEventListener("submit", function(e){ e.preventDefault(); submitSignup(); });
 

@@ -6,12 +6,12 @@
   /* ---- multi-select (apply to one or many) ---- keyed by the stable original
      index (_i) so it survives re-filtering and language toggles. ---- */
   var selected={};
-  var MAX_APPLY=10;   /* cap how many roles can be applied to in one go */
+  var MAX_APPLY=LW.MAX_APPLICATIONS;   /* the hard, lifetime cap (shared with the backend) */
   function isSelected(job){ return !!selected[job._i]; }
   function setSelected(job,on){ if(on) selected[job._i]=true; else delete selected[job._i]; updateSelBar(); }
   function flashSelMax(){ var c=$("#selCount"); if(!c) return; c.classList.remove("sb-flash"); void c.offsetWidth; c.classList.add("sb-flash"); }
   function selectionCount(){ var n=0; for(var k in selected) if(selected.hasOwnProperty(k)) n++; return n; }
-  function selectedDbIds(){ return LW.normalizeJobIds(JOBS.filter(function(j){return selected[j._i];}).map(function(j){return j.id;})); }
+  function selectedJobs(){ return JOBS.filter(function(j){ return selected[j._i]; }); }
   function clearSelection(){ selected={}; renderJobs(); }
 
   /* ---- save / bookmark roles ---- persisted in localStorage so a visitor (signed
@@ -47,11 +47,59 @@
     btn.setAttribute("aria-pressed", savedOnly?"true":"false");
     if(lab) lab.textContent = savedOnly ? t("sv_view_all") : t("sv_view").replace("{n}", savedKeys.length);
   }
+
+  /* ---- applied roles: the hard 10-per-person cap ---- persisted so it holds across
+     visits (not just one session), keyed by the same jobKey() as saved roles. The backend
+     enforces the true per-email limit; this mirrors it so the picker stops you at 10 and
+     shows what's left. "10 applications, one and done" — you can't reset it by re-selecting. */
+  var APPLIED_KEY="lw_applied_jobs";
+  function loadApplied(){ try{ var v=JSON.parse(localStorage.getItem(APPLIED_KEY)||"[]"); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
+  var appliedKeys=loadApplied();
+  function persistApplied(){ try{ localStorage.setItem(APPLIED_KEY, JSON.stringify(appliedKeys)); }catch(e){} }
+  function isApplied(job){ return appliedKeys.indexOf(jobKey(job))>-1; }
+  function appliedUsed(){ return appliedKeys.length; }
+  function remainingApplies(){ return Math.max(0, MAX_APPLY - appliedKeys.length); }
+  function atApplyLimit(){ return remainingApplies()<=0; }
+  /* record applied jobs (objects), dedupe + persist. Never grows past the cap in practice
+     because selection is gated on remainingApplies(). */
+  function markApplied(jobs){
+    (jobs||[]).forEach(function(j){ var k=jobKey(j); if(appliedKeys.indexOf(k)===-1) appliedKeys.push(k); });
+    persistApplied();
+  }
+  /* called from the signup submit (modals.js) with the roles just applied to (objects) →
+     mark them against the cap, then reset the picker (clearSelection re-renders the grid so
+     applied badges + remaining caps refresh everywhere). Works with or without a DB id. */
+  function markAppliedJobs(jobs){
+    markApplied(jobs);
+    clearSelection();
+  }
+  /* trust the server's authoritative remaining count: if it says fewer remain than we've
+     tracked locally (e.g. applied from another browser), pad so the UI reflects the real cap. */
+  function syncAppliesFromServer(remaining){
+    if(typeof remaining!=="number" || isNaN(remaining)) return;
+    var used=MAX_APPLY-Math.max(0,Math.min(MAX_APPLY,remaining));
+    var changed=false;
+    while(appliedKeys.length<used){ appliedKeys.push("srv:"+appliedKeys.length); changed=true; }
+    if(changed){ persistApplied(); renderJobs(); }
+  }
+  /* a highlighted bar above the grid once the cap is reached */
+  function updateApplyNotice(){
+    var box=$("#applyNotice"); if(!box) return;
+    if(atApplyLimit()){
+      box.hidden=false;
+      box.innerHTML='<span class="an-ic" aria-hidden="true">✓</span><span>'+ esc(t("apply_limit_hit").replace("{n}",MAX_APPLY)) +'</span>';
+    } else { box.hidden=true; box.innerHTML=""; }
+  }
   function updateSelBar(){
     var bar=$("#selectBar"); if(!bar) return;
     var n=selectionCount();
     bar.hidden = n===0;
-    if(n){ $("#selCount").textContent=t("sel_selected").replace("{n}",n)+(n>=MAX_APPLY?" · "+t("sel_max").replace("{n}",MAX_APPLY):""); $("#selApply").textContent=t("sel_apply")+" ("+n+")"; }
+    if(n){
+      var rem=remainingApplies();
+      /* show what's left of the lifetime allowance, and flag when this batch fills it */
+      $("#selCount").textContent=t("sel_selected").replace("{n}",n)+" · "+t("sel_left").replace("{r}",rem).replace("{n}",MAX_APPLY);
+      $("#selApply").textContent=t("sel_apply")+" ("+n+")";
+    }
   }
   /* One full-width row per role (not a boxed card): logo · title+company+tags · salary/view.
      The title is never clamped, so the whole role name is always visible. */
@@ -80,7 +128,8 @@
      click never also opens the modal (and vice-versa). */
   function buildCard(job,i){
     var idx=job._i;
-    var card=el("div","job-card jc-reveal"+(isSelected(job)?" sel":""));
+    var applied=isApplied(job);
+    var card=el("div","job-card jc-reveal"+(isSelected(job)?" sel":"")+(applied?" applied":""));
     card.style.animationDelay=(Math.min(i,12)*0.045)+"s";
     var corner=el("div","jc-corner");
     var save=el("button","jc-save"+(isSaved(job)?" is-saved":""));
@@ -91,15 +140,24 @@
     save.setAttribute("title", isSaved(job)?t("sv_saved"):t("sv_save"));
     save.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.3l-1.45-1.32C5.4 14.36 2 11.28 2 7.5 2 5.42 3.42 4 5.5 4c1.74 0 3.41 1.01 4.5 2.61C11.09 5.01 12.76 4 14.5 4 16.58 4 18 5.42 18 7.5c0 3.78-3.4 6.86-8.55 11.54L12 20.3z"/></svg>';
     save.addEventListener("click", function(e){ e.stopPropagation(); toggleSaved(job); });
-    var sel=el("label","jc-select");
-    var cb=document.createElement("input"); cb.type="checkbox"; cb.checked=isSelected(job);
-    cb.setAttribute("aria-label", t("sel_pick")+": "+roleL(job));
-    cb.addEventListener("change", function(){
-      if(cb.checked && selectionCount()>=MAX_APPLY){ cb.checked=false; updateSelBar(); flashSelMax(); return; }
-      setSelected(job, cb.checked); card.classList.toggle("sel", cb.checked);
-    });
-    sel.appendChild(cb);
-    corner.appendChild(save); corner.appendChild(sel);
+    corner.appendChild(save);
+    if(applied){
+      /* already applied → a static "Applied" badge, no checkbox (can't re-apply / re-count) */
+      corner.appendChild(el("span","jc-applied", '✓ '+esc(t("applied_badge"))));
+    } else {
+      var sel=el("label","jc-select");
+      var cb=document.createElement("input"); cb.type="checkbox"; cb.checked=isSelected(job);
+      cb.setAttribute("aria-label", t("sel_pick")+": "+roleL(job));
+      /* at the lifetime limit, unpicked roles can't be selected at all */
+      if(atApplyLimit() && !isSelected(job)){ cb.disabled=true; sel.title=t("apply_limit_hit").replace("{n}",MAX_APPLY); }
+      cb.addEventListener("change", function(){
+        /* can't select more than what's left of the 10-application allowance */
+        if(cb.checked && selectionCount()>=remainingApplies()){ cb.checked=false; updateSelBar(); flashSelMax(); return; }
+        setSelected(job, cb.checked); card.classList.toggle("sel", cb.checked);
+      });
+      sel.appendChild(cb);
+      corner.appendChild(sel);
+    }
     var open=el("button","jc-open",cardHTML(job));
     open.setAttribute("aria-label", roleL(job)+" at "+COMPANIES[job.co].name);
     open.addEventListener("click", function(){ openJob(idx); });
@@ -108,6 +166,7 @@
   }
   function renderJobs(){
     var f=getFilters();
+    updateApplyNotice();   /* keep the "you've used all 10" banner in sync on every render */
     /* Saved view: show only bookmarked roles (still honouring any active filters),
        skipping the pick-a-filter gate. */
     if(savedOnly){
@@ -171,7 +230,7 @@
      apply mode with the selected job ids). openSignup lives in modals.js (same IIFE). */
   (function(){
     var clr=$("#selClear"); if(clr) clr.addEventListener("click", clearSelection);
-    var ap=$("#selApply"); if(ap) ap.addEventListener("click", function(){ openSignup("job", selectedDbIds()); });
+    var ap=$("#selApply"); if(ap) ap.addEventListener("click", function(){ openSignup("job", selectedJobs()); });
     var st=$("#savedToggle"); if(st) st.addEventListener("click", function(){ savedOnly=!savedOnly; if(savedOnly) showAllJobs=false; renderJobs(); });
   })();
 

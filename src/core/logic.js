@@ -8,6 +8,12 @@
     /* HTML-escape — the one helper that's both pure and used app-wide. */
     function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
 
+    /* Hard cap: a candidate (identified by one email) may apply to at most this many
+       DISTINCT jobs, EVER — cumulative across every visit/batch, not per session. The
+       frontend picker uses it to gate selection; the backend enforces it authoritatively
+       per-email so it can't be bypassed by re-selecting after hitting the limit. */
+    var MAX_APPLICATIONS = 10;
+
     /* Canonical, ordered specialty list (drives the filter dropdown order).
        Every value classifySpec() can return MUST appear here — guarded by a test. */
     var SPECS = ["Frontend","Backend","Full-Stack","Software Engineering","Mobile","AI / ML","Data Engineering","SRE / Infra","Security","QA / Test","UI/UX & Design","Hardware & Mfg","Product Management","Project / Program Mgmt","Engineering Management","Consulting","Sales & BD","Management","Corporate & Ops","Other"];
@@ -159,6 +165,7 @@
 
     return {
       esc: esc,
+      MAX_APPLICATIONS: MAX_APPLICATIONS,
       ROUTES: ROUTES,
       routeFor: routeFor,
       SPECS: SPECS,
