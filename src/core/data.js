@@ -98,13 +98,66 @@
      q:{en:"Every candidate arrived pre-screened on Japanese level. No more mismatched first interviews.", ja:"候補者は全員、日本語レベルを事前確認済みで来てくれました。ミスマッチな一次面接がなくなりました。"}}
   ];
 
+  /* Each article carries a one-line `dek` and a `body` (array of paragraphs) per language,
+     shown in the in-app reading modal (openArticle → #artOverlay). Bodies are placeholder
+     editorial to swap for real posts before launch. */
   var ARTICLES = [
-    {cat:{en:"Language", ja:"言語"}, title:{en:"How much Japanese do you actually need as a developer in Tokyo", ja:"東京のエンジニア職に、実際どれくらいの日本語が必要か"}},
-    {cat:{en:"Job hunting", ja:"転職"}, title:{en:"Decoding a Japanese job posting: salary, levels, and what's negotiable", ja:"日本の求人票を読み解く：給与・レベル・交渉できる範囲"}},
-    {cat:{en:"Culture", ja:"カルチャー"}, title:{en:"Working at a Japanese product company as a foreign engineer", ja:"外国人エンジニアとして日本のプロダクト企業で働く"}},
-    {cat:{en:"Visa", ja:"ビザ"}, title:{en:"The engineer's guide to work visas and relocation to Japan", ja:"エンジニアのための就労ビザと日本への移住ガイド"}},
-    {cat:{en:"Interviews", ja:"面接"}, title:{en:"What Japanese tech interviews look like, and how to prepare", ja:"日本の技術面接はどんな流れか、どう準備するか"}},
-    {cat:{en:"Career", ja:"キャリア"}, title:{en:"From manual QA to SET: making the jump in Japan", ja:"手動QAからSETへ：日本でのキャリアの広げ方"}}
+    {cat:{en:"Language", ja:"言語"}, title:{en:"How much Japanese do you actually need as a developer in Tokyo", ja:"東京のエンジニア職に、実際どれくらいの日本語が必要か"},
+     dek:{en:"The real language bar varies by team — here's how to read it before you apply.", ja:"求められる日本語のレベルはチーム次第。応募前に見極めるコツ。"},
+     body:{en:[
+       "A “business-level Japanese” line on a posting is a starting point, not a verdict. Plenty of infrastructure, data, and platform teams at Japanese product companies run day-to-day work in English, while customer-facing and domain-heavy roles lean more on Japanese.",
+       "Before you rule a role in or out, ask a simple question: what language do code review, design docs, and incident channels actually happen in? That tells you far more than the headline requirement.",
+       "If you're still studying, conversational Japanese plus strong written English is enough to thrive on many teams — and a company serious about hiring bilingual engineers will have a plan to support you."
+     ], ja:[
+       "求人票の「ビジネスレベルの日本語」は出発点であって結論ではありません。日本のプロダクト企業でも、インフラ・データ・プラットフォーム系のチームは日常業務を英語で進めることが多く、一方で顧客対応やドメイン知識が重い職種は日本語比重が高くなります。",
+       "応募を判断する前に、コードレビュー・設計ドキュメント・障害対応のチャンネルが実際に何語で回っているかを聞いてみましょう。見出しの要件よりずっと多くのことが分かります。",
+       "学習中でも、日常会話レベルの日本語と確かな英語のライティングがあれば、多くのチームで活躍できます。バイリンガル採用に本気の企業なら、あなたを支える仕組みを用意しています。"
+     ]}},
+    {cat:{en:"Job hunting", ja:"転職"}, title:{en:"Decoding a Japanese job posting: salary, levels, and what's negotiable", ja:"日本の求人票を読み解く：給与・レベル・交渉できる範囲"},
+     dek:{en:"Salary bands, Japanese levels, and what's actually negotiable.", ja:"給与レンジ・日本語レベル・本当に交渉できる項目の読み方。"},
+     body:{en:[
+       "Japanese postings often show a wide salary band with a note that the final figure depends on experience. The top of the band is usually reachable, but expect it to map to a specific level ladder — ask where the role sits and what the next rung looks like.",
+       "Beyond base pay, clarify remote policy, overtime treatment, and stock or bonus structure early. These are frequently more negotiable than the headline number, especially for bilingual engineers in demand."
+     ], ja:[
+       "日本の求人票では、幅のある給与レンジに「経験による」と添えられていることがよくあります。上限には届き得ますが、多くの場合は等級（グレード）に対応しています。このポジションがどの等級で、次の等級はどうなるかを確認しましょう。",
+       "基本給以外に、リモート方針・残業の扱い・ストックやボーナスの仕組みも早めに確認を。特に需要の高いバイリンガルエンジニアにとっては、見出しの金額より交渉の余地が大きいことが多い項目です。"
+     ]}},
+    {cat:{en:"Culture", ja:"カルチャー"}, title:{en:"Working at a Japanese product company as a foreign engineer", ja:"外国人エンジニアとして日本のプロダクト企業で働く"},
+     dek:{en:"What changes, what doesn't, and how to ramp up fast.", ja:"変わること・変わらないこと、そして早く立ち上がるコツ。"},
+     body:{en:[
+       "Modern Japanese product companies look a lot like their global peers: Git-based workflows, agile ceremonies, and English-friendly tooling. What differs is often the emphasis on consensus and written context — decisions may take an extra step, but they tend to stick.",
+       "The fastest way to ramp is to over-communicate in writing and build a couple of internal allies early. Most teams are glad to explain the “why” behind a process if you ask."
+     ], ja:[
+       "いまどきの日本のプロダクト企業は、Gitベースのワークフローやアジャイルのセレモニー、英語対応のツールなど、海外の同業とよく似ています。違いはむしろ、合意形成と文書での背景共有を重視する点にあります。意思決定に一手間かかることはありますが、決まったことは定着しやすい傾向です。",
+       "早く立ち上がるコツは、文章で多めにコミュニケーションを取り、早い段階で社内に味方を2人ほど作ること。プロセスの「なぜ」を尋ねれば、たいていのチームは喜んで説明してくれます。"
+     ]}},
+    {cat:{en:"Visa", ja:"ビザ"}, title:{en:"The engineer's guide to work visas and relocation to Japan", ja:"エンジニアのための就労ビザと日本への移住ガイド"},
+     dek:{en:"The common visa paths for engineers, and what employers handle.", ja:"エンジニア向けの主な就労ビザと、企業が対応してくれる範囲。"},
+     body:{en:[
+       "Most engineers come in on the Engineer / Specialist in Humanities visa, and a growing number qualify for the Highly Skilled Professional route, which can speed up permanent residency. Your employer typically sponsors the paperwork; you supply documents and a bit of patience.",
+       "Relocation support varies widely — some companies cover flights, temporary housing, and a settling-in allowance, others don't. It's a fair thing to ask about during offer discussions."
+     ], ja:[
+       "多くのエンジニアは「技術・人文知識・国際業務」の在留資格で来日し、近年は永住申請を早められる可能性がある「高度専門職」に該当する人も増えています。書類手続きは基本的に企業側がスポンサーとなり、あなたは必要書類の準備と少しの忍耐を用意します。",
+       "リロケーション支援は企業によってさまざまで、渡航費・一時的な住居・着任手当をカバーするところもあれば、そうでないところもあります。オファー面談の際に確認して問題ない項目です。"
+     ]}},
+    {cat:{en:"Interviews", ja:"面接"}, title:{en:"What Japanese tech interviews look like, and how to prepare", ja:"日本の技術面接はどんな流れか、どう準備するか"},
+     dek:{en:"The formats you'll see, and how they differ from the US/EU.", ja:"遭遇する選考フォーマットと、欧米との違い。"},
+     body:{en:[
+       "Expect a mix that's familiar and local: a coding or system-design round, plus one or more conversational interviews that probe motivation, team fit, and your reasons for choosing Japan. Take-home tasks are common; whiteboard trivia less so.",
+       "Prepare a clear, structured story of your experience and why this company. Interviewers here tend to value concrete examples and calm reasoning over raw speed."
+     ], ja:[
+       "見慣れたものとローカルなものが混在します。コーディングやシステム設計のラウンドに加えて、志望動機・チームとの相性・日本を選ぶ理由を掘り下げる会話型の面接が1回以上あります。持ち帰り課題はよくありますが、ホワイトボードでの難問クイズは比較的少なめです。",
+       "自分の経験と「なぜこの会社か」を、構造立てて明確に語れるよう準備しましょう。面接官は、速さよりも具体的な事例と落ち着いた思考を評価する傾向があります。"
+     ]}},
+    {cat:{en:"Career", ja:"キャリア"}, title:{en:"From manual QA to SET: making the jump in Japan", ja:"手動QAからSETへ：日本でのキャリアの広げ方"},
+     dek:{en:"A realistic path from manual testing into automation roles.", ja:"手動テストから自動化職種への、現実的な移行ルート。"},
+     body:{en:[
+       "The move from manual QA to Software Engineer in Test is very doable in Japan, where demand for automation skills outstrips supply. Start by automating the tests you already run — Playwright or Cypress on a real feature — and build a small portfolio.",
+       "Framing matters: position yourself as a quality engineer who codes, not a tester learning to program. Bilingual candidates who can bridge QA and dev teams are especially sought after."
+     ], ja:[
+       "手動QAからSET（Software Engineer in Test）への移行は、自動化スキルの需要が供給を上回る日本では十分に現実的です。まずは今実行しているテストを自動化することから始めましょう。実際の機能に対してPlaywrightやCypressで書き、小さなポートフォリオを作ります。",
+       "見せ方も重要です。「プログラミングを学んでいるテスター」ではなく、「コードを書く品質エンジニア」として自分を位置づけましょう。QAと開発の橋渡しができるバイリンガル人材は特に求められています。"
+     ]}}
   ];
 
 

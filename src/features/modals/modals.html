@@ -145,6 +145,20 @@
   </div>
 </div>
 
+<!-- article reading view (opened from an Articles card) -->
+<div class="overlay" id="artOverlay" role="dialog" aria-modal="true" aria-labelledby="artTitle">
+  <div class="modal narrow" id="artModal">
+    <button class="modal-close" id="artClose" aria-label="Close">×</button>
+    <article class="art-read">
+      <span class="cat" id="artCat"></span>
+      <h2 class="art-read-title" id="artTitle"></h2>
+      <p class="art-read-dek" id="artDek"></p>
+      <div class="art-read-body" id="artBody"></div>
+      <p class="art-read-cta" data-i18n="art_cta">Looking for roles like the ones above? <button class="linklike" data-signup type="button">Sign up</button> and a bilingual recruiter brings you matched openings.</p>
+    </article>
+  </div>
+</div>
+
 <!-- Optional generated job data from the HRMOS sync (ats-connectors/generate-jobs).
      If jobs.js is absent, the site falls back to the built-in JOBS list below. -->
 

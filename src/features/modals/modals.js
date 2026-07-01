@@ -84,6 +84,7 @@
      (so the underlying modal's Apply button flips to "Applied" once the signup closes). */
   function repaintOpenModal(){
     if(currentJob && jobOverlay && jobOverlay.classList.contains("open")) fillJobModal(currentJob);
+    if(currentArticle!=null && typeof fillArticle==="function" && artOverlay && artOverlay.classList.contains("open")) fillArticle(currentArticle);
   }
   if($("#mSave")) $("#mSave").addEventListener("click", function(){ if(currentJob && typeof toggleSaved==="function"){ toggleSaved(currentJob); paintModalSave(); } });
 
@@ -237,6 +238,29 @@
   if($("#pjClose")) $("#pjClose").addEventListener("click", function(){ closeOverlay(pjOverlay); });
   if(pjOverlay) pjOverlay.addEventListener("click", function(e){ if(e.target===pjOverlay) closeOverlay(pjOverlay); });
   document.addEventListener("click", function(e){ var p=e.target.closest("[data-postjob]"); if(p){ e.preventDefault(); openPostJob(); } });
+
+  /* ---------------- article reading modal ----------------
+     Articles cards carry data-article="<index>"; clicking one opens an in-app reading view
+     (no real blog yet). Split fill/open so a language toggle re-renders it (repaintOpenModal). */
+  var artOverlay=$("#artOverlay");
+  var currentArticle=null;
+  function fillArticle(i){
+    var a=ARTICLES[i]; if(!a) return;
+    if($("#artCat")) $("#artCat").textContent = a.cat[lang];
+    if($("#artTitle")) $("#artTitle").textContent = a.title[lang];
+    var dek=$("#artDek"); if(dek){ var d=a.dek?a.dek[lang]:""; dek.textContent=d; dek.style.display=d?"":"none"; }
+    var body=$("#artBody"); if(body){ body.innerHTML=((a.body&&a.body[lang])||[]).map(function(p){ return "<p>"+esc(p)+"</p>"; }).join(""); }
+  }
+  function openArticle(i){
+    if(!artOverlay || !ARTICLES[i]) return;
+    currentArticle=i; lastFocus=document.activeElement;
+    fillArticle(i);
+    openOverlay(artOverlay); $("#artClose").focus();
+  }
+  if($("#artClose")) $("#artClose").addEventListener("click", function(){ closeOverlay(artOverlay); });
+  if(artOverlay) artOverlay.addEventListener("click", function(e){ if(e.target===artOverlay) closeOverlay(artOverlay); });
+  document.addEventListener("click", function(e){ var c=e.target.closest("[data-article]"); if(c){ e.preventDefault(); openArticle(+c.getAttribute("data-article")); } });
+
   /* the job detail modal's "Sign up to apply" → apply to just that role */
   var _mApply=$("#mApply");
   if(_mApply) _mApply.addEventListener("click", function(){ if(_mApply.disabled) return; openSignup("job", currentJob ? [currentJob] : []); });
@@ -246,7 +270,7 @@
   function closeOverlay(o){
     o.classList.remove("open");
     /* only unlock body scroll once NO overlay is open — the signup can stack on the job modal */
-    var anyOpen=[jobOverlay,suOverlay,coOverlay,ctOverlay,pjOverlay].some(function(ov){ return ov && ov.classList.contains("open"); });
+    var anyOpen=[jobOverlay,suOverlay,coOverlay,ctOverlay,pjOverlay,artOverlay].some(function(ov){ return ov && ov.classList.contains("open"); });
     if(!anyOpen) document.body.style.overflow="";
     if(lastFocus) lastFocus.focus();
   }

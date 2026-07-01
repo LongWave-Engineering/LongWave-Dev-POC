@@ -5,7 +5,20 @@
   .art:hover{transform:translateY(-3px);border-color:var(--accent);}
   .art .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
   .art h4{font-size:1.2rem;line-height:1.28;}
+  .art .art-dek{color:var(--slate);font-size:.98rem;line-height:1.5;}
   .art .read{margin-top:auto;color:var(--accent-deep);font-weight:700;padding-top:8px;}
+  .art{cursor:pointer;}
+
+  /* ---------- article reading modal ---------- */
+  .art-read .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
+  .art-read-title{font-size:1.7rem;line-height:1.2;margin:10px 0 0;}
+  .art-read-dek{color:var(--slate);font-size:1.1rem;line-height:1.5;margin:12px 0 0;}
+  .art-read-body{margin-top:18px;}
+  .art-read-body p{color:var(--ink-soft);font-size:1.02rem;line-height:1.7;margin:0 0 14px;}
+  .art-read-cta{margin:22px 0 0;padding-top:18px;border-top:1px solid var(--line);color:var(--slate);font-size:1rem;line-height:1.5;}
+  /* an inline text button that reads as a link (used inside sentence-flow CTAs) */
+  .linklike{background:none;border:0;padding:0;font:inherit;color:var(--accent-deep);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+  .linklike:hover{color:var(--ink);}
 
 
 
