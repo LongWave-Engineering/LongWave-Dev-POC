@@ -28,28 +28,29 @@
     if(job.visa) tags+='<span class="tag tag--meta">'+esc(t("lbl_visa"))+'</span>';
     (job.stack||[]).forEach(function(s){ tags+='<span class="tag tag--tech">'+esc(s)+'</span>'; });
     $("#mTags").innerHTML=tags;
-    var scopeTxt = job.scope || bodyL(job) || "";
+    /* every detail field is language-aware (jf): English base / Japanese `_ja` override */
+    var scopeTxt = jf(job,"scope") || bodyL(job) || "";
     var pts = pointsL(job);
-    var reqText = job.required || (pts && pts.length ? "・"+pts.join("\n・") : "");
+    var reqText = jf(job,"required") || (pts && pts.length ? "・"+pts.join("\n・") : "");
     var H="";
-    H+=jdSec("jd_bg", job.bg, false);
+    H+=jdSec("jd_bg", jf(job,"bg"), false);
     H+=jdSec("jd_scope", scopeTxt, true);
     H+=jdSec("jd_required", reqText, true);
-    H+=jdSec("jd_nice", job.nice, false);
-    H+=jdSec("jd_ideal", job.ideal, false);
+    H+=jdSec("jd_nice", jf(job,"nice"), false);
+    H+=jdSec("jd_ideal", jf(job,"ideal"), false);
     if(job.stack && job.stack.length){ H+='<h4 class="m-sub">'+esc(t("jd_stack"))+'</h4><div class="m-tags tags">'+job.stack.map(function(s){return '<span class="tag tag--tech">'+esc(s)+'</span>';}).join("")+'</div>'; }
-    H+=jdSec("jd_team", job.team, false);
-    H+=jdSec("jd_lang", job.lang, true);
+    H+=jdSec("jd_team", jf(job,"team"), false);
+    H+=jdSec("jd_lang", jf(job,"lang"), true);
     H+=jdSec("jd_office", locL(job), true);
-    H+=jdSec("jd_workstyle", job.workStyle, false);
-    H+=jdSec("jd_hours", job.hours, false);
-    H+=jdSec("jd_comp", job.comp, false);
-    H+=jdSec("jd_bonus", job.bonus, false);
-    H+=jdSec("jd_benefits", job.benefits, false);
-    H+=jdSec("jd_holiday", job.holiday, false);
-    H+=jdSec("jd_probation", job.probation, false);
-    H+=jdSec("jd_selection", job.selection, false);
-    H+=jdSec("jd_notes", job.notes, false);
+    H+=jdSec("jd_workstyle", jf(job,"workStyle"), false);
+    H+=jdSec("jd_hours", jf(job,"hours"), false);
+    H+=jdSec("jd_comp", jf(job,"comp"), false);
+    H+=jdSec("jd_bonus", jf(job,"bonus"), false);
+    H+=jdSec("jd_benefits", jf(job,"benefits"), false);
+    H+=jdSec("jd_holiday", jf(job,"holiday"), false);
+    H+=jdSec("jd_probation", jf(job,"probation"), false);
+    H+=jdSec("jd_selection", jf(job,"selection"), false);
+    H+=jdSec("jd_notes", jf(job,"notes"), false);
     $("#mDetail").innerHTML=H;
     var comp=$("#mCompany"); if(c.site){ comp.href=c.site; comp.style.display=""; } else { comp.style.display="none"; }
     paintModalSave(); paintModalApply();

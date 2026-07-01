@@ -195,9 +195,21 @@
 
   function jpTag(level){ return '<span class="tag '+ LW.jpTagClass(level) +'">'+ esc(t("lbl_jp_"+level)) +'</span>'; }
   function remoteLabel(r){ return t("lbl_remote_"+r); }
-  function roleL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].role : j.role; }
-  function bodyL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].body : j.body; }
-  function pointsL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].points : j.points; }
+  /* Language accessor for any job field. The base job fields are ENGLISH; the Japanese
+     text lives per-job as `<field>_ja` (HRMOS data). Falls back to the legacy JOBS_JA map
+     (keyed by English role) for the built-in demo data, then to the base field. So English
+     mode always shows the base (English) and Japanese mode shows the JA override. */
+  function jf(j, f){
+    if(lang==="ja"){
+      var jv = j[f+"_ja"];
+      if(jv!=null && jv!=="") return jv;
+      if(JOBS_JA[j.role] && JOBS_JA[j.role][f]!=null) return JOBS_JA[j.role][f];
+    }
+    return j[f];
+  }
+  function roleL(j){ return jf(j,"role"); }
+  function bodyL(j){ return jf(j,"body"); }
+  function pointsL(j){ return jf(j,"points"); }
   function locL(j){ return (lang==="ja" && j.loc==="Tokyo · Ginza") ? "東京・銀座" : j.loc; }
   /* insert a zero-width break after slashes so a long slash-separated title wraps AT the
      slashes (e.g. "…(Tokyo/Osaka/Kyoto/Nagoya/Fukuoka)") instead of breaking mid-word */
