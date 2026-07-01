@@ -19,7 +19,7 @@
     .nav-links a.active::after{display:none;}
     .menu-toggle{display:grid;place-items:center;}
     .nav-right .btn{display:none;}
-    .section{padding:62px 0;}
+    .section{padding:40px 0;}
     .hero-inner{padding:56px 0 18px;}
     .partners{padding:32px 0 56px;}
     .boxes,.co-grid,.rev-grid,.art-grid,.teaser-grid{grid-template-columns:1fr;}
