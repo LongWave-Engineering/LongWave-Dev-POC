@@ -27,21 +27,22 @@
   .fclear{background:transparent;border:0;color:var(--accent-deep);font-weight:700;font-size:.98rem;padding:4px 0;}
   .fclear:hover{color:var(--ink);}
   .result-count{font-size:1.02rem;color:var(--slate);margin-bottom:20px;font-weight:600;}
-  /* Fluid grid: 1 column when narrow, scaling up to a hard cap of 3 across when wide —
-     3 roomy cards read better than 4 cramped ones. The minmax floor = max(280px, a
-     third-row) keeps cards at least 280px wide (never scrunched) and caps at 3, while
-     still reflowing down to 2 then 1 as the window shrinks. */
-  .job-grid{display:grid;gap:22px;grid-template-columns:repeat(auto-fill, minmax(max(280px, (100% - 44px)/3), 1fr));}
+  /* Full-width list: every role is ONE row spanning the whole content column, so the
+     entire title is always visible (no boxed grid, no 2-line clamp). Rows stack. */
+  .job-grid{display:flex;flex-direction:column;gap:14px;}
   .jobs-prompt{grid-column:1/-1;text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:64px 30px;}
   .jobs-prompt .jp-ic{font-size:2.4rem;line-height:1;margin-bottom:12px;}
   .jobs-prompt h3{font-size:1.55rem;margin-bottom:12px;}
   .jobs-prompt p{color:var(--slate);font-size:1.08rem;line-height:1.5;max-width:36em;margin:0 auto 24px;}
-  /* card = wrapper (visual + selected ring); .jc-open = the clickable content button;
-     .jc-select = the selection checkbox (separate control, no nested buttons). */
-  .job-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;position:relative;}
-  .jc-open{display:flex;flex-direction:column;gap:16px;width:100%;padding:26px;text-align:left;background:transparent;border:0;border-radius:var(--radius);color:inherit;font:inherit;cursor:pointer;}
-  /* top-right corner: save heart + selection checkbox, side by side, layered over the open-button */
-  .jc-corner{position:absolute;top:12px;right:12px;z-index:3;display:flex;align-items:center;gap:9px;}
+  /* card = full-width row: [.jc-open clickable content] + [.jc-corner save/select controls]
+     side by side. Keeping the controls a sibling of the open-button avoids nested buttons. */
+  .job-card{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;position:relative;}
+  .jc-open{flex:1 1 auto;min-width:0;display:flex;flex-direction:row;align-items:center;gap:22px;padding:18px 24px;text-align:left;background:transparent;border:0;border-radius:var(--radius);color:inherit;font:inherit;cursor:pointer;}
+  .jc-logo{flex:0 0 auto;display:flex;}
+  .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .jc-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:5px;text-align:right;margin-left:auto;padding-left:14px;}
+  /* save heart + selection checkbox as a control cluster at the row's right edge */
+  .jc-corner{flex:0 0 auto;z-index:3;display:flex;align-items:center;gap:10px;padding:0 20px;}
   .jc-select{display:flex;align-items:center;line-height:0;}
   .jc-select input{width:21px;height:21px;margin:0;cursor:pointer;accent-color:var(--sky-deep);}
   .jc-save{width:30px;height:30px;padding:0;display:grid;place-items:center;border:0;background:transparent;border-radius:9px;color:var(--line-strong);transition:color .15s ease, transform .15s ease, background .15s ease;}
@@ -50,7 +51,6 @@
   .jc-save.is-saved{color:#ef5b7a;}
   .jc-save.is-saved svg{fill:#ef5b7a;stroke:#ef5b7a;}
   .job-card.sel{border-color:var(--sky);box-shadow:0 0 0 2px var(--sky), var(--shadow);}
-  .jc-top{padding-right:74px;}  /* reserve room for the corner controls on the title row */
   /* Apple-style silky entrance: cards glide up + fade + de-blur, gently staggered.
      Delay is set inline per-card in jobs.js; `both` keeps them hidden until their turn. */
   @keyframes jcReveal{from{opacity:0;transform:translateY(15px) scale(.985);filter:blur(5px);}to{opacity:1;transform:none;filter:blur(0);}}
@@ -68,17 +68,21 @@
   .select-bar .sb-actions{display:flex;gap:10px;}
   .select-bar .btn--ghost{color:#fff;background:transparent;border-color:rgba(255,255,255,.55);}
   .select-bar .btn--ghost:hover{background:rgba(255,255,255,.12);}
-  .jc-top{display:flex;gap:14px;align-items:flex-start;}
-  /* clamp the title to 2 lines and the company to 1 so every card header is the same
-     height — long roles no longer balloon a card or clip past its edge */
-  .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.22rem;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere;}
-  .jc-co{font-size:.98rem;color:var(--slate);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .jc-salary{font-family:var(--font-display);font-size:1.14rem;color:var(--ink);font-weight:800;}
-  .jc-blurb{color:var(--ink-soft);font-size:.97rem;line-height:1.45;margin:2px 0;}
-  .job-card .badge-hot{position:absolute;top:-11px;right:18px;}
-  .jc-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:2px;}
-  .jc-loc{font-size:.96rem;color:var(--slate);}
-  .jc-link{font-size:.98rem;font-weight:700;color:var(--accent-deep);}
+  /* the whole role title is shown on the row — it wraps to a second line if long,
+     never clipped or ellipsised, so you can always read the full role name */
+  .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.2rem;line-height:1.28;overflow-wrap:anywhere;}
+  .jc-co{font-size:.96rem;color:var(--slate);overflow-wrap:anywhere;}
+  .jc-dot{color:var(--line-strong);margin:0 2px;}
+  .jc-main .tags{margin-top:3px;}
+  .jc-salary{font-family:var(--font-display);font-size:1.12rem;color:var(--ink);font-weight:800;white-space:nowrap;}
+  .jc-link{font-size:.95rem;font-weight:700;color:var(--accent-deep);white-space:nowrap;}
+  .job-card .badge-hot{position:absolute;top:-11px;left:18px;}
+  /* narrow screens: let the row wrap — salary/view drops below the title block */
+  @media (max-width:640px){
+    .jc-open{flex-wrap:wrap;gap:12px 16px;padding:16px 16px;}
+    .jc-end{width:100%;flex-direction:row;justify-content:space-between;align-items:center;margin-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:10px;}
+    .jc-corner{padding:0 12px;}
+  }
 
   /* jobs page header: title + sub on the left, the "Saved" view toggle on the right
      (gives the previously-empty space beside the heading a purpose) */

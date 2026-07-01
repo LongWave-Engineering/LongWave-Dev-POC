@@ -201,12 +201,47 @@
   function bodyL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].body : j.body; }
   function pointsL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].points : j.points; }
   function locL(j){ return (lang==="ja" && j.loc==="Tokyo · Ginza") ? "東京・銀座" : j.loc; }
-  /* company avatar: embedded logo when present, else the coloured monogram */
+  /* Map the HRMOS companies' Japanese names to the English keys in PARTNER_LOGOS, so
+     every job card can show the crisp curated brand mark instead of the low-res HRMOS
+     favicon (48–128px, several missing). Add a line here when a new client is synced. */
+  var LOGO_ALIAS = {
+    "株式会社マネーフォワード":"Money Forward",
+    "株式会社エニトグループ":"Enito Group",
+    "株式会社ギブリー":"Givery",
+    "GO株式会社":"GO Inc.",
+    "ＫＩＮＴＯテクノロジーズ株式会社":"KINTO Technologies",
+    "株式会社アカツキAIテクノロジーズ":"Akatsuki",
+    "ＭＥＴＡＴＥＡＭ株式会社":"METATEAM",
+    "株式会社ツクルバ":"Tsukuruba",
+    "株式会社ジーニー":"Geniee",
+    "株式会社博報堂テクノロジーズ":"Hakuhodo Technologies",
+    "株式会社asken":"asken",
+    "株式会社XAION DATA":"Xaion Data",
+    "movus technologies株式会社":"Movus Technologies",
+    "株式会社ブリングアウト":"Bringout",
+    "合同会社dotData Japan":"dotData Japan",
+    "株式会社VRAIN Solution":"VRAIN Solution",
+    "CBcloud株式会社":"CBcloud"
+  };
+  /* best mark for a company: prefer the crisp curated PARTNER_LOGOS entry (looked up by
+     English name, mapping JP names through LOGO_ALIAS), then the embedded HRMOS logo,
+     then null → caller draws a monogram. PARTNER_LOGOS is defined in a later script but
+     avatarHTML is only ever called at render time, so the late reference is safe. */
+  function bestLogo(c){
+    if(!c) return null;
+    if(typeof PARTNER_LOGOS !== "undefined" && PARTNER_LOGOS){
+      var key = LOGO_ALIAS[c.name] || c.name;
+      if(key && PARTNER_LOGOS[key]) return PARTNER_LOGOS[key];
+    }
+    return c.logo || null;
+  }
+  /* company avatar: crisp curated mark → embedded logo → coloured monogram */
   function avatarHTML(c, cls){
     var k=' class="avatar'+(cls?" "+cls:"")+'"';
     /* esc() the color/logo too — they can come from auto-generated HRMOS data, so
        an unescaped value could break out of the attribute (injection surface). */
-    if(c && c.logo) return '<span'+k+' style="background:#fff"><img src="'+ esc(c.logo) +'" alt=""></span>';
+    var logo = bestLogo(c);
+    if(logo) return '<span'+k+' style="background:#fff"><img src="'+ esc(logo) +'" alt="" loading="lazy"></span>';
     return '<span'+k+' style="background:'+ esc((c&&c.color)||"#888") +'">'+ esc((c&&c.mono)||"?") +'</span>';
   }
   var BLURB = {

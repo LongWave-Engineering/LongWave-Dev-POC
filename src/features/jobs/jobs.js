@@ -53,6 +53,8 @@
     bar.hidden = n===0;
     if(n){ $("#selCount").textContent=t("sel_selected").replace("{n}",n)+(n>=MAX_APPLY?" · "+t("sel_max").replace("{n}",MAX_APPLY):""); $("#selApply").textContent=t("sel_apply")+" ("+n+")"; }
   }
+  /* One full-width row per role (not a boxed card): logo · title+company+tags · salary/view.
+     The title is never clamped, so the whole role name is always visible. */
   function cardHTML(job){
     var c=COMPANIES[job.co];
     var tags = jpTag(job.jp) + '<span class="tag tag--meta">'+ esc(remoteLabel(job.remote)) +'</span>';
@@ -60,11 +62,16 @@
     if(job.visa) tags += '<span class="tag tag--meta">'+ esc(t("lbl_visa")) +'</span>';
     (job.stack||[]).slice(0,3).forEach(function(s){ tags += '<span class="tag tag--tech">'+ esc(s) +'</span>'; });
     return (job.hot ? '<span class="badge-hot">🔥 '+ esc(t("hot")) +'</span>' : '')+
-      '<div class="jc-top">'+ avatarHTML(c) +
-      '<div style="min-width:0"><div class="jc-role">'+ esc(roleL(job)) +'</div><div class="jc-co">'+ esc(c.name) +'</div></div></div>'+
-      '<div class="jc-salary">'+ esc(salaryMax(job, t("salary_neg"))) +'</div>'+
-      '<div class="tags">'+ tags +'</div>'+
-      '<div class="jc-foot"><span class="jc-loc">'+ esc(locL(job)) +'</span><span class="jc-link">'+ esc(t("viewrole")) +'</span></div>';
+      '<span class="jc-logo">'+ avatarHTML(c) +'</span>'+
+      '<span class="jc-main">'+
+        '<span class="jc-role">'+ esc(roleL(job)) +'</span>'+
+        '<span class="jc-co">'+ esc(c.name) +' <span class="jc-dot">·</span> <span class="jc-loc">'+ esc(locL(job)) +'</span></span>'+
+        '<span class="tags">'+ tags +'</span>'+
+      '</span>'+
+      '<span class="jc-end">'+
+        '<span class="jc-salary">'+ esc(salaryMax(job, t("salary_neg"))) +'</span>'+
+        '<span class="jc-link">'+ esc(t("viewrole")) +'</span>'+
+      '</span>';
   }
   function getFilters(){ return { q:($("#filterSearch").value||"").trim().toLowerCase(), jp:$("#filterJp").value, remote:$("#filterRemote").value, spec:$("#filterSpec").value, loc:($("#filterLoc")?$("#filterLoc").value:""), stack:($("#filterStack")?$("#filterStack").value:"") }; }
   /* card = wrapper (visual + selected ring) holding a corner with two separate controls
