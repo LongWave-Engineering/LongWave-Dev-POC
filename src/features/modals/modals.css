@@ -11,9 +11,10 @@
   .modal.narrow{max-width:480px;}
   .modal-close{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:11px;border:2px solid var(--line);background:#fff;font-size:1.4rem;color:var(--slate);}
   .modal-close:hover{color:var(--ink);}
-  .modal .m-head{display:flex;gap:16px;align-items:center;padding-right:40px;}
-  .modal .m-role{font-family:var(--font-display);font-weight:800;font-size:1.58rem;line-height:1.16;}
-  .modal .m-co{color:var(--slate);font-size:1.04rem;margin-top:2px;}
+  .modal .m-head{display:flex;gap:16px;align-items:center;padding-right:44px;}
+  .modal .m-head>div{min-width:0;}   /* let the text block shrink so a long title wraps instead of overflowing */
+  .modal .m-role{font-family:var(--font-display);font-weight:800;font-size:1.58rem;line-height:1.16;overflow-wrap:anywhere;}
+  .modal .m-co{color:var(--slate);font-size:1.04rem;margin-top:2px;overflow-wrap:anywhere;}
   .modal .m-salary{font-family:var(--font-display);font-weight:800;font-size:1.48rem;margin:22px 0 8px;}
   .modal .m-salary span{display:block;font-size:.94rem;font-weight:600;color:var(--slate);margin-bottom:2px;}
   .modal .m-tags{margin:14px 0 8px;}
