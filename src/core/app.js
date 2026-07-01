@@ -9,6 +9,9 @@
     buildSpecSelect(); buildStackSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners();
     var jc=$("#jobCount"); if(jc) jc.innerHTML = t("jobcount").replace("{n}","<b>"+JOBS.length+"</b>");
     document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
+    /* an open JD modal's Save/Apply buttons hold runtime state the data-i18n sweep above
+       just clobbered — repaint them in the new language */
+    if(typeof repaintOpenModal==="function") repaintOpenModal();
   }
   function setLang(l){ if(l===lang) return; lang=l; applyLang(); }
   document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
@@ -111,11 +114,17 @@
     var grab=function(p){ return fetch(p).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }); };
     Promise.all([grab("/api/jobs"), grab("/api/companies")]).then(function(res){
       var jobs=res[0], cos=res[1];
-      if(!Array.isArray(jobs) || !jobs.length) return;  /* nothing live → keep snapshot */
-      if(Array.isArray(cos)) cos.forEach(function(c){
+      /* need BOTH live jobs AND their companies — swapping in jobs without the companies
+         they reference would make COMPANIES[job.co] undefined and crash every render
+         (avatarHTML/cardHTML/openJob read .name/.sector). Keep the embedded snapshot instead. */
+      if(!Array.isArray(jobs) || !jobs.length || !Array.isArray(cos)) return;
+      cos.forEach(function(c){
         COMPANIES[c.id]={ name:c.name||c.id, mono:c.mono, color:c.color, logo:c.logo, site:c.site,
           sector:{ en:c.sector_en||"", ja:c.sector_ja||"" }, loc:c.loc };
       });
+      /* belt-and-suspenders: drop any live job whose company didn't come through */
+      jobs=jobs.filter(function(j){ return COMPANIES[j.co]; });
+      if(!jobs.length) return;
       JOBS=jobs;
       enrichJobs();
       selected={};   /* selection is keyed by the old _i indices — reset it for the new dataset */

@@ -18,7 +18,11 @@
      up or not) can come back to roles later. Keyed by the stable DB id when present,
      else company+role, so it survives re-filtering, language toggles and live hydration. */
   var SAVED_KEY="lw_saved_jobs";
-  function jobKey(job){ return (job.id!=null) ? ("id:"+job.id) : ("co:"+job.co+"|"+job.role); }
+  /* stable per-row key for saved/applied state. Use the DB id when present; otherwise the
+     unique per-job index _i (set in enrichJobs) — NOT co+role, which collides for the
+     baked snapshot's duplicate postings (offline mode), making one save/apply hit every
+     duplicate and letting several real applications share a single cap slot. */
+  function jobKey(job){ return (job.id!=null) ? ("id:"+job.id) : ("i:"+job._i); }
   function loadSaved(){ try{ var v=JSON.parse(localStorage.getItem(SAVED_KEY)||"[]"); return Array.isArray(v)?v:[]; }catch(e){ return []; } }
   var savedKeys=loadSaved();
   var savedOnly=false;   /* when true the grid shows only saved roles */
@@ -117,7 +121,7 @@
         '<span class="tags">'+ tags +'</span>'+
       '</span>'+
       '<span class="jc-end">'+
-        '<span class="jc-salary">'+ esc(salaryMax(job, t("salary_neg"))) +'</span>'+
+        '<span class="jc-salary">'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe"))) +'</span>'+
         '<span class="jc-link">'+ esc(t("viewrole")) +'</span>'+
       '</span>';
   }
@@ -161,7 +165,9 @@
     var open=el("button","jc-open",cardHTML(job));
     open.setAttribute("aria-label", roleL(job)+" at "+COMPANIES[job.co].name);
     open.addEventListener("click", function(){ openJob(idx); });
-    card.appendChild(corner); card.appendChild(open);
+    /* content first (fills the row), then the save/select cluster at the right edge — matches
+       the CSS design intent and keeps the HOT badge (top-left, over the logo) clear of it */
+    card.appendChild(open); card.appendChild(corner);
     jobGrid.appendChild(card);
   }
   function renderJobs(){

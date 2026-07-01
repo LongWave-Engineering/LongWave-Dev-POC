@@ -23,9 +23,8 @@
     .hero-inner{padding:56px 0 18px;}
     .partners{padding:32px 0 56px;}
     .boxes,.co-grid,.rev-grid,.art-grid,.teaser-grid{grid-template-columns:1fr;}
-    /* .job-grid is intentionally NOT forced to 1fr here — its auto-fill rule already
-       collapses to a single column when cards no longer fit, so it can still show 2
-       across on larger phones/small tablets instead of snapping to one. */
+    /* .job-grid is a single-column flex stack of full-width rows now, so it needs no
+       per-breakpoint column override — each row just reflows internally (see jobs.css). */
     .cta-band{padding:40px 26px;}
     .foot-links{gap:34px;}
     .foot-bottom{justify-content:flex-start;}

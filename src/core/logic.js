@@ -75,11 +75,13 @@
        Some HRMOS rows carry free-text (e.g. "conditions depend on experience")
        instead of a ¥ band; for those, show a neutral fallback (default "DOE")
        rather than dumping a whole sentence into the salary chip. Pass a localized
-       label (e.g. "Negotiable"/"応相談") as the 2nd arg. */
-    function salaryMax(job, negotiableLabel){
+       negotiable label (e.g. "Negotiable"/"応相談") as the 2nd arg and a localized
+       depends-on-experience suffix (e.g. "DOE"/"経験による") as the 3rd. */
+    function salaryMax(job, negotiableLabel, doeLabel){
+      var doe = doeLabel || "DOE";
       var s = String(job && job.salary != null ? job.salary : "");
       var m = s.match(/¥[\d.]+M/g);
-      if(m) return m[m.length-1] + " DOE";
+      if(m) return m[m.length-1] + " " + doe;
       /* Japanese 万-yen bands from imported/scraped rows (e.g. "800万〜1300万円").
          100万 = ¥1M, so the band top in millions is (max 万 value / 100). */
       var man = s.match(/[\d,]+(?=\s*万)/g);
@@ -87,10 +89,10 @@
         var top = Math.max.apply(null, man.map(function(x){ return parseFloat(x.replace(/,/g,"")); }));
         if(isFinite(top) && top > 0){
           var mm = top / 100;
-          return "¥" + (mm % 1 === 0 ? String(mm) : mm.toFixed(1)) + "M DOE";
+          return "¥" + (mm % 1 === 0 ? String(mm) : mm.toFixed(1)) + "M " + doe;
         }
       }
-      return negotiableLabel || "DOE";
+      return negotiableLabel || doe;
     }
 
     /* CSS class for the Japanese-level tag. */
@@ -141,12 +143,22 @@
     }
 
     /* Age in whole years from an ISO date string. `now` is injectable for tests.
-       Returns "" for empty/invalid/out-of-range input. */
+       Returns "" for empty/invalid/out-of-range input. Parses yyyy-mm-dd in LOCAL time
+       (not UTC, which new Date("yyyy-mm-dd") would use) so the age never flips a day early
+       for users west of UTC — and so dob and a live `new Date()` now are compared in the
+       same timezone. */
+    function parseLocalDate(v){
+      if(v instanceof Date) return v;
+      var m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if(m) return new Date(+m[1], +m[2]-1, +m[3]);
+      var d = new Date(String(v)); return isNaN(d.getTime()) ? null : d;
+    }
     function calcAge(dob, now){
       if(!dob) return "";
-      var d = new Date(dob);
-      if(isNaN(d.getTime())) return "";
-      var n = now ? new Date(now) : new Date();
+      var d = parseLocalDate(dob);
+      if(!d || isNaN(d.getTime())) return "";
+      var n = now ? parseLocalDate(now) : new Date();
+      if(!n || isNaN(n.getTime())) return "";
       var a = n.getFullYear() - d.getFullYear();
       var mm = n.getMonth() - d.getMonth();
       if(mm < 0 || (mm === 0 && n.getDate() < d.getDate())) a--;

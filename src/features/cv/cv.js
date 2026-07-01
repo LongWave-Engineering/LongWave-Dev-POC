@@ -1,6 +1,6 @@
-/* features/cv/cv.js — LongWave cover sheet + 履歴書 (rirekisho) + 職務経歴書 (shokumukeirekisho) builder.
-   One form feeds three live documents; the toggle picks which doc shows next to the
-   always-present cover sheet, and print captures the cover + the selected doc. */
+/* features/cv/cv.js — 履歴書 (rirekisho) + 職務経歴書 (shokumukeirekisho) builder.
+   One form feeds two live documents; the ENG/JPN-style toggle picks which one shows and
+   prints. Print captures only the selected document. */
   /* ---------------- CV builder ---------------- */
   var cvPhoto="";
   var DRAFT_KEY="lw_cv_draft";   /* a saved-in-progress draft (localStorage) */
@@ -101,7 +101,9 @@
         summary=cvVal("#cv_summary"), otherTech=cvVal("#cv_otherTech");
     var age=calcAge(dob);
     var dobDisp="&nbsp;";
-    if(dob){ var dd=new Date(dob); if(!isNaN(dd.getTime())) dobDisp=dd.getFullYear()+"年 "+(dd.getMonth()+1)+"月 "+dd.getDate()+"日生"; }
+    /* build the date straight from the yyyy-mm-dd parts — new Date(dob) parses as UTC and
+       would render the day before for anyone west of UTC */
+    if(dob){ var p=String(dob).split("-"); if(p.length===3 && p[0] && p[1] && p[2]) dobDisp=(+p[0])+"年 "+(+p[1])+"月 "+(+p[2])+"日生"; }
 
     /* ---------------- 履歴書 (rirekisho) ---------------- */
     var edu=[].map.call(document.querySelectorAll("#eduRows .cv-row"),function(r){ return {type:r.querySelector(".e-type").value, y:r.querySelector(".e-year").value, m:r.querySelector(".e-month").value, txt:r.querySelector(".e-text").value}; });
@@ -262,9 +264,8 @@
     var clr=$("#cvClear"); if(clr) clr.addEventListener("click", clearAll);
     /* document toggle (like the ENG/JPN switch): flips the WHOLE page between the
        rirekisho and shokumukeirekisho views — its own form fields AND its preview doc.
-       The LongWave cover sheet shows above both. Inputs keep their values while hidden
-       and renderCV reads them all, so every document stays live; print captures the
-       cover + the selected document. */
+       Inputs keep their values while hidden and renderCV reads them all, so both documents
+       stay live; print captures only the selected document. */
     var docs=$("#cvDocs"), formRk=$("#cvFormRk"), formSk=$("#cvFormSk");
     document.querySelectorAll(".cv-doctab").forEach(function(tab){
       tab.addEventListener("click", function(){

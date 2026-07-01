@@ -9,14 +9,17 @@
     return '<h4 class="m-sub">'+esc(t(labelKey))+'</h4><div class="m-body">'+body+'</div>';
   }
   var currentJob=null;   /* the job whose detail modal is open (for "Sign up to apply") */
-  function openJob(idx){
-    var job=JOBS[idx], c=COMPANIES[job.co];
-    currentJob=job;
-    lastFocus=document.activeElement;
-    var _av=$("#mAvatar"); if(c.logo){ _av.innerHTML='<img src="'+ esc(c.logo) +'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
+  /* Fill the JD modal body from a job. Split out of openJob so a language toggle while the
+     modal is open (repaintOpenModal) fully re-renders it — role, company, salary, tags and
+     every section — instead of leaving it half-translated. */
+  function fillJobModal(job){
+    var c=COMPANIES[job.co];
+    /* use the crisp curated mark (same as the job cards), not the low-res HRMOS favicon */
+    var _av=$("#mAvatar"); var _logo=(typeof bestLogo==="function")?bestLogo(c):c.logo;
+    if(_logo){ _av.innerHTML='<img src="'+ esc(_logo) +'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
     $("#mRole").textContent=roleL(job);
     $("#mCo").textContent=c.name+" · "+c.sector[lang]+(job.loc?" · "+locL(job):"");
-    $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg")));
+    $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe")));
     var tags=jpTag(job.jp)+'<span class="tag tag--meta">'+esc(remoteLabel(job.remote))+'</span>';
     if(job.flexHours) tags+='<span class="tag tag--meta">'+esc(t("jd_flex"))+'</span>';
     if(job.fixedOvertime) tags+='<span class="tag tag--meta">'+esc(t("jd_ot"))+'</span>';
@@ -50,6 +53,12 @@
     $("#mDetail").innerHTML=H;
     var comp=$("#mCompany"); if(c.site){ comp.href=c.site; comp.style.display=""; } else { comp.style.display="none"; }
     paintModalSave(); paintModalApply();
+  }
+  function openJob(idx){
+    var job=JOBS[idx];
+    currentJob=job;
+    lastFocus=document.activeElement;
+    fillJobModal(job);
     openOverlay(jobOverlay); $("#jobModalClose").focus();
   }
   /* the JD modal's Save button mirrors the per-card save heart (same store, see jobs.js) */
@@ -69,6 +78,12 @@
     if(applied){ b.disabled=true; b.textContent=t("m_applied"); }
     else if(limit){ b.disabled=true; b.textContent=t("m_apply_limit").replace("{n}",MAX_APPLY); }
     else { b.disabled=false; b.textContent=t("m_apply"); }
+  }
+  /* re-render the open JD modal from currentJob. Called by applyLang() after a language
+     toggle (the body + button labels must follow the new language) and after an apply
+     (so the underlying modal's Apply button flips to "Applied" once the signup closes). */
+  function repaintOpenModal(){
+    if(currentJob && jobOverlay && jobOverlay.classList.contains("open")) fillJobModal(currentJob);
   }
   if($("#mSave")) $("#mSave").addEventListener("click", function(){ if(currentJob && typeof toggleSaved==="function"){ toggleSaved(currentJob); paintModalSave(); } });
 
@@ -105,6 +120,10 @@
     pendingApplyJobs = arr;
     pendingApplyJobIds = LW.normalizeJobIds(arr.map(function(j){ return j.id; }));
     $("#suSuccess").style.display="none"; $("#suForm").style.display="";
+    /* clear every field so a returning visitor (or a second person on the same device)
+       never sees the previous applicant's name / email / links / attached CV */
+    ["#suName","#suEmail","#suLinkedin","#suGithub"].forEach(function(s){ if($(s)) $(s).value=""; });
+    if($("#suResume")) $("#suResume").value="";
     if($("#suLoc")) $("#suLoc").value=""; if($("#suLocWarn")) $("#suLocWarn").style.display="none";
     if($("#suSubmit")) $("#suSubmit").disabled=false;
     if($("#suJp")) $("#suJp").value=""; if($("#suYears")) $("#suYears").value="";
@@ -298,6 +317,9 @@
     $("#suForm").style.display="none"; if(succ) succ.style.display="block";
     /* record the applied roles against the lifetime cap (also re-renders the grid) */
     if(n && typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs);
+    /* if this apply came from a JD modal (still open behind the signup), flip its Apply
+       button to "Applied" so it isn't a stale, re-openable CTA once the signup closes */
+    repaintOpenModal();
   }
   $("#suForm").addEventListener("submit", function(e){ e.preventDefault(); submitSignup(); });
 
