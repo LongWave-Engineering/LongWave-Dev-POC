@@ -31,11 +31,11 @@
 .partner-feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
 .pf-card{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
-  background:var(--surface);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
   padding:32px 24px;
   transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s ease, border-color .18s ease;
 }
-.pf-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg);border-color:var(--line-strong);}
+.pf-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--line-strong);}
 .pf-mark{width:72px;height:72px;display:grid;place-items:center;}
 .pf-mark img{max-width:100%;max-height:100%;object-fit:contain;}
 .pf-mono{border-radius:16px;color:#fff;font-family:var(--font-display);font-weight:800;font-size:1.6rem;letter-spacing:-.01em;}

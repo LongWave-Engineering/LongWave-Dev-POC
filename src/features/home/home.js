@@ -17,7 +17,7 @@
       var node=el("button","jt",
         (job.hot ? '<span class="badge-hot">🔥 '+ esc(t("hot")) +'</span>' : '')+
         avatarHTML(c,"sm")+
-        '<div class="jt-role">'+ esc(roleL(job)) +'</div>'+
+        '<div class="jt-role">'+ softBreak(esc(roleL(job))) +'</div>'+
         '<div class="jt-co">'+ esc(c.name) +'</div>'+
         (blurbL(job) ? '<div class="jt-blurb">'+ esc(blurbL(job)) +'</div>' : '')+
         '<div class="jt-sal">'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe"))) +'</div>');

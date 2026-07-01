@@ -9,10 +9,10 @@
 
   /* ---------- compact job teaser (title page) ---------- */
   .teaser-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-  .jt{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px;text-align:left;width:100%;min-width:0;color:inherit;position:relative;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;display:flex;flex-direction:column;gap:10px;min-height:172px;}
+  .jt{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;text-align:left;width:100%;min-width:0;color:inherit;position:relative;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;display:flex;flex-direction:column;gap:10px;min-height:172px;}
   .jt .jt-role,.jt .jt-co,.jt .jt-blurb{overflow-wrap:anywhere;}
   .jt:hover{transform:translateY(-4px);box-shadow:0 22px 44px -22px rgba(14,34,53,.38);border-color:var(--line-strong);}
-  .jt .jt-role{font-family:var(--font-display);font-weight:800;font-size:1.06rem;line-height:1.22;}
+  .jt .jt-role{font-family:var(--font-display);font-weight:800;font-size:1.06rem;line-height:1.28;}
   .jt .jt-co{font-size:.92rem;color:var(--slate);}
   .jt .jt-sal{font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--ink);margin-top:auto;}
   .jt .jt-blurb{color:var(--ink-soft);font-size:.92rem;line-height:1.42;margin-top:2px;}

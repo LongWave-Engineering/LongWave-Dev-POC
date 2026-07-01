@@ -28,12 +28,17 @@
     --pos-bg:#E2F1EA; --pos-fg:#1C7A57;
     --neu-bg:#E7EEF4; --neu-fg:#2B4A63;
     --warn-bg:#F6E9CF; --warn-fg:#8A5A12;
+    /* saved/favourite heart (was duplicated as raw hex across jobs + modals) */
+    --save:#EF5B7A; --save-deep:#C43358; --save-wash:#FDEEF2;
+    /* destructive "remove row" control (CV builder) */
+    --danger-bg:#F4DADA; --danger-fg:#A33;
 
     --font-display:'Libre Franklin', system-ui, -apple-system, sans-serif;
     --font-body:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
 
     --maxw:1180px;
     --radius:18px;
+    --radius-sm:10px;   /* small square controls: icon buttons, close, remove-row */
     /* softer, more diffuse shadows read more modern than a single hard drop */
     --shadow:0 1px 2px rgba(14,34,53,.04), 0 10px 30px -14px rgba(14,34,53,.15);
     --shadow-lg:0 30px 70px -28px rgba(14,34,53,.4);

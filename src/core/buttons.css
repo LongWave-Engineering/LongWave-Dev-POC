@@ -15,7 +15,10 @@
   .btn--light:hover{transform:translateY(-2px);}
   .btn--xl{font-size:1.18rem;padding:18px 38px;border-radius:16px;}
   .btn--block{width:100%;}
-  :focus-visible{outline:3px solid var(--banana);outline-offset:2px;border-radius:8px;}
+  /* focus ring only — do NOT set border-radius here (it would override each element's own
+     shape and flatten pill buttons to 8px corners on keyboard focus). The outline hugs the
+     element's real radius via outline-offset in modern browsers. */
+  :focus-visible{outline:3px solid var(--banana);outline-offset:2px;}
 
 
 

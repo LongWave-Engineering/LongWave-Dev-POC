@@ -21,12 +21,12 @@
   .cv-row.lic{grid-template-columns:76px 70px 1fr auto;}
   .cv-row.skill{grid-template-columns:1fr 1.6fr auto;}
   .cv-row.lang{grid-template-columns:1.1fr 1fr 1fr auto;}
-  .cv-row input,.cv-row select{padding:11px 12px;border:2px solid var(--line-strong);border-radius:10px;font-family:inherit;font-size:.95rem;background:#fff;color:var(--ink);}
-  .cv-row .rm{border:0;background:#f4dada;color:#a33;border-radius:8px;width:36px;height:36px;font-size:1.1rem;cursor:pointer;}
+  .cv-row input,.cv-row select{padding:11px 12px;border:2px solid var(--line-strong);border-radius:11px;font-family:inherit;font-size:.95rem;background:#fff;color:var(--ink);}
+  .cv-row .rm{border:0;background:var(--danger-bg);color:var(--danger-fg);border-radius:var(--radius-sm);width:36px;height:36px;font-size:1.1rem;cursor:pointer;}
   .cv-add{background:var(--accent-wash);color:var(--accent-deep);border:0;border-radius:10px;padding:11px 18px;font-weight:700;font-size:.95rem;margin-top:8px;cursor:pointer;}
   .cv-career{border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px;position:relative;background:#fcfdfe;}
   .cv-career .cv-field:last-child{margin-bottom:0;}
-  .cv-career .rm{position:absolute;top:12px;right:12px;border:0;background:#f4dada;color:#a33;border-radius:8px;width:32px;height:32px;font-size:1rem;cursor:pointer;z-index:1;}
+  .cv-career .rm{position:absolute;top:12px;right:12px;border:0;background:var(--danger-bg);color:var(--danger-fg);border-radius:var(--radius-sm);width:32px;height:32px;font-size:1rem;cursor:pointer;z-index:1;}
   .cv-actions{display:flex;gap:14px;margin:8px 0 26px;flex-wrap:wrap;align-items:center;}
   .cv-note{color:var(--slate);font-size:.96rem;}
   .btn.cv-saved{background:var(--pos-bg);color:var(--pos-fg);border-color:var(--pos-fg);}

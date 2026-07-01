@@ -116,7 +116,7 @@
     return (job.hot ? '<span class="badge-hot">🔥 '+ esc(t("hot")) +'</span>' : '')+
       '<span class="jc-logo">'+ avatarHTML(c) +'</span>'+
       '<span class="jc-main">'+
-        '<span class="jc-role">'+ esc(roleL(job)) +'</span>'+
+        '<span class="jc-role">'+ softBreak(esc(roleL(job))) +'</span>'+
         '<span class="jc-co">'+ esc(c.name) +' <span class="jc-dot">·</span> <span class="jc-loc">'+ esc(locL(job)) +'</span></span>'+
         '<span class="tags">'+ tags +'</span>'+
       '</span>'+

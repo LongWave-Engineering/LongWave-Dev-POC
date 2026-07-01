@@ -9,12 +9,13 @@
   .modal{background:var(--surface);border-radius:22px;max-width:640px;width:100%;box-shadow:var(--shadow-lg);padding:36px;position:relative;opacity:0;transform:translateY(20px) scale(.985);transition:opacity .36s cubic-bezier(.16,1,.3,1), transform .36s cubic-bezier(.16,1,.3,1);}
   .overlay.open .modal{opacity:1;transform:none;}
   .modal.narrow{max-width:480px;}
-  .modal-close{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:11px;border:2px solid var(--line);background:#fff;font-size:1.4rem;color:var(--slate);}
-  .modal-close:hover{color:var(--ink);}
+  .modal-close{position:absolute;top:18px;right:18px;width:42px;height:42px;border-radius:var(--radius-sm);border:2px solid var(--line);background:#fff;font-size:1.4rem;color:var(--slate);transition:color .15s ease, border-color .15s ease, background .15s ease, transform .12s ease;}
+  .modal-close:hover{color:var(--ink);border-color:var(--line-strong);background:var(--paper);}
+  .modal-close:active{transform:scale(.94);}
   .modal .m-head{display:flex;gap:16px;align-items:center;padding-right:44px;}
   .modal .m-head>div{min-width:0;}   /* let the text block shrink so a long title wraps instead of overflowing */
-  .modal .m-role{font-family:var(--font-display);font-weight:800;font-size:1.58rem;line-height:1.16;overflow-wrap:anywhere;}
-  .modal .m-co{color:var(--slate);font-size:1.04rem;margin-top:2px;overflow-wrap:anywhere;}
+  .modal .m-role{font-family:var(--font-display);font-weight:800;font-size:1.58rem;line-height:1.16;overflow-wrap:break-word;}
+  .modal .m-co{color:var(--slate);font-size:1.04rem;margin-top:2px;overflow-wrap:break-word;}
   .modal .m-salary{font-family:var(--font-display);font-weight:800;font-size:1.48rem;margin:22px 0 8px;}
   .modal .m-salary span{display:block;font-size:.94rem;font-weight:600;color:var(--slate);margin-bottom:2px;}
   .modal .m-tags{margin:14px 0 8px;}
@@ -27,15 +28,15 @@
   .modal p.su-intro{color:var(--slate);margin-bottom:22px;font-size:1.06rem;}
   .field{margin-bottom:18px;}
   .field label{display:block;font-weight:600;margin-bottom:8px;font-size:1.02rem;}
-  .field input,.field select,.field textarea{width:100%;border:2px solid var(--line-strong);border-radius:12px;padding:13px 15px;font-size:1.04rem;font-family:inherit;color:var(--ink);background:#fff;}
+  .field input,.field select,.field textarea{width:100%;border:2px solid var(--line-strong);border-radius:11px;padding:13px 15px;font-size:1.04rem;font-family:inherit;color:var(--ink);background:#fff;}
   .field textarea{resize:vertical;min-height:96px;line-height:1.5;}
   .form-success{color:var(--pos-fg);font-weight:700;font-size:1.06rem;margin-top:8px;}
   /* visa/residence heads-up for applicants currently outside Japan */
   .form-warn{margin-top:9px;color:var(--warn-fg);background:var(--warn-bg);border-radius:10px;padding:9px 12px;font-weight:600;}
   /* JD-modal Save button — mirrors the per-card save heart */
   #mSave .m-save-ic{color:var(--line-strong);font-size:1.05em;line-height:1;transition:color .15s ease;}
-  #mSave.is-saved{border-color:#ef5b7a;color:#c43358;}
-  #mSave.is-saved .m-save-ic{color:#ef5b7a;}
+  #mSave.is-saved{border-color:var(--save);color:var(--save-deep);}
+  #mSave.is-saved .m-save-ic{color:var(--save);}
 
 
 

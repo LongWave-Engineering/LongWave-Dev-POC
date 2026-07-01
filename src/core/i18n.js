@@ -199,6 +199,9 @@
   function bodyL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].body : j.body; }
   function pointsL(j){ return (lang==="ja" && JOBS_JA[j.role]) ? JOBS_JA[j.role].points : j.points; }
   function locL(j){ return (lang==="ja" && j.loc==="Tokyo · Ginza") ? "東京・銀座" : j.loc; }
+  /* insert a zero-width break after slashes so a long slash-separated title wraps AT the
+     slashes (e.g. "…(Tokyo/Osaka/Kyoto/Nagoya/Fukuoka)") instead of breaking mid-word */
+  function softBreak(s){ return String(s==null?"":s).replace(/([\/\uFF0F])/g, "$1\u200B"); }
   /* Map the HRMOS companies' Japanese names to the English keys in PARTNER_LOGOS, so
      every job card can show the crisp curated brand mark instead of the low-res HRMOS
      favicon (48–128px, several missing). Add a line here when a new client is synced. */

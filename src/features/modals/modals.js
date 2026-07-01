@@ -17,7 +17,7 @@
     /* use the crisp curated mark (same as the job cards), not the low-res HRMOS favicon */
     var _av=$("#mAvatar"); var _logo=(typeof bestLogo==="function")?bestLogo(c):c.logo;
     if(_logo){ _av.innerHTML='<img src="'+ esc(_logo) +'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
-    $("#mRole").textContent=roleL(job);
+    $("#mRole").textContent=softBreak(roleL(job));
     $("#mCo").textContent=c.name+" · "+c.sector[lang]+(job.loc?" · "+locL(job):"");
     $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe")));
     var tags=jpTag(job.jp)+'<span class="tag tag--meta">'+esc(remoteLabel(job.remote))+'</span>';
