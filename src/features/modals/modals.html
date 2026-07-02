@@ -159,6 +159,7 @@
   </div>
 </div>
 
-<!-- The job data (window.__HRMOS_DATA__) is injected by build.sh as its own <script>
-     after this body markup, from src/core/hrmos-data.js; core/data.js is the offline fallback. -->
+<!-- Job data: the public/offline bundle ships the curated demo set in src/core/data.js.
+     The real roster (window.__HRMOS_DATA__) is backend-only and loads via /api when the
+     site is served by the backend. It is NOT inlined here (kept out of the public file). -->
 
