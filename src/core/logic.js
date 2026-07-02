@@ -183,7 +183,6 @@
       SPECS: SPECS,
       SPEC_RULES: SPEC_RULES,
       classifySpec: classifySpec,
-      CITY_PREF: CITY_PREF,
       locFromAddr: locFromAddr,
       salaryMax: salaryMax,
       jpTagClass: jpTagClass,
