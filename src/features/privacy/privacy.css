@@ -1,6 +1,8 @@
 /* features/privacy/privacy.css — long-form legal doc: a narrow, readable column */
   .privacy-doc{max-width:52rem;}
-  .privacy-doc .pv-updated{color:var(--slate);font-size:.95rem;margin:0 0 24px;}
   .privacy-doc p{color:var(--ink-soft);font-size:1.05rem;line-height:1.7;margin:0 0 14px;}
   .privacy-doc .pv-h{font-size:1.35rem;margin:32px 0 10px;}
-  .privacy-doc .pv-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px;}
+  .privacy-doc .pv-list{margin:0 0 14px;padding-left:22px;color:var(--ink-soft);font-size:1.05rem;line-height:1.7;}
+  .privacy-doc .pv-list li{margin:0 0 8px;}
+  .privacy-doc .pv-note{color:var(--slate);font-size:.92rem;margin-top:26px;}
+  .privacy-doc .pv-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;}

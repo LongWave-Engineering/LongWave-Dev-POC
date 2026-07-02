@@ -78,15 +78,17 @@
   });
 
   /* ---------------- external links ---------------- */
-  $("#linkedinBtn").href=LINKS.linkedin;
-  $("#longwaveBtn").href=LINKS.longwave;
+  var _li=$("#linkedinBtn"); if(_li) _li.href=LINKS.linkedin;
+  var _lw=$("#longwaveBtn"); if(_lw) _lw.href=LINKS.longwave;
 
   /* ---------------- mobile menu ---------------- */
   var menuToggle=$("#menuToggle"), navLinks=$("#navLinks");
-  menuToggle.addEventListener("click", function(){
-    var open=navLinks.classList.toggle("show");
-    menuToggle.setAttribute("aria-expanded", open?"true":"false");
-  });
+  if(menuToggle && navLinks){
+    menuToggle.addEventListener("click", function(){
+      var open=navLinks.classList.toggle("show");
+      menuToggle.setAttribute("aria-expanded", open?"true":"false");
+    });
+  }
 
   /* ---------------- header shadow on scroll ---------------- */
   var siteHeader=document.querySelector("header.site");
@@ -111,7 +113,16 @@
      backend) silently keeps the embedded snapshot — the site never breaks. */
   function hydrateFromApi(){
     if(!served()) return;   /* opened as a file → no API */
-    var grab=function(p){ return fetch(p).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }); };
+    /* time-bound each fetch so a hung/slow backend can never leave the live upgrade pending
+       forever — on abort/timeout we fall back to the embedded snapshot, same as any failure. */
+    var grab=function(p){
+      var ctrl=(typeof AbortController!=="undefined")?new AbortController():null;
+      var timer=ctrl?setTimeout(function(){ ctrl.abort(); },5000):null;
+      return fetch(p, ctrl?{signal:ctrl.signal}:undefined)
+        .then(function(r){ return r.ok?r.json():null; })
+        .catch(function(){ return null; })
+        .then(function(v){ if(timer) clearTimeout(timer); return v; });
+    };
     Promise.all([grab("/api/jobs"), grab("/api/companies")]).then(function(res){
       var jobs=res[0], cos=res[1];
       /* need BOTH live jobs AND their companies — swapping in jobs without the companies
@@ -119,6 +130,7 @@
          (avatarHTML/cardHTML/openJob read .name/.sector). Keep the embedded snapshot instead. */
       if(!Array.isArray(jobs) || !jobs.length || !Array.isArray(cos)) return;
       cos.forEach(function(c){
+        if(!c || c.id==null) return;   /* skip malformed rows so COMPANIES[undefined] can't poison lookups */
         COMPANIES[c.id]={ name:c.name||c.id, mono:c.mono, color:c.color, logo:c.logo, site:c.site,
           sector:{ en:c.sector_en||"", ja:c.sector_ja||"" }, loc:c.loc };
       });
