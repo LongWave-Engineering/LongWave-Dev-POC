@@ -7,8 +7,19 @@
   function val(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; }
   /* blank every listed field so a returning visitor never sees a previous person's input */
   function clearFields(ids){ ids.forEach(function(s){ if($(s)) $(s).value=""; }); }
-  /* fire-and-forget a lead to the backend — only when SERVED (opened as a file → no API, no-op) */
-  function postLead(body){ if(served()){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); } }
+  /* fire-and-forget a lead — only when a backend is actually reachable (apiReady). On a
+     static host / offline there's no /api, so we DON'T pretend to submit (see leadDone). */
+  function postLead(body){ if(apiReady){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); } }
+  /* Show the post-submit state honestly: the normal success only when a backend actually
+     received the lead; otherwise tell the user we couldn't (no /api here) so they don't
+     believe they've reached us. Pass okText for a dynamic message, or omit to keep the
+     element's markup text when a backend IS present. */
+  function leadDone(el, okText){
+    if(!el) return;
+    if(!apiReady) el.textContent = t("lead_offline");
+    else if(okText!=null) el.textContent = okText;
+    el.style.display="block";
+  }
   /* one labelled detail section; renders "N/A" when `always` is set and the field is empty */
   function jdSec(labelKey,val,always){
     var has = val!=null && String(val).trim()!=="";
@@ -176,7 +187,7 @@
     if(loc && LOC_LABEL[loc]) parts.push("based: "+LOC_LABEL[loc]);
     var body={ kind:"job", name:val("#coName")||undefined, email:val("#coEmail")||undefined, message:parts.join(" · ") };
     postLead(body);
-    var s=$("#coSuccess"); if(s){ s.textContent=t("co_success").replace("{co}",currentCompany); s.style.display="block"; }
+    leadDone($("#coSuccess"), t("co_success").replace("{co}",currentCompany));
     $("#coForm").style.display="none";
   }
   if($("#coForm")) $("#coForm").addEventListener("submit", function(e){ e.preventDefault(); submitCompanyInquiry(); });
@@ -213,7 +224,7 @@
     var body={ kind:CT_KIND[reason]||"contact", name:val("#ctName")||undefined, email:val("#ctEmail")||undefined,
       phone:val("#ctPhone")||undefined, company:company||undefined, message:"["+label+"] "+msg };
     postLead(body);
-    $("#ctForm").style.display="none"; var s=$("#ctSuccess"); if(s) s.style.display="block";
+    $("#ctForm").style.display="none"; leadDone($("#ctSuccess"));
   }
   if($("#ctForm")) $("#ctForm").addEventListener("submit", function(e){ e.preventDefault(); submitContact(); });
   document.addEventListener("click", function(e){ var c=e.target.closest("[data-contact]"); if(c){ e.preventDefault(); openContact(c.getAttribute("data-contact")||undefined); } });
@@ -238,7 +249,7 @@
     var body={ kind:"hire", name:val("#pjName")||undefined, email:val("#pjEmail")||undefined,
       phone:val("#pjPhone")||undefined, company:val("#pjCompany")||undefined, message:parts.join("\n") };
     postLead(body);
-    $("#pjForm").style.display="none"; var s=$("#pjSuccess"); if(s) s.style.display="block";
+    $("#pjForm").style.display="none"; leadDone($("#pjSuccess"));
   }
   if($("#pjForm")) $("#pjForm").addEventListener("submit", function(e){ e.preventDefault(); submitPostJob(); });
   document.addEventListener("click", function(e){ var p=e.target.closest("[data-postjob]"); if(p){ e.preventDefault(); openPostJob(); } });
@@ -331,7 +342,7 @@
     if(pendingApplyJobIds.length){
       /* applying to specific roles → /api/applications; read the response so we can honour
          the backend's authoritative remaining count (served only — a file has no API) */
-      if(served()){
+      if(apiReady){
         var body=collectSignup(); body.job_ids=pendingApplyJobIds;
         fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) })
           .then(function(r){ return r.ok ? r.json() : null; })
@@ -342,10 +353,12 @@
       postLead(collectSignup());   /* plain signup → a lead */
     }
     var succ=$("#suSuccess");
-    if(succ) succ.textContent = n ? t("apply_success").replace("{n}",n) : t("su_success");
-    $("#suForm").style.display="none"; if(succ) succ.style.display="block";
-    /* record the applied roles against the lifetime cap (also re-renders the grid) */
-    if(n && typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs);
+    /* honest confirmation: only claim it went through if a backend actually received it */
+    if(succ){ succ.textContent = !apiReady ? t("lead_offline") : (n ? t("apply_success").replace("{n}",n) : t("su_success")); succ.style.display="block"; }
+    $("#suForm").style.display="none";
+    /* record the applied roles against the lifetime cap (also re-renders the grid) — only
+       when a backend actually recorded them, so we don't show a fake "Applied" state */
+    if(apiReady && n && typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs);
     /* if this apply came from a JD modal (still open behind the signup), flip its Apply
        button to "Applied" so it isn't a stale, re-openable CTA once the signup closes */
     repaintOpenModal();

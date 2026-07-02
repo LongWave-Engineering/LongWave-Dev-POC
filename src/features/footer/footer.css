@@ -9,6 +9,8 @@
   .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:#a9b8c6;padding:6px 0;font-size:1.02rem;background:transparent;border:0;font-family:inherit;cursor:pointer;}
   .foot-col a:hover,.foot-col button:hover{color:var(--sky-soft);}
   .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center;color:#a6b6c4;font-size:1rem;}
+  .foot-bottom a{color:#cdd9e4;text-decoration:none;}
+  .foot-bottom a:hover{color:var(--sky-soft);text-decoration:underline;}
   .foot-actions{display:flex;gap:12px;flex-wrap:wrap;}
   .foot-actions .btn{padding:11px 20px;font-size:.98rem;}
   .foot-actions .btn svg{width:18px;height:18px;}

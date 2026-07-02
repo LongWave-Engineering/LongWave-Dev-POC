@@ -11,6 +11,11 @@
   /* true when the page is SERVED over http(s) (a backend/API may exist) vs opened as a
      file:// (no API). Used to gate every fetch so the single-file build works offline. */
   function served(){ return /^https?:$/.test(location.protocol); }
+  /* served() only means "not a file://" — it does NOT mean a backend is actually there
+     (e.g. the static GitHub Pages build has no /api). apiReady is set true by a one-shot
+     /api/health probe at boot (app.js) and gates the WRITE path, so form submits either
+     really reach a backend or tell the user honestly that they didn't. */
+  var apiReady=false;
   /* pure helpers live in core/logic.js (LW.*); alias the app-wide ones for brevity */
   var esc = LW.esc, salaryMax = LW.salaryMax;
   function nl2br(s){ return esc(s).replace(/\n/g,"<br>"); }

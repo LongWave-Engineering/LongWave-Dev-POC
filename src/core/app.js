@@ -106,6 +106,20 @@
     } else { document.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); }); }
   }
 
+  /* ---------------- backend probe ----------------
+     One-shot /api/health check at boot: proves a real backend is reachable (vs. a static
+     host that has no /api), so the write path can be honest instead of firing form submits
+     into a 404 and faking success. Runs early; resolves well before a user finishes a form. */
+  function probeApi(){
+    if(!served()) return;   /* file:// → definitely no API */
+    var ctrl=(typeof AbortController!=="undefined")?new AbortController():null;
+    var timer=ctrl?setTimeout(function(){ ctrl.abort(); },5000):null;
+    fetch("/api/health", ctrl?{signal:ctrl.signal}:undefined)
+      .then(function(r){ apiReady = !!(r && r.ok); })
+      .catch(function(){ apiReady=false; })
+      .then(function(){ if(timer) clearTimeout(timer); });
+  }
+
   /* ---------------- live data (progressive enhancement) ----------------
      The bundle ships an embedded snapshot so it works offline as a single file.
      When the page is SERVED by the backend, pull live jobs + companies so admin

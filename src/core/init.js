@@ -9,6 +9,7 @@
     applyLang();
     router();
     initReveal();
+    probeApi();         /* detect a real backend so form submits can be honest (no-op offline) */
     hydrateFromApi();   /* upgrade to live data when served by the backend (no-op offline) */
   }catch(e){
     try{ document.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); }); }catch(_){}

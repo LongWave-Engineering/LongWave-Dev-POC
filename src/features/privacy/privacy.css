@@ -1,5 +1,8 @@
-/* features/privacy/privacy.css — long-form legal doc: a narrow, readable column */
-  .privacy-doc{max-width:52rem;}
+/* features/privacy/privacy.css — long-form legal doc: a narrow, readable, CENTERED column */
+  /* Center the whole page block (title + intro + body) as one 48rem column so the heading
+     lines up with the body instead of the heading sitting flush-left over a centered doc. */
+  #page-privacy .head{max-width:48rem;margin-left:auto;margin-right:auto;}
+  .privacy-doc{max-width:48rem;margin:0 auto;}
   .privacy-doc p{color:var(--ink-soft);font-size:1.05rem;line-height:1.7;margin:0 0 14px;}
   .privacy-doc .pv-h{font-size:1.35rem;margin:32px 0 10px;}
   .privacy-doc .pv-list{margin:0 0 14px;padding-left:22px;color:var(--ink-soft);font-size:1.05rem;line-height:1.7;}
