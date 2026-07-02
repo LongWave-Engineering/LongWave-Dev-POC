@@ -49,12 +49,14 @@
   /* ---- recurring wave divider along the top edge of tinted sections ----
      Spreads the brand motif across the whole page instead of living in one spot. */
   .section.tinted{position:relative;}
-  .section.tinted::before{
-    content:""; position:absolute; left:0; right:0; top:0; height:24px; pointer-events:none;
+  .section.tinted::before, .section.tinted::after{
+    content:""; position:absolute; left:0; right:0; height:24px; pointer-events:none;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='24' viewBox='0 0 300 24' preserveAspectRatio='none'%3E%3Cpath d='M0 14 C 50 4 100 4 150 14 C 200 24 250 24 300 14' fill='none' stroke='%2301A7E3' stroke-width='2'/%3E%3C/svg%3E");
-    background-repeat:repeat-x; background-position:top center; background-size:300px 100%;
-    opacity:.10; animation:waveDivide 22s linear infinite;
+    background-repeat:repeat-x; background-size:300px 100%;
+    opacity:.18; animation:waveDivide 22s linear infinite;
   }
+  .section.tinted::before{ top:0; background-position:top center; }
+  .section.tinted::after{ bottom:0; background-position:bottom center; }
 
   /* ---- wave divider atop the "Hiring with us" logo strip ----
      Replaces the old flat border-top so the strip is framed by the wave motif (matching the
