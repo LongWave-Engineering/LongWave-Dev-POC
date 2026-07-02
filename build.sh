@@ -82,9 +82,11 @@ JS=(
 
   for f in "${BODY[@]}"; do cat "$f"; done
 
+  # The private HRMOS roster (real client jobs) is NOT bundled into the public site —
+  # it lives backend-only (backend/data/hrmos-data.js, gitignored) and is served via /api
+  # when the site runs against the backend. The public/offline file ships the curated demo
+  # set in src/core/data.js instead.
   printf '<script>\n'
-  cat src/core/hrmos-data.js
-  printf '</script>\n\n\n<script>\n'
   for f in "${JS[@]}"; do cat "$f"; done
   printf '</script>\n\n</body>\n</html>\n'
 } > "$OUT"
