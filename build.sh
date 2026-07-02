@@ -17,6 +17,7 @@ OUT="longwave-dev.html"
 
 # ---- CSS (cascade order) ----
 CSS=(
+  src/core/fonts.css
   src/core/base.css
   src/core/buttons.css
   src/features/header/header.css

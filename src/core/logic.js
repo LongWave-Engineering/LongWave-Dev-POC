@@ -6,7 +6,7 @@
     "use strict";
 
     /* HTML-escape — the one helper that's both pure and used app-wide. */
-    function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+    function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 
     /* Hard cap: a candidate (identified by one email) may apply to at most this many
        DISTINCT jobs, EVER — cumulative across every visit/batch, not per session. The

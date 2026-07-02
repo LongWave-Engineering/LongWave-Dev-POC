@@ -7,6 +7,7 @@ const LW = require("../src/core/logic.js");
 
 test("esc() escapes HTML-significant characters", () => {
   assert.equal(LW.esc('<a href="x">&'), "&lt;a href=&quot;x&quot;&gt;&amp;");
+  assert.equal(LW.esc("it's a <'quote'>"), "it&#39;s a &lt;&#39;quote&#39;&gt;");   // single quote escaped too
   assert.equal(LW.esc("plain"), "plain");
   assert.equal(LW.esc(5), "5");
 });

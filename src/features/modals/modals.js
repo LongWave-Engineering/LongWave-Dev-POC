@@ -60,7 +60,9 @@
     H+=jdSec("jd_selection", jf(job,"selection"), false);
     H+=jdSec("jd_notes", jf(job,"notes"), false);
     $("#mDetail").innerHTML=H;
-    var comp=$("#mCompany"); if(c.site){ comp.href=c.site; comp.style.display=""; } else { comp.style.display="none"; }
+    /* only link out to http(s) — never assign a javascript:/data: URL to href, even from
+       admin/live company data (defence-in-depth against a poisoned COMPANIES.site). */
+    var comp=$("#mCompany"); var site=(c.site && /^https?:\/\//i.test(c.site)) ? c.site : ""; if(site){ comp.href=site; comp.style.display=""; } else { comp.style.display="none"; }
     paintModalSave(); paintModalApply();
   }
   function openJob(idx){
