@@ -153,7 +153,7 @@
       }
     });
     if(PRIVACY.note && PRIVACY.note[L]) H+='<p class="pv-note">'+ esc(PRIVACY.note[L]) +'</p>';
-    var formLbl = L==="ja" ? "お問い合わせフォームへ" : "Go to the contact form";
+    var formLbl = t("pv_contact_cta");
     H+='<p class="pv-actions"><button class="btn btn--primary" type="button" data-contact>'+ esc(formLbl) +'</button></p>';
     box.innerHTML=H;
   }

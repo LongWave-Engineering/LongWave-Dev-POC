@@ -290,7 +290,8 @@
   }
   document.addEventListener("keydown", function(e){
     /* signup can stack on top of the job modal — handle the topmost one first */
-    var openOv = (pjOverlay && pjOverlay.classList.contains("open")) ? pjOverlay
+    var openOv = (artOverlay && artOverlay.classList.contains("open")) ? artOverlay
+      : (pjOverlay && pjOverlay.classList.contains("open")) ? pjOverlay
       : (ctOverlay && ctOverlay.classList.contains("open")) ? ctOverlay
       : (coOverlay && coOverlay.classList.contains("open")) ? coOverlay
       : (suOverlay.classList.contains("open") ? suOverlay : (jobOverlay.classList.contains("open") ? jobOverlay : null));

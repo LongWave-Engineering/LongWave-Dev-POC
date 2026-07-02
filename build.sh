@@ -74,6 +74,16 @@ JS=(
   src/core/outro.js
 )
 
+# Pre-flight: fail loudly BEFORE writing anything if a manifest references a missing file,
+# so a typo/rename can't leave a truncated bundle behind.
+for f in "${CSS[@]}" "${BODY[@]}" "${JS[@]}"; do
+  [ -f "$f" ] || { echo "build.sh: missing source file listed in a manifest: $f" >&2; exit 1; }
+done
+
+# Build atomically: assemble into a temp file and move into place only on full success, so a
+# mid-stream failure can never truncate/corrupt the committed, double-clickable bundle.
+TMP="$(mktemp "${OUT}.XXXXXX")"
+trap 'rm -f "$TMP"' EXIT
 {
   cat src/core/head.html
   printf '<style>\n'
@@ -89,6 +99,8 @@ JS=(
   printf '<script>\n'
   for f in "${JS[@]}"; do cat "$f"; done
   printf '</script>\n\n</body>\n</html>\n'
-} > "$OUT"
+} > "$TMP"
+mv "$TMP" "$OUT"
+trap - EXIT
 
 echo "built $OUT ($(wc -c < "$OUT" | tr -d ' ') bytes)"

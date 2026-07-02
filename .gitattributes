@@ -1,0 +1,10 @@
+# Keep line endings stable so the byte-exact bundle-freshness gate is deterministic
+# across machines/editors (a Windows CRLF checkout or an editor re-adding a BOM would
+# otherwise make the locally-built longwave-dev.html differ from CI's and trip the gate).
+* text=auto eol=lf
+*.html text eol=lf
+*.css  text eol=lf
+*.js   text eol=lf
+*.json text eol=lf
+*.sh   text eol=lf
+*.md   text eol=lf

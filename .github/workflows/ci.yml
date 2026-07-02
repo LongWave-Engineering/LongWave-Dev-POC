@@ -23,18 +23,23 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Run unit + data tests
+      - name: Run frontend unit + guardrail tests
         run: node --test
+
+      - name: Run backend tests
+        run: node --test
+        working-directory: backend
 
       - name: Build, then syntax-check the bundled app JS
         run: |
           bash build.sh
-          node -e "const fs=require('fs');const h=fs.readFileSync('longwave-dev.html','utf8');const m=[...h.matchAll(/<script>([\s\S]*?)<\/script>/g)];fs.writeFileSync(process.env.RUNNER_TEMP+'/app.js', m[m.length-1][1]);"
+          node -e "const fs=require('fs');const h=fs.readFileSync('longwave-dev.html','utf8');const m=[...h.matchAll(/<script>([\s\S]*?)<\/script>/g)];if(m.length!==1){console.error('::error::expected exactly 1 <script> block in the bundle, found '+m.length);process.exit(1);}const js=m[0][1];if(!js.trim()){console.error('::error::extracted app JS is empty');process.exit(1);}fs.writeFileSync(process.env.RUNNER_TEMP+'/app.js', js);"
           node --check "$RUNNER_TEMP/app.js"
-          echo "✓ bundled app JS parses"
+          echo "✓ bundled app JS parses (exactly one script block)"
 
       - name: Verify the bundle is in sync with source
         run: |
+          git ls-files --error-unmatch longwave-dev.html >/dev/null 2>&1 || { echo "::error::longwave-dev.html is not tracked — the freshness gate can't protect an untracked bundle."; exit 1; }
           if ! git diff --quiet -- longwave-dev.html; then
             echo "::error::longwave-dev.html is out of date — run ./build.sh and commit the result."
             git --no-pager diff --stat -- longwave-dev.html

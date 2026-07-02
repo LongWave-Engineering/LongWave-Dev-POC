@@ -26,11 +26,24 @@ jobs:
         with:
           node-version: '24'
 
-      - name: Run tests (gate the release)
+      - name: Run frontend tests (gate the release)
         run: node --test
+
+      - name: Run backend tests (gate the release)
+        run: node --test
+        working-directory: backend
 
       - name: Build the single-file site
         run: bash build.sh
+
+      - name: Verify the committed bundle matches the tagged source
+        run: |
+          if ! git diff --quiet -- longwave-dev.html; then
+            echo "::error::longwave-dev.html is stale at this tag — the release would ship a bundle that disagrees with its own source. Rebuild and commit before tagging."
+            git --no-pager diff --stat -- longwave-dev.html
+            exit 1
+          fi
+          echo "✓ tagged bundle matches source"
 
       - name: Resolve the release tag
         id: ver

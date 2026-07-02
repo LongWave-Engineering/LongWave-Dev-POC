@@ -73,7 +73,7 @@
       }
       go(link.getAttribute("data-go"));
       if(navLinks) navLinks.classList.remove("show");
-      [jobOverlay, suOverlay, coOverlay, ctOverlay, pjOverlay].forEach(function(o){ if(o && o.classList.contains("open")) closeOverlay(o); });
+      [jobOverlay, suOverlay, coOverlay, ctOverlay, pjOverlay, artOverlay].forEach(function(o){ if(o && o.classList.contains("open")) closeOverlay(o); });
     }
   });
 

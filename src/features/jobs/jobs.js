@@ -227,7 +227,7 @@
     jobGrid.innerHTML="";
     jobShown=shown; jobRendered=0;
     if(shown.length===0){
-      jobGrid.appendChild(el("div","jobs-empty",'<p style="color:var(--slate);padding:30px 0;font-size:1.1rem;">'+(lang==="ja"?"条件に合う求人が見つかりません。フィルターを調整してください。":"No roles match these filters yet. Try widening your search.")+'</p>'));
+      jobGrid.appendChild(el("div","jobs-empty",'<p style="color:var(--slate);padding:30px 0;font-size:1.1rem;">'+ esc(t("jobs_empty")) +'</p>'));
     } else {
       appendJobBatch(doAnimate);
     }

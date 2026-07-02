@@ -63,3 +63,29 @@ test("no confidential or secret files are tracked by git", () => {
     assert.ok(!tracked.includes(f), `${f} must never be tracked by git`);
   }
 });
+
+/* --- i18n integrity: every markup key resolves, and no bilingual strings bypass the dict --- */
+test("every data-i18n attribute in the markup resolves to a real dictionary key", () => {
+  const { I18N } = require(path.join(ROOT, "src/core/i18n-data.js"));
+  const keys = new Set(Object.keys(I18N.en));
+  const htmlFiles = cp.execSync("find src -name '*.html'", { cwd: ROOT }).toString().trim().split("\n");
+  const bad = [];
+  for (const rel of htmlFiles) {
+    const h = fs.readFileSync(path.join(ROOT, rel), "utf8");
+    const re = /data-i18n(?:-ph)?="([^"]+)"/g;
+    let m;
+    while ((m = re.exec(h))) if (!keys.has(m[1])) bad.push(`${m[1]} (${rel})`);
+  }
+  assert.deepEqual(bad, [], "data-i18n attribute(s) reference a missing key — they render blank / English for JA users");
+});
+
+test("no hardcoded bilingual ternary outside i18n.js / logic.js (route strings through the dict)", () => {
+  const jsFiles = cp.execSync("find src -name '*.js'", { cwd: ROOT }).toString().trim().split("\n")
+    .filter((f) => !/core\/(i18n|i18n-data|logic)\.js$/.test(f));
+  const offenders = [];
+  for (const rel of jsFiles) {
+    const s = fs.readFileSync(path.join(ROOT, rel), "utf8");
+    if (/\b[lL](?:ang)?\s*===?\s*["']ja["']\s*\?/.test(s)) offenders.push(rel);
+  }
+  assert.deepEqual(offenders, [], "bilingual strings must go through t()/I18N, not an inline lang===\"ja\"?… ternary");
+});
