@@ -111,6 +111,7 @@ test("routeFor() maps a hash to its route name (and every route round-trips)", (
   assert.equal(LW.routeFor("#/articles"), "articles");
   assert.equal(LW.routeFor("#/cv"), "cv");
   assert.equal(LW.routeFor("#/post"), "post");
+  assert.equal(LW.routeFor("#/privacy"), "privacy");
   assert.equal(LW.routeFor("#/unknown"), "home");           // unknown → home
   // every route in the canonical table resolves back to itself
   for (const name of Object.keys(LW.ROUTES)) assert.equal(LW.routeFor(LW.ROUTES[name]), name, `route ${name}`);

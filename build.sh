@@ -33,6 +33,7 @@ CSS=(
   src/core/motion.css
   src/features/waves/waves.css
   src/features/cv/cv.css
+  src/features/privacy/privacy.css
   src/core/responsive.css
 )
 
@@ -45,6 +46,7 @@ BODY=(
   src/features/articles/articles.html
   src/features/post/post.html
   src/features/cv/cv.html
+  src/features/privacy/privacy.html
   src/features/footer/footer.html
   src/features/modals/modals.html
 )
@@ -54,6 +56,7 @@ JS=(
   src/core/intro.js
   src/core/logic.js
   src/core/data.js
+  src/core/i18n-data.js
   src/core/i18n.js
   src/features/jobs/jobs.js
   src/features/home/home.js
@@ -61,6 +64,7 @@ JS=(
   src/features/partners/partners-logos.js
   src/features/partners/partners.js
   src/features/articles/articles.js
+  src/features/privacy/privacy.js
   src/features/testimonials/testimonials.js
   src/features/modals/modals.js
   src/core/app.js

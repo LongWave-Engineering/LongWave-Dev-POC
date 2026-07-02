@@ -2,6 +2,10 @@
   /* ---------------- jobs (full grid) ---------------- */
   var jobGrid=$("#jobGrid"), resultCount=$("#resultCount");
   var showAllJobs=false;
+  /* progressive rendering: paint the grid in batches so a 700+ role result never stalls
+     the main thread. jobShown = current filtered list; jobRendered = rows painted so far;
+     a "Show more" button appends the next JOB_BATCH on demand. */
+  var JOB_BATCH=60, jobShown=[], jobRendered=0;
 
   /* ---- multi-select (apply to one or many) ---- keyed by the stable original
      index (_i) so it survives re-filtering and language toggles. ---- */
@@ -129,11 +133,11 @@
      (a save heart and a selection checkbox) plus a clickable open-button. Keeping the
      controls as siblings of the open-button avoids nested buttons, so a heart/checkbox
      click never also opens the modal (and vice-versa). */
-  function buildCard(job,i){
+  function buildCard(job,i,animate){
     var idx=job._i;
     var applied=isApplied(job);
-    var card=el("div","job-card jc-reveal"+(isSelected(job)?" sel":"")+(applied?" applied":""));
-    card.style.animationDelay=(Math.min(i,12)*0.045)+"s";
+    var card=el("div","job-card"+(animate?" jc-reveal":"")+(isSelected(job)?" sel":"")+(applied?" applied":""));
+    if(animate) card.style.animationDelay=(Math.min(i,12)*0.045)+"s";
     var corner=el("div","jc-corner");
     var save=el("button","jc-save"+(isSaved(job)?" is-saved":""));
     save.type="button";
@@ -169,18 +173,36 @@
     card.appendChild(open); card.appendChild(corner);
     jobGrid.appendChild(card);
   }
-  function renderJobs(){
+  /* paint the next batch of jobShown into the grid; re-add the "Show more" button while
+     rows remain. Only the first batch of a fresh view animates (animate=true); appended
+     batches just appear (no blur-in replay). */
+  function appendJobBatch(animate){
+    var oldMore=$("#jobsMore"); if(oldMore) oldMore.remove();
+    var to=Math.min(jobRendered+JOB_BATCH, jobShown.length);
+    for(var i=jobRendered;i<to;i++) buildCard(jobShown[i], i, animate);
+    jobRendered=to;
+    if(jobRendered<jobShown.length){
+      var rem=jobShown.length-jobRendered;
+      var b=el("button","btn btn--ghost jobs-more", esc(t("jobs_more").replace("{n}", Math.min(JOB_BATCH,rem))));
+      b.id="jobsMore"; b.type="button";
+      b.addEventListener("click", function(){ appendJobBatch(false); });
+      jobGrid.appendChild(b);
+    }
+  }
+  function renderJobs(animate){
     var f=getFilters();
+    var doAnimate=animate===true;   /* only play the card entrance on a fresh view (Show all / Saved), not on every filter keystroke */
     updateApplyNotice();   /* keep the "you've used all 10" banner in sync on every render */
     /* Saved view: show only bookmarked roles (still honouring any active filters),
        skipping the pick-a-filter gate. */
     if(savedOnly){
       var savedList=LW.filterJobs(JOBS.filter(isSaved), f);
       jobGrid.innerHTML="";
+      jobShown=savedList; jobRendered=0;
       if(savedList.length===0){
         jobGrid.appendChild(el("div","jobs-empty",'<p style="color:var(--slate);padding:30px 0;font-size:1.1rem;">'+ esc(t("sv_none")) +'</p>'));
       } else {
-        savedList.forEach(buildCard);
+        appendJobBatch(doAnimate);
       }
       updateSelBar(); updateSavedToggle();
       resultCount.textContent = t("sv_heading") + " · " + t("result").replace("{n}",savedList.length).replace("{total}",JOBS.length);
@@ -196,17 +218,18 @@
         '<p>'+ esc(t("prompt_sub").replace("{total}",JOBS.length)) +'</p>'+
         '<button class="btn btn--ghost" id="showAllJobs" type="button">'+ esc(t("prompt_all").replace("{total}",JOBS.length)) +'</button>');
       jobGrid.appendChild(prompt);
-      var sa=$("#showAllJobs"); if(sa) sa.addEventListener("click", function(){ showAllJobs=true; renderJobs(); });
+      var sa=$("#showAllJobs"); if(sa) sa.addEventListener("click", function(){ showAllJobs=true; renderJobs(true); });
       resultCount.textContent = t("result_pick");
       updateSavedToggle();
       return;
     }
     var shown=LW.filterJobs(JOBS, f);
     jobGrid.innerHTML="";
+    jobShown=shown; jobRendered=0;
     if(shown.length===0){
       jobGrid.appendChild(el("div","jobs-empty",'<p style="color:var(--slate);padding:30px 0;font-size:1.1rem;">'+(lang==="ja"?"条件に合う求人が見つかりません。フィルターを調整してください。":"No roles match these filters yet. Try widening your search.")+'</p>'));
     } else {
-      shown.forEach(buildCard);
+      appendJobBatch(doAnimate);
     }
     updateSelBar(); updateSavedToggle();
     resultCount.textContent = t("result").replace("{n}",shown.length).replace("{total}",JOBS.length);
@@ -236,7 +259,7 @@
   (function(){
     var clr=$("#selClear"); if(clr) clr.addEventListener("click", clearSelection);
     var ap=$("#selApply"); if(ap) ap.addEventListener("click", function(){ openSignup("job", selectedJobs()); });
-    var st=$("#savedToggle"); if(st) st.addEventListener("click", function(){ savedOnly=!savedOnly; if(savedOnly) showAllJobs=false; renderJobs(); });
+    var st=$("#savedToggle"); if(st) st.addEventListener("click", function(){ savedOnly=!savedOnly; if(savedOnly) showAllJobs=false; renderJobs(true); });
   })();
 
 

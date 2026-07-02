@@ -6,7 +6,7 @@
        rule as t() — so the two never diverge (e.g. a JA gap shows EN, not blank). */
     document.querySelectorAll("[data-i18n]").forEach(function(n){ var k=n.getAttribute("data-i18n"); var v=I18N[lang][k]!=null?I18N[lang][k]:I18N.en[k]; if(v!=null) n.innerHTML=v; });
     document.querySelectorAll("[data-i18n-ph]").forEach(function(n){ var k=n.getAttribute("data-i18n-ph"); var v=I18N[lang][k]!=null?I18N[lang][k]:I18N.en[k]; if(v!=null) n.setAttribute("placeholder", v); });
-    buildSpecSelect(); buildStackSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners();
+    buildSpecSelect(); buildStackSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners(); renderPrivacy();
     var jc=$("#jobCount"); if(jc) jc.innerHTML = t("jobcount").replace("{n}","<b>"+JOBS.length+"</b>");
     document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
     /* an open JD modal's Save/Apply buttons hold runtime state the data-i18n sweep above
@@ -46,7 +46,7 @@
     var de=document.documentElement, body=document.body;
     var prevHtml=de.style.scrollBehavior, prevBody=body.style.scrollBehavior;
     de.style.scrollBehavior="auto"; body.style.scrollBehavior="auto";   // force instant, beat html{scroll-behavior:smooth}
-    ["home","jobs","companies","articles","cv","post"].forEach(function(r){ var p=$("#page-"+r); if(p) p.classList.remove("active"); });
+    ["home","jobs","companies","articles","cv","post","privacy"].forEach(function(r){ var p=$("#page-"+r); if(p) p.classList.remove("active"); });
     window.scrollTo(0,0);
     de.style.scrollBehavior=prevHtml; body.style.scrollBehavior=prevBody;
     next.classList.add("active");                       // fades in at the top via pageFade
@@ -110,7 +110,7 @@
      edits / adds / hides show up. Any failure (offline, opened as a file, no
      backend) silently keeps the embedded snapshot — the site never breaks. */
   function hydrateFromApi(){
-    if(!/^https?:$/.test(location.protocol)) return;   /* opened as a file → no API */
+    if(!served()) return;   /* opened as a file → no API */
     var grab=function(p){ return fetch(p).then(function(r){ return r.ok?r.json():null; }).catch(function(){ return null; }); };
     Promise.all([grab("/api/jobs"), grab("/api/companies")]).then(function(res){
       var jobs=res[0], cos=res[1];

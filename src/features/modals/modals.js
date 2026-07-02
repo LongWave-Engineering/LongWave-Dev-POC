@@ -8,7 +8,7 @@
   /* blank every listed field so a returning visitor never sees a previous person's input */
   function clearFields(ids){ ids.forEach(function(s){ if($(s)) $(s).value=""; }); }
   /* fire-and-forget a lead to the backend — only when SERVED (opened as a file → no API, no-op) */
-  function postLead(body){ if(/^https?:$/.test(location.protocol)){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); } }
+  function postLead(body){ if(served()){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); } }
   /* one labelled detail section; renders "N/A" when `always` is set and the field is empty */
   function jdSec(labelKey,val,always){
     var has = val!=null && String(val).trim()!=="";
@@ -328,7 +328,7 @@
     if(pendingApplyJobIds.length){
       /* applying to specific roles → /api/applications; read the response so we can honour
          the backend's authoritative remaining count (served only — a file has no API) */
-      if(/^https?:$/.test(location.protocol)){
+      if(served()){
         var body=collectSignup(); body.job_ids=pendingApplyJobIds;
         fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) })
           .then(function(r){ return r.ok ? r.json() : null; })

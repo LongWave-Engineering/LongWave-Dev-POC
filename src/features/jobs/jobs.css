@@ -56,6 +56,7 @@
   @keyframes jcReveal{from{opacity:0;transform:translateY(15px) scale(.985);filter:blur(5px);}to{opacity:1;transform:none;filter:blur(0);}}
   .job-card.jc-reveal{animation:jcReveal .62s cubic-bezier(.16,1,.3,1) both;will-change:opacity,transform,filter;}
   .jobs-empty{animation:jcReveal .5s cubic-bezier(.16,1,.3,1) both;}
+  .jobs-more{align-self:center;margin-top:6px;}
   .job-card:hover,.job-card:focus-within{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--line-strong);}
   .job-card.sel:hover{box-shadow:0 0 0 2px var(--sky), var(--shadow-lift);}
 
