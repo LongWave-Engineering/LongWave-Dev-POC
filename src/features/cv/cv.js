@@ -4,6 +4,10 @@
   /* ---------------- CV builder ---------------- */
   var cvPhoto="";
   var DRAFT_KEY="lw_cv_draft";   /* a saved-in-progress draft (localStorage) */
+  /* Photo upload guards: raster images only (no SVG — it can carry script), ≤5MB, and the
+     data-URL must match this exact shape before we ever inject it into the preview's <img>. */
+  var PHOTO_MAX=5*1024*1024;
+  var PHOTO_OK=/^data:image\/(png|jpe?g|webp);base64,/i;
 
   /* ---- rirekisho: 学歴・職歴 + 免許・資格 rows ---- */
   function addEduRow(type,y,m,txt){
@@ -232,7 +236,7 @@
     var b=$("#cvSave"); if(b){ b.textContent = ok ? t("cv_saved_ok") : t("cv_save_err"); b.classList.toggle("cv-saved", ok); clearTimeout(b._t); b._t=setTimeout(function(){ b.textContent=t("cv_save"); b.classList.remove("cv-saved"); }, 1800); }
   }
   function restoreCV(d){
-    cvPhoto = d.photo || "";
+    cvPhoto = (d.photo && PHOTO_OK.test(d.photo)) ? d.photo : "";   /* ignore a poisoned/foreign draft photo */
     CV_FIELDS.forEach(function(id){ setV("#"+id, (d.f && d.f[id]!=null) ? d.f[id] : ""); });
     ["#eduRows","#licRows","#careerRows","#projRows","#skEduRows","#skillRows","#langRows"].forEach(function(id){ var c=$(id); if(c) c.innerHTML=""; });
     ((d.edu&&d.edu.length)?d.edu:[{type:"学歴"},{type:"職歴"}]).forEach(function(e){ addEduRow(e.type||"学歴", e.y, e.m, e.txt); });
@@ -249,7 +253,18 @@
     /* resume a saved draft if there is one; otherwise a fresh blank form (placeholders) */
     var draft=loadDraft();
     if(draft) restoreCV(draft); else addStarterRows();
-    $("#cv_photo").addEventListener("change", function(e){ var f=e.target.files&&e.target.files[0]; if(!f){ cvPhoto=""; renderCV(); return; } var r=new FileReader(); r.onload=function(){ cvPhoto=r.result; renderCV(); }; r.readAsDataURL(f); });
+    $("#cv_photo").addEventListener("change", function(e){
+      var f=e.target.files&&e.target.files[0];
+      if(!f){ cvPhoto=""; renderCV(); return; }
+      if(!/^image\/(png|jpe?g|webp)$/i.test(f.type) || f.size>PHOTO_MAX){
+        e.target.value="";                                  /* reject; keep any prior photo */
+        var n=$("#cvNote"); if(n) n.textContent=t("cv_photo_bad");
+        return;
+      }
+      var r=new FileReader();
+      r.onload=function(){ if(PHOTO_OK.test(String(r.result))){ cvPhoto=r.result; renderCV(); } };
+      r.readAsDataURL(f);
+    });
     $("#addEdu").addEventListener("click", function(){ addEduRow("職歴","","",""); renderCV(); });
     $("#addLic").addEventListener("click", function(){ addLicRow("","",""); renderCV(); });
     $("#addCareer").addEventListener("click", function(){ addCareer("","","","",""); renderCV(); });
@@ -257,8 +272,8 @@
     $("#addProj").addEventListener("click", function(){ addProj("",""); renderCV(); });
     $("#addSkEdu").addEventListener("click", function(){ addSkEdu("","",""); renderCV(); });
     $("#addLang").addEventListener("click", function(){ addLangRow("",""); renderCV(); });
-    $("#cvForm").addEventListener("input", renderCV);
-    $("#cvForm").addEventListener("change", renderCV);
+    $("#cvForm").addEventListener("input", debounce(renderCV, 130));   /* don't re-render the whole preview on every keystroke */
+    $("#cvForm").addEventListener("change", renderCV);                 /* selects/checkboxes update immediately */
     $("#cvPrint").addEventListener("click", function(){ window.print(); });
     var sv=$("#cvSave"); if(sv) sv.addEventListener("click", saveDraft);
     var clr=$("#cvClear"); if(clr) clr.addEventListener("click", clearAll);

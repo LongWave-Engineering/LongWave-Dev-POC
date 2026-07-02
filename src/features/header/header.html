@@ -1,3 +1,5 @@
+<!-- First focusable element: lets keyboard/screen-reader users jump past the nav. -->
+<a class="skip-link" href="#main" data-i18n="skip_main">Skip to main content</a>
 <!-- The site renders with JavaScript; this is the no-JS / crawler fallback. -->
 <noscript>
   <div style="max-width:640px;margin:12vh auto;padding:0 24px;font-family:system-ui,sans-serif;color:#1f2d3d;text-align:center;line-height:1.6">
@@ -30,6 +32,9 @@
     </nav>
   </div>
 </header>
+
+<!-- routed pages live inside the main landmark; the footer file closes it -->
+<main id="main" tabindex="-1">
 
 <!-- ====================================================== -->
 <!-- ============ PAGE: TITLE / HOME ============ -->

@@ -13,7 +13,7 @@
        just clobbered — repaint them in the new language */
     if(typeof repaintOpenModal==="function") repaintOpenModal();
   }
-  function setLang(l){ if(l===lang) return; lang=l; applyLang(); }
+  function setLang(l){ if(l===lang) return; lang=l; try{ localStorage.setItem("lw_lang", l); }catch(e){} applyLang(); }
   document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
 
   /* ---------------- filters listeners ---------------- */

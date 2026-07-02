@@ -2,7 +2,9 @@
    The EN/JA string dictionary (I18N) lives in core/i18n-data.js, concatenated just before
    this file so I18N is in scope here exactly as before. */
   /* ---------------- i18n ---------------- */
-  var lang="en";
+  /* Restore the visitor's last language choice (persisted by setLang) so JA-preferring
+     users aren't reset to EN on every visit. Guarded for file:// / no-storage contexts. */
+  var lang=(function(){ try{ var s=localStorage.getItem("lw_lang"); return (s==="en"||s==="ja")?s:"en"; }catch(e){ return "en"; } })();
   function t(k){ return (I18N[lang] && I18N[lang][k]!=null) ? I18N[lang][k] : (I18N.en[k]||k); }
   var $ = function(s,c){ return (c||document).querySelector(s); };
   function el(tag,cls,html){ var e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e; }

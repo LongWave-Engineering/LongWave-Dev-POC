@@ -1,4 +1,8 @@
 /* core/base.css — design tokens (:root), reset, base typography */
+/* Skip-to-content: off-screen until focused, then pinned top-left (custom props resolve
+   regardless of declaration order, so referencing --ink/--banana here is fine). */
+.skip-link{position:absolute;left:-9999px;top:0;z-index:2000;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 10px 0;font-weight:700;text-decoration:none;}
+.skip-link:focus{left:0;outline:3px solid var(--banana);outline-offset:-3px;}
 :root{
     --ink:#0E2235;
     --ink-soft:#33465A;

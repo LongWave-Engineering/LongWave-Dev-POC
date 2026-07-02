@@ -4,6 +4,7 @@
    I18N lives in the same shared IIFE scope exactly as before. */
   var I18N = {
     en:{
+      skip_main:"Skip to main content",
       nav_jobs:"Jobs", nav_companies:"Companies", nav_articles:"Articles", nav_post:"Post a job", nav_signup:"Sign up",
       partners_lab:"Hiring with us",
       partners_post_h:"Teams we're helping hire",
@@ -78,6 +79,7 @@
       cv_print:"Print / Save as PDF",
       cv_note_fill:"Fill in your details — the grey examples show what goes where. Save progress to come back later; hover the ⓘ on any field for tips.",
       cv_clear:"Clear all", cv_save:"Save progress", cv_saved_ok:"Saved ✓", cv_save_err:"Couldn't save",
+      cv_photo_bad:"Please choose an image (PNG/JPEG/WebP) under 5 MB.",
       foot_about:"Bilingual Jobs in Japan<br>Curated by the team at LongWave<br>We talk tech, so you don't have to",
       foot_explore:"Explore", foot_jobs:"Jobs", foot_companies:"Companies", foot_articles:"Articles",
       foot_more_h:"More", foot_post:"Post a job", foot_resume:"Resume builder", foot_signup:"Sign up", foot_contact:"Contact us", foot_privacy:"Privacy",
@@ -96,6 +98,7 @@
       sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later."
     },
     ja:{
+      skip_main:"本文へスキップ",
       nav_jobs:"求人", nav_companies:"企業", nav_articles:"記事", nav_post:"求人を掲載", nav_signup:"登録する",
       partners_lab:"導入企業",
       partners_post_h:"採用を支援している企業",
@@ -170,6 +173,7 @@
       cv_print:"印刷・PDFで保存",
       cv_note_fill:"各項目を入力してください（グレーの例が目安です）。「保存する」で後から続きを作成できます。各項目のⓘにカーソルを合わせるとヒントが表示されます。",
       cv_clear:"全てクリア", cv_save:"保存する", cv_saved_ok:"保存しました ✓", cv_save_err:"保存できませんでした",
+      cv_photo_bad:"5MB以下の画像（PNG／JPEG／WebP）を選択してください。",
       foot_about:"日本のバイリンガル求人<br>LongWaveチームが厳選<br>技術がわかるから、通訳はいりません",
       foot_explore:"探す", foot_jobs:"求人", foot_companies:"企業", foot_articles:"記事",
       foot_more_h:"その他", foot_post:"求人を掲載", foot_resume:"履歴書作成", foot_signup:"登録する", foot_contact:"お問い合わせ", foot_privacy:"プライバシー",
