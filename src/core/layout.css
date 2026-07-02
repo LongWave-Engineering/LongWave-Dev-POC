@@ -19,7 +19,8 @@
   .hero-cta{display:flex;gap:15px;flex-wrap:wrap;align-items:center;}
   .jobcount{font-size:1.02rem;color:var(--slate);font-weight:600;margin-top:22px;}
   .jobcount b{color:var(--accent-deep);}
-  .partners{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:30px 0 84px;margin-top:30px;border-top:1px solid var(--line);position:relative;z-index:1;}
+  /* top edge is a wave divider (see waves.css .partners::before), not a flat rule, to match the site's wave motif */
+  .partners{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:40px 0 84px;margin-top:30px;position:relative;z-index:1;}
   .partners .lab{font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;color:var(--slate);font-weight:700;margin:0 0 4px;width:100%;}
   .partners .avatar.sm{box-shadow:0 0 0 1px rgba(14,34,53,.05), var(--shadow);transition:transform .15s ease;}
   .partners .avatar.sm:hover{transform:translateY(-2px);}
