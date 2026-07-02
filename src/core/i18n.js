@@ -80,7 +80,7 @@
       foot_explore:"Explore", foot_jobs:"Jobs", foot_companies:"Companies", foot_articles:"Articles",
       foot_more_h:"More", foot_post:"Post a job", foot_resume:"Resume builder", foot_signup:"Sign up", foot_contact:"Contact us",
       foot_legal:"© 2026 LongWave Dev · Built in Tokyo", foot_linkedin:"LinkedIn", foot_longwave:"LongWave",
-      m_about:"About the role", m_look:"What they're looking for", m_apply:"Sign up to apply", m_company:"Company site ↗",
+      m_apply:"Sign up to apply", m_company:"Company site ↗",
       jd_bg:"Why they're hiring", jd_scope:"The role & scope", jd_required:"Must-have skills & experience", jd_nice:"Nice to have", jd_ideal:"Who they're looking for", jd_stack:"Tech stack", jd_team:"Team & org", jd_lang:"Language requirement", jd_office:"Office / location", jd_workstyle:"Work style", jd_hours:"Working hours", jd_comp:"Compensation details", jd_bonus:"Bonus", jd_benefits:"Benefits", jd_holiday:"Holidays & leave", jd_probation:"Probation", jd_selection:"Selection process", jd_notes:"Other notes", jd_na:"Not listed (N/A)", jd_flex:"Flex hours", jd_stock:"Stock options", jd_ot:"Incl. fixed overtime",
       lbl_remote_full:"Fully remote", lbl_remote_partial:"Partially remote", lbl_remote_no:"On-site",
       lbl_abroad:"Apply from abroad", lbl_visa:"Visa support", lbl_salary:"Salary band", salary_neg:"Negotiable", salary_doe:"DOE",
@@ -90,7 +90,7 @@
       sel_pick:"Select this role", sel_selected:"{n} selected", sel_left:"{r} of {n} applications left", sel_apply:"Apply to selected", sel_clear:"Clear", apply_title:"Apply to {n} role(s)", apply_success:"Application sent for {n} role(s). We'll be in touch shortly.",
       applied_badge:"Applied", m_applied:"✓ Applied", m_apply_limit:"Application limit reached", apply_limit_hit:"You've applied to your {n} roles — that's the limit, so no more applications can be sent.",
       sv_save:"Save", sv_saved:"Saved", sv_aria:"Save this role for later", sv_view:"Saved ({n})", sv_view_all:"Show all roles",
-      sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later.", sv_note:"Saved in this browser so you can come back to them."
+      sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later."
     },
     ja:{
       nav_jobs:"求人", nav_companies:"企業", nav_articles:"記事", nav_post:"求人を掲載", nav_signup:"登録する",
@@ -171,7 +171,7 @@
       foot_explore:"探す", foot_jobs:"求人", foot_companies:"企業", foot_articles:"記事",
       foot_more_h:"その他", foot_post:"求人を掲載", foot_resume:"履歴書作成", foot_signup:"登録する", foot_contact:"お問い合わせ",
       foot_legal:"© 2026 LongWave Dev · Built in Tokyo", foot_linkedin:"LinkedIn", foot_longwave:"LongWave",
-      m_about:"求人について", m_look:"求める人物像", m_apply:"登録して応募", m_company:"企業サイト ↗",
+      m_apply:"登録して応募", m_company:"企業サイト ↗",
       jd_bg:"募集背景", jd_scope:"業務内容・スコープ", jd_required:"求めるスキル・経験", jd_nice:"あると望ましい経験", jd_ideal:"求める人物像", jd_stack:"技術スタック", jd_team:"チーム・組織", jd_lang:"語学要件", jd_office:"勤務地", jd_workstyle:"働き方", jd_hours:"勤務時間", jd_comp:"給与・待遇の詳細", jd_bonus:"賞与", jd_benefits:"福利厚生", jd_holiday:"休日・休暇", jd_probation:"試用期間", jd_selection:"選考フロー", jd_notes:"備考", jd_na:"記載なし（N/A）", jd_flex:"フレックス", jd_stock:"ストックオプション", jd_ot:"固定残業代込み",
       lbl_remote_full:"フルリモート", lbl_remote_partial:"一部リモート", lbl_remote_no:"出社",
       lbl_abroad:"海外から応募可", lbl_visa:"ビザサポート", lbl_salary:"給与レンジ", salary_neg:"応相談", salary_doe:"経験による",
@@ -181,7 +181,7 @@
       sel_pick:"この求人を選択", sel_selected:"{n}件選択中", sel_left:"応募枠 残り{r}/{n}件", sel_apply:"選択した求人に応募", sel_clear:"クリア", apply_title:"{n}件の求人に応募", apply_success:"{n}件の求人に応募しました。すぐにご連絡します。",
       applied_badge:"応募済み", m_applied:"✓ 応募済み", m_apply_limit:"応募上限に達しました", apply_limit_hit:"応募上限の{n}件に達しました。これ以上は応募できません。",
       sv_save:"保存", sv_saved:"保存済み", sv_aria:"この求人をあとで見るために保存", sv_view:"保存した求人 ({n})", sv_view_all:"すべての求人を表示",
-      sv_heading:"保存した求人", sv_none:"まだ保存した求人はありません。求人の「保存」をタップすると、ここに表示されます。", sv_note:"このブラウザに保存され、あとで見返せます。"
+      sv_heading:"保存した求人", sv_none:"まだ保存した求人はありません。求人の「保存」をタップすると、ここに表示されます。"
     }
   };
 
@@ -193,6 +193,8 @@
   var esc = LW.esc, salaryMax = LW.salaryMax;
   function nl2br(s){ return esc(s).replace(/\n/g,"<br>"); }
 
+  /* NOTE: the lbl_jp_* and lbl_remote_* keys above are referenced dynamically by suffix
+     (t("lbl_jp_"+level) / t("lbl_remote_"+r)) — they look unused to a naive grep but aren't. */
   function jpTag(level){ return '<span class="tag '+ LW.jpTagClass(level) +'">'+ esc(t("lbl_jp_"+level)) +'</span>'; }
   function remoteLabel(r){ return t("lbl_remote_"+r); }
   /* Language accessor for any job field. The base job fields are ENGLISH; the Japanese

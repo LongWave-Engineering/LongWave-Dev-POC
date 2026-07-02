@@ -54,7 +54,7 @@ flowchart LR
 | **Forms** | Sign-up + CV builder are **client-only** today (sign-up shows a success state; the CV/rirekisho is generated and printed in-browser — no data leaves the page). |
 | **Tests** | `test/` via Node's built-in `node:test` — unit tests for `LW.*` + integrity checks on the real data. Zero dependencies. |
 | **CI/CD** | `.github/workflows/ci.yml` (test + bundle-freshness gate + artifact) and `release.yml` (tag → Release). |
-| **Delivery** | Private repo → the built HTML ships as a CI **artifact** (per push) and a **Release asset** (per tag). No hosting. |
+| **Delivery** | Built HTML ships as a CI **artifact** (per push) and a **Release asset** (per tag); the repo's root `index.html` redirects to it, served on **GitHub Pages**. |
 
 ### Current data flow 🟢
 
@@ -128,10 +128,10 @@ flowchart TB
 
 ### What's still 🟠 (productionizing)
 
-SQLite → **Postgres**; single shared token → **real auth**; add **resume file storage**,
-rate-limiting, a migrations framework; wire the **live HERP/HRMOS/Talentio APIs** (the
-agency portals currently come in via the bulk-import path). The diagrams in §2 are the
-target this is growing toward.
+SQLite → **Postgres**; single shared token → **real auth**; add **resume file storage**
+and a migrations framework; move the best-effort per-IP rate limiter to the edge/CDN; wire
+the **live HERP/HRMOS/Talentio APIs** (the agency portals currently come in via the
+bulk-import path). The diagrams in §2 are the target this is growing toward.
 
 ---
 

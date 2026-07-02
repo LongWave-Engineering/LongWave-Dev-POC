@@ -79,7 +79,7 @@
     document.querySelectorAll("[data-partner-feature]").forEach(function(box){
       if(box.dataset.pfBuilt) return;
       var names = (box.getAttribute("data-partner-feature") || "").split(",").map(function(s){ return s.trim(); }).filter(Boolean);
-      var list = names.map(function(nm){ for(var i=0;i<PARTNERS.length;i++){ if(PARTNERS[i].name===nm) return PARTNERS[i]; } return null; }).filter(Boolean);
+      var list = names.map(findPartner).filter(Boolean);   /* findPartner: shared roster lookup (modals.js, same IIFE) */
       if(!list.length) return;
       box.innerHTML = '<div class="partner-feature-grid">'+ list.map(featureCardHTML).join("") +'</div>';
       if(!box.getAttribute("role")) box.setAttribute("role", "group");

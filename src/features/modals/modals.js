@@ -1,6 +1,14 @@
 /* features/modals/modals.js — job-detail + signup modals, overlay + focus trap */
   /* ---------------- job modal ---------------- */
   var jobOverlay=$("#jobOverlay"), lastFocus=null;
+
+  /* ---- shared modal-form helpers (used by the inquiry / signup / post-a-job modals) ---- */
+  /* trimmed value of a text field, or "" when the field is missing or blank */
+  function val(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; }
+  /* blank every listed field so a returning visitor never sees a previous person's input */
+  function clearFields(ids){ ids.forEach(function(s){ if($(s)) $(s).value=""; }); }
+  /* fire-and-forget a lead to the backend — only when SERVED (opened as a file → no API, no-op) */
+  function postLead(body){ if(/^https?:$/.test(location.protocol)){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); } }
   /* one labelled detail section; renders "N/A" when `always` is set and the field is empty */
   function jdSec(labelKey,val,always){
     var has = val!=null && String(val).trim()!=="";
@@ -124,7 +132,7 @@
     $("#suSuccess").style.display="none"; $("#suForm").style.display="";
     /* clear every field so a returning visitor (or a second person on the same device)
        never sees the previous applicant's name / email / links / attached CV */
-    ["#suName","#suEmail","#suLinkedin","#suGithub"].forEach(function(s){ if($(s)) $(s).value=""; });
+    clearFields(["#suName","#suEmail","#suLinkedin","#suGithub"]);
     if($("#suResume")) $("#suResume").value="";
     if($("#suLoc")) $("#suLoc").value=""; if($("#suLocWarn")) $("#suLocWarn").style.display="none";
     if($("#suSubmit")) $("#suSubmit").disabled=false;
@@ -151,7 +159,7 @@
     var blurb=(p.blurb && p.blurb[lang]) || "";
     var b=$("#coBlurb"); b.textContent=blurb; b.style.display=blurb?"":"none";
     $("#coForm").style.display=""; $("#coSuccess").style.display="none";
-    ["#coRole","#coLink","#coName","#coEmail"].forEach(function(s){ if($(s)) $(s).value=""; });
+    clearFields(["#coRole","#coLink","#coName","#coEmail"]);
     if($("#coSource")) $("#coSource").value="";
     if($("#coLoc")) $("#coLoc").value=""; if($("#coLocWarn")) $("#coLocWarn").style.display="none";
     if($("#coSubmit")) $("#coSubmit").disabled=false;
@@ -159,14 +167,13 @@
   }
   function submitCompanyInquiry(){
     if(isAbroad("#coLoc")){ var w=$("#coLocWarn"); if(w) w.style.display=""; if($("#coSubmit")) $("#coSubmit").disabled=true; return; }
-    var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; };
     var role=val("#coRole"), source=val("#coSource"), link=val("#coLink"), loc=val("#coLoc");
     var parts=["Interested in "+(role||"roles")+" at "+currentCompany];   /* captured into the lead message for the recruiter */
     if(source) parts.push("heard via "+source);
     if(link) parts.push("link: "+link);
     if(loc && LOC_LABEL[loc]) parts.push("based: "+LOC_LABEL[loc]);
     var body={ kind:"job", name:val("#coName")||undefined, email:val("#coEmail")||undefined, message:parts.join(" · ") };
-    if(/^https?:$/.test(location.protocol)){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); }
+    postLead(body);
     var s=$("#coSuccess"); if(s){ s.textContent=t("co_success").replace("{co}",currentCompany); s.style.display="block"; }
     $("#coForm").style.display="none";
   }
@@ -193,23 +200,20 @@
     if(!ctOverlay) return;
     lastFocus=document.activeElement;
     $("#ctForm").style.display=""; $("#ctSuccess").style.display="none";
-    ["#ctName","#ctEmail","#ctPhone","#ctCompany","#ctMessage"].forEach(function(s){ if($(s)) $(s).value=""; });
+    clearFields(["#ctName","#ctEmail","#ctPhone","#ctCompany","#ctMessage"]);
     if($("#ctReason")) $("#ctReason").value = (preset==="job"||preset==="hire"||preset==="other") ? preset : "";
     ctToggleCompany();
     openOverlay(ctOverlay); $("#ctClose").focus();
   }
   function submitContact(){
-    var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; };
     var reason=val("#ctReason"), msg=val("#ctMessage"), company=val("#ctCompany");
     var label=CT_LABEL[reason]||"General enquiry";
     var body={ kind:CT_KIND[reason]||"contact", name:val("#ctName")||undefined, email:val("#ctEmail")||undefined,
       phone:val("#ctPhone")||undefined, company:company||undefined, message:"["+label+"] "+msg };
-    if(/^https?:$/.test(location.protocol)){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); }
+    postLead(body);
     $("#ctForm").style.display="none"; var s=$("#ctSuccess"); if(s) s.style.display="block";
   }
   if($("#ctForm")) $("#ctForm").addEventListener("submit", function(e){ e.preventDefault(); submitContact(); });
-  if($("#ctClose")) $("#ctClose").addEventListener("click", function(){ closeOverlay(ctOverlay); });
-  if(ctOverlay) ctOverlay.addEventListener("click", function(e){ if(e.target===ctOverlay) closeOverlay(ctOverlay); });
   document.addEventListener("click", function(e){ var c=e.target.closest("[data-contact]"); if(c){ e.preventDefault(); openContact(c.getAttribute("data-contact")||undefined); } });
 
   /* ---------------- post-a-job (company) modal ----------------
@@ -220,11 +224,10 @@
     if(!pjOverlay) return;
     lastFocus=document.activeElement;
     $("#pjForm").style.display=""; $("#pjSuccess").style.display="none";
-    ["#pjCompany","#pjName","#pjRole","#pjEmail","#pjPhone","#pjSite","#pjLooking","#pjNotes"].forEach(function(s){ if($(s)) $(s).value=""; });
+    clearFields(["#pjCompany","#pjName","#pjRole","#pjEmail","#pjPhone","#pjSite","#pjLooking","#pjNotes"]);
     openOverlay(pjOverlay); $("#pjClose").focus();
   }
   function submitPostJob(){
-    var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; };
     var looking=val("#pjLooking"), role=val("#pjRole"), site=val("#pjSite"), notes=val("#pjNotes");
     var parts=["Hiring for: "+(looking||"(not specified)")];
     if(role) parts.push("Contact role: "+role);
@@ -232,12 +235,10 @@
     if(notes) parts.push("Notes: "+notes);
     var body={ kind:"hire", name:val("#pjName")||undefined, email:val("#pjEmail")||undefined,
       phone:val("#pjPhone")||undefined, company:val("#pjCompany")||undefined, message:parts.join("\n") };
-    if(/^https?:$/.test(location.protocol)){ fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).catch(function(){}); }
+    postLead(body);
     $("#pjForm").style.display="none"; var s=$("#pjSuccess"); if(s) s.style.display="block";
   }
   if($("#pjForm")) $("#pjForm").addEventListener("submit", function(e){ e.preventDefault(); submitPostJob(); });
-  if($("#pjClose")) $("#pjClose").addEventListener("click", function(){ closeOverlay(pjOverlay); });
-  if(pjOverlay) pjOverlay.addEventListener("click", function(e){ if(e.target===pjOverlay) closeOverlay(pjOverlay); });
   document.addEventListener("click", function(e){ var p=e.target.closest("[data-postjob]"); if(p){ e.preventDefault(); openPostJob(); } });
 
   /* ---------------- article reading modal ----------------
@@ -258,8 +259,6 @@
     fillArticle(i);
     openOverlay(artOverlay); $("#artClose").focus();
   }
-  if($("#artClose")) $("#artClose").addEventListener("click", function(){ closeOverlay(artOverlay); });
-  if(artOverlay) artOverlay.addEventListener("click", function(e){ if(e.target===artOverlay) closeOverlay(artOverlay); });
   document.addEventListener("click", function(e){ var c=e.target.closest("[data-article]"); if(c){ e.preventDefault(); openArticle(+c.getAttribute("data-article")); } });
 
   /* the job detail modal's "Sign up to apply" → apply to just that role */
@@ -275,12 +274,14 @@
     if(!anyOpen) document.body.style.overflow="";
     if(lastFocus) lastFocus.focus();
   }
-  $("#jobModalClose").addEventListener("click", function(){ closeOverlay(jobOverlay); });
-  jobOverlay.addEventListener("click", function(e){ if(e.target===jobOverlay) closeOverlay(jobOverlay); });
-  $("#suClose").addEventListener("click", function(){ closeOverlay(suOverlay); });
-  suOverlay.addEventListener("click", function(e){ if(e.target===suOverlay) closeOverlay(suOverlay); });
-  if($("#coClose")) $("#coClose").addEventListener("click", function(){ closeOverlay(coOverlay); });
-  if(coOverlay) coOverlay.addEventListener("click", function(e){ if(e.target===coOverlay) closeOverlay(coOverlay); });
+  /* wire a modal's close-button + backdrop click to closeOverlay (guarded → no-op if absent) */
+  function wireOverlay(overlay, closeBtnId){
+    if(!overlay) return;
+    var btn=$(closeBtnId); if(btn) btn.addEventListener("click", function(){ closeOverlay(overlay); });
+    overlay.addEventListener("click", function(e){ if(e.target===overlay) closeOverlay(overlay); });
+  }
+  [[jobOverlay,"#jobModalClose"],[suOverlay,"#suClose"],[coOverlay,"#coClose"],
+   [ctOverlay,"#ctClose"],[pjOverlay,"#pjClose"],[artOverlay,"#artClose"]].forEach(function(p){ wireOverlay(p[0], p[1]); });
   function focusables(container){
     var list=container.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
     return Array.prototype.filter.call(list, function(n){ return n.offsetWidth>0 || n.offsetHeight>0 || n===document.activeElement; });
@@ -306,12 +307,11 @@
   });
 
   function collectSignup(){
-    var val=function(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : undefined; };
     var resume=$("#suResume");
     return {
       kind: "job",
-      name: val("#suName"), email: val("#suEmail"),
-      linkedin: val("#suLinkedin"), github: val("#suGithub"),
+      name: val("#suName")||undefined, email: val("#suEmail")||undefined,
+      linkedin: val("#suLinkedin")||undefined, github: val("#suGithub")||undefined,
       jp_level: ($("#suJp") && $("#suJp").value) ? $("#suJp").value : undefined,
       years_exp: ($("#suYears") && $("#suYears").value!=="") ? $("#suYears").value : undefined,
       message: ($("#suLoc") && LOC_LABEL[$("#suLoc").value]) ? ("Based: "+LOC_LABEL[$("#suLoc").value]) : undefined,
@@ -325,17 +325,18 @@
     if(isAbroad("#suLoc")){ var w=$("#suLocWarn"); if(w) w.style.display=""; if($("#suSubmit")) $("#suSubmit").disabled=true; return; }
     var n=pendingApplyJobs.length;
     var appliedJobs=pendingApplyJobs.slice();   /* snapshot: markAppliedJobs/clearSelection reset the live array */
-    if(/^https?:$/.test(location.protocol)){
-      if(pendingApplyJobIds.length){
+    if(pendingApplyJobIds.length){
+      /* applying to specific roles → /api/applications; read the response so we can honour
+         the backend's authoritative remaining count (served only — a file has no API) */
+      if(/^https?:$/.test(location.protocol)){
         var body=collectSignup(); body.job_ids=pendingApplyJobIds;
-        /* read the response so we can honour the backend's authoritative remaining count */
         fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) })
           .then(function(r){ return r.ok ? r.json() : null; })
           .then(function(d){ if(d && typeof syncAppliesFromServer==="function") syncAppliesFromServer(d.remaining); })
           .catch(function(){});
-      } else {
-        fetch("/api/leads", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(collectSignup()) }).catch(function(){});
       }
+    } else {
+      postLead(collectSignup());   /* plain signup → a lead */
     }
     var succ=$("#suSuccess");
     if(succ) succ.textContent = n ? t("apply_success").replace("{n}",n) : t("su_success");

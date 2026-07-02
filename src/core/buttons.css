@@ -7,8 +7,6 @@
   .btn--primary:hover{background:#074f70;transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(1,167,227,.85);}
   .btn--banana{background:var(--banana);color:#3a2c00;box-shadow:0 10px 24px -10px rgba(255,210,63,.85);}
   .btn--banana:hover{background:var(--banana-deep);transform:translateY(-2px);box-shadow:0 16px 30px -12px rgba(255,210,63,.9);}
-  .btn--dark{background:var(--ink);color:#fff;}
-  .btn--dark:hover{background:#193652;transform:translateY(-2px);}
   .btn--ghost{background:transparent;color:var(--ink);border-color:var(--line-strong);}
   .btn--ghost:hover{border-color:var(--sky);color:var(--sky-deep);transform:translateY(-2px);}
   .btn--light{background:#fff;color:var(--ink);}

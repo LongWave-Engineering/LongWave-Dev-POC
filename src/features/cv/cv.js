@@ -96,7 +96,7 @@
     var name=cvVal("#cv_name"), furi=cvVal("#cv_furi"), dob=cvVal("#cv_dob"), gender=cvVal("#cv_gender"),
         phone=cvVal("#cv_phone"), email=cvVal("#cv_email"), postal=cvVal("#cv_postal"), addrFuri=cvVal("#cv_addrFuri"),
         addr=cvVal("#cv_addr"), motiv=cvVal("#cv_motiv"), request=cvVal("#cv_request");
-    var location=cvVal("#cv_location");
+    var residence=cvVal("#cv_location");   /* not `location` — that shadows window.location */
     var jobtitle=cvVal("#cv_jobtitle"), linkedin=cvVal("#cv_linkedin"), github=cvVal("#cv_github"),
         summary=cvVal("#cv_summary"), otherTech=cvVal("#cv_otherTech");
     var age=calcAge(dob);
@@ -168,7 +168,7 @@
     /* qualifications come from the rirekisho licenses */
     var qualBody=lic.filter(function(l){return l.txt;}).map(function(l){ var when=(l.y||l.m)?'（'+esc(l.y)+(l.y?'年':'')+esc(l.m)+(l.m?'月':'')+'）':''; return '<div class="sk-qual">'+esc(l.txt)+when+'</div>'; }).join("");
 
-    var contactBits=[location,email,phone,linkedin,github].filter(Boolean).map(esc).join('　｜　');
+    var contactBits=[residence,email,phone,linkedin,github].filter(Boolean).map(esc).join('　｜　');
     var sk='<div class="sk-head">'+
         '<div class="sk-name">'+(name?esc(name):'<span class="sk-ph">氏名 / Your name</span>')+(furi?'<span class="sk-furi">（'+esc(furi)+'）</span>':'')+'</div>'+
         '<div class="sk-title">'+(jobtitle?esc(jobtitle):'<span class="sk-ph">職種・肩書き / Job title</span>')+'</div>'+

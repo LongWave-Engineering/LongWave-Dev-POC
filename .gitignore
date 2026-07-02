@@ -6,7 +6,6 @@ node_modules/
 .env
 .env.*
 !.env.example
-sources.local.json
 *.local.json
 backend/data/
 *.sqlite

@@ -61,7 +61,6 @@
   var appliedKeys=loadApplied();
   function persistApplied(){ try{ localStorage.setItem(APPLIED_KEY, JSON.stringify(appliedKeys)); }catch(e){} }
   function isApplied(job){ return appliedKeys.indexOf(jobKey(job))>-1; }
-  function appliedUsed(){ return appliedKeys.length; }
   function remainingApplies(){ return Math.max(0, MAX_APPLY - appliedKeys.length); }
   function atApplyLimit(){ return remainingApplies()<=0; }
   /* record applied jobs (objects), dedupe + persist. Never grows past the cap in practice

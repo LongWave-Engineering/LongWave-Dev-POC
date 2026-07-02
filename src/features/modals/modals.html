@@ -1,6 +1,6 @@
 <!-- ============ JOB DETAIL MODAL ============ -->
 <div class="overlay" id="jobOverlay" role="dialog" aria-modal="true" aria-labelledby="mRole">
-  <div class="modal" id="jobModal">
+  <div class="modal">
     <button class="modal-close" id="jobModalClose" aria-label="Close">×</button>
     <div class="m-head">
       <span class="avatar" id="mAvatar"></span>
@@ -19,7 +19,7 @@
 
 <!-- ============ SIGNUP MODAL ============ -->
 <div class="overlay" id="suOverlay" role="dialog" aria-modal="true" aria-labelledby="suTitle">
-  <div class="modal narrow" id="suModal">
+  <div class="modal narrow">
     <button class="modal-close" id="suClose" aria-label="Close">×</button>
     <h3 class="su-title" id="suTitle" data-i18n="su_title">Sign up to apply</h3>
     <p class="su-intro" data-i18n="su_intro">One sign-up and a bilingual recruiter takes it from there.</p>
@@ -60,7 +60,7 @@
 
 <!-- ============ COMPANY DETAIL + INQUIRY MODAL ============ -->
 <div class="overlay" id="coOverlay" role="dialog" aria-modal="true" aria-labelledby="coTitle">
-  <div class="modal narrow" id="coModal">
+  <div class="modal narrow">
     <button class="modal-close" id="coClose" aria-label="Close">×</button>
     <div class="m-head">
       <span class="avatar" id="coAvatar"></span>
@@ -68,7 +68,7 @@
     </div>
     <p class="m-body" id="coBlurb" style="margin:18px 0 0"></p>
     <form id="coForm" autocomplete="off" style="margin-top:22px">
-      <h4 class="m-sub" id="coFormTitle" style="margin-top:0" data-i18n="co_inq_h">Interested? Tell us a bit and we'll be in touch.</h4>
+      <h4 class="m-sub" style="margin-top:0" data-i18n="co_inq_h">Interested? Tell us a bit and we'll be in touch.</h4>
       <div class="field"><label for="coRole" data-i18n="co_role">Which role are you interested in?</label><input type="text" id="coRole"></div>
       <div class="field"><label for="coSource" data-i18n="co_source">Where did you come across this?</label>
         <div class="selectwrap"><select id="coSource" style="width:100%">
@@ -100,7 +100,7 @@
 
 <!-- ============ CONTACT / ENQUIRY MODAL ============ -->
 <div class="overlay" id="ctOverlay" role="dialog" aria-modal="true" aria-labelledby="ctTitle">
-  <div class="modal narrow" id="ctModal">
+  <div class="modal narrow">
     <button class="modal-close" id="ctClose" aria-label="Close">×</button>
     <h3 class="su-title" id="ctTitle" data-i18n="ct_title">Contact us</h3>
     <p class="su-intro" data-i18n="ct_intro">Looking for a job, hiring, or want to book a quick chat? Tell us how to reach you and how we can help.</p>
@@ -126,7 +126,7 @@
 
 <!-- ============ POST-A-JOB (COMPANY) MODAL ============ -->
 <div class="overlay" id="pjOverlay" role="dialog" aria-modal="true" aria-labelledby="pjTitle">
-  <div class="modal narrow" id="pjModal">
+  <div class="modal narrow">
     <button class="modal-close" id="pjClose" aria-label="Close">×</button>
     <h3 class="su-title" id="pjTitle" data-i18n="pj_title">Post a job</h3>
     <p class="su-intro" data-i18n="pj_intro">Tell us who you're hiring and a bilingual recruiter brings you matched, pre-screened candidates.</p>
@@ -147,7 +147,7 @@
 
 <!-- article reading view (opened from an Articles card) -->
 <div class="overlay" id="artOverlay" role="dialog" aria-modal="true" aria-labelledby="artTitle">
-  <div class="modal narrow" id="artModal">
+  <div class="modal narrow">
     <button class="modal-close" id="artClose" aria-label="Close">×</button>
     <article class="art-read">
       <span class="cat" id="artCat"></span>
@@ -159,6 +159,6 @@
   </div>
 </div>
 
-<!-- Optional generated job data from the HRMOS sync (ats-connectors/generate-jobs).
-     If jobs.js is absent, the site falls back to the built-in JOBS list below. -->
+<!-- The job data (window.__HRMOS_DATA__) is injected by build.sh as its own <script>
+     after this body markup, from src/core/hrmos-data.js; core/data.js is the offline fallback. -->
 
