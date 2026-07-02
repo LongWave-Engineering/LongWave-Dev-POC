@@ -1,6 +1,7 @@
 /* features/footer/footer.css — site footer */
   /* ---------- footer ---------- */
-  footer.site{background:var(--navy);color:#cdd9e4;padding:58px 0 34px;}
+  /* deep-sea: brand navy at the crest, deepening toward the bottom */
+  footer.site{background:linear-gradient(180deg,var(--navy) 0%,#12314d 100%);color:#cdd9e4;padding:58px 0 34px;}
   .foot-top{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap;margin-bottom:36px;align-items:flex-start;}
   .foot-brand .brand{color:#fff;margin-bottom:14px;}
   .foot-brand p{max-width:25em;color:#aab9c8;}
