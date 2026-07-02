@@ -1,0 +1,21 @@
+#!/bin/sh
+# LongWave pre-commit — keep the shipped single-file bundle honest.
+# Enable once per clone with:  npm run hooks   (sets git config core.hooksPath .githooks)
+set -e
+
+# 1) The committed bundle must match a fresh build of src/.
+bash build.sh >/dev/null
+if ! git diff --quiet -- longwave-dev.html; then
+  echo "✗ pre-commit: longwave-dev.html was out of date — rebuilt it. Stage the result and re-commit:"
+  echo "    git add longwave-dev.html && git commit"
+  exit 1
+fi
+
+# 2) Security/privacy invariants must hold (no client data / external calls / secrets in the bundle).
+if ! node --test test/guardrails.test.js >/dev/null 2>&1; then
+  echo "✗ pre-commit: guardrail check failed. Run it to see why:"
+  echo "    node --test test/guardrails.test.js"
+  exit 1
+fi
+
+echo "✓ pre-commit: bundle in sync + guardrails pass"
