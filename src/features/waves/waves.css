@@ -49,14 +49,21 @@
   /* ---- recurring wave divider along the top edge of tinted sections ----
      Spreads the brand motif across the whole page instead of living in one spot. */
   .section.tinted{position:relative;}
+  /* The white tinted band sits on the grey page. Shape the grey↔white BOUNDARY ITSELF as a
+     wave: a page-grey (--paper, #F6F8FA) fill with a wavy inner edge overlaid on the top and
+     bottom of the band, so the colour transition is a wave instead of a straight line. */
   .section.tinted::before, .section.tinted::after{
-    content:""; position:absolute; left:0; right:0; height:24px; pointer-events:none;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='24' viewBox='0 0 300 24' preserveAspectRatio='none'%3E%3Cpath d='M0 14 C 50 4 100 4 150 14 C 200 24 250 24 300 14' fill='none' stroke='%2301A7E3' stroke-width='2'/%3E%3C/svg%3E");
+    content:""; position:absolute; left:0; right:0; height:30px; pointer-events:none; z-index:2;
     background-repeat:repeat-x; background-size:300px 100%;
-    opacity:.18; animation:waveDivide 22s linear infinite;
   }
-  .section.tinted::before{ top:0; background-position:top center; }
-  .section.tinted::after{ bottom:0; background-position:bottom center; }
+  .section.tinted::before{   /* grey fills the top, wavy lower edge → the band starts as a wave */
+    top:0; background-position:top center;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='30' viewBox='0 0 300 30' preserveAspectRatio='none'%3E%3Cpath fill='%23F6F8FA' d='M0 0 L300 0 L300 15 C 250 30 200 0 150 15 C 100 30 50 0 0 15 Z'/%3E%3C/svg%3E");
+  }
+  .section.tinted::after{    /* mirror: grey fills the bottom, wavy upper edge */
+    bottom:0; background-position:bottom center;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='30' viewBox='0 0 300 30' preserveAspectRatio='none'%3E%3Cpath fill='%23F6F8FA' d='M0 30 L300 30 L300 15 C 250 0 200 30 150 15 C 100 0 50 30 0 15 Z'/%3E%3C/svg%3E");
+  }
 
   /* ---- wave divider atop the "Hiring with us" logo strip ----
      Replaces the old flat border-top so the strip is framed by the wave motif (matching the
