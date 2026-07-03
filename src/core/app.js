@@ -12,6 +12,7 @@
     /* an open JD modal's Save/Apply buttons hold runtime state the data-i18n sweep above
        just clobbered — repaint them in the new language */
     if(typeof repaintOpenModal==="function") repaintOpenModal();
+    sizeHeadWaves();   /* text may have changed length (EN⇄JA) → re-fit the heading waves */
   }
   function setLang(l){ if(l===lang) return; lang=l; try{ localStorage.setItem("lw_lang", l); }catch(e){} applyLang(); }
   document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
@@ -51,6 +52,7 @@
     de.style.scrollBehavior=prevHtml; body.style.scrollBehavior=prevBody;
     next.classList.add("active");                       // fades in at the top via pageFade
     next.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); });
+    sizeHeadWaves();   /* the page's heading waves can only be measured now it's visible */
     document.querySelectorAll(".nav-links a[data-go]").forEach(function(a){ var on=a.getAttribute("data-go")===route; a.classList.toggle("active", on); if(on) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   }
   function go(route){
@@ -97,6 +99,35 @@
     window.addEventListener("scroll", onScroll, {passive:true});
     onScroll();
   }
+
+  /* ---------------- heading wave sizing ----------------
+     The brand wave under a centred section heading should span the WIDEST line of that
+     heading block (its title or its sub), so it visually "matches the text" instead of
+     being a fixed-width bar. Measured live from the rendered line boxes (Range rects) so
+     it adapts to EN⇄JA line lengths and to wrapping at any viewport width. A hidden page
+     yields 0 rects → we leave the CSS clamp fallback and re-measure on route/resize/lang. */
+  function sizeHeadWaves(){
+    document.querySelectorAll(".head.center").forEach(function(h){
+      var w=0;
+      h.querySelectorAll("h1,h2,.sub").forEach(function(el){
+        if(!el.firstChild) return;
+        var r; try{ r=document.createRange(); r.selectNodeContents(el); }catch(e){ return; }
+        var rects=r.getClientRects();
+        for(var i=0;i<rects.length;i++){ if(rects[i].width>w) w=rects[i].width; }
+      });
+      if(w>2){
+        /* the heading may still be mid reveal-entrance (motion.css: .reveal starts at
+           scale(.985)); getClientRects inherits that scale, so divide it out to store the
+           SETTLED width — otherwise the wave stays ~1.5% narrow after the transform ends. */
+        var sx=1, tf=getComputedStyle(h).transform;
+        if(tf && tf.indexOf("matrix")===0){ var a=parseFloat(tf.slice(tf.indexOf("(")+1)); if(a>0.01 && a<=1.5) sx=a; }
+        h.style.setProperty("--wave-w", Math.round(w/sx)+"px");
+      }
+    });
+  }
+  window.addEventListener("resize", debounce(sizeHeadWaves,150));
+  /* web fonts change glyph metrics → re-fit once they're ready (fallback-safe if unsupported) */
+  if(document.fonts && document.fonts.ready && document.fonts.ready.then){ document.fonts.ready.then(sizeHeadWaves).catch(function(){}); }
 
   /* ---------------- reveal ---------------- */
   function initReveal(){

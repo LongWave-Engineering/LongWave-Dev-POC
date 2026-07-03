@@ -22,16 +22,15 @@
   <div class="modal narrow">
     <button class="modal-close" id="suClose" aria-label="Close">×</button>
     <h3 class="su-title" id="suTitle" data-i18n="su_title">Sign up to apply</h3>
-    <p class="su-intro" data-i18n="su_intro">One sign-up and a bilingual recruiter takes it from there.</p>
     <form id="suForm" autocomplete="off">
       <div class="field"><label for="suName" data-i18n="su_name">Name</label><input type="text" id="suName" required></div>
       <div class="field"><label for="suEmail" data-i18n="su_email">Email</label><input type="email" id="suEmail" required></div>
       <div class="field"><label for="suLoc" data-i18n="su_loc_q">Are you currently in Japan?</label>
         <div class="selectwrap"><select id="suLoc" style="width:100%" required>
           <option value="" data-i18n="su_loc_pick">Select…</option>
-          <option value="eligible" data-i18n="su_loc_eligible">Yes — I have valid work eligibility (work visa / PR / citizen)</option>
-          <option value="need_visa" data-i18n="su_loc_need">Yes — in Japan, but I'd need visa support</option>
-          <option value="abroad" data-i18n="su_loc_abroad">No — I'm currently outside Japan</option>
+          <option value="eligible" data-i18n="su_loc_eligible">Yes, I have valid work eligibility (work visa / PR / citizen)</option>
+          <option value="need_visa" data-i18n="su_loc_need">Yes, in Japan but I'd need visa support</option>
+          <option value="abroad" data-i18n="su_loc_abroad">No, I'm currently outside Japan</option>
         </select></div>
         <p class="form-note form-warn" id="suLocWarn" role="alert" style="display:none" data-i18n="su_loc_warn">These roles require you to already be in Japan, so we can't accept applications from outside Japan right now.</p>
       </div>
@@ -45,12 +44,14 @@
         </select></div>
       </div>
       <div class="field"><label for="suYears" data-i18n="su_years_q">Years of professional experience</label><input type="number" id="suYears" min="0" max="60" step="1" placeholder="5"></div>
+      <div class="field"><label for="suEng" data-i18n="su_eng_q">What type of engineer are you?</label><input type="text" id="suEng" required data-i18n-ph="su_eng_ph" placeholder="e.g. Backend, SRE, Full-stack, ML"></div>
       <div class="field"><label for="suResume" data-i18n="su_resume">Resume / CV</label>
         <input type="file" id="suResume" accept=".pdf,.doc,.docx" required>
         <p class="form-note" data-i18n="su_resume_note">Required · PDF, DOC or DOCX</p>
       </div>
       <div class="field"><label for="suLinkedin" data-i18n="su_linkedin">LinkedIn URL (optional)</label><input type="url" id="suLinkedin" placeholder="https://linkedin.com/in/…"></div>
       <div class="field"><label for="suGithub" data-i18n="su_github">GitHub URL (optional)</label><input type="url" id="suGithub" placeholder="https://github.com/…"></div>
+      <div class="field"><label for="suComments" data-i18n="su_comments_q">Anything else you'd like to add? (optional)</label><textarea id="suComments" rows="3" data-i18n-ph="su_comments_ph" placeholder="Anything you'd like us to know"></textarea></div>
       <div class="cv-prompt"><span data-i18n="su_cv_q">No Japanese CV yet?</span> <a href="#/cv" data-go="cv" data-i18n="su_cv_link">Generate your rirekisho →</a></div>
       <button class="btn btn--primary btn--xl btn--block" type="submit" id="suSubmit" data-i18n="su_submit">Sign up</button>
       <p class="form-success" id="suSuccess" role="status" style="display:none" data-i18n="su_success">You're in. We'll be in touch shortly.</p>
@@ -84,9 +85,9 @@
       <div class="field"><label for="coLoc" data-i18n="su_loc_q">Are you currently in Japan?</label>
         <div class="selectwrap"><select id="coLoc" style="width:100%" required>
           <option value="" data-i18n="su_loc_pick">Select…</option>
-          <option value="eligible" data-i18n="su_loc_eligible">Yes — I have valid work eligibility (work visa / PR / citizen)</option>
-          <option value="need_visa" data-i18n="su_loc_need">Yes — in Japan, but I'd need visa support</option>
-          <option value="abroad" data-i18n="su_loc_abroad">No — I'm currently outside Japan</option>
+          <option value="eligible" data-i18n="su_loc_eligible">Yes, I have valid work eligibility (work visa / PR / citizen)</option>
+          <option value="need_visa" data-i18n="su_loc_need">Yes, in Japan but I'd need visa support</option>
+          <option value="abroad" data-i18n="su_loc_abroad">No, I'm currently outside Japan</option>
         </select></div>
         <p class="form-note form-warn" id="coLocWarn" role="alert" style="display:none" data-i18n="su_loc_warn">These roles require you to already be in Japan, so we can't accept applications from outside Japan right now.</p>
       </div>
@@ -119,7 +120,7 @@
       <div class="field" id="ctCompanyField" style="display:none"><label for="ctCompany" data-i18n="ct_company">Company name</label><input type="text" id="ctCompany"></div>
       <div class="field"><label for="ctMessage" data-i18n="ct_message">Tell us a bit more</label><textarea id="ctMessage" rows="4" required></textarea></div>
       <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="ct_submit">Send message</button>
-      <p class="form-success" id="ctSuccess" role="status" style="display:none" data-i18n="ct_success">Thanks — we'll get back to you soon.</p>
+      <p class="form-success" id="ctSuccess" role="status" style="display:none" data-i18n="ct_success">Thanks! We'll get back to you soon.</p>
     </form>
   </div>
 </div>
@@ -137,10 +138,10 @@
       <div class="field"><label for="pjEmail" data-i18n="pj_email">Work email</label><input type="email" id="pjEmail" required></div>
       <div class="field"><label for="pjPhone" data-i18n="pj_phone">Phone (optional)</label><input type="tel" id="pjPhone"></div>
       <div class="field"><label for="pjSite" data-i18n="pj_site">Company website (optional)</label><input type="url" id="pjSite" placeholder="https://…"></div>
-      <div class="field"><label for="pjLooking" data-i18n="pj_looking">What roles are you hiring for?</label><textarea id="pjLooking" rows="3" required data-i18n-ph="pj_looking_ph" placeholder="e.g. 2 Backend Engineers (Go), 1 SRE — business Japanese a plus"></textarea></div>
+      <div class="field"><label for="pjLooking" data-i18n="pj_looking">What roles are you hiring for?</label><textarea id="pjLooking" rows="3" required data-i18n-ph="pj_looking_ph" placeholder="e.g. 2 Backend Engineers (Go), 1 SRE, business Japanese a plus"></textarea></div>
       <div class="field"><label for="pjNotes" data-i18n="pj_notes">Anything else we should know? (optional)</label><textarea id="pjNotes" rows="2"></textarea></div>
       <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="pj_submit">Send to LongWave</button>
-      <p class="form-success" id="pjSuccess" role="status" style="display:none" data-i18n="pj_success">Thanks — a bilingual recruiter will reach out shortly to learn what you need.</p>
+      <p class="form-success" id="pjSuccess" role="status" style="display:none" data-i18n="pj_success">Thanks! A bilingual recruiter will reach out shortly to learn what you need.</p>
     </form>
   </div>
 </div>

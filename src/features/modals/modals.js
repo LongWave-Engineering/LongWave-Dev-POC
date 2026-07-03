@@ -118,7 +118,7 @@
   /* Visa/residence gate: base requirement is being IN JAPAN now. Applicants currently
      abroad are filtered out — the warning shows and the submit button is disabled, and
      submit handlers refuse an "abroad" value as a backstop. */
-  var LOC_LABEL={ eligible:"In Japan — work-eligible", need_visa:"In Japan — needs visa support", abroad:"Outside Japan" };
+  var LOC_LABEL={ eligible:"In Japan (work-eligible)", need_visa:"In Japan (needs visa support)", abroad:"Outside Japan" };
   function isAbroad(selId){ var s=$(selId); return !!(s && s.value==="abroad"); }
   function bindLocWarn(selId, warnId, submitId){
     var s=$(selId), w=$(warnId), b=submitId?$(submitId):null; if(!s||!w) return;
@@ -145,7 +145,7 @@
     $("#suSuccess").style.display="none"; $("#suForm").style.display="";
     /* clear every field so a returning visitor (or a second person on the same device)
        never sees the previous applicant's name / email / links / attached CV */
-    clearFields(["#suName","#suEmail","#suLinkedin","#suGithub"]);
+    clearFields(["#suName","#suEmail","#suEng","#suComments","#suLinkedin","#suGithub"]);
     if($("#suResume")) $("#suResume").value="";
     if($("#suLoc")) $("#suLoc").value=""; if($("#suLocWarn")) $("#suLocWarn").style.display="none";
     if($("#suSubmit")) $("#suSubmit").disabled=false;
@@ -322,13 +322,21 @@
 
   function collectSignup(){
     var resume=$("#suResume");
+    /* fold the free-text answers (engineer type, residence, comments) into the lead message,
+       same as the company/contact forms — one human-readable line for the recruiter. */
+    var eng=val("#suEng"), comments=val("#suComments");
+    var loc=($("#suLoc") && LOC_LABEL[$("#suLoc").value]) ? LOC_LABEL[$("#suLoc").value] : "";
+    var parts=[];
+    if(eng) parts.push("Engineer type: "+eng);
+    if(loc) parts.push("Based: "+loc);
+    if(comments) parts.push("Comments: "+comments);
     return {
       kind: "job",
       name: val("#suName")||undefined, email: val("#suEmail")||undefined,
       linkedin: val("#suLinkedin")||undefined, github: val("#suGithub")||undefined,
       jp_level: ($("#suJp") && $("#suJp").value) ? $("#suJp").value : undefined,
       years_exp: ($("#suYears") && $("#suYears").value!=="") ? $("#suYears").value : undefined,
-      message: ($("#suLoc") && LOC_LABEL[$("#suLoc").value]) ? ("Based: "+LOC_LABEL[$("#suLoc").value]) : undefined,
+      message: parts.length ? parts.join(" · ") : undefined,
       resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined
     };
   }

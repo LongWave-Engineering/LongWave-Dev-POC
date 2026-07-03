@@ -10,9 +10,11 @@
   .badge-hot{background:var(--hot-bg);color:var(--hot-fg);font-weight:700;font-size:.86rem;padding:4px 11px;border-radius:999px;box-shadow:0 6px 14px -8px rgba(179,71,27,.5);}
 
   /* ---------- jobs page (sidebar + grid) ---------- */
-  /* a touch wider than the site default so the grid can reach its 4-column cap on large
-     monitors (with the sidebar present, a 1180 wrap would top out at ~3) */
-  #page-jobs .wrap{max-width:1380px;}
+  /* a touch wider than the site default so the full-width role list has room to breathe.
+     Extra side padding (scales with viewport) keeps the heading + filters + list from
+     sitting flush against the window edge on laptop widths, where a 1380 wrap would
+     otherwise run edge-to-edge with only the default 26px gutter. */
+  #page-jobs .wrap{max-width:1380px;padding-left:clamp(26px,3.4vw,58px);padding-right:clamp(26px,3.4vw,58px);}
   .jobs-layout{display:grid;grid-template-columns:268px 1fr;gap:34px;align-items:start;}
   .filters-side{position:sticky;top:100px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);}
   .filters-side .fgroup{margin-bottom:20px;}

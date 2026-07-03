@@ -27,7 +27,7 @@
         card.setAttribute("data-company", p.name);
         card.setAttribute("role","button");
         card.setAttribute("tabindex","0");
-        card.setAttribute("aria-label", p.name + " — " + t("comp_view_co_a11y"));
+        card.setAttribute("aria-label", p.name + ", " + t("comp_view_co_a11y"));
         card.innerHTML=
           '<div class="co-head">'+ avatarHTML({logo:(typeof PARTNER_LOGOS!=="undefined"?PARTNER_LOGOS[p.name]:null), color:p.color, mono:p.mono}) +
             '<div><div class="co-name">'+ esc(p.name) +'</div>'+
