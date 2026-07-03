@@ -10,11 +10,16 @@
   .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:#a9b8c6;padding:6px 0;font-size:1.02rem;background:transparent;border:0;font-family:inherit;cursor:pointer;}
   .foot-col a:hover,.foot-col button:hover{color:var(--sky-soft);}
   .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center;color:#a6b6c4;font-size:1rem;}
-  .foot-bottom a{color:#cdd9e4;text-decoration:none;}
-  .foot-bottom a:hover{color:var(--sky-soft);text-decoration:underline;}
+  .foot-bottom a:not(.btn){color:#cdd9e4;text-decoration:none;}
+  .foot-bottom a:not(.btn):hover{color:var(--sky-soft);text-decoration:underline;}
+  /* keep the white LinkedIn pill's label its designed dark ink, not the light footer text */
+  .foot-actions .btn--light{color:var(--ink);}
   .foot-actions{display:flex;gap:12px;flex-wrap:wrap;}
   .foot-actions .btn{padding:11px 20px;font-size:.98rem;}
   .foot-actions .btn svg{width:18px;height:18px;}
 
 
 
+
+  /* footer brand uses the flat white logo mark, not the circular badge */
+  .foot-brand .brand .logo{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 111 69' fill='none'%3E%3Cpath d='M84.891 66.327C84.891 66.327 104.137 61.9931 104.037 45.367C104.037 45.367 103.231 21.3843 77.2324 27.9355C77.2324 27.9355 69.171 8.68937 52.4442 9.99823C52.4442 9.99823 42.3668 8.79006 33.7014 17.5562C33.7014 17.5562 27.3539 16.1443 23.8254 16.5494C23.8277 16.5471 35.9187 -0.0790265 52.6455 0.0216545C52.6455 0.0216545 71.8917 -1.2872 82.8751 16.4464C82.8751 16.4464 110.384 16.8491 110.485 42.1406C110.485 42.1406 111.997 66.9288 84.891 66.3247V66.327Z' fill='white'/%3E%3Cpath d='M84.184 66.3371C84.184 66.3371 76.1226 45.7707 45.7923 54.2348C45.7923 54.2348 28.8641 59.3741 24.4295 44.8646C24.4295 44.8646 22.8163 36.1991 31.9875 31.5632C31.9875 31.5632 16.1668 27.9364 10.222 41.2378C10.222 41.2378 4.98197 53.2279 17.1759 60.3832C17.1759 60.3832 4.07584 44.1598 22.0132 36.4005C22.0132 36.4005 10.2243 44.7639 19.1918 58.1659C19.1918 58.1659 23.02 63.9093 30.7793 64.01C30.7793 64.01 38.6393 64.01 47.9089 60.4838C57.1785 56.9577 75.9212 55.5688 84.184 66.3394V66.3371Z' fill='white'/%3E%3Cpath d='M45.0876 35.5908C45.0876 35.5908 37.731 26.9253 25.8414 26.9253C25.8414 26.9253 11.1305 27.4288 6.89726 42.1419C6.89726 42.1419 0.952476 67.0307 31.9875 68.0375C31.9875 68.0375 15.462 72.5727 5.48543 59.6741C5.48543 59.6741 -2.878 51.0087 2.05997 35.1881C2.05997 35.1881 7.80339 15.8413 32.8937 20.9806C32.8937 20.9806 15.9655 18.1592 7.29998 30.3508C7.29998 30.3508 15.2607 22.4908 25.1343 22.5915C35.008 22.6922 42.3646 28.5362 45.0853 35.5908H45.0876Z' fill='white'/%3E%3C/svg%3E") center/contain no-repeat;box-shadow:none;border-radius:0;width:54px;height:33px;}
