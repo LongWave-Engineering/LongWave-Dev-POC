@@ -11,7 +11,7 @@
      out — old blends into new IN PLACE, so nothing appears to move. z-index is set inline
      per ghost (content below the sticky header, header bits above). Skipped under
      prefers-reduced-motion (JS builds no ghosts and swaps directly). */
-  .lang-ghost{position:fixed;pointer-events:none;opacity:1;overflow:hidden;transition:opacity .26s ease;}
+  .lang-ghost{position:fixed;pointer-events:none;opacity:1;overflow:hidden;transition:opacity .28s ease;}
   .lang-ghost.out{opacity:0;}
 
   /* ---------- scroll reveal ---------- */

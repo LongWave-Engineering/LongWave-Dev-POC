@@ -14,18 +14,13 @@
     if(typeof repaintOpenModal==="function") repaintOpenModal();
     sizeHeadWaves();   /* text may have changed length (EN⇄JA) → re-fit the heading waves */
   }
-  /* Language toggle: CROSS-DISSOLVE. A plain swap makes the layout jump, because JA/EN glyph
-     widths & line-counts differ. Instead we freeze the current content as fixed-position
-     "ghost" clones over each region that changes, swap the real content underneath instantly
-     (so the reflow is hidden), then dissolve the ghosts out — old blends into new in place,
-     nothing appears to move. The EN/JPN highlight updates instantly. prefers-reduced-motion
-     → plain swap, no ghosts. */
-  var langGhosts=[], langGhostTimer=null;
-  function clearLangGhosts(){
-    for(var i=0;i<langGhosts.length;i++){ var g=langGhosts[i]; if(g && g.parentNode) g.parentNode.removeChild(g); }
-    langGhosts=[];
-    if(langGhostTimer){ clearTimeout(langGhostTimer); langGhostTimer=null; }
-  }
+  /* Language toggle: CROSS-DISSOLVE. A plain swap makes the layout jump (JA/EN glyph widths &
+     line-counts differ) and an instant swap reads as a flicker. So we run a real crossfade:
+     freeze the CURRENT content as fixed-position "ghost" clones over each region that changes,
+     swap the real content underneath, then simultaneously fade the ghosts (old) OUT and the
+     real regions (new) IN. Old dissolves into new in place — visible, and nothing jumps. The
+     EN/JPN highlight updates instantly; prefers-reduced-motion swaps directly with no fade. */
+  var langGhosts=[], langReal=[], langFadeTimer=null;
   function ghostRegion(el, z){
     if(!el || !el.cloneNode) return;
     var r=el.getBoundingClientRect();
@@ -39,25 +34,34 @@
     document.body.appendChild(g);
     langGhosts.push(g);
   }
+  function endLangFade(){   /* tear down: remove ghosts, clear the fade-in styles off the real regions */
+    for(var i=0;i<langGhosts.length;i++){ var g=langGhosts[i]; if(g && g.parentNode) g.parentNode.removeChild(g); }
+    langGhosts=[];
+    for(var j=0;j<langReal.length;j++){ var el=langReal[j]; if(el){ el.style.transition=""; el.style.opacity=""; } }
+    langReal=[];
+    if(langFadeTimer){ clearTimeout(langFadeTimer); langFadeTimer=null; }
+  }
   function setLang(l){
     if(l===lang) return;
     lang=l; try{ localStorage.setItem("lw_lang", l); }catch(e){}
     document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    clearLangGhosts();   /* drop any dissolve still in flight (rapid re-toggle) */
+    endLangFade();   /* finish any dissolve still in flight (rapid re-toggle) */
     if(reduce){ applyLang(); return; }
-    /* freeze the current content. Content ghosts sit BELOW the sticky header (z<50) so they
-       scroll under it; the header ghosts sit ABOVE it (z>50) so they cover the real, just-
-       swapped nav. */
+    /* freeze old content. Content ghosts sit BELOW the sticky header (z<50) so they scroll
+       under it; the header ghosts sit ABOVE it (z>50) so they cover the real, just-swapped nav. */
     ghostRegion(document.getElementById("main"), 40);
     ghostRegion(document.querySelector("footer.site"), 40);
     ghostRegion(document.querySelector(".nav-links"), 60);
     ghostRegion(document.querySelector(".nav-right [data-signup]"), 60);
-    applyLang();   /* swap the real content underneath, instantly (hidden by the ghosts) */
-    var mine=langGhosts;
-    for(var i=0;i<mine.length;i++) void mine[i].offsetWidth;   /* commit opacity:1 before we transition it */
-    for(var j=0;j<mine.length;j++) mine[j].classList.add("out");   /* dissolve old → new */
-    langGhostTimer=setTimeout(clearLangGhosts, 320);
+    applyLang();   /* swap the real content underneath */
+    /* make the NEW content start invisible so it can fade IN while the ghosts fade OUT */
+    langReal=[document.getElementById("main"), document.querySelector("footer.site"), document.querySelector(".nav-links"), document.querySelector(".nav-right [data-signup]")].filter(Boolean);
+    for(var i=0;i<langReal.length;i++){ langReal[i].style.transition="none"; langReal[i].style.opacity="0"; }
+    void document.body.offsetWidth;   /* commit real=0 + ghosts=1 in one reflow before transitioning */
+    for(var k=0;k<langReal.length;k++){ langReal[k].style.transition="opacity .28s ease"; langReal[k].style.opacity="1"; }   /* new fades in */
+    for(var j=0;j<langGhosts.length;j++) langGhosts[j].classList.add("out");                                                 /* old fades out */
+    langFadeTimer=setTimeout(endLangFade, 340);
   }
   document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
 
