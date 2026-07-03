@@ -14,54 +14,39 @@
     if(typeof repaintOpenModal==="function") repaintOpenModal();
     sizeHeadWaves();   /* text may have changed length (EN⇄JA) → re-fit the heading waves */
   }
-  /* Language toggle: CROSS-DISSOLVE. A plain swap makes the layout jump (JA/EN glyph widths &
-     line-counts differ) and an instant swap reads as a flicker. So we run a real crossfade:
-     freeze the CURRENT content as fixed-position "ghost" clones over each region that changes,
-     swap the real content underneath, then simultaneously fade the ghosts (old) OUT and the
-     real regions (new) IN. Old dissolves into new in place — visible, and nothing jumps. The
+  /* Language toggle: FADE-THROUGH. Crossfading old+new copy double-images the text (you see
+     the old jobs/companies ghosting through the new ones — janky). Instead: fade the changing
+     regions OUT, swap the copy while FULLY hidden (so the reflow is never seen and nothing
+     appears to move), then fade back IN. The swap is triggered by the fade-out's transitionend
+     so it lands exactly at opacity 0 — no overlap, no jump. Quick out, gentle settle in. The
      EN/JPN highlight updates instantly; prefers-reduced-motion swaps directly with no fade. */
-  var langGhosts=[], langReal=[], langFadeTimer=null;
-  function ghostRegion(el, z){
-    if(!el || !el.cloneNode) return;
-    var r=el.getBoundingClientRect();
-    if(r.width<1 || r.height<1) return;   /* skip hidden regions (e.g. the mobile nav menu when closed) */
-    var g=el.cloneNode(true);
-    g.removeAttribute("id");   /* the clone is decorative — never duplicate live ids */
-    var kids=g.querySelectorAll("[id]"); for(var i=0;i<kids.length;i++) kids[i].removeAttribute("id");
-    g.setAttribute("aria-hidden","true");
-    g.classList.add("lang-ghost");
-    var s=g.style; s.left=r.left+"px"; s.top=r.top+"px"; s.width=r.width+"px"; s.height=r.height+"px"; s.margin="0"; s.zIndex=z;
-    document.body.appendChild(g);
-    langGhosts.push(g);
-  }
-  function endLangFade(){   /* tear down: remove ghosts, clear the fade-in styles off the real regions */
-    for(var i=0;i<langGhosts.length;i++){ var g=langGhosts[i]; if(g && g.parentNode) g.parentNode.removeChild(g); }
-    langGhosts=[];
-    for(var j=0;j<langReal.length;j++){ var el=langReal[j]; if(el){ el.style.transition=""; el.style.opacity=""; } }
-    langReal=[];
-    if(langFadeTimer){ clearTimeout(langFadeTimer); langFadeTimer=null; }
+  var langTimer=null, langEndHandler=null;
+  function cancelLangFade(main){
+    if(langEndHandler && main) main.removeEventListener("transitionend", langEndHandler);
+    langEndHandler=null;
+    if(langTimer){ clearTimeout(langTimer); langTimer=null; }
   }
   function setLang(l){
     if(l===lang) return;
     lang=l; try{ localStorage.setItem("lw_lang", l); }catch(e){}
     document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
+    var de=document.documentElement, main=document.getElementById("main");
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    endLangFade();   /* finish any dissolve still in flight (rapid re-toggle) */
-    if(reduce){ applyLang(); return; }
-    /* freeze old content. Content ghosts sit BELOW the sticky header (z<50) so they scroll
-       under it; the header ghosts sit ABOVE it (z>50) so they cover the real, just-swapped nav. */
-    ghostRegion(document.getElementById("main"), 40);
-    ghostRegion(document.querySelector("footer.site"), 40);
-    ghostRegion(document.querySelector(".nav-links"), 60);
-    ghostRegion(document.querySelector(".nav-right [data-signup]"), 60);
-    applyLang();   /* swap the real content underneath */
-    /* make the NEW content start invisible so it can fade IN while the ghosts fade OUT */
-    langReal=[document.getElementById("main"), document.querySelector("footer.site"), document.querySelector(".nav-links"), document.querySelector(".nav-right [data-signup]")].filter(Boolean);
-    for(var i=0;i<langReal.length;i++){ langReal[i].style.transition="none"; langReal[i].style.opacity="0"; }
-    void document.body.offsetWidth;   /* commit real=0 + ghosts=1 in one reflow before transitioning */
-    for(var k=0;k<langReal.length;k++){ langReal[k].style.transition="opacity .28s ease"; langReal[k].style.opacity="1"; }   /* new fades in */
-    for(var j=0;j<langGhosts.length;j++) langGhosts[j].classList.add("out");                                                 /* old fades out */
-    langFadeTimer=setTimeout(endLangFade, 340);
+    cancelLangFade(main);   /* drop any fade still in flight (rapid re-toggle) */
+    if(reduce || !main){ de.classList.remove("lang-out"); applyLang(); return; }
+    var done=false;
+    var swapIn=function(){
+      if(done) return; done=true;
+      cancelLangFade(main);
+      applyLang();                       /* swap all copy while fully hidden (opacity 0) */
+      de.classList.remove("lang-out");   /* ...then fade the new copy back in */
+    };
+    /* swap the instant the fade-out finishes (opacity hits 0); setTimeout is a fallback for
+       when transitionend doesn't fire — e.g. a backgrounded tab that throttles transitions */
+    langEndHandler=function(e){ if(e.target===main && e.propertyName==="opacity") swapIn(); };
+    main.addEventListener("transitionend", langEndHandler);
+    langTimer=setTimeout(swapIn, 240);
+    de.classList.add("lang-out");   /* fade the current copy out */
   }
   document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
 
