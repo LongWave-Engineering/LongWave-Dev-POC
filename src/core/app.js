@@ -14,22 +14,50 @@
     if(typeof repaintOpenModal==="function") repaintOpenModal();
     sizeHeadWaves();   /* text may have changed length (EN⇄JA) → re-fit the heading waves */
   }
-  /* Language toggle: crossfade the content so the mass text-swap reads as a smooth
-     transition, not a flicker. The toggle button updates instantly (feedback while the
-     content fade is deferred); under prefers-reduced-motion we swap with no fade. */
-  var langFadeTimer=null;
+  /* Language toggle: CROSS-DISSOLVE. A plain swap makes the layout jump, because JA/EN glyph
+     widths & line-counts differ. Instead we freeze the current content as fixed-position
+     "ghost" clones over each region that changes, swap the real content underneath instantly
+     (so the reflow is hidden), then dissolve the ghosts out — old blends into new in place,
+     nothing appears to move. The EN/JPN highlight updates instantly. prefers-reduced-motion
+     → plain swap, no ghosts. */
+  var langGhosts=[], langGhostTimer=null;
+  function clearLangGhosts(){
+    for(var i=0;i<langGhosts.length;i++){ var g=langGhosts[i]; if(g && g.parentNode) g.parentNode.removeChild(g); }
+    langGhosts=[];
+    if(langGhostTimer){ clearTimeout(langGhostTimer); langGhostTimer=null; }
+  }
+  function ghostRegion(el, z){
+    if(!el || !el.cloneNode) return;
+    var r=el.getBoundingClientRect();
+    if(r.width<1 || r.height<1) return;   /* skip hidden regions (e.g. the mobile nav menu when closed) */
+    var g=el.cloneNode(true);
+    g.removeAttribute("id");   /* the clone is decorative — never duplicate live ids */
+    var kids=g.querySelectorAll("[id]"); for(var i=0;i<kids.length;i++) kids[i].removeAttribute("id");
+    g.setAttribute("aria-hidden","true");
+    g.classList.add("lang-ghost");
+    var s=g.style; s.left=r.left+"px"; s.top=r.top+"px"; s.width=r.width+"px"; s.height=r.height+"px"; s.margin="0"; s.zIndex=z;
+    document.body.appendChild(g);
+    langGhosts.push(g);
+  }
   function setLang(l){
     if(l===lang) return;
     lang=l; try{ localStorage.setItem("lw_lang", l); }catch(e){}
     document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
-    var de=document.documentElement;
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if(langFadeTimer){ clearTimeout(langFadeTimer); langFadeTimer=null; }
-    if(reduce){ de.classList.remove("lang-switching"); applyLang(); return; }
-    de.classList.add("lang-switching");   /* fade content out (opacity → 0 via CSS) */
-    langFadeTimer=setTimeout(function(){   /* once faded, swap all copy while invisible, then fade back in */
-      applyLang(); de.classList.remove("lang-switching"); langFadeTimer=null;
-    }, 170);   /* just past the .16s opacity fade-out in motion.css, so copy swaps while hidden */
+    clearLangGhosts();   /* drop any dissolve still in flight (rapid re-toggle) */
+    if(reduce){ applyLang(); return; }
+    /* freeze the current content. Content ghosts sit BELOW the sticky header (z<50) so they
+       scroll under it; the header ghosts sit ABOVE it (z>50) so they cover the real, just-
+       swapped nav. */
+    ghostRegion(document.getElementById("main"), 40);
+    ghostRegion(document.querySelector("footer.site"), 40);
+    ghostRegion(document.querySelector(".nav-links"), 60);
+    ghostRegion(document.querySelector(".nav-right [data-signup]"), 60);
+    applyLang();   /* swap the real content underneath, instantly (hidden by the ghosts) */
+    var mine=langGhosts;
+    for(var i=0;i<mine.length;i++) void mine[i].offsetWidth;   /* commit opacity:1 before we transition it */
+    for(var j=0;j<mine.length;j++) mine[j].classList.add("out");   /* dissolve old → new */
+    langGhostTimer=setTimeout(clearLangGhosts, 320);
   }
   document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
 

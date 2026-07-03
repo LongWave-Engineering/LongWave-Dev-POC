@@ -15,6 +15,10 @@
   .nav-links a.active::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;border-radius:3px;background:var(--banana);animation:navUnderline .3s cubic-bezier(.2,.7,.3,1);}
   @keyframes navUnderline{from{transform:scaleX(0);opacity:0;}to{transform:scaleX(1);opacity:1;}}
   .nav-right{margin-left:auto;display:flex;align-items:center;gap:14px;}
+  /* "Sign up" and 登録する differ in width; nav-right is right-anchored, so without this the
+     whole cluster (incl. the EN/JPN toggle) would shift a few px on language switch. Pin a
+     min-width that fits both so nothing in the header moves when you toggle. */
+  .nav-right [data-signup]{min-width:124px;}
   .lang{display:inline-flex;border:2px solid var(--line-strong);border-radius:999px;overflow:hidden;}
   .lang button{border:0;background:transparent;padding:8px 14px;font-weight:700;font-size:.92rem;color:var(--slate);letter-spacing:.02em;cursor:pointer;transition:background .15s ease, color .15s ease;}
   .lang button:not(.active):hover{background:rgba(14,34,53,.06);color:var(--ink);}
