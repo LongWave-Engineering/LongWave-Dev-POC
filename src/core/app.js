@@ -29,7 +29,7 @@
     de.classList.add("lang-switching");   /* fade content out (opacity → 0 via CSS) */
     langFadeTimer=setTimeout(function(){   /* once faded, swap all copy while invisible, then fade back in */
       applyLang(); de.classList.remove("lang-switching"); langFadeTimer=null;
-    }, 180);   /* matches the .18s opacity transition in motion.css */
+    }, 170);   /* just past the .16s opacity fade-out in motion.css, so copy swaps while hidden */
   }
   document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
 
