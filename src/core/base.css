@@ -40,7 +40,7 @@
     --font-display:'Libre Franklin', system-ui, -apple-system, sans-serif;
     --font-body:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
 
-    --maxw:1180px;
+    --maxw:1280px;
     --radius:18px;
     --radius-sm:10px;   /* small square controls: icon buttons, close, remove-row */
     /* softer, more diffuse shadows read more modern than a single hard drop */

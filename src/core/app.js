@@ -14,7 +14,23 @@
     if(typeof repaintOpenModal==="function") repaintOpenModal();
     sizeHeadWaves();   /* text may have changed length (EN⇄JA) → re-fit the heading waves */
   }
-  function setLang(l){ if(l===lang) return; lang=l; try{ localStorage.setItem("lw_lang", l); }catch(e){} applyLang(); }
+  /* Language toggle: crossfade the content so the mass text-swap reads as a smooth
+     transition, not a flicker. The toggle button updates instantly (feedback while the
+     content fade is deferred); under prefers-reduced-motion we swap with no fade. */
+  var langFadeTimer=null;
+  function setLang(l){
+    if(l===lang) return;
+    lang=l; try{ localStorage.setItem("lw_lang", l); }catch(e){}
+    document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
+    var de=document.documentElement;
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if(langFadeTimer){ clearTimeout(langFadeTimer); langFadeTimer=null; }
+    if(reduce){ de.classList.remove("lang-switching"); applyLang(); return; }
+    de.classList.add("lang-switching");   /* fade content out (opacity → 0 via CSS) */
+    langFadeTimer=setTimeout(function(){   /* once faded, swap all copy while invisible, then fade back in */
+      applyLang(); de.classList.remove("lang-switching"); langFadeTimer=null;
+    }, 180);   /* matches the .18s opacity transition in motion.css */
+  }
   document.querySelectorAll(".lang button").forEach(function(b){ b.addEventListener("click", function(){ setLang(b.getAttribute("data-lang")); }); });
 
   /* ---------------- filters listeners ---------------- */

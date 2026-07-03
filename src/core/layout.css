@@ -17,6 +17,16 @@
   .hero h1{margin-bottom:22px;}
   .hero .lede{font-size:1.32rem;color:var(--ink-soft);max-width:38em;margin-bottom:26px;}
   .hero-cta{display:flex;gap:15px;flex-wrap:wrap;align-items:center;}
+  /* On wide screens a left-aligned single column leaves the right half of the hero empty
+     (a lopsided gap that reads as "unfinished"). Centre it so the whitespace becomes
+     intentional, symmetric breathing room — consistent with the centred section headings
+     and CTA band. Mobile stays left-aligned: a narrow column already fills the width. */
+  @media (min-width:820px){
+    .hero-inner{max-width:960px;margin-left:auto;margin-right:auto;text-align:center;}
+    .hero .lede{max-width:44em;margin-left:auto;margin-right:auto;}
+    .hero-cta{justify-content:center;}
+    .jobcount{text-align:center;}
+  }
   .jobcount{font-size:1.02rem;color:var(--slate);font-weight:600;margin-top:22px;}
   .jobcount b{color:var(--accent-deep);}
   /* top edge is a wave divider (see waves.css .partners::before), not a flat rule, to match the site's wave motif */
