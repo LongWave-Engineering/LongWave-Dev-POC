@@ -134,6 +134,10 @@ and a migrations framework; move the best-effort per-IP rate limiter to the edge
 the **live HERP/HRMOS/Talentio APIs** (the agency portals currently come in via the
 bulk-import path). The diagrams in §2 are the target this is growing toward.
 
+> **Backend deep-dive:** the backend's own service architecture — the API contract,
+> Next.js integration patterns (ISR, BFF, revalidation), CORS allowlist, and the
+> phased readiness plan — lives in **[BACKEND-ARCHITECTURE.md](./BACKEND-ARCHITECTURE.md)**.
+
 ---
 
 ## 2. Target architecture (production) 🟠
