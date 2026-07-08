@@ -5,6 +5,8 @@
   .foot-top{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap;margin-bottom:36px;align-items:flex-start;}
   .foot-brand .brand{color:#fff;margin-bottom:14px;}
   .foot-brand p{max-width:25em;color:#aab9c8;}
+  /* office address: quieter than the blurb, separated by a breath of space */
+  .foot-brand .foot-addr{margin-top:14px;font-size:.92rem;color:#8fa2b4;}
   .foot-links{display:flex;gap:56px;flex-wrap:wrap;}
   .foot-col h5{font-size:1.02rem;color:#fff;margin:0 0 13px;font-weight:700;}
   .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:#a9b8c6;padding:6px 0;font-size:1.02rem;background:transparent;border:0;font-family:inherit;cursor:pointer;}
