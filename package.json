@@ -7,7 +7,7 @@
     "build": "bash build.sh",
     "test": "node --test",
     "test:watch": "node --test --watch",
-    "check": "bash build.sh && node --test && npm --prefix backend test",
+    "check": "bash build.sh && node --test",
     "hooks": "git config core.hooksPath .githooks && echo 'pre-commit hook enabled (.githooks/pre-commit)'"
   },
   "license": "UNLICENSED"

@@ -1,8 +1,9 @@
 # LongWave Dev — Architecture
 
-This document describes **(1) the architecture as it exists today** (a static,
-single-file POC with no backend) and **(2) a proposed target architecture** for a
-production build with a real frontend + backend. Diagrams are [Mermaid](https://mermaid.js.org/)
+This document describes **(1) the architecture as it exists today** — a static,
+single-file public site (this repo) plus a zero-dependency backend + admin console
+(the private **LongWave-Dev-Admin** repo) — and **(2) a proposed target architecture**
+for a production build. Diagrams are [Mermaid](https://mermaid.js.org/)
 and render natively on GitHub.
 
 > **Status legend** — 🟢 exists today · 🟠 proposed (not built yet).
@@ -11,17 +12,18 @@ and render natively on GitHub.
 
 ## 1. Current architecture (POC) 🟢
 
-The POC is a **single, self-contained `longwave-dev.html`** — all CSS, JS, web-font
-links and the job data are inlined, so it runs by double-clicking the file. There is
-**no server and no runtime data fetching**; the HRMOS job data is baked into the
-bundle at build time.
+The POC is a **single, self-contained `longwave-dev.html`** — all CSS, JS, web fonts
+and a curated demo data set are inlined, so it runs by double-clicking the file (and
+on GitHub Pages) with **no server required**. When the site is served by the backend
+(see [§1b](#1b-backend-as-built-)), it progressively hydrates live jobs/articles
+from `/api` instead.
 
 ```mermaid
 flowchart LR
     subgraph authoring["Authoring (src/)"]
         core["src/core/<br/>tokens · layout · router · i18n · <b>logic.js</b> · data"]
         feat["src/features/*<br/>header · home · jobs · companies · cv · modals · …"]
-        data["src/core/hrmos-data.js<br/>window.__HRMOS_DATA__ (generated)"]
+        data["src/core/data.js<br/>curated demo set (offline fallback)"]
     end
     build["build.sh<br/>(concatenate by manifest)"]
     bundle["longwave-dev.html<br/>self-contained single file"]
@@ -50,9 +52,9 @@ flowchart LR
 | **Routing** | Client-side hash router (`#/jobs`, `#/companies`, …) in `core/app.js`. |
 | **i18n** | `core/i18n.js` — EN/JA dictionaries + `t()`; language toggled in the client. |
 | **Domain logic** | `core/logic.js` (`LW.*`) — pure functions: specialty classification, address→prefecture, salary parsing, filter predicate, age calc. **No DOM, no state.** |
-| **Data** | `core/hrmos-data.js` sets `window.__HRMOS_DATA__`, generated from an HRMOS sync and **embedded at build time**. Falls back to demo data in `core/data.js`. |
-| **Forms** | Sign-up + CV builder are **client-only** today (sign-up shows a success state; the CV/rirekisho is generated and printed in-browser — no data leaves the page). |
-| **Tests** | `test/` via Node's built-in `node:test` — unit tests for `LW.*` + integrity checks on the real data. Zero dependencies. |
+| **Data** | The curated demo set in `core/data.js` is **embedded at build time** (offline / Pages). Served by the backend, the site hydrates live data from `/api` (progressive enhancement in `core/app.js`). |
+| **Forms** | The CV/rirekisho builder is **client-only** (generated + printed in-browser — no data leaves the page). Sign-up / inquiry forms POST to `/api/leads` when a backend is present; the static Pages build honestly says there's no backend instead of faking success. |
+| **Tests** | `test/` via Node's built-in `node:test` — unit tests for `LW.*`, EN/JA i18n parity, and guardrail invariants on the shipped bundle. Zero dependencies. |
 | **CI/CD** | `.github/workflows/ci.yml` (test + bundle-freshness gate + artifact) and `release.yml` (tag → Release). |
 | **Delivery** | Built HTML ships as a CI **artifact** (per push) and a **Release asset** (per tag); the repo's root `index.html` redirects to it, served on **GitHub Pages**. |
 
@@ -60,37 +62,38 @@ flowchart LR
 
 ```mermaid
 flowchart LR
-    hrmos["HRMOS ATS"] -->|"manual / agent sync<br/>(offline)"| gen["hrmos-data.js<br/>(generated)"]
-    gen -->|build time| bundle["longwave-dev.html"]
-    bundle -->|open file| user["User"]
-    user -->|sign up| nowhere["(client-side only —<br/>no submission yet)"]
+    demo["src/core/data.js<br/>(curated demo set)"] -->|build time| bundle["longwave-dev.html"]
+    bundle -->|"open file / GitHub Pages"| user["User"]
+    api["backend /api<br/>(LongWave-Dev-Admin)"] -.->|"hydrates live data when<br/>the backend serves the site"| user
+    user -.->|"sign up (when /api present)"| api
 ```
 
-**Key trait:** data is _static at build time_. Refreshing listings = re-running the
-sync + rebuilding + redeploying. Good enough for a static POC; the backend below makes it live.
+**Key trait:** the shipped file is static and self-contained; live listings and lead
+capture exist when the backend serves it. Refreshing the *embedded* demo set means
+rebuild + redeploy; live data refreshes via the backend's ATS sync (§1b).
 
 ---
 
 ## 1b. Backend (as built) 🟢
 
-A **runnable, zero-dependency** backend now lives in [`backend/`](../backend/README.md):
-Node built-ins only — `node:http` (server), `node:sqlite` (`DatabaseSync`), global
-`fetch` (ATS/Manatal). It serves a JSON API and the built public site, and it **reuses
-this repo's `core/logic.js`** so the backend classifies jobs identically to the frontend
-by construction. The admin SPA is a separate app (repo: LongWave-Dev-Admin) that calls
-this API over CORS.
+A **runnable, zero-dependency** backend now lives in the **private LongWave-Dev-Admin
+repo** (`backend/`), next to the admin SPA that drives it: Node built-ins only —
+`node:http` (server), `node:sqlite` (`DatabaseSync`), global `fetch` (ATS/Manatal).
+It serves a JSON API (and, opt-in via `$LW_SITE_FILE`, this repo's built public site),
+and it **vendors a byte-identical copy of this repo's `core/logic.js`** so the backend
+classifies jobs identically to the frontend by construction.
 
 ```mermaid
 flowchart TB
     subgraph clients["Clients"]
         site["Public site<br/>(longwave-dev.html)"]
-        admin["Admin SPA<br/>(separate repo · CORS · Bearer token)"]
+        admin["Admin SPA<br/>(same repo · CORS · Bearer token)"]
     end
-    subgraph be["backend/ (node:http, zero deps)"]
+    subgraph be["LongWave-Dev-Admin · backend/ (node:http, zero deps)"]
         server["server.js<br/>static + route /api"]
         api["api.js<br/>JSON router · auth guard · CORS"]
         models["models.js<br/>data access + normalization"]
-        logic["logic.js → core/logic.js<br/>(shared LW.* via createRequire)"]
+        logic["logic.js → shared/logic.cjs<br/>(vendored copy of core/logic.js)"]
         importer["import.js<br/>CSV/JSON bulk import"]
         manatal["manatal.js<br/>CRM push + CSV export"]
         subgraph ats["ats/ (adapter registry + runSync)"]
@@ -118,7 +121,7 @@ flowchart TB
 
 | Concern | As built 🟢 |
 | --- | --- |
-| **Server** | `server.js` — `node:http`; serves `/api` and the built site at `/`. The admin SPA is a separate app (LongWave-Dev-Admin) that calls the API over CORS. |
+| **Server** | `server.js` — `node:http`; serves `/api` (+ the built public site at `/` when `$LW_SITE_FILE` points at one). The admin SPA lives at the same repo's root and calls the API over CORS. |
 | **API** | `api.js` — public reads (`jobs/featured/articles`, `POST /leads`); everything else behind `Bearer ADMIN_TOKEN`. Malformed JSON → 400, empty leads → 400, hidden jobs never leak to anon. |
 | **Data access** | `models.js` — upsert/list jobs, companies, articles, featured (gap-free ranks); normalizes spec/location through shared `LW`. SQLite via `db.js`. |
 | **ATS** | `ats/` registry + `runSync`. Greenhouse/Lever pull live public JSON; others scrape schema.org `JobPosting` via `generic.js` (thin per-provider delegators share one `_delegate.js` factory). |
@@ -284,16 +287,16 @@ These are sensible defaults, not requirements — chosen for low ops + good DX.
 ## 5. Repository layout
 
 Frontend source today lives under `src/` (see the [README](../README.md) for the full
-map). If/when the backend is built, a clean split would be:
+map). The split spans two repos:
 
 ```
-/                      ← frontend (current repo root: src/, build.sh, longwave-dev.html)
-/backend/  🟠          ← api/ (Jobs + Leads API) · worker/ (HRMOS sync) · db/ (migrations)
-/shared/   🟠          ← the LW domain logic, imported by both frontend build and backend
-/docs/                 ← this file
+LongWave-Dev-POC/     ← this repo (public): the site — src/, build.sh, longwave-dev.html, docs/
+LongWave-Dev-Admin/   ← private repo: the admin SPA (root) + backend/ (API · ATS worker · import/export)
+shared/  🟠           ← the LW domain logic as a real package, consumed by both repos
 ```
 
-> **Update:** the backend scaffold described in **[§1b](#1b-backend-as-built-)** now exists in
-> **[`backend/`](../backend/README.md)** and already imports this repo's `core/logic.js` for
-> normalization (the "shared logic" arrow above), so lifting that file into a dedicated
-> `shared/` package is the only remaining step to fully formalize the split.
+> **Update:** the backend scaffold described in **[§1b](#1b-backend-as-built-)** lives in
+> **LongWave-Dev-Admin** (`backend/`) with a vendored, byte-identical copy of this repo's
+> `core/logic.js` (`backend/src/shared/logic.cjs`) for normalization (the "shared logic"
+> arrow above). Publishing that file as a real `shared/` package is the remaining step to
+> fully formalize the split.

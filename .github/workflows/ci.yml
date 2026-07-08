@@ -26,10 +26,6 @@ jobs:
       - name: Run frontend unit + guardrail tests
         run: node --test
 
-      - name: Run backend tests
-        run: node --test
-        working-directory: backend
-
       - name: Build, then syntax-check the bundled app JS
         run: |
           bash build.sh

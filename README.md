@@ -13,29 +13,22 @@ Open **[`longwave-dev.html`](longwave-dev.html)** — double-click it and it ope
 in your browser. It's a single, self-contained file (all CSS, JS, fonts and job
 data inlined), so it needs no server and no build step to view.
 
-## Backend & admin
+## Backend & admin (separate repo)
 
-A runnable backend lives in **[`backend/`](backend/README.md)** — zero npm
-dependencies (Node 22+ built-ins: `node:http` + `node:sqlite`). It provides a Jobs/
-Articles/Leads API, live ATS scraping (Greenhouse/Lever public APIs) on a weekly
-schedule, and reuses this repo's `core/logic.js` to classify jobs.
-
-```bash
-cd backend && node src/seed.js && node src/server.js   # API → http://localhost:8787
-```
-
-The **admin console** is its own app in a separate repo —
-[**LongWave-Dev-Admin**](https://github.com/LongWave-Engineering/LongWave-Dev-Admin)
-(home 3×3 curation, jobs/articles CRUD, tags, PDF JD import, ATS sources, logo
-manager, and a filterable inbox → Manatal export). It's a static SPA that talks to
-this API over CORS.
+This repo is **just the public site** — the main jobs-board UI. The backend
+(Jobs/Articles/Leads/Partners API, ATS sync worker, Manatal export, PDF JD import)
+and the admin console both live in the private companion repo
+[**LongWave-Dev-Admin**](https://github.com/LongWave-Engineering/LongWave-Dev-Admin).
+The site works entirely standalone from its embedded demo data; when it's served by
+that backend it hydrates live data from `/api` (see `src/core/app.js`).
 
 ## Architecture
 
 See **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)** for how the system fits together
-(static frontend + the new backend) with diagrams (ATS sync, the jobs API, sign-up/leads),
-tech choices, and a migration path. The pure domain logic in `core/logic.js` is shared by
-the frontend bundle, the backend, and the tests.
+(this static frontend + the backend in the admin repo) with diagrams (ATS sync, the jobs
+API, sign-up/leads), tech choices, and a migration path. The pure domain logic in
+`core/logic.js` is shared by the frontend bundle and the tests, and the backend keeps a
+vendored, byte-identical copy so both sides classify jobs the same way.
 
 ## Project layout
 
@@ -79,7 +72,8 @@ src/
 
 test/                          ← Node built-in test runner (node:test) — zero dependencies
 ├── logic.test.js                 unit tests for every pure function in core/logic.js
-└── data.test.js                  integrity checks on the real HRMOS data (enums, ids, classification)
+├── i18n.test.js                  EN/JA dictionary parity + helpers
+└── guardrails.test.js            shipped-bundle invariants (no client data / external loads / secrets)
 .github/workflows/              ci.yml (test + package) · release.yml (tag → GitHub Release)
 package.json                   ← npm test / npm run build (zero runtime deps)
 ```
@@ -112,8 +106,9 @@ node --test
 ```
 
 No dependencies and no install step — tests use Node's built-in `node:test` +
-`node:assert` (Node 20+). They cover the pure logic in `core/logic.js` and validate
-the real HRMOS data. Shift-left: run `npm test` before you commit.
+`node:assert` (Node 20+). They cover the pure logic in `core/logic.js`, EN/JA i18n
+parity, and the guardrail invariants on the shipped bundle. Shift-left: run
+`npm test` before you commit.
 
 ## CI/CD pipeline
 
@@ -136,8 +131,9 @@ git tag v1.1.0 && git push origin v1.1.0
 ```
 
 [`.github/dependabot.yml`](.github/dependabot.yml) keeps the pipeline's actions
-patched. The repo stays **private**: no public URL — the site is delivered as the
-build artifact (per push) and the Release asset (per tag).
+patched. The site is live on **GitHub Pages**
+(https://longwave-engineering.github.io/LongWave-Dev-POC/) and is also delivered as
+the build artifact (per push) and the Release asset (per tag).
 
 ## Editing notes
 
@@ -151,8 +147,9 @@ build artifact (per push) and the Release asset (per tag).
   (see end of `src/core/responsive.css`).
 - **Links** (post-a-job page, LinkedIn, company site) live at the top of
   `src/core/intro.js`.
-- **Job data** in `src/core/hrmos-data.js` is generated from the HRMOS sync.
-  If it's absent, the app falls back to the demo data in `src/core/data.js`.
+- **Job data**: the bundle ships the curated demo set in `src/core/data.js` (so the
+  file works offline and on Pages). When the site is served by the backend (repo:
+  LongWave-Dev-Admin), it hydrates live jobs/articles from `/api` instead.
 - **Jobs page UX:** results are hidden until the user picks at least one filter
   (Carsensor-style), with a "browse all roles" escape hatch. See `renderJobs()`
   in `src/features/jobs/jobs.js`.

@@ -15,14 +15,14 @@ const bundle = fs.readFileSync(path.join(ROOT, "longwave-dev.html"), "utf8");
 /* --- Privacy: the confidential HRMOS client roster must NEVER be in the public bundle --- */
 test("public bundle carries no confidential HRMOS roster data", () => {
   assert.doesNotMatch(bundle, /window\.__HRMOS_DATA__\s*=/,
-    "the HRMOS data payload is being inlined into the public bundle — it must stay backend-only (backend/data/)");
+    "the HRMOS data payload is being inlined into the public bundle — it must stay in the private LongWave-Dev-Admin repo (backend/data/)");
   assert.equal((bundle.match(/source_ats_id/g) || []).length, 0,
     "internal HRMOS record IDs (source_ats_id) leaked into the public bundle");
 });
 
-test("the private roster file is not present under src/ (it lives backend-only)", () => {
+test("the private roster file is not present under src/ (it lives in LongWave-Dev-Admin)", () => {
   assert.equal(fs.existsSync(path.join(ROOT, "src/core/hrmos-data.js")), false,
-    "src/core/hrmos-data.js is back — the roster must stay in backend/data/ (gitignored) and load via /api");
+    "src/core/hrmos-data.js is back — the roster must stay in the private LongWave-Dev-Admin repo (backend/data/, gitignored there) and reach the site via /api");
 });
 
 /* --- Privacy: the single-file site must make ZERO external requests (self-contained) --- */
@@ -46,10 +46,9 @@ test("public bundle contains no secrets or default admin token", () => {
 });
 
 /* --- Ignore rules keep real client data + secrets out of the repo --- */
-test(".gitignore keeps secrets, DBs and the private roster out of version control", () => {
-  const all = fs.readFileSync(path.join(ROOT, ".gitignore"), "utf8") + "\n" +
-    fs.readFileSync(path.join(ROOT, "backend/.gitignore"), "utf8");
-  for (const pat of [".env", "backend/data/", "sources.local.json"]) {
+test(".gitignore keeps secrets and databases out of version control", () => {
+  const all = fs.readFileSync(path.join(ROOT, ".gitignore"), "utf8");
+  for (const pat of [".env", "*.local.json"]) {
     assert.ok(all.includes(pat), `.gitignore must keep "${pat}" out of the repo`);
   }
   assert.match(all, /\*\.db|\*\.sqlite/, ".gitignore must ignore database files");
@@ -59,7 +58,7 @@ test("no confidential or secret files are tracked by git", () => {
   let tracked;
   try { tracked = cp.execSync("git ls-files", { cwd: ROOT }).toString().split("\n"); }
   catch { return; } /* not a git checkout (e.g. a release tarball) — nothing to assert */
-  for (const f of ["backend/data/hrmos-data.js", "backend/sources.local.json", ".env", "backend/.env"]) {
+  for (const f of [".env", "src/core/hrmos-data.js"]) {
     assert.ok(!tracked.includes(f), `${f} must never be tracked by git`);
   }
 });

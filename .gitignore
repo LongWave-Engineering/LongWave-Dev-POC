@@ -2,11 +2,11 @@
 *.zip
 node_modules/
 
-# Secrets & real client data — MUST stay out of this now-public repo.
+# Secrets & data — MUST stay out of this PUBLIC repo. (The backend and the real
+# client roster live in the private LongWave-Dev-Admin repo.)
 .env
 .env.*
 !.env.example
 *.local.json
-backend/data/
 *.sqlite
 *.db
