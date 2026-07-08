@@ -220,6 +220,24 @@
       selected={};   /* selection is keyed by the old _i indices — reset it for the new dataset */
       applyLang();   /* re-render everything (cards, selects, counts) from live data */
     });
+    /* Partner logos hydrate INDEPENDENTLY of jobs/companies: the admin can edit the home
+       "Hiring with us" marquee live. An empty/failed fetch keeps the embedded roster
+       (so the static GitHub Pages build is unaffected). */
+    grab("/api/partners").then(function(list){
+      if(!Array.isArray(list) || !list.length) return;
+      try{
+        var logos={};
+        PARTNERS = list.map(function(p){
+          if(p && p.logo) logos[p.name]=p.logo;
+          return { name:(p&&p.name)||"", mono:(p&&p.mono)||String((p&&p.name)||"?").slice(0,2), color:(p&&p.color)||"#5E7185" };
+        }).filter(function(p){ return p.name; });
+        PARTNER_LOGOS = logos;
+        /* clear the one-time build guards so the marquee/feature walls rebuild from live data */
+        document.querySelectorAll("[data-partner-marquee]").forEach(function(b){ delete b.dataset.pmBuilt; });
+        document.querySelectorAll("[data-partner-feature]").forEach(function(b){ delete b.dataset.pfBuilt; });
+        renderPartners();
+      }catch(e){ if(window.console&&console.error) console.error("[partners hydrate]", e); }
+    });
   }
 
 

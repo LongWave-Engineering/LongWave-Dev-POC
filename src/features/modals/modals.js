@@ -185,7 +185,8 @@
     if(source) parts.push("heard via "+source);
     if(link) parts.push("link: "+link);
     if(loc && LOC_LABEL[loc]) parts.push("based: "+LOC_LABEL[loc]);
-    var body={ kind:"job", name:val("#coName")||undefined, email:val("#coEmail")||undefined, message:parts.join(" · ") };
+    var body={ kind:"job", name:val("#coName")||undefined, email:val("#coEmail")||undefined, message:parts.join(" · "),
+      source_channel:"company", heard_via: source||undefined };
     postLead(body);
     leadDone($("#coSuccess"), t("co_success").replace("{co}",currentCompany));
     $("#coForm").style.display="none";
@@ -222,7 +223,7 @@
     var reason=val("#ctReason"), msg=val("#ctMessage"), company=val("#ctCompany");
     var label=CT_LABEL[reason]||"General enquiry";
     var body={ kind:CT_KIND[reason]||"contact", name:val("#ctName")||undefined, email:val("#ctEmail")||undefined,
-      phone:val("#ctPhone")||undefined, company:company||undefined, message:"["+label+"] "+msg };
+      phone:val("#ctPhone")||undefined, company:company||undefined, message:"["+label+"] "+msg, source_channel:"contact" };
     postLead(body);
     $("#ctForm").style.display="none"; leadDone($("#ctSuccess"));
   }
@@ -247,7 +248,7 @@
     if(site) parts.push("Website: "+site);
     if(notes) parts.push("Notes: "+notes);
     var body={ kind:"hire", name:val("#pjName")||undefined, email:val("#pjEmail")||undefined,
-      phone:val("#pjPhone")||undefined, company:val("#pjCompany")||undefined, message:parts.join("\n") };
+      phone:val("#pjPhone")||undefined, company:val("#pjCompany")||undefined, message:parts.join("\n"), source_channel:"post_job" };
     postLead(body);
     $("#pjForm").style.display="none"; leadDone($("#pjSuccess"));
   }
@@ -337,7 +338,8 @@
       jp_level: ($("#suJp") && $("#suJp").value) ? $("#suJp").value : undefined,
       years_exp: ($("#suYears") && $("#suYears").value!=="") ? $("#suYears").value : undefined,
       message: parts.length ? parts.join(" · ") : undefined,
-      resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined
+      resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined,
+      source_channel: "signup"
     };
   }
   /* Submit: when the site is SERVED, POST to /api/applications (applying to one or
