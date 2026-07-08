@@ -91,10 +91,10 @@ The shape that matters architecturally:
 - **Anon redaction is a guarantee, not a habit:** hidden jobs 404 for anonymous callers,
   internal `tags` are stripped, ATS `token` is never serialized (only `hasToken`).
   Tests enforce all three; a Next.js public site can render API responses **verbatim**.
-- **Pagination 🟠 (additive):** `GET /api/jobs` returns a bare array today. When listings
-  outgrow one response, add opt-in `?page=&per_page=` returning
-  `{ items, total, page, per_page }` — only when the params are present, so existing
-  clients keep working.
+- **Pagination 🟢 (additive, opt-in):** `GET /api/jobs` returns a bare array by default
+  (existing clients keep working). Passing `?page=` and/or `?per_page=` switches to the
+  `{ items, total, page, per_page }` envelope — `total` spans the whole filtered set,
+  `per_page` caps at 100, bad values fall back to defaults instead of erroring.
 - **Typed contract 🟠:** author `docs/openapi.yaml` once the pagination shape lands; the
   Next.js repo generates TypeScript types from it (`openapi-typescript`) at build time.
   This is how the frontend gets end-to-end types **without** a monorepo or a shared
@@ -172,7 +172,7 @@ In dependency order — each unblocks the ones after it:
 | --- | --- | --- | --- |
 | 1 | **CORS origin allowlist** | 🟢 **done** | `ALLOWED_ORIGINS` env (comma-separated). Unset → `*` (dev). Set → matching `Origin` echoed back + `Vary: Origin`; non-matching origins get **no** CORS grant. |
 | 2 | **Shared logic → own package** | 🟢 **done** | `shared/logic.js` (`@longwave/logic`) at the repo root — outside the frontend tree, consumed by the bundle, the backend, and the tests via path imports. The backend no longer reaches into `src/`. |
-| 3 | **Pagination on `/api/jobs`** | 🟠 | Additive opt-in (§2). Do before the Next.js site launches so it never binds to the unbounded array. |
+| 3 | **Pagination on `/api/jobs`** | 🟢 **done** | Additive opt-in envelope (§2) — landed before any Next.js code exists, so no frontend ever binds to the unbounded array. |
 | 4 | **OpenAPI + generated TS types** | 🟠 | `docs/openapi.yaml` after #3; Next.js repo generates types at build. |
 | 5 | **Revalidation webhook** | 🟠 | Backend POSTs to `$REVALIDATE_URL` (with a shared secret) after admin writes / sync runs; Next.js route handler calls `revalidateTag`. Fire-and-forget, additive. |
 | 6 | **Postgres + migrations framework** | 🟠 | `db.js` is the only module that touches SQLite; swap driver behind the same `all/get/run/transaction` helpers. Replace `ensureColumn` with numbered migrations at the same time. |
