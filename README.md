@@ -15,15 +15,20 @@ data inlined), so it needs no server and no build step to view.
 
 ## Backend & admin
 
-A runnable backend + admin lives in **[`backend/`](backend/README.md)** — zero npm
+A runnable backend lives in **[`backend/`](backend/README.md)** — zero npm
 dependencies (Node 22+ built-ins: `node:http` + `node:sqlite`). It provides a Jobs/
-Articles/Leads API, an admin UI (drag-to-reorder the home 3×3, jobs/articles CRUD,
-ATS sources, resumes → Manatal export), live ATS scraping (Greenhouse/Lever public
-APIs) on a weekly schedule, and reuses this repo's `core/logic.js` to classify jobs.
+Articles/Leads API, live ATS scraping (Greenhouse/Lever public APIs) on a weekly
+schedule, and reuses this repo's `core/logic.js` to classify jobs.
 
 ```bash
-cd backend && node src/seed.js && node src/server.js   # → http://localhost:8788/admin
+cd backend && node src/seed.js && node src/server.js   # API → http://localhost:8787
 ```
+
+The **admin console** is its own app in a separate repo —
+[**LongWave-Dev-Admin**](https://github.com/LongWave-Engineering/LongWave-Dev-Admin)
+(home 3×3 curation, jobs/articles CRUD, tags, PDF JD import, ATS sources, logo
+manager, and a filterable inbox → Manatal export). It's a static SPA that talks to
+this API over CORS.
 
 ## Architecture
 

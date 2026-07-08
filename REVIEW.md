@@ -9,8 +9,9 @@ is in sync with source, CI + Pages deploy green.
 
 - **What it is:** a bilingual (EN/JA) jobs board. The public site is **one self-contained
   HTML file** (`longwave-dev.html`) assembled by `build.sh` from per-feature sources under
-  `src/`. A separate Node backend (`backend/`) serves a JSON API, an admin UI, and an
-  ATS-scraping worker.
+  `src/`. A separate Node backend (`backend/`) serves a JSON API and runs an
+  ATS-scraping worker. The admin console is its own repo (LongWave-Dev-Admin), a
+  static SPA that calls the API over CORS.
 - **The golden rule:** **zero runtime dependencies.** Frontend is one shared-scope IIFE
   (no bundler/framework); backend is Node 22 built-ins only (`node:http`, `node:sqlite`).
   Tests use `node --test`. "Why no React/Express/webpack?" — that's the deliberate constraint.
@@ -27,9 +28,9 @@ is in sync with source, CI + Pages deploy green.
 2. **`backend/src/api.js` · `models.js` · `db.js` · `server.js`** — the security surface:
    constant-time auth + fail-closed default token, XFF-untrusted rate limiting, body caps,
    parameterized SQL, the request-crash guard, security headers.
-3. **`src/features/modals/modals.js` · `backend/src/ats/generic.js` · `import.js`** — the
-   lead/form flow (biggest frontend file; overlay infra + 5 modals) and ATS ingest
-   (`generic.js` has the SSRF guard on admin-supplied URLs).
+3. **`src/features/modals/` (lead-forms.js et al.) · `backend/src/ats/generic.js` · `import.js`** —
+   the lead/form flow (one file per modal + a single OVERLAYS registry in overlay-wiring.js)
+   and ATS ingest (`generic.js` has the SSRF guard on admin-supplied URLs).
 4. **`src/core/app.js` · `i18n.js` · `init.js`** — hash router, language apply/persist, the
    `/api/health` probe + progressive hydration (embedded snapshot → live `/api`).
 5. **`src/features/{jobs,companies,articles,cv,home}/`** — DOM rendering. Untrusted strings go
@@ -90,8 +91,8 @@ Run everything locally: `npm run check`. Enable the pre-commit hook: `npm run ho
   Fix scoped; needs a product call on how rich a served JD should be.
 - **Backend imports frontend logic** via `require('../../src/core/logic.js')` — should become a
   shared peer before the backend is deployed independently.
-- **`modals.js`** mixes overlay infra + 5 forms; the DOM/interaction layer has no automated
-  tests (zero-dep rule makes jsdom awkward — logic is pushed into `logic.js` instead).
+- **The modal/DOM interaction layer** (`src/features/modals/`, now split per concern) has no
+  automated tests (zero-dep rule makes jsdom awkward — logic is pushed into `logic.js` instead).
 - **Owner decisions (not code):** git history still contains the removed client roster (scrub
   is destructive, pending sign-off); the partner roster names real clients (consent); the
   privacy policy has APPI disclosure gaps (Manatal US transfer, retention, named controller).
@@ -106,10 +107,10 @@ cd backend && node --test  # backend (auth / SSRF / rate-limit / import)
 bash build.sh              # regenerate longwave-dev.html from src/
 open longwave-dev.html     # the site runs offline, straight from a file
 
-# backend (serves site + /api + /admin), Node 22+:
+# backend (serves /api + the built site; admin is a separate app), Node 22+:
 cd backend && ADMIN_TOKEN=... node src/server.js
 ```
 
-Start reading at `src/core/logic.js` → `backend/src/api.js` → `src/features/modals/modals.js`:
-the correctness spine, the security surface, and the largest/most-coupled file — the three
+Start reading at `src/core/logic.js` → `backend/src/api.js` → `src/features/modals/`:
+the correctness spine, the security surface, and the DOM/interaction layer — the three
 places a real bug would hide.

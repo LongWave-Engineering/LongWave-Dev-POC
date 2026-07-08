@@ -67,7 +67,13 @@ JS=(
   src/features/articles/articles.js
   src/features/privacy/privacy.js
   src/features/testimonials/testimonials.js
-  src/features/modals/modals.js
+  # modals: shared plumbing first, one file per modal, registry/wiring LAST
+  # (overlay-wiring.js snapshots the overlay vars the files before it assign)
+  src/features/modals/overlay-core.js
+  src/features/modals/modal-job.js
+  src/features/modals/modal-article.js
+  src/features/modals/lead-forms.js
+  src/features/modals/overlay-wiring.js
   src/core/app.js
   src/features/cv/cv.js
   src/core/init.js

@@ -73,7 +73,7 @@
     (jobs||[]).forEach(function(j){ var k=jobKey(j); if(appliedKeys.indexOf(k)===-1) appliedKeys.push(k); });
     persistApplied();
   }
-  /* called from the signup submit (modals.js) with the roles just applied to (objects) →
+  /* called from the signup submit (modals/lead-forms.js) with the roles just applied to (objects) →
      mark them against the cap, then reset the picker (clearSelection re-renders the grid so
      applied badges + remaining caps refresh everywhere). Works with or without a DB id. */
   function markAppliedJobs(jobs){
@@ -255,7 +255,8 @@
   }
 
   /* selection-bar actions: Clear, and batch "Apply to selected" (opens signup in
-     apply mode with the selected job ids). openSignup lives in modals.js (same IIFE). */
+     apply mode with the selected job ids). openSignup lives in modals/lead-forms.js
+     (same IIFE). */
   (function(){
     var clr=$("#selClear"); if(clr) clr.addEventListener("click", clearSelection);
     var ap=$("#selApply"); if(ap) ap.addEventListener("click", function(){ openSignup("job", selectedJobs()); });

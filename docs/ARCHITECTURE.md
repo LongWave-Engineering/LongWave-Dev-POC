@@ -75,15 +75,16 @@ sync + rebuilding + redeploying. Good enough for a static POC; the backend below
 
 A **runnable, zero-dependency** backend now lives in [`backend/`](../backend/README.md):
 Node built-ins only — `node:http` (server), `node:sqlite` (`DatabaseSync`), global
-`fetch` (ATS/Manatal). It serves a JSON API, an admin SPA, and the built public site,
-and it **reuses this repo's `core/logic.js`** so the backend classifies jobs identically
-to the frontend by construction.
+`fetch` (ATS/Manatal). It serves a JSON API and the built public site, and it **reuses
+this repo's `core/logic.js`** so the backend classifies jobs identically to the frontend
+by construction. The admin SPA is a separate app (repo: LongWave-Dev-Admin) that calls
+this API over CORS.
 
 ```mermaid
 flowchart TB
     subgraph clients["Clients"]
         site["Public site<br/>(longwave-dev.html)"]
-        admin["Admin SPA<br/>(/admin, Bearer token)"]
+        admin["Admin SPA<br/>(separate repo · CORS · Bearer token)"]
     end
     subgraph be["backend/ (node:http, zero deps)"]
         server["server.js<br/>static + route /api"]
@@ -117,7 +118,7 @@ flowchart TB
 
 | Concern | As built 🟢 |
 | --- | --- |
-| **Server** | `server.js` — `node:http`; serves `/api`, the `/admin` SPA (path-traversal-contained), and the built site at `/`. |
+| **Server** | `server.js` — `node:http`; serves `/api` and the built site at `/`. The admin SPA is a separate app (LongWave-Dev-Admin) that calls the API over CORS. |
 | **API** | `api.js` — public reads (`jobs/featured/articles`, `POST /leads`); everything else behind `Bearer ADMIN_TOKEN`. Malformed JSON → 400, empty leads → 400, hidden jobs never leak to anon. |
 | **Data access** | `models.js` — upsert/list jobs, companies, articles, featured (gap-free ranks); normalizes spec/location through shared `LW`. SQLite via `db.js`. |
 | **ATS** | `ats/` registry + `runSync`. Greenhouse/Lever pull live public JSON; others scrape schema.org `JobPosting` via `generic.js` (thin per-provider delegators share one `_delegate.js` factory). |
