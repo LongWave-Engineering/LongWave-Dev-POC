@@ -83,7 +83,7 @@
   }
 
   function cvVal(id){ var n=$(id); return n?n.value.trim():""; }
-  var calcAge = LW.calcAge;   /* pure, unit-tested in /test (see core/logic.js) */
+  var calcAge = LW.calcAge;   /* pure, unit-tested in /test (see shared/logic.js) */
   function todayStr(){ var d=new Date(); return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日"; }
   /* split a textarea into trimmed non-empty lines (used for bullet lists) */
   function lines(s){ return String(s||"").split("\n").map(function(l){return l.trim();}).filter(Boolean); }

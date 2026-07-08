@@ -18,7 +18,7 @@ data inlined), so it needs no server and no build step to view.
 A runnable backend lives in **[`backend/`](backend/README.md)** — zero npm
 dependencies (Node 22+ built-ins: `node:http` + `node:sqlite`). It provides a Jobs/
 Articles/Leads API, live ATS scraping (Greenhouse/Lever public APIs) on a weekly
-schedule, and reuses this repo's `core/logic.js` to classify jobs.
+schedule, and reuses this repo's `shared/logic.js` to classify jobs.
 
 ```bash
 cd backend && node src/seed.js && node src/server.js   # API → http://localhost:8787
@@ -34,7 +34,7 @@ this API over CORS.
 
 See **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)** for how the system fits together
 (static frontend + the new backend) with diagrams (ATS sync, the jobs API, sign-up/leads),
-tech choices, and a migration path. The pure domain logic in `core/logic.js` is shared by
+tech choices, and a migration path. The pure domain logic in `shared/logic.js` is shared by
 the frontend bundle, the backend, and the tests.
 
 ## Project layout
@@ -78,17 +78,17 @@ src/
     └── modals/                   modals.html/.css/.js   (job-detail + signup, focus trap)
 
 test/                          ← Node built-in test runner (node:test) — zero dependencies
-├── logic.test.js                 unit tests for every pure function in core/logic.js
+├── logic.test.js                 unit tests for every pure function in shared/logic.js
 └── data.test.js                  integrity checks on the real HRMOS data (enums, ids, classification)
 .github/workflows/              ci.yml (test + package) · release.yml (tag → GitHub Release)
 package.json                   ← npm test / npm run build (zero runtime deps)
 ```
 
-### Pure logic lives in `core/logic.js`
+### Pure logic lives in `shared/logic.js`
 
 Anything pure (no DOM, no app state) — specialty classification, address → prefecture,
 salary parsing, the filter predicate, age calc — lives in
-[`src/core/logic.js`](src/core/logic.js) as the `LW` namespace. It works **both** inside
+[`shared/logic.js`](shared/logic.js) as the `LW` namespace. It works **both** inside
 the browser bundle *and* when `require()`'d by Node, so the unit tests exercise the exact
 code that ships. Add testable logic here, not in the render files.
 
@@ -112,7 +112,7 @@ node --test
 ```
 
 No dependencies and no install step — tests use Node's built-in `node:test` +
-`node:assert` (Node 20+). They cover the pure logic in `core/logic.js` and validate
+`node:assert` (Node 20+). They cover the pure logic in `shared/logic.js` and validate
 the real HRMOS data. Shift-left: run `npm test` before you commit.
 
 ## CI/CD pipeline

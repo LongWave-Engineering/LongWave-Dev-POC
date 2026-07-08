@@ -3,7 +3,7 @@
    (bad enums, unknown company ids, unclassifiable roles) before they reach the UI. */
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const LW = require("../src/core/logic.js");
+const LW = require("../shared/logic.js");
 
 // The private HRMOS roster now lives backend-only (backend/data/hrmos-data.js — gitignored,
 // not published). The file does `window.__HRMOS_DATA__ = {...}`; give it a window to write

@@ -66,7 +66,7 @@
   });
 
   /* ---------------- routing ---------------- */
-  /* route set + hash→route resolution now live in core/logic.js (LW.*) so they're
+  /* route set + hash→route resolution now live in shared/logic.js (LW.*) so they're
      unit-tested and defined once. */
   var ROUTES=LW.ROUTES;
   function routeFromHash(){ return LW.routeFor(location.hash); }

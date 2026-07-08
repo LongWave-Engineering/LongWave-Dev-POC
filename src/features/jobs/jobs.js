@@ -1,4 +1,4 @@
-/* features/jobs/jobs.js — job cards, render, filter selects (pure filtering lives in core/logic.js) */
+/* features/jobs/jobs.js — job cards, render, filter selects (pure filtering lives in shared/logic.js) */
   /* ---------------- jobs (full grid) ---------------- */
   var jobGrid=$("#jobGrid"), resultCount=$("#resultCount");
   var showAllJobs=false;

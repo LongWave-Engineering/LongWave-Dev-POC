@@ -49,7 +49,7 @@ flowchart LR
 | **UI** | Vanilla HTML/CSS/JS, no framework. One IIFE assembled from `src/` parts by `build.sh`. |
 | **Routing** | Client-side hash router (`#/jobs`, `#/companies`, …) in `core/app.js`. |
 | **i18n** | `core/i18n.js` — EN/JA dictionaries + `t()`; language toggled in the client. |
-| **Domain logic** | `core/logic.js` (`LW.*`) — pure functions: specialty classification, address→prefecture, salary parsing, filter predicate, age calc. **No DOM, no state.** |
+| **Domain logic** | `shared/logic.js` (`LW.*`) — pure functions: specialty classification, address→prefecture, salary parsing, filter predicate, age calc. **No DOM, no state.** |
 | **Data** | `core/hrmos-data.js` sets `window.__HRMOS_DATA__`, generated from an HRMOS sync and **embedded at build time**. Falls back to demo data in `core/data.js`. |
 | **Forms** | Sign-up + CV builder are **client-only** today (sign-up shows a success state; the CV/rirekisho is generated and printed in-browser — no data leaves the page). |
 | **Tests** | `test/` via Node's built-in `node:test` — unit tests for `LW.*` + integrity checks on the real data. Zero dependencies. |
@@ -76,7 +76,7 @@ sync + rebuilding + redeploying. Good enough for a static POC; the backend below
 A **runnable, zero-dependency** backend now lives in [`backend/`](../backend/README.md):
 Node built-ins only — `node:http` (server), `node:sqlite` (`DatabaseSync`), global
 `fetch` (ATS/Manatal). It serves a JSON API and the built public site, and it **reuses
-this repo's `core/logic.js`** so the backend classifies jobs identically to the frontend
+this repo's `shared/logic.js`** so the backend classifies jobs identically to the frontend
 by construction. The admin SPA is a separate app (repo: LongWave-Dev-Admin) that calls
 this API over CORS.
 
@@ -90,7 +90,7 @@ flowchart TB
         server["server.js<br/>static + route /api"]
         api["api.js<br/>JSON router · auth guard · CORS"]
         models["models.js<br/>data access + normalization"]
-        logic["logic.js → core/logic.js<br/>(shared LW.* via createRequire)"]
+        logic["logic.js → shared/logic.js<br/>(shared LW.* via createRequire)"]
         importer["import.js<br/>CSV/JSON bulk import"]
         manatal["manatal.js<br/>CRM push + CSV export"]
         subgraph ats["ats/ (adapter registry + runSync)"]
@@ -243,7 +243,7 @@ sequenceDiagram
 
 ### The reuse that makes this clean
 
-`core/logic.js` (`LW.*`) is **already pure and dependency-free**, and is already
+`shared/logic.js` (`LW.*`) is **already pure and dependency-free**, and is already
 `require()`-d by the Node tests. The **same module powers the Sync Worker's
 normalization** (classify specialty, parse prefecture, parse salary, build the search
 index) — so the frontend and backend agree on classification by construction, and it
@@ -251,7 +251,7 @@ stays unit-tested in one place.
 
 ```mermaid
 flowchart LR
-    logic["core/logic.js (LW.*)<br/>pure domain logic"]
+    logic["shared/logic.js (LW.*)<br/>pure domain logic"]
     logic --> fe["Frontend<br/>(filter/sort/display)"]
     logic --> be["Backend Sync Worker 🟠<br/>(normalize on ingest)"]
     logic --> tests["Node tests<br/>(both sides covered)"]
@@ -278,7 +278,7 @@ These are sensible defaults, not requirements — chosen for low ops + good DX.
 1. **Extract the API contract** from today's data shape (`window.__HRMOS_DATA__`) — it
    already defines `jobs`, `companies`, `jobs_ja`, `blurb`. Make that the `GET /jobs`
    response shape so the frontend change is minimal.
-2. **Stand up Postgres + the Sync Worker**, reusing `core/logic.js` for normalization.
+2. **Stand up Postgres + the Sync Worker**, reusing `shared/logic.js` for normalization.
 3. **Add the Jobs API**; switch the frontend from `window.__HRMOS_DATA__` to a `fetch()`
    (keep the embedded data as an offline fallback).
 4. **Add the Leads API** + resume storage; wire the existing sign-up modal to it.
@@ -292,12 +292,13 @@ map). If/when the backend is built, a clean split would be:
 
 ```
 /                      ← frontend (current repo root: src/, build.sh, longwave-dev.html)
-/backend/  🟠          ← api/ (Jobs + Leads API) · worker/ (HRMOS sync) · db/ (migrations)
-/shared/   🟠          ← the LW domain logic, imported by both frontend build and backend
+/backend/  🟢          ← api/ (Jobs + Leads API) · worker/ (ATS sync) · db
+/shared/   🟢          ← the LW domain logic (@longwave/logic), imported by both apps
 /docs/                 ← this file
 ```
 
-> **Update:** the backend scaffold described in **[§1b](#1b-backend-as-built-)** now exists in
-> **[`backend/`](../backend/README.md)** and already imports this repo's `core/logic.js` for
-> normalization (the "shared logic" arrow above), so lifting that file into a dedicated
-> `shared/` package is the only remaining step to fully formalize the split.
+> **Update:** this split is now fully realized — the backend scaffold described in
+> **[§1b](#1b-backend-as-built-)** lives in **[`backend/`](../backend/README.md)**, and the
+> shared `LW` domain logic was lifted out of the frontend tree into
+> **[`shared/logic.js`](../shared/README.md)**, consumed by the frontend bundle, the
+> backend, and both test suites.

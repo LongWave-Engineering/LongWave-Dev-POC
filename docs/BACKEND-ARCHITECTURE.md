@@ -48,7 +48,7 @@ flowchart TB
         worker["worker.js 🟢 — scheduled ATS sync<br/>(cron / --once)"]
     end
 
-    shared["shared domain logic (LW.*) 🟢<br/>today: ../src/core/logic.js via createRequire<br/>→ own package 🟠 (prereq to deploy backend alone)"]
+    shared["shared domain logic (LW.*) 🟢<br/>shared/logic.js — @longwave/logic<br/>consumed by bundle + backend + tests"]
     store[("object storage 🟠<br/>resumes (S3/R2, signed uploads)")]
     ext["external ATS boards · Manatal · Anthropic"]
 
@@ -171,7 +171,7 @@ In dependency order — each unblocks the ones after it:
 | # | Item | Status | Shape of the work |
 | --- | --- | --- | --- |
 | 1 | **CORS origin allowlist** | 🟢 **done** | `ALLOWED_ORIGINS` env (comma-separated). Unset → `*` (dev). Set → matching `Origin` echoed back + `Vary: Origin`; non-matching origins get **no** CORS grant. |
-| 2 | **Shared logic → own package** | 🟠 | Lift `src/core/logic.js` out of the frontend tree (a `shared/` workspace or tiny git-referenced package). Removes the `createRequire('../../src/core/logic.js')` coupling — the **prerequisite for deploying the backend independently** of this repo's frontend. |
+| 2 | **Shared logic → own package** | 🟢 **done** | `shared/logic.js` (`@longwave/logic`) at the repo root — outside the frontend tree, consumed by the bundle, the backend, and the tests via path imports. The backend no longer reaches into `src/`. |
 | 3 | **Pagination on `/api/jobs`** | 🟠 | Additive opt-in (§2). Do before the Next.js site launches so it never binds to the unbounded array. |
 | 4 | **OpenAPI + generated TS types** | 🟠 | `docs/openapi.yaml` after #3; Next.js repo generates types at build. |
 | 5 | **Revalidation webhook** | 🟠 | Backend POSTs to `$REVALIDATE_URL` (with a shared secret) after admin writes / sync runs; Next.js route handler calls `revalidateTag`. Fire-and-forget, additive. |
