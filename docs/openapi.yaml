@@ -1,0 +1,1016 @@
+openapi: 3.1.0
+info:
+  title: LongWave Jobs API
+  version: 0.1.0
+  license:
+    name: UNLICENSED (private — LongWave internal)
+  description: |
+    The LongWave backend API — jobs, articles, featured grid, partner logos, ATS
+    sources, and candidate intake (leads/applications). Consumed by the public site,
+    the admin console (LongWave-Dev-Admin), and any future Next.js frontend.
+
+    **Contract stance** (see `BACKEND-ARCHITECTURE.md` §2): changes are additive-only;
+    the first breaking change introduces `/api/v1/`. Anonymous callers get redacted
+    shapes (no internal `tags`, hidden jobs 404, ATS `token` never serialized).
+    Frontend repos generate TypeScript types from this file (e.g. `openapi-typescript`).
+servers:
+  - url: http://localhost:8787
+    description: Local dev (backend/src/server.js)
+security: []
+tags:
+  - name: public — reads
+    description: No auth. Safe to cache / ISR. Anonymous responses are redacted.
+  - name: public — intake
+    description: No auth. Rate-limited per IP; empty/malformed bodies are 400.
+  - name: admin
+    description: Requires `Authorization Bearer $ADMIN_TOKEN`.
+
+paths:
+  /api/health:
+    get:
+      operationId: getHealth
+      tags: [public — reads]
+      summary: Liveness check
+      responses:
+        '200':
+          description: Service is up.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, ts]
+                properties:
+                  ok: { type: boolean, const: true }
+                  ts: { type: string, format: date-time }
+
+  /api/jobs:
+    get:
+      operationId: listJobs
+      tags: [public — reads]
+      summary: List jobs (filterable; opt-in pagination)
+      description: |
+        Bare array by default. Passing `page` and/or `per_page` switches to the
+        `{ items, total, page, per_page }` envelope (additive, opt-in). Anonymous
+        callers never receive `tags` and never see hidden jobs; authenticated admins
+        may pass `hidden=1` to include drafts.
+      security: [{}, { bearerAuth: [] }]
+      parameters:
+        - { name: spec,   in: query, schema: { type: string }, description: "Specialty (canonical LW.SPECS value, e.g. `Frontend`)" }
+        - { name: jp,     in: query, schema: { type: string }, description: "Maximum required Japanese level (e.g. `none` | `conversational` | `business` | `native`)" }
+        - { name: remote, in: query, schema: { type: string }, description: "Remote policy (e.g. `full` | `partial` | `no`)" }
+        - { name: loc,    in: query, schema: { type: string }, description: "Prefecture / location" }
+        - { name: stack,  in: query, schema: { type: string }, description: "Technology substring match" }
+        - { name: q,      in: query, schema: { type: string }, description: "Free-text search over the job + company hay" }
+        - { name: hidden, in: query, schema: { type: string, enum: ['1'] }, description: "Admin only — include hidden (draft) jobs" }
+        - { name: page,     in: query, schema: { type: integer, minimum: 1, default: 1 }, description: "Opt into the pagination envelope" }
+        - { name: per_page, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 }, description: "Page size (capped at 100). Bad values fall back to defaults." }
+      responses:
+        '200':
+          description: Bare array (no pagination params) or envelope (with them).
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - type: array
+                    items: { $ref: '#/components/schemas/Job' }
+                  - $ref: '#/components/schemas/JobsPage'
+    post:
+      operationId: createJob
+      tags: [admin]
+      summary: Create a job (auto-classified; missing language auto-filled when a translator is configured)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JobInput' }
+      responses:
+        '201': { $ref: '#/components/responses/JobOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/jobs/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    get:
+      operationId: getJob
+      tags: [public — reads]
+      summary: Get one job
+      description: A hidden job is 404 for anonymous callers; `tags` are admin-only.
+      security: [{}, { bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/JobOk' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      operationId: updateJob
+      tags: [admin]
+      summary: Update a job
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JobInput' }
+      responses:
+        '200': { $ref: '#/components/responses/JobOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    delete:
+      operationId: deleteJob
+      tags: [admin]
+      summary: Delete a job
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Deleted' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/jobs/{id}/hidden:
+    put:
+      operationId: setJobHidden
+      tags: [admin]
+      summary: Hide / unhide (publish) a job
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [hidden]
+              properties:
+                hidden: { type: boolean }
+      responses:
+        '200': { $ref: '#/components/responses/JobOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/jobs/import:
+    post:
+      operationId: importJobs
+      tags: [admin]
+      summary: Bulk-import jobs from a portal CSV/JSON export
+      description: Columns auto-map (EN + Japanese aliases); rows dedupe on `(source, source_ref)` namespaced per company.
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [data]
+              properties:
+                data: { type: string, description: "The CSV or JSON export, as a string" }
+                source: { type: string, description: "Provenance label, e.g. `herp`" }
+                company_id: { type: string }
+      responses:
+        '200':
+          description: Import summary.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ImportResult' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/jobs/import-pdf:
+    post:
+      operationId: importJobPdf
+      tags: [admin]
+      summary: Import a JD from a PDF (saved as a hidden draft for review)
+      description: |
+        Extracts text (Japanese-aware), structures it (Claude when configured, else
+        heuristics), saves the job **hidden**. Re-uploading the same PDF updates its
+        draft (deduped on company + content hash). Body cap ~20 MB (base64).
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [data]
+              properties:
+                data: { type: string, description: "Base64-encoded PDF (a `data:` URL prefix is tolerated)" }
+                company_id: { type: string }
+      responses:
+        '201':
+          description: Draft created (always hidden until reviewed).
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [job, extracted_chars, preview, llm]
+                properties:
+                  job: { $ref: '#/components/schemas/Job' }
+                  extracted_chars: { type: integer }
+                  preview: { type: string, description: "First 500 chars of the extracted text" }
+                  llm: { type: boolean, description: "Whether the LLM (vs heuristics) structured this draft" }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '413': { $ref: '#/components/responses/TooLarge' }
+        '422':
+          description: Unreadable PDF (image scan, unmapped fonts, or no job title found).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /api/tags:
+    get:
+      operationId: listTags
+      tags: [admin]
+      summary: Distinct internal job tags with usage counts (autocomplete)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Sorted by count desc, then name.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  required: [tag, count]
+                  properties:
+                    tag: { type: string }
+                    count: { type: integer }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/companies:
+    get:
+      operationId: listCompanies
+      tags: [public — reads]
+      summary: List companies (names/logos the site needs to render jobs)
+      responses:
+        '200':
+          description: All companies, ordered by name.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Company' }
+
+  /api/featured:
+    get:
+      operationId: listFeatured
+      tags: [public — reads]
+      summary: The home-page 3×3 featured grid (rank order)
+      responses:
+        '200':
+          description: Featured jobs, gap-free rank ascending.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Job' }
+    put:
+      operationId: setFeatured
+      tags: [admin]
+      summary: Replace the featured set/order
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: array
+                  items: { type: integer }
+                - type: object
+                  required: [ids]
+                  properties:
+                    ids: { type: array, items: { type: integer } }
+      responses:
+        '200':
+          description: The new featured list (unknown ids skipped; ranks stay gap-free).
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Job' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/articles:
+    get:
+      operationId: listArticles
+      tags: [public — reads]
+      summary: List articles
+      description: Anonymous callers see published only; admins see all (incl. unpublished).
+      security: [{}, { bearerAuth: [] }]
+      responses:
+        '200':
+          description: Articles ordered by rank, then id.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Article' }
+    post:
+      operationId: createArticle
+      tags: [admin]
+      summary: Create an article
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/ArticleInput' }
+      responses:
+        '201': { $ref: '#/components/responses/ArticleOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/articles/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    put:
+      operationId: updateArticle
+      tags: [admin]
+      summary: Update an article
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/ArticleInput' }
+      responses:
+        '200': { $ref: '#/components/responses/ArticleOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    delete:
+      operationId: deleteArticle
+      tags: [admin]
+      summary: Delete an article
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Deleted' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/partners:
+    get:
+      operationId: listPartners
+      tags: [public — reads]
+      summary: List partner logos (home marquee)
+      description: Anonymous callers see enabled only; admins see all.
+      security: [{}, { bearerAuth: [] }]
+      responses:
+        '200':
+          description: Partners in display order (NULL rank last).
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Partner' }
+    post:
+      operationId: createPartner
+      tags: [admin]
+      summary: Add a partner logo (body cap ~20 MB for the data URL)
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/PartnerInput' }
+      responses:
+        '201': { $ref: '#/components/responses/PartnerOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/partners/order:
+    put:
+      operationId: reorderPartners
+      tags: [admin]
+      summary: Reorder the marquee (drag-and-drop id sequence)
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - type: array
+                  items: { type: integer }
+                - type: object
+                  required: [ids]
+                  properties:
+                    ids: { type: array, items: { type: integer } }
+      responses:
+        '200':
+          description: All partners in the new order.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Partner' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/partners/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    put:
+      operationId: updatePartner
+      tags: [admin]
+      summary: Update a partner
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/PartnerInput' }
+      responses:
+        '200': { $ref: '#/components/responses/PartnerOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    delete:
+      operationId: deletePartner
+      tags: [admin]
+      summary: Delete a partner
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Deleted' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/sources:
+    get:
+      operationId: listSources
+      tags: [admin]
+      summary: List ATS sources (credentials redacted to `hasToken`)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: All sources. The `token` column is never serialized.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Source' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      operationId: createSource
+      tags: [admin]
+      summary: Register a job-board source (provider auto-detected from the URL)
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/SourceInput' }
+      responses:
+        '201': { $ref: '#/components/responses/SourceOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/sources/{id}:
+    parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+    put:
+      operationId: updateSource
+      tags: [admin]
+      summary: Update a source (omitting `token` preserves the stored credential)
+      security: [{ bearerAuth: [] }]
+      requestBody: { $ref: '#/components/requestBodies/SourceInput' }
+      responses:
+        '200': { $ref: '#/components/responses/SourceOk' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    delete:
+      operationId: deleteSource
+      tags: [admin]
+      summary: Delete a source
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200': { $ref: '#/components/responses/Deleted' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/sources/{id}/sync:
+    post:
+      operationId: syncSource
+      tags: [admin]
+      summary: Sync one source now (pull + upsert its openings)
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200':
+          description: Sync outcome (also recorded as a `sync_runs` row).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SyncResult' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /api/leads:
+    post:
+      operationId: createLead
+      tags: [public — intake]
+      summary: Submit a sign-up / inquiry (public form)
+      description: |
+        Rate-limited per IP. Rejects submissions with no name, email, message, or
+        resume filename (400). Free-text fields are clamped to 2000 chars. A returning
+        email updates the same lead (messages append, other fields keep-first).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LeadInput' }
+      responses:
+        '201':
+          description: The (created or updated) lead.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Lead' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+    get:
+      operationId: listLeads
+      tags: [admin]
+      summary: List leads (with applied-role counts)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Newest first.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/LeadWithCount' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/leads/export.csv:
+    get:
+      operationId: exportLeadsCsv
+      tags: [admin]
+      summary: Export all leads as CSV (spreadsheet-safe; formula injection neutralized)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: CSV file.
+          content:
+            text/csv:
+              schema: { type: string }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/leads/{id}/applications:
+    get:
+      operationId: listLeadApplications
+      tags: [admin]
+      summary: The jobs one lead applied to
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200':
+          description: Applications joined with role/company.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/LeadApplication' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/leads/{id}/manatal:
+    post:
+      operationId: pushLeadToManatal
+      tags: [admin]
+      summary: Push one lead to Manatal
+      security: [{ bearerAuth: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200':
+          description: Pushed (or recorded as pending when no API key is configured).
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ManatalPushResult' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '502':
+          description: Manatal rejected the push.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ManatalPushResult' }
+
+  /api/leads/manatal-bulk:
+    post:
+      operationId: pushUnsyncedLeadsToManatal
+      tags: [admin]
+      summary: Push every not-yet-synced lead to Manatal
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Per-lead outcomes.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [pushed]
+                properties:
+                  pushed:
+                    type: array
+                    items:
+                      allOf:
+                        - type: object
+                          required: [id]
+                          properties:
+                            id: { type: integer }
+                        - $ref: '#/components/schemas/ManatalPushResult'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/applications:
+    post:
+      operationId: applyToJobs
+      tags: [public — intake]
+      summary: Apply to one or many jobs (public form)
+      description: |
+        Rate-limited per IP. Needs a name or email AND at least one job id. Enforces
+        the per-email **lifetime** cap (`LW.MAX_APPLICATIONS`, currently 10 distinct
+        jobs); re-applying to the same job is idempotent and consumes no slot.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/LeadInput'
+                - type: object
+                  required: [job_ids]
+                  properties:
+                    job_ids:
+                      type: array
+                      items: { type: integer }
+      responses:
+        '201':
+          description: Application outcome — lets the UI show an honest "X of 10 left".
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApplyResult' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+    get:
+      operationId: listApplications
+      tags: [admin]
+      summary: List all applications (raw rows, newest first)
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: All (lead, job) application rows.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Application' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /api/stats:
+    get:
+      operationId: getStats
+      tags: [admin]
+      summary: Dashboard counts
+      security: [{ bearerAuth: [] }]
+      responses:
+        '200':
+          description: Live counts.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Stats' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: The backend's shared `ADMIN_TOKEN`.
+
+  responses:
+    JobOk:
+      description: The job.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Job' }
+    ArticleOk:
+      description: The article.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Article' }
+    PartnerOk:
+      description: The partner.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Partner' }
+    SourceOk:
+      description: The source (credential redacted to `hasToken`).
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Source' }
+    Deleted:
+      description: Deleted.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [deleted]
+            properties:
+              deleted: { type: integer, description: "The deleted id" }
+    BadRequest:
+      description: Client fault — malformed JSON, empty/invalid submission.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Missing or wrong Bearer token.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: Not found (includes hidden jobs for anonymous callers).
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    TooLarge:
+      description: Request body over the cap (1 MB; ~20 MB for PDF/partner routes).
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    RateLimited:
+      description: Per-IP rate limit exceeded (`RATE_LIMIT_MAX` per `RATE_LIMIT_WINDOW_MS`).
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  requestBodies:
+    ArticleInput:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ArticleInput' }
+    PartnerInput:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/PartnerInput' }
+    SourceInput:
+      required: true
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/SourceInput' }
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        reqId: { type: string, description: "Present on 500s — correlate with server logs" }
+
+    Job:
+      type: object
+      description: A job as serialized by the API (`rowToJob`).
+      required: [id, source, co, role, spec, salary, jp, remote, loc, stack, hot, hidden]
+      properties:
+        id: { type: integer }
+        source: { type: string, description: "Provenance: `manual` | `pdf` | an ATS/import label" }
+        source_ref: { type: [string, 'null'], description: "Dedupe key within `source` (upsert identity)" }
+        co: { type: [string, 'null'], description: "Company id (see `/api/companies`)" }
+        role: { type: string }
+        role_ja: { type: [string, 'null'] }
+        spec: { type: string, description: "Canonical specialty (one of LW.SPECS)" }
+        salary: { type: string }
+        jp: { type: string, description: "Required Japanese level (e.g. `none` | `conversational` | `business` | `native`)" }
+        remote: { type: string, description: "Remote policy (e.g. `full` | `partial` | `no`)" }
+        loc: { type: string, description: "Normalized prefecture/location" }
+        office: { type: [string, 'null'], description: "Raw office address" }
+        stack: { type: array, items: { type: string } }
+        body: { type: [string, 'null'], description: "JD body (EN)" }
+        body_ja: { type: [string, 'null'], description: "JD body (JA)" }
+        hot: { type: boolean }
+        tags:
+          type: array
+          items: { type: string }
+          description: "INTERNAL recruiter tags — present for authenticated admins only; stripped from anonymous responses."
+        featured_rank: { type: [integer, 'null'] }
+        hidden: { type: boolean }
+        created_at: { type: string }
+        updated_at: { type: [string, 'null'] }
+
+    JobsPage:
+      type: object
+      description: The opt-in pagination envelope (`?page=` / `?per_page=`).
+      required: [items, total, page, per_page]
+      properties:
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/Job' }
+        total: { type: integer, description: "Size of the WHOLE filtered set, not this page" }
+        page: { type: integer }
+        per_page: { type: integer }
+
+    JobInput:
+      type: object
+      description: |
+        Fields for create/update. `spec` and `loc` are auto-derived via the shared LW
+        logic when omitted. Omitting `tags` preserves existing tags (a partial edit or
+        re-sync never wipes recruiter tags). With a translator configured, the missing
+        language (role/body ⇄ role_ja/body_ja) is auto-filled.
+      properties:
+        role: { type: string }
+        role_ja: { type: string }
+        co: { type: string, description: "Company id — a stub company is auto-created if unknown" }
+        spec: { type: string }
+        salary: { type: string }
+        jp: { type: string }
+        remote: { type: string }
+        loc: { type: string }
+        office: { type: string }
+        stack: { type: array, items: { type: string } }
+        body: { type: string }
+        body_ja: { type: string }
+        hot: { type: boolean }
+        tags: { type: array, items: { type: string }, description: "Normalized: trimmed, case-insensitively deduped, ≤30 tags of ≤40 chars" }
+        source: { type: string, default: manual }
+        source_ref: { type: string }
+
+    Company:
+      type: object
+      required: [id, name]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        mono: { type: [string, 'null'], description: "1–2 char monogram fallback" }
+        color: { type: [string, 'null'] }
+        logo: { type: [string, 'null'] }
+        site: { type: [string, 'null'] }
+        sector_en: { type: [string, 'null'] }
+        sector_ja: { type: [string, 'null'] }
+        loc: { type: [string, 'null'] }
+
+    Article:
+      type: object
+      required: [id, title_en, published]
+      properties:
+        id: { type: integer }
+        cat_en: { type: [string, 'null'] }
+        cat_ja: { type: [string, 'null'] }
+        title_en: { type: string }
+        title_ja: { type: [string, 'null'] }
+        url: { type: [string, 'null'] }
+        rank: { type: [integer, 'null'] }
+        published: { type: integer, enum: [0, 1] }
+        created_at: { type: string }
+
+    ArticleInput:
+      type: object
+      properties:
+        cat_en: { type: string }
+        cat_ja: { type: string }
+        title_en: { type: string }
+        title_ja: { type: string }
+        url: { type: string }
+        rank: { type: [integer, 'null'] }
+        published: { type: boolean, default: true }
+
+    Partner:
+      type: object
+      required: [id, name, enabled]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        logo: { type: [string, 'null'], description: "data: URL (uploaded) or remote URL; null → monogram tile" }
+        mono: { type: [string, 'null'] }
+        color: { type: [string, 'null'], description: "Validated hex/rgb(a) only (CSS-injection-safe)" }
+        rank: { type: [integer, 'null'], description: "Display order; null sorts last" }
+        enabled: { type: integer, enum: [0, 1] }
+        created_at: { type: string }
+
+    PartnerInput:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string, maxLength: 120 }
+        logo: { type: string, description: "Capped at ~2 MB" }
+        mono: { type: string, maxLength: 4 }
+        color: { type: string, description: "Plain hex/rgb(a) — anything else is rejected to null" }
+        rank: { type: [integer, 'null'] }
+        enabled: { type: boolean, default: true }
+
+    Source:
+      type: object
+      description: An ATS source. The stored credential is NEVER serialized — only `hasToken`.
+      required: [id, url, type, enabled, schedule, hasToken]
+      properties:
+        id: { type: integer }
+        name: { type: [string, 'null'] }
+        type: { type: string, description: "`greenhouse` | `lever` | `hrmos` | `talentio` | `herp` | `jobcan` | `persona` | `randstad` | `axol` | `wantedly` | `generic`" }
+        url: { type: string }
+        company_id: { type: [string, 'null'] }
+        enabled: { type: integer, enum: [0, 1] }
+        schedule: { type: string, description: "`weekly` | `daily` | `manual`" }
+        last_synced_at: { type: [string, 'null'] }
+        last_status: { type: [string, 'null'] }
+        created_at: { type: string }
+        hasToken: { type: boolean }
+
+    SourceInput:
+      type: object
+      required: [url]
+      properties:
+        name: { type: string, description: "Defaults to the URL" }
+        type: { type: string, description: "Auto-detected from the URL when omitted" }
+        url: { type: string }
+        token: { type: string, description: "Provider credential. On PUT, omitting this key preserves the stored token." }
+        company_id: { type: string }
+        enabled: { type: boolean, default: true }
+        schedule: { type: string, default: weekly }
+
+    SyncResult:
+      type: object
+      required: [status, found, upserted]
+      properties:
+        status: { type: string }
+        found: { type: integer }
+        upserted: { type: integer }
+        message: { type: [string, 'null'] }
+
+    ImportResult:
+      type: object
+      required: [found, imported, errors]
+      properties:
+        found: { type: integer }
+        imported: { type: integer }
+        errors:
+          type: array
+          items:
+            type: object
+            required: [error]
+            properties:
+              role: { type: [string, 'null'] }
+              error: { type: string }
+
+    LeadInput:
+      type: object
+      description: Public intake fields. Free-text fields are clamped to 2000 chars server-side.
+      properties:
+        kind: { type: string, description: "`job` (candidate) | `hire` (company inquiry)", default: job }
+        name: { type: string }
+        email: { type: string, description: "Normalized lowercase; the dedupe identity for returning candidates" }
+        phone: { type: string }
+        linkedin: { type: string }
+        github: { type: string }
+        company: { type: string }
+        message: { type: string }
+        jp_level: { type: string, description: "`none` | `conversational` | `business` | `native`" }
+        years_exp: { type: [integer, 'null'], description: "Coerced to 0–60; junk → null" }
+        resume_filename: { type: string }
+        job_id: { type: [integer, 'null'] }
+        source_channel: { type: string, description: "Which form/context: `signup` | `company` | `contact` | `post_job` | `article`. Keep-first on returning leads." }
+        heard_via: { type: string }
+
+    Lead:
+      type: object
+      required: [id, kind]
+      properties:
+        id: { type: integer }
+        kind: { type: string }
+        name: { type: [string, 'null'] }
+        email: { type: [string, 'null'] }
+        phone: { type: [string, 'null'] }
+        linkedin: { type: [string, 'null'] }
+        github: { type: [string, 'null'] }
+        company: { type: [string, 'null'] }
+        message: { type: [string, 'null'], description: "Newline-appended across a returning candidate's submissions" }
+        jp_level: { type: [string, 'null'] }
+        years_exp: { type: [integer, 'null'] }
+        source_channel: { type: [string, 'null'] }
+        heard_via: { type: [string, 'null'] }
+        resume_filename: { type: [string, 'null'] }
+        resume_path: { type: [string, 'null'] }
+        job_id: { type: [integer, 'null'] }
+        manatal_candidate_id: { type: [string, 'null'] }
+        manatal_synced_at: { type: [string, 'null'] }
+        created_at: { type: string }
+
+    LeadWithCount:
+      allOf:
+        - $ref: '#/components/schemas/Lead'
+        - type: object
+          required: [application_count]
+          properties:
+            application_count: { type: integer }
+
+    Application:
+      type: object
+      required: [id, lead_id, job_id]
+      properties:
+        id: { type: integer }
+        lead_id: { type: integer }
+        job_id: { type: integer }
+        created_at: { type: string }
+
+    LeadApplication:
+      type: object
+      description: An application row joined with its job's role/company.
+      required: [id, job_id]
+      properties:
+        id: { type: integer }
+        job_id: { type: integer }
+        created_at: { type: string }
+        role: { type: [string, 'null'] }
+        co: { type: [string, 'null'] }
+
+    ApplyResult:
+      type: object
+      required: [lead_id, requested, applied, blocked, total, remaining, limit]
+      properties:
+        lead_id: { type: integer }
+        requested: { type: integer, description: "Valid distinct job ids in the request" }
+        applied: { type: integer, description: "Newly linked this request" }
+        blocked: { type: integer, description: "Refused by the lifetime cap" }
+        total: { type: integer, description: "The lead's cumulative distinct applications" }
+        remaining: { type: integer }
+        limit: { type: integer, description: "LW.MAX_APPLICATIONS" }
+
+    ManatalPushResult:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
+        candidate_id: { type: string, description: "Present on success" }
+        pending: { type: boolean, description: "true when no MANATAL_API_KEY is configured — recorded to retry later" }
+        reason: { type: string }
+        status: { type: integer, description: "Manatal's HTTP status on failure" }
+        body: { description: "Manatal's response body on failure" }
+        error: { type: string }
+
+    Stats:
+      type: object
+      required: [jobs, featured, articles, sources, leads, unsynced, manatalConfigured]
+      properties:
+        jobs: { type: integer, description: "Visible (non-hidden) jobs" }
+        featured: { type: integer }
+        articles: { type: integer }
+        sources: { type: integer }
+        leads: { type: integer }
+        unsynced: { type: integer, description: "Leads not yet pushed to Manatal" }
+        manatalConfigured: { type: boolean }

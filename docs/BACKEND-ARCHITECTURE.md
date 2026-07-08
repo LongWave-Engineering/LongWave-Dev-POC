@@ -95,10 +95,10 @@ The shape that matters architecturally:
   (existing clients keep working). Passing `?page=` and/or `?per_page=` switches to the
   `{ items, total, page, per_page }` envelope — `total` spans the whole filtered set,
   `per_page` caps at 100, bad values fall back to defaults instead of erroring.
-- **Typed contract 🟠:** author `docs/openapi.yaml` once the pagination shape lands; the
-  Next.js repo generates TypeScript types from it (`openapi-typescript`) at build time.
-  This is how the frontend gets end-to-end types **without** a monorepo or a shared
-  runtime package.
+- **Typed contract 🟢:** [`docs/openapi.yaml`](./openapi.yaml) (OpenAPI 3.1, redocly-validated,
+  operationIds on all 36 operations) is the contract's source of truth. Frontend repos
+  generate TypeScript types from it at build time (`npx openapi-typescript docs/openapi.yaml`) —
+  end-to-end types **without** a monorepo or a shared runtime package.
 
 ---
 
@@ -173,7 +173,7 @@ In dependency order — each unblocks the ones after it:
 | 1 | **CORS origin allowlist** | 🟢 **done** | `ALLOWED_ORIGINS` env (comma-separated). Unset → `*` (dev). Set → matching `Origin` echoed back + `Vary: Origin`; non-matching origins get **no** CORS grant. |
 | 2 | **Shared logic → own package** | 🟢 **done** | `shared/logic.js` (`@longwave/logic`) at the repo root — outside the frontend tree, consumed by the bundle, the backend, and the tests via path imports. The backend no longer reaches into `src/`. |
 | 3 | **Pagination on `/api/jobs`** | 🟢 **done** | Additive opt-in envelope (§2) — landed before any Next.js code exists, so no frontend ever binds to the unbounded array. |
-| 4 | **OpenAPI + generated TS types** | 🟠 | `docs/openapi.yaml` after #3; Next.js repo generates types at build. |
+| 4 | **OpenAPI + generated TS types** | 🟢 **done** | [`docs/openapi.yaml`](./openapi.yaml) — validated, all operations covered; type generation verified with `openapi-typescript`. Consumer repos run it at build. |
 | 5 | **Revalidation webhook** | 🟠 | Backend POSTs to `$REVALIDATE_URL` (with a shared secret) after admin writes / sync runs; Next.js route handler calls `revalidateTag`. Fire-and-forget, additive. |
 | 6 | **Postgres + migrations framework** | 🟠 | `db.js` is the only module that touches SQLite; swap driver behind the same `all/get/run/transaction` helpers. Replace `ensureColumn` with numbered migrations at the same time. |
 | 7 | **Resume object storage** | 🟠 | Signed uploads to S3/R2; `leads` keeps a pointer, PII files stay out of the DB. |
@@ -218,10 +218,10 @@ use the host's secret store, or `node --env-file=.env` locally.
 
 Each phase ships alone; nothing blocks on a big-bang.
 
-1. **Phase 0 — contract hardening (this commit).** CORS allowlist; this document.
-2. **Phase 1 — formalize the contract.** Shared-logic package (#2), pagination (#3),
-   OpenAPI + types (#4). After this, a Next.js app can be built against a typed,
-   stable, independently-deployable API.
+1. **Phase 0 — contract hardening.** 🟢 done — CORS allowlist; this document.
+2. **Phase 1 — formalize the contract.** 🟢 done — shared-logic package (#2),
+   pagination (#3), OpenAPI + types (#4). A Next.js app can now be built against a
+   typed, stable, independently-deployable API.
 3. **Phase 2 — Next.js public site.** New repo (`LongWave-Dev-Web`), Server Components
    + ISR per §3.1, intake proxied at the edge, revalidation webhook (#5). The current
    static build keeps shipping until parity, then the CDN flips.
