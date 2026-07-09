@@ -22,7 +22,9 @@
   display:inline-flex; align-items:center; justify-content:center; flex:none;
   opacity:.92; user-select:none; -webkit-user-select:none; cursor:default;
 }
-.lc-img{height:58px; width:auto; max-width:184px; object-fit:contain; display:block;}
+/* every chip gets the SAME fixed box — marks are contained + centred inside it, so
+   square tiles and wide wordmarks read at one consistent size across the wall */
+.lc-img{width:132px; height:56px; object-fit:contain; display:block;}
 .lc-word{font-family:var(--font-display); font-weight:800; font-size:1.5rem; letter-spacing:-.02em; white-space:nowrap;}
 
 /* ---- curated featured showcase (Post-a-job): a few big-name clients, static ---- */
