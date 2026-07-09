@@ -18,7 +18,7 @@ jobs:
     name: Test & verify build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
@@ -49,7 +49,7 @@ jobs:
     name: Secret scan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       # Post-push tripwire mirroring .githooks/pre-commit (hooks are opt-in via `npm run
       # hooks`, so an unhooked clone still gets caught). Repo is public → a landed token
       # must be found and rotated. Whitelists the in-tree placeholders.
@@ -69,7 +69,7 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
