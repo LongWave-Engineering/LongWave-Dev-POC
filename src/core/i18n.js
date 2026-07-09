@@ -16,7 +16,7 @@
      /api/health probe at boot (app.js) and gates the WRITE path, so form submits either
      really reach a backend or tell the user honestly that they didn't. */
   var apiReady=false;
-  /* pure helpers live in core/logic.js (LW.*); alias the app-wide ones for brevity */
+  /* pure helpers live in shared/logic.js (LW.*); alias the app-wide ones for brevity */
   var esc = LW.esc, salaryMax = LW.salaryMax;
   function nl2br(s){ return esc(s).replace(/\n/g,"<br>"); }
 
@@ -109,7 +109,7 @@
   function blurbL(j){ var b=BLURB[j.role]; return b ? (lang==="ja"?b.ja:b.en) : ""; }
 
   /* ---------------- enrich every loaded job (demo or HRMOS) ----------------
-     classifySpec / locFromAddr now live in core/logic.js (LW.*) so they are unit
+     classifySpec / locFromAddr now live in shared/logic.js (LW.*) so they are unit
      tested. Here we apply them once and precompute, per job:
        _i   = original index into JOBS (so render loops avoid O(n) indexOf)
        _hay = lowercased free-text search index (so filtering never rebuilds it) */

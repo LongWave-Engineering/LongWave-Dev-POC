@@ -18,4 +18,17 @@ if ! node --test test/guardrails.test.js >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "✓ pre-commit: bundle in sync + guardrails pass"
+# 3) No credentials in the staged diff (repo is PUBLIC and pushes go straight to main, so a
+#    pasted token would be instantly public + permanent in history). Scans added lines only;
+#    whitelists the in-tree placeholders (dev-admin-token, the "sk-ant-..." doc example).
+if git diff --cached -U0 -- . ':(exclude)*.env.example' \
+   | grep -E '^\+[^+]' \
+   | grep -Ev 'dev-admin-token|sk-ant-\.\.\.' \
+   | grep -qE 'sk-ant-[A-Za-z0-9_-]{8,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY|(ADMIN_TOKEN|MANATAL_API_KEY|HRMOS_API_TOKEN|ANTHROPIC_API_KEY)=[^[:space:]"]{8,}'; then
+  echo "✗ pre-commit: the staged diff looks like it contains a credential."
+  echo "  Real secrets belong in the LongWave-Dev-Admin repo's backend/.env or"
+  echo "  backend/sources.local.json (both gitignored there) — never in this public repo."
+  exit 1
+fi
+
+echo "✓ pre-commit: bundle in sync + guardrails + no secrets"

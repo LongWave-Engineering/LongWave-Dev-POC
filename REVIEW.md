@@ -16,7 +16,7 @@ suite moved to the private LongWave-Dev-Admin repo, alongside the admin console.
 - **The golden rule:** **zero runtime dependencies.** The frontend is one shared-scope IIFE
   (no bundler/framework). Tests use `node --test`. "Why no React/webpack?" — that's the
   deliberate constraint.
-- **Read first:** `src/core/logic.js` — pure, DOM-free domain logic (classify, filter, salary
+- **Read first:** `shared/logic.js` — pure, DOM-free domain logic (classify, filter, salary
   parse, routing, the application cap). It's unit-tested here, and the backend vendors a
   byte-identical copy so UI and server agree by construction. It's the spine.
 - **Safety net:** CI runs the test suite, a **byte-exact freshness gate** (committed bundle
@@ -25,7 +25,7 @@ suite moved to the private LongWave-Dev-Admin repo, alongside the admin console.
 
 ## Where to spend review time
 
-1. **`src/core/logic.js`** (199 LOC) — the pure, shared correctness spine. Fully tested.
+1. **`shared/logic.js`** (199 LOC) — the pure, shared correctness spine. Fully tested.
 2. **`src/features/modals/`** (lead-forms.js et al.) — the lead/form flow: one file per
    modal + a single OVERLAYS registry in overlay-wiring.js, focus trap, the Japan-residence
    gate.
@@ -80,8 +80,8 @@ Run everything locally: `npm run check`. Enable the pre-commit hook: `npm run ho
 - **Frontend↔backend job contract:** the detail modal renders ~11 rich JD fields that exist
   only in the offline snapshot, not the DB, so hydrating from `/api` shows a thinner page.
   Fix scoped; needs a product call on how rich a served JD should be.
-- **The backend vendors `core/logic.js`** (a byte-identical copy at
-  `backend/src/shared/logic.cjs` in LongWave-Dev-Admin). When you change `src/core/logic.js`
+- **The backend vendors `shared/logic.js`** (a byte-identical copy at
+  `backend/src/shared/logic.cjs` in LongWave-Dev-Admin). When you change `shared/logic.js`
   here, re-copy it there — lifting it into a shared package is the eventual fix.
 - **The modal/DOM interaction layer** (`src/features/modals/`, now split per concern) has no
   automated tests (zero-dep rule makes jsdom awkward — logic is pushed into `logic.js` instead).
@@ -103,6 +103,6 @@ open longwave-dev.html     # the site runs offline, straight from a file
 The backend and admin console run from the LongWave-Dev-Admin repo (`npm run api` +
 `npm start` there).
 
-Start reading at `src/core/logic.js` → `src/features/modals/` → `src/core/app.js`:
+Start reading at `shared/logic.js` → `src/features/modals/` → `src/core/app.js`:
 the correctness spine, the DOM/interaction layer, and the router/hydration glue — the
 places a real bug would hide in this repo.

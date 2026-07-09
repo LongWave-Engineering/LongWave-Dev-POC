@@ -13,6 +13,8 @@ concurrency:
 
 jobs:
   test:
+    # The backend (and its node:sqlite version matrix + coverage floor) lives in the
+    # LongWave-Dev-Admin repo now — this suite is the frontend + bundle guardrails only.
     name: Test & verify build
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +44,23 @@ jobs:
             exit 1
           fi
           echo "✓ bundle is in sync with src/"
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      # Post-push tripwire mirroring .githooks/pre-commit (hooks are opt-in via `npm run
+      # hooks`, so an unhooked clone still gets caught). Repo is public → a landed token
+      # must be found and rotated. Whitelists the in-tree placeholders.
+      - name: Scan tracked files for credential-shaped strings
+        run: |
+          if git grep -nE 'sk-ant-[A-Za-z0-9_-]{8,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY|(ADMIN_TOKEN|MANATAL_API_KEY|HRMOS_API_TOKEN|ANTHROPIC_API_KEY)=[^[:space:]"]{8,}' -- . ':(exclude)*.env.example' \
+             | grep -Ev 'dev-admin-token|sk-ant-\.\.\.'; then
+            echo "::error::a tracked file contains a credential-shaped string — rotate it and move the secret to .env / sources.local.json (gitignored)."
+            exit 1
+          fi
+          echo "✓ no credential-shaped strings in tracked files"
 
   package:
     name: Package built site

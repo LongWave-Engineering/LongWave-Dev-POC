@@ -16,8 +16,8 @@ data inlined), so it needs no server and no build step to view.
 ## Backend & admin (separate repo)
 
 This repo is **just the public site** — the main jobs-board UI. The backend
-(Jobs/Articles/Leads/Partners API, ATS sync worker, Manatal export, PDF JD import)
-and the admin console both live in the private companion repo
+(Jobs/Articles/Leads/Partners API, ATS sync worker, Manatal export, PDF JD import,
+OpenAPI contract) and the admin console both live in the private companion repo
 [**LongWave-Dev-Admin**](https://github.com/LongWave-Engineering/LongWave-Dev-Admin).
 The site works entirely standalone from its embedded demo data; when it's served by
 that backend it hydrates live data from `/api` (see `src/core/app.js`).
@@ -27,8 +27,8 @@ that backend it hydrates live data from `/api` (see `src/core/app.js`).
 See **[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)** for how the system fits together
 (this static frontend + the backend in the admin repo) with diagrams (ATS sync, the jobs
 API, sign-up/leads), tech choices, and a migration path. The pure domain logic in
-`core/logic.js` is shared by the frontend bundle and the tests, and the backend keeps a
-vendored, byte-identical copy so both sides classify jobs the same way.
+[`shared/logic.js`](shared/logic.js) is bundled into the site and unit-tested here, and
+the backend keeps a vendored, byte-identical copy so both sides classify jobs the same way.
 
 ## Project layout
 
@@ -49,13 +49,11 @@ src/
 │   ├── motion.css                scroll-reveal + staggered entrance (one Apple-style easing curve)
 │   ├── responsive.css            media queries, reduced-motion, print
 │   ├── intro.js / outro.js       open / close the shared IIFE
-│   ├── logic.js                  ★ pure, framework-free domain logic (LW.*) — unit-tested
 │   ├── data.js                   built-in demo fallback data + SPECS
 │   ├── i18n.js                   EN/JA strings, t(), helpers, HRMOS override, per-job enrichment
 │   ├── app.js                    applyLang, hash router, nav, header-scroll, reveal
 │   ├── init.js                   bootstrap
-│   ├── head.html                 <head>: meta, title, favicon, web fonts
-│   └── hrmos-data.js             generated job data — window.__HRMOS_DATA__ (synced from HRMOS)
+│   └── head.html                 <head>: meta, title, favicon, web fonts
 └── features/                  ← one folder per feature (html + css + js together)
     ├── header/                   header.html, header.css   (nav + round logo badge)
     ├── home/                     home.html/.css/.js + home-cta.css   (hero, why-us, teaser, signup band)
@@ -70,19 +68,21 @@ src/
     ├── footer/                   footer.html, footer.css
     └── modals/                   modals.html/.css/.js   (job-detail + signup, focus trap)
 
+shared/                        ← @longwave/logic — ★ pure domain logic (LW.*), bundled into
+                                 the site by build.sh and vendored by the backend (admin repo)
 test/                          ← Node built-in test runner (node:test) — zero dependencies
-├── logic.test.js                 unit tests for every pure function in core/logic.js
+├── logic.test.js                 unit tests for every pure function in shared/logic.js
 ├── i18n.test.js                  EN/JA dictionary parity + helpers
 └── guardrails.test.js            shipped-bundle invariants (no client data / external loads / secrets)
 .github/workflows/              ci.yml (test + package) · release.yml (tag → GitHub Release)
 package.json                   ← npm test / npm run build (zero runtime deps)
 ```
 
-### Pure logic lives in `core/logic.js`
+### Pure logic lives in `shared/logic.js`
 
 Anything pure (no DOM, no app state) — specialty classification, address → prefecture,
 salary parsing, the filter predicate, age calc — lives in
-[`src/core/logic.js`](src/core/logic.js) as the `LW` namespace. It works **both** inside
+[`shared/logic.js`](shared/logic.js) as the `LW` namespace. It works **both** inside
 the browser bundle *and* when `require()`'d by Node, so the unit tests exercise the exact
 code that ships. Add testable logic here, not in the render files.
 
@@ -106,7 +106,7 @@ node --test
 ```
 
 No dependencies and no install step — tests use Node's built-in `node:test` +
-`node:assert` (Node 20+). They cover the pure logic in `core/logic.js`, EN/JA i18n
+`node:assert` (Node 20+). They cover the pure logic in `shared/logic.js`, EN/JA i18n
 parity, and the guardrail invariants on the shipped bundle. Shift-left: run
 `npm test` before you commit.
 

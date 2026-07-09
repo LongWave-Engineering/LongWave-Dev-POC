@@ -21,7 +21,7 @@ from `/api` instead.
 ```mermaid
 flowchart LR
     subgraph authoring["Authoring (src/)"]
-        core["src/core/<br/>tokens · layout · router · i18n · <b>logic.js</b> · data"]
+        core["src/core/ + shared/<br/>tokens · layout · router · i18n · <b>shared/logic.js</b> · data"]
         feat["src/features/*<br/>header · home · jobs · companies · cv · modals · …"]
         data["src/core/data.js<br/>curated demo set (offline fallback)"]
     end
@@ -51,7 +51,7 @@ flowchart LR
 | **UI** | Vanilla HTML/CSS/JS, no framework. One IIFE assembled from `src/` parts by `build.sh`. |
 | **Routing** | Client-side hash router (`#/jobs`, `#/companies`, …) in `core/app.js`. |
 | **i18n** | `core/i18n.js` — EN/JA dictionaries + `t()`; language toggled in the client. |
-| **Domain logic** | `core/logic.js` (`LW.*`) — pure functions: specialty classification, address→prefecture, salary parsing, filter predicate, age calc. **No DOM, no state.** |
+| **Domain logic** | `shared/logic.js` (`LW.*`, the `@longwave/logic` package) — pure functions: specialty classification, address→prefecture, salary parsing, filter predicate, age calc. **No DOM, no state.** |
 | **Data** | The curated demo set in `core/data.js` is **embedded at build time** (offline / Pages). Served by the backend, the site hydrates live data from `/api` (progressive enhancement in `core/app.js`). |
 | **Forms** | The CV/rirekisho builder is **client-only** (generated + printed in-browser — no data leaves the page). Sign-up / inquiry forms POST to `/api/leads` when a backend is present; the static Pages build honestly says there's no backend instead of faking success. |
 | **Tests** | `test/` via Node's built-in `node:test` — unit tests for `LW.*`, EN/JA i18n parity, and guardrail invariants on the shipped bundle. Zero dependencies. |
@@ -80,7 +80,7 @@ A **runnable, zero-dependency** backend now lives in the **private LongWave-Dev-
 repo** (`backend/`), next to the admin SPA that drives it: Node built-ins only —
 `node:http` (server), `node:sqlite` (`DatabaseSync`), global `fetch` (ATS/Manatal).
 It serves a JSON API (and, opt-in via `$LW_SITE_FILE`, this repo's built public site),
-and it **vendors a byte-identical copy of this repo's `core/logic.js`** so the backend
+and it **vendors a byte-identical copy of this repo's `shared/logic.js`** so the backend
 classifies jobs identically to the frontend by construction.
 
 ```mermaid
@@ -93,7 +93,7 @@ flowchart TB
         server["server.js<br/>static + route /api"]
         api["api.js<br/>JSON router · auth guard · CORS"]
         models["models.js<br/>data access + normalization"]
-        logic["logic.js → shared/logic.cjs<br/>(vendored copy of core/logic.js)"]
+        logic["logic.js → src/shared/logic.cjs<br/>(vendored copy of shared/logic.js)"]
         importer["import.js<br/>CSV/JSON bulk import"]
         manatal["manatal.js<br/>CRM push + CSV export"]
         subgraph ats["ats/ (adapter registry + runSync)"]
@@ -136,6 +136,11 @@ SQLite → **Postgres**; single shared token → **real auth**; add **resume fil
 and a migrations framework; move the best-effort per-IP rate limiter to the edge/CDN; wire
 the **live HERP/HRMOS/Talentio APIs** (the agency portals currently come in via the
 bulk-import path). The diagrams in §2 are the target this is growing toward.
+
+> **Backend deep-dive:** the backend's own service architecture — the API contract
+> (`docs/openapi.yaml`), Next.js integration patterns (ISR, BFF, revalidation), CORS
+> allowlist, and the phased readiness plan — lives in the **LongWave-Dev-Admin repo**
+> (`docs/BACKEND-ARCHITECTURE.md`), next to the code it describes.
 
 ---
 
@@ -242,7 +247,7 @@ sequenceDiagram
 
 ### The reuse that makes this clean
 
-`core/logic.js` (`LW.*`) is **already pure and dependency-free**, and is already
+`shared/logic.js` (`LW.*`) is **already pure and dependency-free**, and is already
 `require()`-d by the Node tests. The **same module powers the Sync Worker's
 normalization** (classify specialty, parse prefecture, parse salary, build the search
 index) — so the frontend and backend agree on classification by construction, and it
@@ -250,7 +255,7 @@ stays unit-tested in one place.
 
 ```mermaid
 flowchart LR
-    logic["core/logic.js (LW.*)<br/>pure domain logic"]
+    logic["shared/logic.js (LW.*)<br/>pure domain logic"]
     logic --> fe["Frontend<br/>(filter/sort/display)"]
     logic --> be["Backend Sync Worker 🟠<br/>(normalize on ingest)"]
     logic --> tests["Node tests<br/>(both sides covered)"]
@@ -277,7 +282,7 @@ These are sensible defaults, not requirements — chosen for low ops + good DX.
 1. **Extract the API contract** from today's data shape (`window.__HRMOS_DATA__`) — it
    already defines `jobs`, `companies`, `jobs_ja`, `blurb`. Make that the `GET /jobs`
    response shape so the frontend change is minimal.
-2. **Stand up Postgres + the Sync Worker**, reusing `core/logic.js` for normalization.
+2. **Stand up Postgres + the Sync Worker**, reusing `shared/logic.js` for normalization.
 3. **Add the Jobs API**; switch the frontend from `window.__HRMOS_DATA__` to a `fetch()`
    (keep the embedded data as an offline fallback).
 4. **Add the Leads API** + resume storage; wire the existing sign-up modal to it.
@@ -290,13 +295,16 @@ Frontend source today lives under `src/` (see the [README](../README.md) for the
 map). The split spans two repos:
 
 ```
-LongWave-Dev-POC/     ← this repo (public): the site — src/, build.sh, longwave-dev.html, docs/
-LongWave-Dev-Admin/   ← private repo: the admin SPA (root) + backend/ (API · ATS worker · import/export)
-shared/  🟠           ← the LW domain logic as a real package, consumed by both repos
+LongWave-Dev-POC/     ← this repo (public): the site — src/, shared/ (@longwave/logic),
+                        build.sh, longwave-dev.html, docs/
+LongWave-Dev-Admin/   ← private repo: the admin SPA (root) + backend/ (API · ATS worker ·
+                        import/export) + docs/ (openapi.yaml · BACKEND-ARCHITECTURE.md)
 ```
 
-> **Update:** the backend scaffold described in **[§1b](#1b-backend-as-built-)** lives in
-> **LongWave-Dev-Admin** (`backend/`) with a vendored, byte-identical copy of this repo's
-> `core/logic.js` (`backend/src/shared/logic.cjs`) for normalization (the "shared logic"
-> arrow above). Publishing that file as a real `shared/` package is the remaining step to
-> fully formalize the split.
+> **Update:** the shared `LW` domain logic was lifted out of the frontend tree into
+> **[`shared/logic.js`](../shared/README.md)** (`@longwave/logic`), consumed here by the
+> frontend bundle and the test suite. The backend described in
+> **[§1b](#1b-backend-as-built-)** lives in **LongWave-Dev-Admin** (`backend/`) with a
+> vendored, byte-identical copy (`backend/src/shared/logic.cjs`) for normalization (the
+> "shared logic" arrow above). Publishing `@longwave/logic` as a real cross-repo package
+> is the remaining step to fully formalize the split.

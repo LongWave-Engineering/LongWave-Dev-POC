@@ -1,7 +1,8 @@
-/* core/logic.js — pure, framework-free domain logic (LW.*).
-   No DOM, no app state, so the exact same code is used by the browser bundle
-   (exposed as `LW` in the IIFE scope) AND require()'d by the Node unit tests in
-   /test (via the module.exports footer). Put testable pure logic here. */
+/* shared/logic.js — pure, framework-free domain logic (LW.*), shared by BOTH apps.
+   No DOM, no app state, no Node APIs, so the exact same code is used by the browser
+   bundle (exposed as `LW` in the IIFE scope), require()'d by the Node unit tests in
+   /test, AND require()'d by the backend (backend/src/logic.js) so frontend and
+   backend classify/filter identically by construction. Put testable pure logic here. */
   var LW = (function(){
     "use strict";
 

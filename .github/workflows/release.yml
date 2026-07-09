@@ -29,10 +29,6 @@ jobs:
       - name: Run frontend tests (gate the release)
         run: node --test
 
-      - name: Run backend tests (gate the release)
-        run: node --test
-        working-directory: backend
-
       - name: Build the single-file site
         run: bash build.sh
 

@@ -55,7 +55,7 @@ BODY=(
 # ---- app JS (load order; one shared IIFE) ----
 JS=(
   src/core/intro.js
-  src/core/logic.js
+  shared/logic.js
   src/core/data.js
   src/core/i18n-data.js
   src/core/i18n.js

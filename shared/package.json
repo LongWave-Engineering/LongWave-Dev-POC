@@ -1,0 +1,8 @@
+{
+  "name": "@longwave/logic",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LongWave shared domain logic (LW.*) — pure, dependency-free, dual-format (browser IIFE + CJS). Consumed by the frontend bundle, the backend, and both test suites via path imports; packageable/git-referenceable if a consumer ever lives outside this repo.",
+  "main": "logic.js",
+  "license": "UNLICENSED"
+}
