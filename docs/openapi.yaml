@@ -112,6 +112,7 @@ paths:
       responses:
         '200': { $ref: '#/components/responses/JobOk' }
         '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
     delete:
       operationId: deleteJob
       tags: [admin]
@@ -140,6 +141,7 @@ paths:
       responses:
         '200': { $ref: '#/components/responses/JobOk' }
         '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
 
   /api/jobs/import:
     post:
@@ -320,6 +322,7 @@ paths:
       responses:
         '200': { $ref: '#/components/responses/ArticleOk' }
         '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
     delete:
       operationId: deleteArticle
       tags: [admin]
@@ -393,6 +396,7 @@ paths:
       responses:
         '200': { $ref: '#/components/responses/PartnerOk' }
         '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
     delete:
       operationId: deletePartner
       tags: [admin]
@@ -425,6 +429,7 @@ paths:
       requestBody: { $ref: '#/components/requestBodies/SourceInput' }
       responses:
         '201': { $ref: '#/components/responses/SourceOk' }
+        '400': { $ref: '#/components/responses/BadRequest' }
         '401': { $ref: '#/components/responses/Unauthorized' }
 
   /api/sources/{id}:
@@ -432,12 +437,13 @@ paths:
     put:
       operationId: updateSource
       tags: [admin]
-      summary: Update a source (omitting `token` preserves the stored credential)
+      summary: Update a source (omitting `token` or `enabled` preserves the stored value)
       security: [{ bearerAuth: [] }]
       requestBody: { $ref: '#/components/requestBodies/SourceInput' }
       responses:
         '200': { $ref: '#/components/responses/SourceOk' }
         '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
     delete:
       operationId: deleteSource
       tags: [admin]
@@ -472,6 +478,11 @@ paths:
         Rate-limited per IP. Rejects submissions with no name, email, message, or
         resume filename (400). Free-text fields are clamped to 2000 chars. A returning
         email updates the same lead (messages append, other fields keep-first).
+
+        Responds with a bare `{ ok: true }` acknowledgement only — it deliberately does
+        NOT echo the stored record. Echoing it made this public endpoint an email-keyed
+        PII lookup (POST a known email → that candidate's full record). The lead is
+        persisted; read it back from the admin `GET /api/leads`.
       requestBody:
         required: true
         content:
@@ -479,10 +490,14 @@ paths:
             schema: { $ref: '#/components/schemas/LeadInput' }
       responses:
         '201':
-          description: The (created or updated) lead.
+          description: Acknowledgement (no PII echoed).
           content:
             application/json:
-              schema: { $ref: '#/components/schemas/Lead' }
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok: { type: boolean, const: true }
         '400': { $ref: '#/components/responses/BadRequest' }
         '429': { $ref: '#/components/responses/RateLimited' }
     get:
@@ -875,13 +890,14 @@ components:
     SourceInput:
       type: object
       required: [url]
+      description: "POST requires `url` (400 otherwise). On PUT, any omitted field is preserved from the stored row, so a rename-only edit is safe."
       properties:
         name: { type: string, description: "Defaults to the URL" }
         type: { type: string, description: "Auto-detected from the URL when omitted" }
         url: { type: string }
         token: { type: string, description: "Provider credential. On PUT, omitting this key preserves the stored token." }
         company_id: { type: string }
-        enabled: { type: boolean, default: true }
+        enabled: { type: boolean, default: true, description: "A real `false` disables the source; omitting it on PUT preserves the stored value (it does not disable)." }
         schedule: { type: string, default: weekly }
 
     SyncResult:

@@ -155,12 +155,17 @@ sequenceDiagram
 | Guarantee | Enforced by |
 | --- | --- |
 | Hidden jobs never leak to anon (list **or** by-id) | `api.js` + test |
+| Hidden jobs can't be **applied to** by anon (no pipeline pollution / slot burn) | `models.addApplications` `hidden=0` probe + test |
+| Public intake never echoes a stored record (no email-keyed PII lookup) | `POST /api/leads` → `{ok:true}` + test |
 | Internal `tags` stripped for anon | `stripInternalJob` + test |
-| ATS credentials never serialized | `redactSource` + test |
+| ATS credentials never serialized (column **or** in error text) | `redactSource` + `scrubSecrets` + test |
+| PII responses are `no-store` + `nosniff`; CSV export is an attachment | shared response headers + test |
 | Public intake is rate-limited, body-capped, rejects malformed/empty | limiter + `readBody` + tests |
+| Repeated failed admin auth is throttled per IP (valid token always passes) | `authFailLimited` in `guard()` + test |
 | UTF-8 (Japanese) bodies survive chunked transport | `readBody` byte-concat + test |
 | Constant-time token comparison | SHA-256 + `timingSafeEqual` |
 | Fail-closed boot: production refuses the default token | startup check in `api.js` |
+| The contract (`openapi.yaml`) can't silently drift from the routes | `test/contract.test.js` |
 
 ---
 
@@ -177,9 +182,32 @@ In dependency order — each unblocks the ones after it:
 | 5 | **Revalidation webhook** | 🟠 | Backend POSTs to `$REVALIDATE_URL` (with a shared secret) after admin writes / sync runs; Next.js route handler calls `revalidateTag`. Fire-and-forget, additive. |
 | 6 | **Postgres + migrations framework** | 🟠 | `db.js` is the only module that touches SQLite; swap driver behind the same `all/get/run/transaction` helpers. Replace `ensureColumn` with numbered migrations at the same time. |
 | 7 | **Resume object storage** | 🟠 | Signed uploads to S3/R2; `leads` keeps a pointer, PII files stay out of the DB. |
-| 8 | **Real auth** | 🟠 | Per-user OIDC at the admin BFF (§3.2); backend keeps one bearer check. |
-| 9 | **Edge rate limiting / caching** | 🟠 | Move the best-effort in-memory limiter's job to the CDN/edge in front of the API; add `Cache-Control` to public reads when a CDN fronts them. |
-| 10 | **Observability** | 🟠 | Structured request log line (status, ms, route) + `/api/health` (exists) split into liveness/readiness once Postgres arrives. |
+| 8 | **Real auth** | 🟠 (throttle done) | Per-user OIDC at the admin BFF (§3.2); backend keeps one bearer check. Interim: a per-IP failed-auth throttle now blunts brute force / scanning. |
+| 9 | **Edge rate limiting / caching** | 🟠 (headers done) | Move the in-memory limiter's job to the CDN/edge in front of the API. Responses already send `Cache-Control: no-store`; a CDN can override for the public reads. |
+| 10 | **Observability** | 🟢 **logging done** | One structured JSON access line per request (reqId, method, path, status, ms, ip); the 500 handler shares that reqId. The liveness/readiness split still waits for out-of-process Postgres (a read probe is a no-op on embedded SQLite). |
+
+### 4b. Hardening pass 🟢 (done)
+
+An adversarial audit (five dimensions, each finding independently verified) drove a round of
+fixes that don't need Postgres to land:
+
+- **Security** — closed the critical PII echo on public sign-up; blocked applications to
+  hidden jobs; `no-store`+`nosniff` on every response + CSV as an attachment; rate-limiter
+  uses the proxy-set (rightmost) `X-Forwarded-For` under `TRUST_PROXY` and hard-caps its map;
+  per-IP failed-auth throttle; ATS error text scrubbed of URL credentials before it's persisted.
+- **Resilience** — every outbound `fetch` (ATS adapters, Manatal, Anthropic) is bounded by
+  `AbortSignal.timeout`; `PRAGMA busy_timeout` so server/worker writes queue instead of
+  throwing `SQLITE_BUSY`; the worker survives a stray rejection, handles signals, and
+  `--once` exits non-zero on failure; `uncaughtException` fails fast through the graceful path.
+- **Durability** — `npm run backup` takes a live `node:sqlite` backup that includes the WAL
+  (a plain `cp` of a live WAL DB is not a valid backup).
+- **Automation** — CI now lints `openapi.yaml` + verifies type generation, runs a Node 22+24
+  matrix with a coverage floor, and scans for committed secrets; `test/contract.test.js` keeps
+  the spec and the routes in lockstep, `test/zero-dep.test.js` enforces the dependency-free
+  invariant, and the pre-commit hook gained a secret scan + backend tests.
+- **Refactor** — one write path for `ats_sources` (fixing `enabled` coercion + missing-`url`
+  500s + missing-id 404s), one `JOB_SET_COLS` list feeding all three job writes, one HRMOS
+  roster mapper (fixing sectors nulled on every sync), and one shared `claude.js` Anthropic call.
 
 ---
 
@@ -206,11 +234,18 @@ flowchart LR
     api -.->|"webhook: revalidate"| v
 ```
 
-**Environment (the whole config surface):** `PORT`, `DB_PATH` (→ `DATABASE_URL` 🟠),
-`ADMIN_TOKEN` (fail-closed in production), `ALLOWED_ORIGINS`, `MANATAL_API_KEY`,
-`HRMOS_API_TOKEN`, `ANTHROPIC_API_KEY` + `TRANSLATE_MODEL`/`JD_MODEL`,
-`RATE_LIMIT_MAX`/`RATE_LIMIT_WINDOW_MS`, `TRUST_PROXY`, body caps. No dotenv loader —
-use the host's secret store, or `node --env-file=.env` locally.
+The `worker --once` box runs **next to the API so it shares the DB** (host cron or a
+long-running `npm run worker`); it already honours each source's `weekly`/`daily`/`manual`
+schedule. A CI-only checkout DB would be synced to nothing, so no scheduled workflow ships
+in-repo — wire one at deploy time.
+
+**Environment (the whole config surface — `.env.example` is authoritative; there is no
+dotenv loader, so load with `node --env-file=.env`):** `PORT`, `DB_PATH` (→ `DATABASE_URL`
+🟠), `ADMIN_TOKEN` (fail-closed in production via `NODE_ENV=production`), `ALLOWED_ORIGINS`,
+`MANATAL_API_KEY`, `HRMOS_API_TOKEN`, `ANTHROPIC_API_KEY` + `TRANSLATE_MODEL`/`JD_MODEL`/
+`LLM_TIMEOUT_MS`, `RATE_LIMIT_MAX`/`RATE_LIMIT_WINDOW_MS`, `AUTH_FAIL_MAX`/
+`AUTH_FAIL_WINDOW_MS`, `TRUST_PROXY`, `ATS_FETCH_TIMEOUT_MS`, `MAX_BODY_BYTES`/
+`MAX_PDF_BODY_BYTES`, `SOURCES_FILE`. Backups: `npm run backup` (cron alongside the sync).
 
 ---
 
@@ -222,7 +257,9 @@ Each phase ships alone; nothing blocks on a big-bang.
 2. **Phase 1 — formalize the contract.** 🟢 done — shared-logic package (#2),
    pagination (#3), OpenAPI + types (#4). A Next.js app can now be built against a
    typed, stable, independently-deployable API.
-3. **Phase 2 — Next.js public site.** New repo (`LongWave-Dev-Web`), Server Components
+3. **Hardening pass.** 🟢 done — the audit-driven security / resilience / durability /
+   automation / refactor fixes in §4b, none of which block on Postgres.
+4. **Phase 2 — Next.js public site.** New repo (`LongWave-Dev-Web`), Server Components
    + ISR per §3.1, intake proxied at the edge, revalidation webhook (#5). The current
    static build keeps shipping until parity, then the CDN flips.
 4. **Phase 3 — production data layer.** Postgres + migrations (#6), resume storage
