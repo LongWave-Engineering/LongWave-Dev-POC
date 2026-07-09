@@ -13,21 +13,30 @@ concurrency:
 
 jobs:
   test:
-    name: Test & verify build
+    name: Test & verify build (Node ${{ matrix.node }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      # The backend declares engines >=22 and uses experimental node:sqlite, whose API
+      # shifted between 22 and 24 — test BOTH so code can't pass on 24 yet throw on the
+      # documented minimum. Both suites are dependency-free, so the extra leg is cheap.
+      matrix:
+        node: ['22', '24']
     steps:
       - uses: actions/checkout@v5
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
         with:
-          node-version: '24'
+          node-version: ${{ matrix.node }}
 
       - name: Run frontend unit + guardrail tests
         run: node --test
 
-      - name: Run backend tests
-        run: node --test
+      - name: Run backend tests (with a coverage floor)
+        # node:test's built-in coverage gate — no dependency. Thresholds sit a few points
+        # below current (90 lines / 84 branches / 85 funcs) so a new untested module fails CI.
+        run: node --test --experimental-test-coverage --test-coverage-lines=85 --test-coverage-branches=78 --test-coverage-functions=80
         working-directory: backend
 
       - name: Build, then syntax-check the bundled app JS
@@ -46,6 +55,41 @@ jobs:
             exit 1
           fi
           echo "✓ bundle is in sync with src/"
+
+  contract:
+    name: Validate the API contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+      # The spec is the source of truth frontends generate types from — lint it and prove
+      # type generation still succeeds, so a bad edit (dangling $ref, dup operationId,
+      # 3.1-invalid schema) fails HERE instead of in a downstream repo's build. CI may
+      # download tools via npx; nothing is added to any package.json (repo stays zero-dep).
+      - name: Lint OpenAPI + verify TypeScript generation
+        run: |
+          npx --yes @redocly/cli@latest lint docs/openapi.yaml
+          npx --yes openapi-typescript@latest docs/openapi.yaml -o "$RUNNER_TEMP/lw-api.d.ts"
+          echo "✓ openapi.yaml is valid and generates types"
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      # Post-push tripwire mirroring .githooks/pre-commit (hooks are opt-in via `npm run
+      # hooks`, so an unhooked clone still gets caught). Repo is public → a landed token
+      # must be found and rotated. Whitelists the in-tree placeholders.
+      - name: Scan tracked files for credential-shaped strings
+        run: |
+          if git grep -nE 'sk-ant-[A-Za-z0-9_-]{8,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY|(ADMIN_TOKEN|MANATAL_API_KEY|HRMOS_API_TOKEN|ANTHROPIC_API_KEY)=[^[:space:]"]{8,}' -- . ':(exclude)backend/.env.example' \
+             | grep -Ev 'dev-admin-token|sk-ant-\.\.\.'; then
+            echo "::error::a tracked file contains a credential-shaped string — rotate it and move the secret to .env / sources.local.json (gitignored)."
+            exit 1
+          fi
+          echo "✓ no credential-shaped strings in tracked files"
 
   package:
     name: Package built site

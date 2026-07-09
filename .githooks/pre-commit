@@ -18,4 +18,25 @@ if ! node --test test/guardrails.test.js >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "✓ pre-commit: bundle in sync + guardrails pass"
+# 3) No credentials in the staged diff (repo is PUBLIC and pushes go straight to main, so a
+#    pasted token would be instantly public + permanent in history). Scans added lines only;
+#    whitelists the in-tree placeholders (dev-admin-token, the "sk-ant-..." doc example).
+if git diff --cached -U0 -- . ':(exclude)backend/.env.example' \
+   | grep -E '^\+[^+]' \
+   | grep -Ev 'dev-admin-token|sk-ant-\.\.\.' \
+   | grep -qE 'sk-ant-[A-Za-z0-9_-]{8,}|ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY|(ADMIN_TOKEN|MANATAL_API_KEY|HRMOS_API_TOKEN|ANTHROPIC_API_KEY)=[^[:space:]"]{8,}'; then
+  echo "✗ pre-commit: the staged diff looks like it contains a credential."
+  echo "  Real secrets belong in backend/.env or backend/sources.local.json (both gitignored)."
+  exit 1
+fi
+
+# 4) Backend regressions must not reach main (direct-to-main workflow → CI is post-hoc).
+#    Only when the commit touches backend/ (keeps frontend-only commits instant).
+if git diff --cached --name-only | grep -q '^backend/'; then
+  if ! (cd backend && node --no-warnings --test) >/dev/null 2>&1; then
+    echo "✗ pre-commit: backend tests failed. Run: npm --prefix backend test"
+    exit 1
+  fi
+fi
+
+echo "✓ pre-commit: bundle in sync + guardrails + no secrets + backend tests pass"

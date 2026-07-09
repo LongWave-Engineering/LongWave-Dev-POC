@@ -33,6 +33,9 @@ jobs:
         run: node --test
         working-directory: backend
 
+      - name: Validate the API contract (gate the release)
+        run: npx --yes @redocly/cli@latest lint docs/openapi.yaml
+
       - name: Build the single-file site
         run: bash build.sh
 
