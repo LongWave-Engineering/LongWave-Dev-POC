@@ -46,8 +46,7 @@
       "blurb": {
         "en": "enechain operates Japan's largest wholesale energy trading marketplace, eSquare, where utilities, industrial firms, and financial institutions trade electricity, fuels, and environmental values such as carbon credits. Alongside the marketplace, it provides supporting tools including clearing, data, and risk-management software. The company aims to build fair, open markets across the energy sector.",
         "ja": "enechainは、日本最大級の卸エネルギー取引マーケットプレイス「eSquare」を運営し、電力会社・事業会社・金融機関などが電力や燃料、カーボンクレジットといった環境価値を取引できる場を提供しています。マーケットプレイスに加え、クリアリング、データ、リスク管理ソフトウェアなどの周辺ツールも提供しています。エネルギー分野全体で公正で開かれた市場の構築を目指しています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Hubble",
@@ -141,8 +140,7 @@
       "blurb": {
         "en": "LegalOn Technologies builds AI software for contract review and management, founded in 2017 by former corporate attorneys and headquartered in Tokyo and San Francisco. In Japan it offers \"LegalForce\" for AI-assisted contract review and \"LegalForce Cabinet\" for contract lifecycle management, serving thousands of corporate legal teams across Japan, the US, and the UK.",
         "ja": "LegalOn Technologiesは契約書の審査・管理を支援するAIソフトウェアを開発する企業で、2017年に企業法務出身の弁護士らが創業し、東京とサンフランシスコに拠点を置いています。日本国内ではAIによる契約審査サービス「LegalForce」と、契約管理サービス「LegalForce Cabinet」を提供し、日本・米国・英国の数千社の法務部門に利用されています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Findy",
@@ -195,8 +193,7 @@
       "blurb": {
         "en": "Nature Inc. is a Japanese IoT company best known for \"Nature Remo,\" a smart remote that lets users control air conditioners, TVs, and other appliances from a smartphone or smart speaker. It has expanded into home energy management with \"Nature Remo E\" and operates a distributed-energy-resource platform and demand-response services aimed at supporting the shift to renewable energy.",
         "ja": "Nature株式会社は、エアコンやテレビなどの家電をスマートフォンやスマートスピーカーから操作できるスマートリモコン「Nature Remo」で知られる日本のIoT企業です。「Nature Remo E」で家庭のエネルギーマネジメント領域にも進出し、分散型エネルギーリソース（DER）プラットフォームやデマンドレスポンスサービスを運営して、再生可能エネルギーへの移行を後押ししています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Minttown",
@@ -262,8 +259,7 @@
       "blurb": {
         "en": "Amptalk builds AI-powered sales enablement tools that turn meeting and call conversations into usable data. Its core product, amptalk analysis, automatically transcribes, summarizes, and analyzes sales conversations and syncs the results to CRM and collaboration tools such as Salesforce, HubSpot, Slack, and Microsoft Teams. It also offers amptalk coach, an AI role-play tool for sales training. The company was founded in 2019 and is based in Tokyo.",
         "ja": "amptalkは、商談や電話の会話を活用可能なデータに変えるAI搭載のセールスイネーブルメントツールを開発しています。主力製品「amptalk analysis」は商談を自動で文字起こし・要約・解析し、結果をSalesforce、HubSpot、Slack、Microsoft TeamsなどのCRMやコラボレーションツールに連携します。AIロールプレイによる営業トレーニングツール「amptalk coach」も提供しています。同社は2019年設立、東京を拠点としています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "newmo",
@@ -342,8 +338,7 @@
       "blurb": {
         "en": "GA technologies is a Tokyo-based real-estate technology company that operates RENOSY, an online, AI-driven real-estate investment service providing a one-stop platform for buying, managing, and selling investment properties such as condominiums, apartments, and houses. RENOSY has ranked first in Japan for investment-property sales. The company is expanding its real-estate investment business into the U.S. market.",
         "ja": "GA technologiesは東京を拠点とする不動産テック企業で、AIを活用したオンライン不動産投資サービス「RENOSY（リノシー）」を運営しています。マンション、アパート、戸建てなどの投資用物件の購入・管理・売却をワンストップで提供するプラットフォームで、投資用不動産の売買で国内No.1の実績を持ちます。近年は不動産投資事業を米国市場にも展開しています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Giftmall",
@@ -356,7 +351,8 @@
       "blurb": {
         "en": "Giftmall operates one of Japan's largest online gift marketplaces, where shoppers can search roughly a million-plus items by recipient, occasion, or category. It offers gift-specific features such as personalized engraving, special wrapping, and next-day delivery for eligible items, and uses purchase data from its large user base to power product recommendations. The service runs as both a website and a mobile app.",
         "ja": "Giftmallは、日本最大級のオンラインギフトサービスを運営しており、贈る相手やイベント、カテゴリーなどから約100万点以上の商品を検索できます。名入れや特別なラッピング、対象商品の翌日配送など、ギフトに特化した機能を提供し、大規模なユーザーの購買データを活用した商品レコメンドも行っています。WebサイトとモバイルアプリのＡ両方で提供されています。"
-      }
+      },
+      "placement": true
     },
     {
       "name": "WeWork Japan",
@@ -369,8 +365,7 @@
       "blurb": {
         "en": "WeWork Japan provides flexible workspace, operating coworking spaces, furnished private offices, and meeting rooms across roughly 40 locations in cities including Tokyo, Osaka, Yokohama, Nagoya, Fukuoka, and Kobe. It serves freelancers, startups, and large enterprises with monthly memberships and turnkey office solutions, along with amenities and community events. It is the Japan operation of the WeWork flexible-office brand.",
         "ja": "WeWork Japanはフレキシブルオフィス事業を展開し、東京・大阪・横浜・名古屋・福岡・神戸などの都市で約40拠点のコワーキングスペース、家具付きの専用オフィス、会議室を運営しています。月額会員制やすぐに利用できるオフィスソリューションを通じて、フリーランスからスタートアップ、大企業までを対象とし、各種アメニティやコミュニティイベントも提供しています。フレキシブルオフィスブランドWeWorkの日本法人です。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Globis",
@@ -409,8 +404,7 @@
       "blurb": {
         "en": "M3 operates m3.com, a portal for medical professionals that is used by the large majority of registered physicians in Japan. Its services include pharma marketing support (such as the MR-kun e-detailing platform), medical career and recruitment services, clinical trial and treatment support, and overseas medical platforms. The company is listed on the Tokyo Stock Exchange.",
         "ja": "エムスリーは、日本の登録医師の大多数が利用する医療従事者向けポータル「m3.com」を運営しています。MR君などの製薬マーケティング支援、医師の転職・求人サービス、治験・臨床支援、海外向け医療プラットフォームなどを展開しています。東京証券取引所に上場しています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Sansan",
@@ -527,8 +521,7 @@
       "blurb": {
         "en": "Rapyuta Robotics (ラピュタロボティクス) is a Tokyo-based robotics company, originally an ETH Zurich spinoff founded in 2014, specializing in cloud robotics and warehouse automation. Its core product is the Rapyuta PA-AMR, a pick-assist autonomous mobile robot that works alongside warehouse staff, built on its rapyuta.io cloud platform for multi-robot coordination. It serves logistics and distribution operations.",
         "ja": "ラピュタロボティクス（Rapyuta Robotics）は2014年にETHチューリッヒ発で創業した東京拠点のロボティクス企業で、クラウドロボティクスと倉庫自動化を専門としています。主力製品は、倉庫作業者と協働するピッキング支援型の自律走行ロボット「Rapyuta PA-AMR」で、複数台のロボット連携を可能にするクラウド基盤「rapyuta.io」上で稼働します。物流・流通の現場に導入されています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Xaion Data",
@@ -541,7 +534,8 @@
       "blurb": {
         "en": "XAION DATA (株式会社XAION DATA) is a Tokyo-based AI and data company, founded in 2020, that collects and structures open data using proprietary technology. It offers SaaS products including AUTOHUNT, an AI-driven talent search engine for recruiting, and AUTOBOOST, a sales intelligence platform, alongside data-solution and recruitment services.",
         "ja": "株式会社XAION DATAは2020年設立の東京拠点のAI・データ企業で、独自技術によりオープンデータの収集・構造化を行っています。採用向けのAI人材検索エンジン「AUTOHUNT」やセールスインテリジェンスプラットフォーム「AUTOBOOST」などのSaaSプロダクトに加え、データソリューションや人材紹介サービスを提供しています。"
-      }
+      },
+      "placement": true
     },
     {
       "name": "Comthink",
@@ -554,7 +548,8 @@
       "blurb": {
         "en": "Nihon Comthink (日本コムシンク株式会社) is a Japanese IT services firm, founded in 1985 and based in Osaka, that provides system design, development, and operation. It offers DX (digital transformation) consulting across a range of industries and works with technologies including IoT and AI, with an engineer-focused company culture.",
         "ja": "日本コムシンク株式会社は1985年設立、大阪に本社を置くITサービス企業で、システムの設計・開発・運用を手がけています。幅広い業界向けにDX（デジタルトランスフォーメーション）コンサルティングを提供し、IoTやAIなどの技術も扱う、エンジニアを重視する企業文化を持つ会社です。"
-      }
+      },
+      "placement": true
     },
     {
       "name": "Sales Marker",
@@ -567,7 +562,8 @@
       "blurb": {
         "en": "Sales Marker is a Tokyo-based B2B SaaS company that pioneered \"intent sales\" in Japan. Its platform combines a database of several million companies with web-behavior intent data to identify businesses with active purchase needs, then helps sales teams reach them across multiple channels. It also offers Marketing Marker for intent-based marketing strategy.",
         "ja": "Sales Markerは、日本で「インテントセールス」を切り拓いた東京拠点のBtoB向けSaaS企業です。数百万社規模の企業データベースとWeb行動から得られるインテントデータを組み合わせ、今まさにニーズのある企業を特定し、複数チャネルでのアプローチを支援します。インテントデータを活用したマーケティング向けの「Marketing Marker」も提供しています。"
-      }
+      },
+      "placement": true
     },
     {
       "name": "Givery",
@@ -594,7 +590,8 @@
       "blurb": {
         "en": "AI TalentForce is a Tokyo-based AI company in the Akatsuki group; it was renamed Akatsuki AI Technologies, Inc. in January 2026. Originally focused on dispatching AI engineers, it now provides end-to-end support for corporate AI transformation, spanning generative AI, AI agents, and Physical AI. Services include building AI-powered business apps, internal tools and chatbots, creative-generation AI engines, and industry-specific AI agents.",
         "ja": "AI TalentForceは、アカツキグループに属する東京拠点のAI企業で、2026年1月に「株式会社アカツキAIテクノロジーズ」へ社名変更しました。当初はAIエンジニアの派遣を主軸としていましたが、現在は生成AI・AIエージェント・フィジカルAIを含む企業のAI変革（AX）を一気通貫で支援しています。AI業務アプリや社内ツール・チャットボットの開発、クリエイティブ生成AIエンジン、業界特化型AIエージェントの開発などを手がけています。"
-      }
+      },
+      "placement": true
     },
     {
       "name": "LinQ",
@@ -607,7 +604,8 @@
       "blurb": {
         "en": "LinQ is a Tokyo-based consumer app company that develops \"whoo,\" a location-sharing app for staying connected with close friends. The product is especially popular with Gen Z users and grew rapidly after the shutdown of the competing app Zenly. The company has raised Series A funding to expand its user base.",
         "ja": "LinQは、親しい友人とつながり続けるための位置情報共有アプリ「whoo（フー）」を開発する東京拠点のコンシューマーアプリ企業です。同サービスはZ世代を中心に人気を集め、競合アプリ「Zenly」のサービス終了を機に急成長しました。シリーズAの資金調達を実施し、ユーザー基盤の拡大を進めています。"
-      }
+      },
+      "placement": true
     },
     {
       "name": "estie",
@@ -620,7 +618,8 @@
       "blurb": {
         "en": "estie is a Tokyo-based real-estate tech startup, founded in 2018 with roots at the University of Tokyo, that digitizes the commercial real estate industry. It offers a SaaS platform and data products for office leasing and investment, including a comprehensive office-building database and market-research tools, plus a logistics real estate data service. Its tools support rent estimation and data-driven decision-making for real estate professionals.",
         "ja": "estieは、商業用不動産業界のデジタル化を進める東京拠点の不動産テックスタートアップで、2018年に東京大学発で創業しました。オフィスの賃貸・投資領域向けのSaaSプラットフォームやデータプロダクトを提供し、オフィスビルの包括的なデータベースや市場調査ツール、物流不動産向けのデータサービスなどを展開しています。賃料推定やデータに基づく意思決定を支援し、不動産プロフェッショナルに利用されています。"
-      }
+      },
+      "placement": true
     },
     {
       "name": "mico",
@@ -829,8 +828,7 @@
       "blurb": {
         "en": "Geniee is a Tokyo-based advertising technology company that develops the GENIEE Ads Platform, including its own SSP and DSP for publishers and advertisers. It also offers the GENIEE Marketing Cloud, a suite of marketing SaaS tools such as MA, SFA, CRM and chatbot products. The company operates across Japan and Southeast Asia.",
         "ja": "ジーニーは、自社開発のSSPやDSPを中心とする広告プラットフォーム「GENIEE Ads Platform」を提供する、東京を拠点としたアドテクノロジー企業です。MA・SFA・CRM・チャットボットなどのマーケティングSaaS群「GENIEE マーケティングクラウド」も展開しています。日本国内に加え、東南アジアでも事業を展開しています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Movus Technologies",
@@ -843,8 +841,7 @@
       "blurb": {
         "en": "Movus Technologies is a Tokyo-headquartered automotive fintech company that builds mobility infrastructure across Southeast Asia, primarily Indonesia. Using its own credit-assessment system, it provides vehicle subscription and ownership services for people who cannot access traditional car loans or leasing, including ride-share drivers.",
         "ja": "movus technologiesは、東京に本社を置く自動車フィンテック企業で、インドネシアを中心に東南アジアでモビリティインフラを構築しています。独自の与信評価システムを用い、従来の自動車ローンやリースを利用できない人々やライドシェアドライバー向けに、車両のサブスクリプション・所有サービスを提供しています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Plainer",
@@ -1078,8 +1075,7 @@
       "blurb": {
         "en": "Randstad Japan is the Japanese arm of the global Randstad HR services group, with around 120 branches and in-house locations nationwide. It provides temporary staffing, permanent placement, on-site (in-house) staffing, specialist professional placement, and broader HR solutions to employers and job seekers across Japan.",
         "ja": "ランスタッド（Randstad Japan）は、世界的な人材サービス企業ランスタッドの日本法人で、全国に約120の支店・常駐拠点を展開しています。人材派遣、人材紹介（正社員）、オンサイト（インハウス）派遣、専門職の人材紹介をはじめ、幅広いHRソリューションを企業と求職者に提供しています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Akatsuki",
@@ -1222,8 +1218,7 @@
       "blurb": {
         "en": "JAPAN AI, Inc. is a Tokyo company in the Geniee group that provides generative-AI products for enterprises. Its lineup includes JAPAN AI CHAT (a corporate ChatGPT-style tool with RAG-based internal data search), the autonomous JAPAN AI AGENT, JAPAN AI SPEECH for meeting transcription, JAPAN AI MARKETING, and AI adoption consulting.",
         "ja": "JAPAN AI株式会社は、ジーニーグループに属する東京の企業で、企業向けの生成AIプロダクトを提供しています。RAGによる社内データ検索に対応した法人向けチャット「JAPAN AI CHAT」、自律型の「JAPAN AI AGENT」、議事録を自動生成する「JAPAN AI SPEECH」、「JAPAN AI MARKETING」、AI活用コンサルティングなどを展開しています。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "JDSC",
@@ -1262,8 +1257,7 @@
       "blurb": {
         "en": "KOMOJU is a payment gateway operated by Tokyo-based Degica that lets online merchants accept local payment methods across Japan and Asia through a single integration. Supported methods include credit and debit cards, bank transfers, convenience-store cash payments, digital wallets, carrier billing, and prepaid vouchers. It integrates with major e-commerce platforms such as Shopify, WooCommerce, Wix, and Magento.",
         "ja": "KOMOJUは東京のDegica（デジカ）が運営する決済ゲートウェイで、オンライン事業者が一度の連携で日本やアジアの各種ローカル決済手段を導入できるサービスです。クレジット・デビットカード、銀行振込、コンビニ現金払い、電子ウォレット、キャリア決済、プリペイドバウチャーなどに対応しています。Shopify、WooCommerce、Wix、Magentoといった主要ECプラットフォームと連携できます。"
-      },
-      "placement": true
+      }
     },
     {
       "name": "Monstarlab",
