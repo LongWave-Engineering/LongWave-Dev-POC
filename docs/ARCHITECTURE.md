@@ -128,7 +128,7 @@ flowchart TB
 | **Import** | `import.js` — CSV/JSON portal exports, column-aliased (incl. Japanese), classified, deduped on `(source, source_ref)` namespaced per company. |
 | **CRM** | `manatal.js` — push leads to Manatal (gated by `MANATAL_API_KEY`) or export CSV (formula-injection-safe). |
 | **Scheduler** | `worker.js` — weekly per-source sync (`--once` for cron). |
-| **Tests** | `backend/test/` via `node:test` — models, import, manatal branches, ATS detect/parse, and the HTTP layer (routing/auth/validation). |
+| **Tests** | `backend/test/` (in LongWave-Dev-Admin) via `node:test` — models, import, manatal branches, ATS detect/parse, the HTTP layer (routing/auth/validation), and the OpenAPI contract sync. |
 
 ### What's still 🟠 (productionizing)
 
