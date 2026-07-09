@@ -41,6 +41,8 @@
   .job-card{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;position:relative;}
   .jc-open{flex:1 1 auto;min-width:0;display:flex;flex-direction:row;align-items:center;gap:22px;padding:18px 24px;text-align:left;background:transparent;border:0;border-radius:var(--radius);color:inherit;font:inherit;cursor:pointer;}
   .jc-logo{flex:0 0 auto;display:flex;}
+  /* placements logo strip under the results — slimmer than the home-hero wall */
+  .jobs-partners{padding:26px 0 0;margin-top:46px;}
   .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;}
   .jc-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:5px;text-align:right;margin-left:auto;padding-left:14px;}
   /* save heart + selection checkbox as a control cluster at the row's right edge */
