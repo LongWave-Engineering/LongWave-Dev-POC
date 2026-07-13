@@ -63,6 +63,20 @@ test("no confidential or secret files are tracked by git", () => {
   }
 });
 
+/* --- Partner roster: every company ships a real, inlined brand mark --- */
+test("every partner company has an inlined logo (no monogram/wordmark gaps)", () => {
+  const src = fs.readFileSync(path.join(ROOT, "src/features/partners/partners-logos.js"), "utf8");
+  const { PARTNERS, PARTNER_LOGOS } = new Function(src + "; return { PARTNERS: PARTNERS, PARTNER_LOGOS: PARTNER_LOGOS };")();
+  const missing = PARTNERS.filter((p) => !PARTNER_LOGOS[p.name]).map((p) => p.name);
+  assert.deepEqual(missing, [],
+    "roster companies without a brand mark (they'd render as monograms/wordmarks): " + missing.join(", ") +
+    " — hunt the official mark (site og-image / GitHub org avatar / X avatar / press kit), run it through the white-canvas-removal pipeline, and add it to PARTNER_LOGOS");
+  for (const [name, uri] of Object.entries(PARTNER_LOGOS)) {
+    assert.match(uri, /^data:image\/(png|svg\+xml);base64,/,
+      `${name}'s logo must be an inlined data: URI — external URLs break the offline/no-external-loads guarantee`);
+  }
+});
+
 /* --- i18n integrity: every markup key resolves, and no bilingual strings bypass the dict --- */
 test("every data-i18n attribute in the markup resolves to a real dictionary key", () => {
   const { I18N } = require(path.join(ROOT, "src/core/i18n-data.js"));
