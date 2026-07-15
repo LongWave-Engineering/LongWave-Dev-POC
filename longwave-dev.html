@@ -4789,6 +4789,37 @@
         if(eng.length){ REVIEWS=eng; renderReviews(); }
       }catch(e){ if(window.console&&console.error) console.error("[testimonials hydrate]", e); }
     });
+    /* Articles hydrate the same way (independent, silent on failure): admin-managed
+       posts — AI-drafted, human-published — replace the baked placeholders. A row
+       needs a bilingual title and body paragraph arrays; a missing language falls
+       back to the other so a half-translated post never renders an empty modal.
+       Invalid rows are skipped; an empty/failed fetch keeps the baked posts. */
+    grab("/api/articles").then(function(list){
+      if(!Array.isArray(list) || !list.length) return;
+      try{
+        var rows=[];
+        list.forEach(function(a){
+          if(!a || typeof a!=="object") return;
+          if(!a.title || typeof a.title!=="object" || !(a.title.en || a.title.ja)) return;
+          if(!a.body || typeof a.body!=="object" || !Array.isArray(a.body.en) || !Array.isArray(a.body.ja)) return;
+          var isStr=function(p){ return typeof p==="string"; };
+          var bodyEn=a.body.en.filter(isStr), bodyJa=a.body.ja.filter(isStr);
+          if(!bodyEn.length && !bodyJa.length) return;   /* a card with an empty reading modal is worse than the placeholder */
+          if(!bodyEn.length) bodyEn=bodyJa;
+          if(!bodyJa.length) bodyJa=bodyEn;
+          var cat=(a.cat && typeof a.cat==="object") ? a.cat : {en:"",ja:""};
+          rows.push({
+            cat: { en:String(cat.en||cat.ja||""), ja:String(cat.ja||cat.en||"") },   /* renderArticles reads cat[lang] unguarded */
+            title: { en:String(a.title.en||a.title.ja), ja:String(a.title.ja||a.title.en) },
+            dek: (a.dek && typeof a.dek==="object") ? a.dek : null,   /* dek is optional in the renderer */
+            body: { en:bodyEn, ja:bodyJa }
+          });
+        });
+        if(!rows.length) return;   /* nothing usable — keep the baked posts */
+        ARTICLES=rows;
+        renderArticles();
+      }catch(e){ if(window.console&&console.error) console.error("[articles hydrate]", e); }
+    });
   }
 
 
