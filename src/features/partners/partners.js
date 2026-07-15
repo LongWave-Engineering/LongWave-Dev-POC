@@ -74,12 +74,17 @@
       if(!box.getAttribute("role")) box.setAttribute("role", "group");   /* expose the aria-label (a bare div is role=generic) */
       box.dataset.pmBuilt = "1";
     });
-    /* curated featured showcase: a few big-name clients as static cards.
-       data-partner-feature="Name1,Name2,…" (names must match the roster). */
+    /* curated featured showcase: a few big-name clients as static cards. The live roster
+       wins: any entries flagged featured (admin-curated, roster order) render instead of
+       the baked attribute list — data-partner-feature="Name1,Name2,…" (names must match
+       the roster) stands as the fallback for the offline/static bundle. */
     document.querySelectorAll("[data-partner-feature]").forEach(function(box){
       if(box.dataset.pfBuilt) return;
-      var names = (box.getAttribute("data-partner-feature") || "").split(",").map(function(s){ return s.trim(); }).filter(Boolean);
-      var list = names.map(findPartner).filter(Boolean);   /* findPartner: shared roster lookup (modals/lead-forms.js, same IIFE) */
+      var list = PARTNERS.filter(function(p){ return p.featured === true; });
+      if(!list.length){
+        var names = (box.getAttribute("data-partner-feature") || "").split(",").map(function(s){ return s.trim(); }).filter(Boolean);
+        list = names.map(findPartner).filter(Boolean);   /* findPartner: shared roster lookup (modals/lead-forms.js, same IIFE) */
+      }
       if(!list.length) return;
       box.innerHTML = '<div class="partner-feature-grid">'+ list.map(featureCardHTML).join("") +'</div>';
       if(!box.getAttribute("role")) box.setAttribute("role", "group");

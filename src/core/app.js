@@ -220,23 +220,53 @@
       selected={};   /* selection is keyed by the old _i indices — reset it for the new dataset */
       applyLang();   /* re-render everything (cards, selects, counts) from live data */
     });
-    /* Partner logos hydrate INDEPENDENTLY of jobs/companies: the admin can edit the home
-       "Hiring with us" marquee live. An empty/failed fetch keeps the embedded roster
-       (so the static GitHub Pages build is unaffected). */
+    /* Partner roster hydrates INDEPENDENTLY of jobs/companies: the admin can edit the home
+       "Hiring with us" marquee, the companies page and the featured wall live. An
+       empty/failed fetch keeps the embedded roster (so the static GitHub Pages build is
+       unaffected). */
     grab("/api/partners").then(function(list){
       if(!Array.isArray(list) || !list.length) return;
       try{
+        var rows=list.filter(function(p){ return p && typeof p==="object" && !!p.name; });
+        if(!rows.length) return;   /* nothing usable — keep the embedded roster */
         var logos={};
-        PARTNERS = list.map(function(p){
-          if(p && p.logo) logos[p.name]=p.logo;
-          return { name:(p&&p.name)||"", mono:(p&&p.mono)||String((p&&p.name)||"?").slice(0,2), color:(p&&p.color)||"#5E7185" };
-        }).filter(function(p){ return p.name; });
+        PARTNERS = rows.map(function(p){
+          /* live logo wins; an entry without one keeps its baked mark (if any), so a
+             roster edit in the admin can't strip the logos already inlined in the bundle */
+          if(p.logo) logos[p.name]=p.logo;
+          else if(typeof PARTNER_LOGOS!=="undefined" && PARTNER_LOGOS[p.name]) logos[p.name]=PARTNER_LOGOS[p.name];
+          var rec={ name:p.name, mono:p.mono||String(p.name).slice(0,2), color:p.color||"#5E7185",
+            placement:!!p.placement, featured:!!p.featured };
+          /* bilingual copy rides along in the same nested {en,ja} shape the baked roster uses */
+          if(p.industry && typeof p.industry==="object") rec.industry=p.industry;
+          if(p.blurb && typeof p.blurb==="object") rec.blurb=p.blurb;
+          return rec;
+        });
         PARTNER_LOGOS = logos;
         /* clear the one-time build guards so the marquee/feature walls rebuild from live data */
         document.querySelectorAll("[data-partner-marquee]").forEach(function(b){ delete b.dataset.pmBuilt; });
         document.querySelectorAll("[data-partner-feature]").forEach(function(b){ delete b.dataset.pfBuilt; });
         renderPartners();
+        renderCompanies();   /* the companies page is roster-driven too — repaint it now, not on the next lang toggle */
       }catch(e){ if(window.console&&console.error) console.error("[partners hydrate]", e); }
+    });
+    /* Testimonials hydrate the same way (independent, silent on failure): one payload
+       carries both grids — `kind` partitions it into engineer stories (Jobs page) and
+       HR voices (Post-a-job page). An empty/failed fetch — or an empty partition —
+       keeps the baked quotes for that grid. */
+    grab("/api/testimonials").then(function(list){
+      if(!Array.isArray(list) || !list.length) return;
+      try{
+        var hr=[], eng=[];
+        list.forEach(function(r){
+          if(!r || typeof r!=="object" || !r.name) return;
+          if(!r.role || typeof r.role!=="object" || !r.q || typeof r.q!=="object") return;   /* no bilingual copy → skip, don't crash */
+          var rec={ init:r.init||String(r.name).slice(0,2), color:r.color||"#5E7185", name:r.name, role:r.role, q:r.q };
+          if(r.kind==="hr") hr.push(rec); else if(r.kind==="engineer") eng.push(rec);
+        });
+        if(hr.length){ HR_VOICES=hr; renderHRVoices(); }
+        if(eng.length){ REVIEWS=eng; renderReviews(); }
+      }catch(e){ if(window.console&&console.error) console.error("[testimonials hydrate]", e); }
     });
   }
 
