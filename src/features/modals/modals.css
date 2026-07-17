@@ -22,7 +22,21 @@
   .modal .m-salary span{display:block;font-size:.94rem;font-weight:600;color:var(--slate);margin-bottom:2px;}
   .modal .m-tags{margin:14px 0 8px;}
   .modal h4.m-sub{font-size:1.14rem;margin:24px 0 10px;}
-  .modal p.m-body{color:var(--ink-soft);font-size:1.07rem;}
+  /* JD section body — structured by LW.jdBlocks (headings / lists / paragraphs).
+     Airy line-height for long bilingual JDs; first/last margins collapse so each
+     section hugs its m-sub label instead of double-spacing. */
+  .modal .m-body{color:var(--ink-soft);font-size:1.07rem;line-height:1.7;}
+  .modal .m-body p{margin:.6em 0;}
+  .modal .m-body ul.jd-ul{margin:.6em 0;padding-left:1.2em;list-style:disc;}
+  .modal .m-body .jd-ul li{margin:.35em 0;}
+  .modal .m-body h5.jd-h{font-size:1.04rem;font-weight:700;color:var(--ink);margin:1.1em 0 .35em;}
+  .modal .m-body>:first-child{margin-top:0;}
+  .modal .m-body>:last-child{margin-bottom:0;}
+  /* JD content is view-only on the site: selection and printing are disabled as a
+     deterrent for casual copy-paste (the modal header stays selectable so candidates
+     can still copy the company name to research it). */
+  #jobOverlay .m-body{-webkit-user-select:none;user-select:none;}
+  @media print{ #jobOverlay .m-sub, #jobOverlay .m-body{display:none;} }
   .modal .m-actions{display:flex;gap:13px;margin-top:28px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap;}
   .modal h3.su-title{font-size:1.7rem;margin-bottom:6px;}
   .modal p.su-intro{color:var(--slate);margin-bottom:22px;font-size:1.06rem;}

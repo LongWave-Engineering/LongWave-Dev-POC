@@ -179,6 +179,127 @@ test("filterJobs() filters then sorts hot roles first, preserving the rest", () 
   assert.deepEqual(out.map((j) => j.role), ["B", "A", "D"]); // B (hot) first; A,D keep order
 });
 
+test("formatJdText() returns '' for empty / non-string input", () => {
+  assert.equal(LW.formatJdText(null), "");
+  assert.equal(LW.formatJdText(undefined), "");
+  assert.equal(LW.formatJdText(42), "");
+  assert.equal(LW.formatJdText({}), "");
+  assert.equal(LW.formatJdText(""), "");
+});
+
+test("formatJdText() normalizes newlines, trailing spaces, blank runs and outer blanks", () => {
+  assert.equal(LW.formatJdText("a\r\nb\rc"), "a\nb\nc");                 // CRLF / CR → LF
+  assert.equal(LW.formatJdText("line one   \nline two\t"), "line one\nline two"); // per-line rstrip
+  assert.equal(LW.formatJdText("a\n\n\n\nb"), "a\n\nb");                 // 3+ newlines → exactly 2
+  assert.equal(LW.formatJdText("\n\n  \na\n\n"), "a");                   // outer blank lines trimmed
+});
+
+test("formatJdText() unifies bullet glyphs to '- ' (JP glued and EN spaced variants)", () => {
+  assert.equal(LW.formatJdText("・フロントエンド開発"), "- フロントエンド開発"); // glued JP bullet
+  assert.equal(LW.formatJdText("• item"), "- item");
+  assert.equal(LW.formatJdText("● item\n○ item\n◦ item\n‣ item\n▪ item\n▫ item\n■ item"),
+    "- item\n- item\n- item\n- item\n- item\n- item\n- item");
+  assert.equal(LW.formatJdText("* item"), "- item");
+  assert.equal(LW.formatJdText("– dash item\n— em item\n‐ hyphen item"), "- dash item\n- em item\n- hyphen item");
+  assert.equal(LW.formatJdText("-glued"), "- glued");                    // bare "-" glued to content
+  assert.equal(LW.formatJdText("  - indented item"), "- indented item"); // indent dropped
+  assert.equal(LW.formatJdText("- already fine"), "- already fine");
+});
+
+test("formatJdText() keeps numbered markers, ※ notes, and prose dashes/asterisks as-is", () => {
+  assert.equal(LW.formatJdText("1. 書類選考\n2) 面接\n①応募\n②内定"), "1. 書類選考\n2) 面接\n①応募\n②内定");
+  assert.equal(LW.formatJdText("※経験者優遇"), "※経験者優遇");
+  assert.equal(LW.formatJdText("1.5 years of experience"), "1.5 years of experience"); // decimal ≠ marker
+  assert.equal(LW.formatJdText("*emphasis* is not a bullet"), "*emphasis* is not a bullet"); // glued * kept
+  assert.equal(LW.formatJdText("—glued em dash stays"), "—glued em dash stays");
+});
+
+test("formatJdText() inserts a blank line before headings so sections breathe", () => {
+  assert.equal(LW.formatJdText("intro\n【募集背景】\n増員です。"), "intro\n\n【募集背景】\n増員です。");
+  assert.equal(LW.formatJdText("intro\n▼業務内容\n開発"), "intro\n\n▼業務内容\n開発");
+  assert.equal(LW.formatJdText("intro\nOverview:\ntext"), "intro\n\nOverview:\ntext");
+  assert.equal(LW.formatJdText("intro\n選考フロー：\n①書類選考"), "intro\n\n選考フロー：\n①書類選考");
+  // already separated → unchanged; heading first line → no leading blank
+  assert.equal(LW.formatJdText("intro\n\n【募集背景】"), "intro\n\n【募集背景】");
+  assert.equal(LW.formatJdText("【募集背景】\ntext"), "【募集背景】\ntext");
+  // NOT headings: long colon lines (>40 chars), bullets ending with a colon
+  const long = "this line is way too long to be considered a heading even with a colon:";
+  assert.equal(LW.formatJdText("intro\n" + long), "intro\n" + long);
+  assert.equal(LW.formatJdText("intro\n- 応募資格:"), "intro\n- 応募資格:");
+});
+
+test("formatJdText() is idempotent on messy JP and EN samples", () => {
+  const samples = [
+    "【募集背景】  \r\n事業拡大につき増員。\n\n\n▼業務内容\n・フロントエンド開発\n・コードレビュー\n選考フロー：\n①書類選考\n②面接\n※応相談",
+    "About us\nOverview:\nWe build things.\n* TypeScript\n– Teamwork\n-Ownership\n\n\n\nBenefits:\n1. Insurance\n2) Stock",
+    "", "plain single line",
+  ];
+  for (const s of samples) {
+    const once = LW.formatJdText(s);
+    assert.equal(LW.formatJdText(once), once, `not idempotent for: ${JSON.stringify(s)}`);
+  }
+});
+
+test("jdBlocks() returns [] for empty / non-string input", () => {
+  assert.deepEqual(LW.jdBlocks(""), []);
+  assert.deepEqual(LW.jdBlocks(null), []);
+  assert.deepEqual(LW.jdBlocks(undefined), []);
+  assert.deepEqual(LW.jdBlocks(42), []);
+  assert.deepEqual(LW.jdBlocks("\n\n \n"), []);
+});
+
+test("jdBlocks() parses a JP job description into heading / list / paragraph blocks", () => {
+  const jd = "【募集背景】\n事業拡大につき増員します。\n\n▼業務内容\n・フロントエンド開発\n・コードレビュー\n\n選考フロー：\n①書類選考\n②面接";
+  assert.deepEqual(LW.jdBlocks(jd), [
+    { t: "h", x: "募集背景" },                                    // 【】 wrapper stripped
+    { t: "p", x: "事業拡大につき増員します。" },
+    { t: "h", x: "業務内容" },                                    // ▼ marker stripped
+    { t: "ul", items: ["フロントエンド開発", "コードレビュー"] },  // "- " prefix stripped
+    { t: "h", x: "選考フロー" },                                  // trailing ： stripped
+    { t: "ul", items: ["①書類選考", "②面接"] },                  // numbered keep their marker
+  ]);
+});
+
+test("jdBlocks() parses an EN job description with mixed bullet glyphs", () => {
+  const jd = "About the role:\nWe build hiring tools.\nFor engineers moving to Japan.\n\nRequirements:\n- 5+ years of experience\n* Solid TypeScript\n– Team player\n\nProcess:\n1. Screening\n2) Interview";
+  assert.deepEqual(LW.jdBlocks(jd), [
+    { t: "h", x: "About the role" },
+    { t: "p", x: "We build hiring tools.\nFor engineers moving to Japan." }, // \n kept; renderer does <br>
+    { t: "h", x: "Requirements" },
+    { t: "ul", items: ["5+ years of experience", "Solid TypeScript", "Team player"] },
+    { t: "h", x: "Process" },
+    { t: "ul", items: ["1. Screening", "2) Interview"] },
+  ]);
+});
+
+test("jdBlocks() splits paragraph / list runs inside one blank-line chunk", () => {
+  assert.deepEqual(LW.jdBlocks("Team of five.\n・Weekly 1on1\n・Hack days\n※リモート可"), [
+    { t: "p", x: "Team of five." },
+    { t: "ul", items: ["Weekly 1on1", "Hack days"] },
+    { t: "p", x: "※リモート可" },                                  // ※ note stays plain text
+  ]);
+  // heading appearing mid-chunk (formatJdText splits it out with a blank line)
+  assert.deepEqual(LW.jdBlocks("intro line\n福利厚生:\n・社会保険完備"), [
+    { t: "p", x: "intro line" },
+    { t: "h", x: "福利厚生" },
+    { t: "ul", items: ["社会保険完備"] },
+  ]);
+});
+
+test("jdBlocks() handles the live-data shapes: ・-joined demo items and '- '-prefixed proxy items", () => {
+  // demo/fallback data builds required-points as "・" + pts.join("\n・") (see modal-job.js)
+  const pts = ["3年以上の開発経験", "英語での業務経験"];
+  assert.deepEqual(LW.jdBlocks("・" + pts.join("\n・")), [{ t: "ul", items: pts }]);
+  // proxy (after the per-item "- " prefixing) → same tidy list
+  assert.deepEqual(LW.jdBlocks("- Health insurance\n- Stock options"), [
+    { t: "ul", items: ["Health insurance", "Stock options"] },
+  ]);
+  // today's proxy shape (newline-joined, NO markers) stays one paragraph — not a broken list
+  assert.deepEqual(LW.jdBlocks("Health insurance\nStock options"), [
+    { t: "p", x: "Health insurance\nStock options" },
+  ]);
+});
+
 test("calcAge() computes whole years with an injectable 'now'", () => {
   assert.equal(LW.calcAge("1990-06-01", "2026-06-27"), 36);
   assert.equal(LW.calcAge("1990-12-31", "2026-06-27"), 35); // birthday not yet reached

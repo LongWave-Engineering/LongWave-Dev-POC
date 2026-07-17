@@ -166,6 +166,98 @@
       return (a >= 0 && a < 140) ? a : "";
     }
 
+    /* ---------- JD text formatting ----------
+       Live HRMOS/admin JD sections arrive as loosely formatted plain text (mixed bullet
+       glyphs, cramped headings, stray blank runs). formatJdText() is a deterministic,
+       IDEMPOTENT, language-agnostic cleanup of that text; jdBlocks() then parses the
+       cleaned text into renderable blocks so the UI can build real headings/lists
+       instead of a nl2br() wall. Pure string→data — the renderer owns all HTML/escaping. */
+
+    /* Bullet marker → "- ". Graphic bullets (・•●○◦‣▪▫■) may be glued to their content
+       (JP JDs write "・内容"); the dash/asterisk family (* ‐ ‑ – —) needs a following
+       space so prose dashes and markdown emphasis aren't eaten — except a bare "-",
+       which is normalized even when glued ("-content" → "- content"). */
+    var JD_BULLET = /^[\s　]*(?:[・•●○◦‣▪▫■][ \t　]*|[*‐‑–—][ \t　]+|-[ \t　]*)(\S.*)$/;
+
+    /* Numbered markers (1.  2)  ３．  ①…⑳) are KEPT as-is, not converted to "- ".
+       "1." only counts when NOT followed by a digit, so "1.5 years" stays prose. */
+    var JD_NUMBERED = /^[\s　]*(?:[①-⑳]|\d{1,4}[．）]|\d{1,4}[.)](?!\d))/;
+
+    /* Heading detection — returns the heading TEXT (【】/▼/◆ wrappers and one trailing
+       ：/: stripped) or "" when the line is not a heading. A heading is (a) a line wrapped
+       in 【…】, (b) a short (≤40 chars) non-bullet line ending with ： or :, or (c) a
+       ▼/◆ marker followed by ≤30 chars of text. Shared by formatJdText (which inserts a
+       blank line before headings) and jdBlocks (which emits them as {t:"h"}). */
+    function jdHeading(line){
+      var s = String(line).trim(), m, x;
+      if(!s || JD_BULLET.test(s)) return "";
+      m = s.match(/^【(.+)】[：:]?$/);
+      if(m) return m[1].trim().replace(/[：:]$/,"").trim();
+      m = s.match(/^[▼◆](.+)$/);
+      if(m){
+        x = m[1].trim();
+        return (x && x.length <= 30) ? x.replace(/[：:]$/,"").trim() : "";
+      }
+      if(s.length <= 40 && /[：:]$/.test(s)){
+        x = s.replace(/[：:]$/,"").trim();
+        return x; /* "" (a bare colon line) falls through as not-a-heading */
+      }
+      return "";
+    }
+
+    /* Deterministic, idempotent cleanup of JD plain text: LF-normalized, per-line
+       trailing whitespace stripped, bullet glyphs unified to "- ", blank runs collapsed
+       to one blank line, a blank line guaranteed before each heading, outer blank lines
+       trimmed. Language-agnostic — it never touches the words, only the layout. */
+    function formatJdText(text){
+      if(typeof text !== "string" || text === "") return "";
+      var lines = text.replace(/\r\n?/g,"\n").split("\n");
+      var out = [];
+      for(var i=0;i<lines.length;i++){
+        var line = lines[i].replace(/[ \t　]+$/,"");
+        var bm = line.match(JD_BULLET);
+        if(bm) line = "- " + bm[1];
+        /* let section headings breathe: ensure one blank line before them */
+        if(out.length && out[out.length-1] !== "" && jdHeading(line)) out.push("");
+        out.push(line);
+      }
+      return out.join("\n").replace(/\n{3,}/g,"\n\n").replace(/^\n+/,"").replace(/\n+$/,"");
+    }
+
+    /* Parse a JD section into renderable blocks (runs formatJdText first):
+         {t:"h",  x:"…"}          heading (wrapper chars / trailing colon stripped)
+         {t:"ul", items:["…"]}    run of consecutive "- " lines (prefix stripped);
+                                  numbered lines join the run with their marker kept
+         {t:"p",  x:"a\nb"}       remaining lines of a blank-line-delimited chunk,
+                                  joined with \n (the renderer decides <br>)
+       Blank-line chunks delimit blocks. Empty input → []. */
+    function jdBlocks(text){
+      var blocks = [];
+      var s = formatJdText(text);
+      if(!s) return blocks;
+      var chunks = s.split("\n\n");
+      for(var i=0;i<chunks.length;i++){
+        var lines = chunks[i].split("\n");
+        var ul = null, para = null;   /* open runs within this chunk */
+        for(var j=0;j<lines.length;j++){
+          var line = lines[j];
+          if(line === "") continue;
+          var h = jdHeading(line);
+          if(h){ ul = null; para = null; blocks.push({ t:"h", x:h }); continue; }
+          if(line.indexOf("- ") === 0 || JD_NUMBERED.test(line)){
+            para = null;
+            if(!ul){ ul = { t:"ul", items:[] }; blocks.push(ul); }
+            ul.items.push(line.indexOf("- ") === 0 ? line.slice(2) : line.trim());
+            continue;
+          }
+          ul = null;
+          if(!para){ para = { t:"p", x:line }; blocks.push(para); }
+          else { para.x += "\n" + line; }
+        }
+      }
+      return blocks;
+    }
+
     /* Router mapping kept here (pure) so the route set lives in ONE place and the
        hash→route resolution is unit-testable without a DOM. */
     var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", articles:"#/articles", cv:"#/cv", post:"#/post", privacy:"#/privacy" };
@@ -192,7 +284,9 @@
       matchesFilter: matchesFilter,
       filterJobs: filterJobs,
       normalizeJobIds: normalizeJobIds,
-      calcAge: calcAge
+      calcAge: calcAge,
+      formatJdText: formatJdText,
+      jdBlocks: jdBlocks
     };
   })();
 

@@ -3,11 +3,20 @@
   var jobOverlay=$("#jobOverlay");
   var currentJob=null;   /* the job whose detail modal is open (for "Sign up to apply") */
 
+  /* JD body HTML from LW.jdBlocks(text): real headings/lists/paragraphs instead of a
+     nl2br() wall. Every piece of text is esc()'d here — jdBlocks returns plain strings. */
+  function jdHtml(text){
+    return LW.jdBlocks(text).map(function(b){
+      if(b.t==="h") return '<h5 class="jd-h">'+esc(b.x)+'</h5>';
+      if(b.t==="ul") return '<ul class="jd-ul">'+b.items.map(function(it){ return '<li>'+esc(it)+'</li>'; }).join("")+'</ul>';
+      return '<p>'+nl2br(b.x)+'</p>';   /* nl2br esc()'s, then \n → <br> within the group */
+    }).join("");
+  }
   /* one labelled detail section; renders "N/A" when `always` is set and the field is empty */
   function jdSec(labelKey,val,always){
     var has = val!=null && String(val).trim()!=="";
     if(!has && !always) return "";
-    var body = has ? nl2br(val) : '<span style="color:var(--slate)">'+esc(t("jd_na"))+'</span>';
+    var body = has ? jdHtml(val) : '<span style="color:var(--slate)">'+esc(t("jd_na"))+'</span>';
     return '<h4 class="m-sub">'+esc(t(labelKey))+'</h4><div class="m-body">'+body+'</div>';
   }
   /* Fill the JD modal body from a job. Split out of openJob so a language toggle while the
@@ -90,6 +99,15 @@
     if(currentJob && jobOverlay && jobOverlay.classList.contains("open")) fillJobModal(currentJob);
     if(currentArticle!=null && typeof fillArticle==="function" && artOverlay && artOverlay.classList.contains("open")) fillArticle(currentArticle);
   }
+  /* View-only JD: block copy/cut/drag and the context menu inside the JD sections
+     (selection is already off via CSS user-select). Deterrent only — determined users
+     can always read the page source; this stops casual copy-paste. */
+  if(jobOverlay) ["copy","cut","dragstart","contextmenu"].forEach(function(ev){
+    jobOverlay.addEventListener(ev, function(e){
+      if(e.target && e.target.closest && e.target.closest(".m-body")) e.preventDefault();
+    });
+  });
+
   if($("#mSave")) $("#mSave").addEventListener("click", function(){ if(currentJob && typeof toggleSaved==="function"){ toggleSaved(currentJob); paintModalSave(); } });
 
   /* the job detail modal's "Sign up to apply" → apply to just that role */
