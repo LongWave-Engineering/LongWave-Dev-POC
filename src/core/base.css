@@ -71,5 +71,13 @@
   h2{font-size:clamp(2rem,3.6vw,2.8rem);}
   p{margin:0;}
 
+  /* Japanese line-breaking: JA has no spaces, so by default the browser may split a
+     word like マネジメント across lines at any character. auto-phrase (Chromium 119+)
+     breaks at natural phrase boundaries instead; engines without it ignore the
+     declaration and keep today's behavior. line-break:strict also stops small kana
+     and prolonged-sound marks from starting a line. Long unbroken runs stay safe via
+     the per-component overflow-wrap rules. */
+  html:lang(ja) body{word-break:auto-phrase;line-break:strict;}
+
 
 
