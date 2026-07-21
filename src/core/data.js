@@ -81,7 +81,7 @@
 
   var REVIEWS = [
     {init:"RK", color:"#0b8457", name:"Ren K.", role:{en:"Backend Engineer, Fintech", ja:"バックエンドエンジニア（フィンテック）"},
-     q:{en:"LongWave understood the stack I wanted to work in and only sent roles that actually fit. I had an offer in three weeks.", ja:"触りたい技術スタックを理解してくれて、本当に合う求人だけを紹介してくれました。3週間で内定が出ました。"}},
+     q:{en:"Tokyo Samurai Dev understood the stack I wanted to work in and only sent roles that actually fit. I had an offer in three weeks.", ja:"触りたい技術スタックを理解してくれて、本当に合う求人だけを紹介してくれました。3週間で内定が出ました。"}},
     {init:"MT", color:"#5b3df5", name:"Marisa T.", role:{en:"QA Engineer, SaaS", ja:"QAエンジニア（SaaS）"},
      q:{en:"They prepped me for interviews in both English and Japanese. That made all the difference.", ja:"英語でも日本語でも面接対策をしてくれて、それが大きな違いになりました。"}},
     {init:"DO", color:"#d4762a", name:"Daniel O.", role:{en:"SRE, Mobility", ja:"SRE（モビリティ）"},
@@ -91,7 +91,7 @@
   /* HR / hiring-side testimonials shown on the Post-a-job page (placeholders to swap) */
   var HR_VOICES = [
     {init:"AN", color:"#3056d3", name:"Aya N.", role:{en:"Head of Talent, SaaS", ja:"人事責任者（SaaS）"},
-     q:{en:"LongWave only sent us candidates who fit our stack and our team. We made two hires in a month.", ja:"私たちの技術スタックとチームに合う候補者だけを紹介してくれました。1か月で2名採用できました。"}},
+     q:{en:"Tokyo Samurai Dev only sent us candidates who fit our stack and our team. We made two hires in a month.", ja:"私たちの技術スタックとチームに合う候補者だけを紹介してくれました。1か月で2名採用できました。"}},
     {init:"KS", color:"#0ea5a4", name:"Kenji S.", role:{en:"HR Manager, Fintech", ja:"採用マネージャー（フィンテック）"},
      q:{en:"They handled the English–Japanese back-and-forth, so our engineers could focus on the technical interview.", ja:"英語と日本語のやり取りを巻き取ってくれたので、エンジニアは技術面接に集中できました。"}},
     {init:"ML", color:"#b3471b", name:"Marie L.", role:{en:"Engineering Director (hiring)", ja:"エンジニアリングディレクター（採用担当）"},
