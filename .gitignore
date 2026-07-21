@@ -13,3 +13,6 @@ node_modules/
 
 # Session-local Claude Code config (preview-server paths are machine-specific)
 .claude/
+
+# MCP config (project ref stays out of the public repo)
+.mcp.json
