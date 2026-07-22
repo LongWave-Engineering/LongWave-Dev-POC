@@ -18,8 +18,9 @@
      element's markup text when a backend IS present. */
   function leadDone(el, okText){
     if(!el) return;
-    if(!apiReady) el.textContent = t("lead_offline");
-    else if(okText!=null) el.textContent = okText;
+    var m=el.querySelector(".msg")||el;
+    if(!apiReady) m.textContent = t("lead_offline");
+    else if(okText!=null) m.textContent = okText;
     el.style.display="block";
   }
 

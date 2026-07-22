@@ -79,7 +79,7 @@
     }
     var succ=$("#suSuccess");
     /* honest confirmation: only claim it went through if a backend actually received it */
-    if(succ){ succ.textContent = !apiReady ? t("lead_offline") : (n ? t("apply_success").replace("{n}",n) : t("su_success")); succ.style.display="block"; }
+    if(succ){ var sm=succ.querySelector(".msg")||succ; sm.textContent = !apiReady ? t("lead_offline") : (n ? t("apply_success").replace("{n}",n) : t("su_success")); succ.style.display="block"; }
     $("#suForm").style.display="none";
     /* record the applied roles against the lifetime cap (also re-renders the grid) — only
        when a backend actually recorded them, so we don't show a fake "Applied" state */
