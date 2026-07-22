@@ -127,26 +127,29 @@
 @keyframes tsd-bob{0%,100%{top:0}50%{top:-2.5px}}
 @keyframes tsd-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){.brand .logo,.cta-logo{animation:none!important}}
-/* ---- loading splash: original mascot badge, screen sliced by a katana slash ---- */
+/* ---- loading splash: katana slash cuts through the logo, halves split, fades ---- */
 *{box-sizing:border-box} body{margin:0;font-family:system-ui}
-  #tsd-splash{position:fixed;inset:0;z-index:100000;pointer-events:none;animation:sp-out .45s ease 1.15s forwards}
-  .sp-half{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden;
-    background:radial-gradient(120% 120% at 50% 36%,#16385a 0%,#0e2f4f 55%,#0a2540 100%)}
-  .sp-top{clip-path:polygon(0 0,100% 0,0 100%)}
-  .sp-bot{clip-path:polygon(100% 0,100% 100%,0 100%)}
+  #tsd-splash{position:fixed;inset:0;z-index:100000;pointer-events:none;display:grid;place-items:center;
+    background:radial-gradient(120% 120% at 50% 40%,#16385a 0%,#0e2f4f 55%,#0a2540 100%);
+    animation:sp-out .5s ease 1.2s both}
   .sp-in{display:grid;place-items:center;text-align:center}
-  .sp-badge{width:124px;height:124px;border-radius:50%;background:var(--tsd-logo) center/cover no-repeat;
-    box-shadow:0 18px 50px -18px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08);animation:sp-badge .55s cubic-bezier(.2,.85,.3,1.5) both}
-  .sp-word{margin-top:22px;font-weight:900;font-size:1.5rem;letter-spacing:-.02em;color:#fff;opacity:0;animation:sp-word .45s ease .5s both}
+  .sp-logo{position:relative;width:130px;height:130px;animation:sp-logo-in .5s cubic-bezier(.2,.85,.3,1.5) both}
+  .sp-bh{position:absolute;inset:0;border-radius:50%;background:var(--tsd-logo) center/cover no-repeat;
+    box-shadow:0 16px 44px -18px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08)}
+  .sp-bh-top{clip-path:polygon(0 0,100% 0,0 100%);animation:sp-cut-top 1.6s ease both}
+  .sp-bh-bot{clip-path:polygon(100% 0,100% 100%,0 100%);animation:sp-cut-bot 1.6s ease both}
+  .sp-slash{position:absolute;top:50%;left:50%;width:250px;height:5px;margin:-2.5px 0 0 -125px;border-radius:5px;
+    transform:rotate(-45deg);opacity:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0) 30%,#fff 46%,#eaf5ff 54%,rgba(255,255,255,0) 70%,transparent);
+    box-shadow:0 0 16px 2px rgba(220,240,255,.9);animation:sp-slash 1.6s ease both}
+  .sp-word{margin-top:20px;font-weight:900;font-size:1.5rem;letter-spacing:-.02em;color:#fff;opacity:0;animation:sp-word .45s ease 1.05s both}
   .sp-word small{display:block;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#9fc0e0;margin-top:6px}
-  .sp-slash{position:fixed;top:50%;left:-45%;width:190%;height:7px;margin-top:-3px;transform:rotate(-34deg);opacity:0;
-    background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0) 30%,#fff 48%,#eaf5ff 52%,rgba(255,255,255,0) 70%,transparent);
-    box-shadow:0 0 22px 4px rgba(220,240,255,.9);animation:sp-slash .5s ease-out .62s both}
   .sp-flash{position:fixed;inset:0;background:#fff;opacity:0;animation:sp-flash 1.6s ease both}
-  @keyframes sp-badge{0%{opacity:0;transform:scale(.5) rotate(-8deg)}60%{opacity:1;transform:scale(1.08) rotate(2deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+  @keyframes sp-logo-in{0%{opacity:0;transform:scale(.5) rotate(-8deg)}60%{opacity:1;transform:scale(1.08) rotate(2deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
+  @keyframes sp-cut-top{0%,44%{transform:translate(0,0)}54%{transform:translate(-8px,-8px)}72%{transform:translate(-7px,-7px)}100%{transform:translate(-7px,-7px)}}
+  @keyframes sp-cut-bot{0%,44%{transform:translate(0,0)}54%{transform:translate(8px,8px)}72%{transform:translate(7px,7px)}100%{transform:translate(7px,7px)}}
+  @keyframes sp-slash{0%,32%{opacity:0;clip-path:inset(0 100% 0 0)}40%{opacity:1}50%{opacity:1;clip-path:inset(0 0 0 0)}64%{opacity:0;clip-path:inset(0 0 0 0)}100%{opacity:0}}
   @keyframes sp-word{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes sp-slash{0%{opacity:0;transform:rotate(-34deg) translateX(-55%)}28%{opacity:1}60%{opacity:1;transform:rotate(-34deg) translateX(55%)}100%{opacity:0;transform:rotate(-34deg) translateX(78%)}}
-  @keyframes sp-flash{0%,50%{opacity:0}57%{opacity:.5}66%{opacity:0}100%{opacity:0}}
+  @keyframes sp-flash{0%,48%{opacity:0}53%{opacity:.42}62%{opacity:0}100%{opacity:0}}
   @keyframes sp-out{0%{opacity:1}100%{opacity:0;visibility:hidden}}
   @media (prefers-reduced-motion:reduce){#tsd-splash{display:none!important}}
 /* core/buttons.css — button system */
@@ -929,8 +932,8 @@
 </head>
 <body>
 
-<!-- loading splash: original mascot badge + katana slash; pure CSS, self-fading (no JS) -->
-<div id="tsd-splash" aria-hidden="true"><div class="sp-half sp-top"><div class="sp-in"><span class="sp-badge"></span><span class="sp-word">Tokyo Samurai Dev<small>Bilingual jobs in Japan</small></span></div></div><div class="sp-half sp-bot"><div class="sp-in"><span class="sp-badge"></span><span class="sp-word">Tokyo Samurai Dev<small>Bilingual jobs in Japan</small></span></div></div><span class="sp-slash"></span><span class="sp-flash"></span></div>
+<!-- loading splash: original mascot badge, katana slash cuts through the logo (pure CSS) -->
+<div id="tsd-splash" aria-hidden="true"><div class="sp-in"><div class="sp-logo"><span class="sp-bh sp-bh-top"></span><span class="sp-bh sp-bh-bot"></span><span class="sp-slash"></span></div><span class="sp-word">Tokyo Samurai Dev<small>Bilingual jobs in Japan</small></span></div><span class="sp-flash"></span></div>
 <!-- First focusable element: lets keyboard/screen-reader users jump past the nav. -->
 <a class="skip-link" href="#main" data-i18n="skip_main">Skip to main content</a>
 <!-- The site renders with JavaScript; this is the no-JS / crawler fallback. -->
