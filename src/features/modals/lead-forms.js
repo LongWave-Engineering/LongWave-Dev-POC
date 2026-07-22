@@ -175,14 +175,19 @@
     if(!pjOverlay) return;
     lastFocus=document.activeElement;
     $("#pjForm").style.display=""; $("#pjSuccess").style.display="none";
-    clearFields(["#pjCompany","#pjName","#pjRole","#pjEmail","#pjPhone","#pjSite","#pjLooking","#pjNotes"]);
+    clearFields(["#pjCompany","#pjName","#pjRole","#pjEmail","#pjPhone","#pjSite","#pjLooking","#pjServices","#pjNeeds","#pjNotes"]);
+    if($("#pjUsing")) $("#pjUsing").value="";
     openOverlay(pjOverlay); $("#pjClose").focus();
   }
   function submitPostJob(){
     var looking=val("#pjLooking"), role=val("#pjRole"), site=val("#pjSite"), notes=val("#pjNotes");
+    var using=val("#pjUsing"), services=val("#pjServices"), needs=val("#pjNeeds");
     var parts=["Hiring for: "+(looking||"(not specified)")];
     if(role) parts.push("Contact role: "+role);
     if(site) parts.push("Website: "+site);
+    if(using) parts.push("Currently using: "+using);
+    if(services) parts.push("Tools/services: "+services);
+    if(needs) parts.push("Needs from us: "+needs);
     if(notes) parts.push("Notes: "+notes);
     var body={ kind:"hire", name:val("#pjName")||undefined, email:val("#pjEmail")||undefined,
       phone:val("#pjPhone")||undefined, company:val("#pjCompany")||undefined, message:parts.join("\n"), source_channel:"post_job" };

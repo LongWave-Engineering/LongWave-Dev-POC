@@ -1497,6 +1497,16 @@
       <div class="field"><label for="pjPhone" data-i18n="pj_phone">Phone (optional)</label><input type="tel" id="pjPhone"></div>
       <div class="field"><label for="pjSite" data-i18n="pj_site">Company website (optional)</label><input type="url" id="pjSite" placeholder="https://…"></div>
       <div class="field"><label for="pjLooking" data-i18n="pj_looking">What roles are you hiring for?</label><textarea id="pjLooking" rows="3" required data-i18n-ph="pj_looking_ph" placeholder="e.g. 2 Backend Engineers (Go), 1 SRE, business Japanese a plus"></textarea></div>
+      <div class="field"><label for="pjUsing" data-i18n="pj_using">Are you using recruiters or other hiring services right now?</label>
+        <select id="pjUsing">
+          <option value="" data-i18n="pj_using_pick">Select…</option>
+          <option value="Not yet" data-i18n="pj_using_none">Not yet — we're just starting</option>
+          <option value="Recruiters / agencies" data-i18n="pj_using_agency">Yes — recruiters or agencies</option>
+          <option value="Job boards / tools" data-i18n="pj_using_boards">Yes — job boards or tools (LinkedIn, etc.)</option>
+          <option value="A mix" data-i18n="pj_using_mix">A mix of the above</option>
+        </select></div>
+      <div class="field"><label for="pjServices" data-i18n="pj_services">Which services or tools are you using? (optional)</label><input type="text" id="pjServices" data-i18n-ph="pj_services_ph" placeholder="e.g. LinkedIn, YOUTRUST, an agency…"></div>
+      <div class="field"><label for="pjNeeds" data-i18n="pj_needs">What do you most need from us? (optional)</label><textarea id="pjNeeds" rows="2" data-i18n-ph="pj_needs_ph" placeholder="e.g. bilingual candidates, faster hiring, hard-to-fill roles, employer branding…"></textarea></div>
       <div class="field"><label for="pjNotes" data-i18n="pj_notes">Anything else we should know? (optional)</label><textarea id="pjNotes" rows="2"></textarea></div>
       <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="pj_submit">Send to our team</button>
       <p class="form-success" id="pjSuccess" role="status" style="display:none" data-i18n="pj_success">Thanks! A bilingual recruiter will reach out shortly to learn what you need.</p>
@@ -2039,6 +2049,7 @@
       pj_role_ph:"e.g. Hiring Manager, CTO, Talent", pj_email:"Work email", pj_phone:"Phone (optional)",
       pj_site:"Company website (optional)", pj_looking:"What roles are you hiring for?",
       pj_looking_ph:"e.g. 2 Backend Engineers (Go), 1 SRE, business Japanese a plus",
+      pj_using:"Are you using recruiters or other hiring services right now?", pj_using_pick:"Select…", pj_using_none:"Not yet — we're just starting", pj_using_agency:"Yes — recruiters or agencies", pj_using_boards:"Yes — job boards or tools (LinkedIn, etc.)", pj_using_mix:"A mix of the above", pj_services:"Which services or tools are you using? (optional)", pj_services_ph:"e.g. LinkedIn, YOUTRUST, an agency…", pj_needs:"What do you most need from us? (optional)", pj_needs_ph:"e.g. bilingual candidates, faster hiring, hard-to-fill roles, employer branding…",
       pj_notes:"Anything else we should know? (optional)", pj_submit:"Send to our team",
       pj_success:"Thanks! A bilingual recruiter will reach out shortly to learn what you need.",
       jobs_h1:"Open roles",
@@ -2139,6 +2150,7 @@
       pj_role_ph:"例：採用マネージャー、CTO、人事", pj_email:"会社のメールアドレス", pj_phone:"電話番号（任意）",
       pj_site:"会社ウェブサイト（任意）", pj_looking:"どのようなポジションを採用予定ですか？",
       pj_looking_ph:"例：バックエンドエンジニア（Go）2名、SRE 1名、ビジネス日本語歓迎",
+      pj_using:"現在、他の人材紹介や採用サービスを利用していますか？", pj_using_pick:"選択してください", pj_using_none:"まだ利用していません", pj_using_agency:"はい — 人材紹介・エージェント", pj_using_boards:"はい — 求人媒体・ツール（LinkedInなど）", pj_using_mix:"上記の組み合わせ", pj_services:"利用中のサービスやツールがあれば教えてください（任意）", pj_services_ph:"例：LinkedIn、YOUTRUST、エージェントなど", pj_needs:"私たちに最も期待することは何ですか？（任意）", pj_needs_ph:"例：バイリンガル人材、採用スピード、難しいポジション、採用ブランディングなど",
       pj_notes:"その他お伝えいただきたいこと（任意）", pj_submit:"送信する",
       pj_success:"ありがとうございます。バイリンガルのリクルーターから、ご要望を伺うためすぐにご連絡します。",
       jobs_h1:"求人一覧",
@@ -4641,14 +4653,19 @@
     if(!pjOverlay) return;
     lastFocus=document.activeElement;
     $("#pjForm").style.display=""; $("#pjSuccess").style.display="none";
-    clearFields(["#pjCompany","#pjName","#pjRole","#pjEmail","#pjPhone","#pjSite","#pjLooking","#pjNotes"]);
+    clearFields(["#pjCompany","#pjName","#pjRole","#pjEmail","#pjPhone","#pjSite","#pjLooking","#pjServices","#pjNeeds","#pjNotes"]);
+    if($("#pjUsing")) $("#pjUsing").value="";
     openOverlay(pjOverlay); $("#pjClose").focus();
   }
   function submitPostJob(){
     var looking=val("#pjLooking"), role=val("#pjRole"), site=val("#pjSite"), notes=val("#pjNotes");
+    var using=val("#pjUsing"), services=val("#pjServices"), needs=val("#pjNeeds");
     var parts=["Hiring for: "+(looking||"(not specified)")];
     if(role) parts.push("Contact role: "+role);
     if(site) parts.push("Website: "+site);
+    if(using) parts.push("Currently using: "+using);
+    if(services) parts.push("Tools/services: "+services);
+    if(needs) parts.push("Needs from us: "+needs);
     if(notes) parts.push("Notes: "+notes);
     var body={ kind:"hire", name:val("#pjName")||undefined, email:val("#pjEmail")||undefined,
       phone:val("#pjPhone")||undefined, company:val("#pjCompany")||undefined, message:parts.join("\n"), source_channel:"post_job" };
