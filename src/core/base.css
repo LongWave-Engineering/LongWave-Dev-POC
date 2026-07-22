@@ -83,21 +83,22 @@
 @keyframes tsd-bob{0%,100%{top:0}50%{top:-2.5px}}
 @keyframes tsd-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){.brand .logo,.cta-logo{animation:none!important}}
-/* ---- loading splash: mascot intro, once per session, self-clearing (works w/o JS) ---- */
-#tsd-splash{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;background:radial-gradient(120% 120% at 50% 38%,#16385a 0%,#0e2f4f 55%,#0a2540 100%);animation:sp-out .55s ease 2.1s forwards;}
-#tsd-splash .sp-in{position:relative;display:grid;place-items:center;text-align:center;}
-#tsd-splash .sp-badge{width:120px;height:120px;border-radius:50%;background:var(--tsd-logo) center/cover no-repeat;box-shadow:0 18px 50px -18px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.08);animation:sp-badge 1.6s cubic-bezier(.3,.7,.3,1) both;}
-#tsd-splash .sp-fx{position:absolute;top:-6px;left:50%;width:150px;height:150px;margin-left:-75px;pointer-events:none;}
-#tsd-splash .katana{position:absolute;left:44px;top:36px;opacity:0;animation:sp-katana .7s ease-in-out .8s both;}
-#tsd-splash .slash{position:absolute;height:5px;width:120px;left:20px;border-radius:5px;transform-origin:left center;opacity:0;background:linear-gradient(90deg,transparent,#fff 32%,#dcefff 68%,transparent);box-shadow:0 0 14px rgba(200,230,255,.95);}
-#tsd-splash .s1{top:52px;animation:sp-slash .45s ease-out .95s both;}
-#tsd-splash .s2{top:74px;left:10px;animation:sp-slash .45s ease-out 1.05s both;}
-#tsd-splash .s3{top:96px;left:24px;animation:sp-slash .45s ease-out 1.15s both;}
-#tsd-splash .sp-word{margin-top:22px;font-family:var(--font-display,inherit);font-weight:900;font-size:1.5rem;letter-spacing:-.02em;color:#fff;opacity:0;animation:sp-word .5s ease 1.35s both;}
-#tsd-splash .sp-word small{display:block;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#9fc0e0;margin-top:6px;}
-@keyframes sp-badge{0%{opacity:0;transform:translate(0,0) scale(.4) rotate(-18deg)}28%{opacity:1;transform:translate(0,0) scale(1.08) rotate(3deg)}40%{transform:translate(0,0) scale(1) rotate(0)}50%{transform:translate(-7px,3px) scale(.98) rotate(-8deg)}66%{transform:translate(20px,-10px) scale(1.06) rotate(12deg)}78%{transform:translate(10px,-4px) scale(1.02) rotate(6deg)}90%{transform:translate(0,0) scale(1) rotate(0)}100%{transform:translate(0,0) scale(1) rotate(0)}}
-@keyframes sp-katana{0%{opacity:0;transform:translate(-34px,28px) rotate(-42deg) scale(.7)}22%{opacity:1}70%{opacity:1;transform:translate(18px,-14px) rotate(18deg) scale(1.08)}100%{opacity:0;transform:translate(46px,-32px) rotate(36deg)}}
-@keyframes sp-slash{0%{opacity:0;transform:rotate(-40deg) scaleX(0)}45%{opacity:1;transform:rotate(-40deg) scaleX(1)}100%{opacity:0;transform:rotate(-40deg) scaleX(1)}}
-@keyframes sp-word{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
-@keyframes sp-out{0%{opacity:1}100%{opacity:0;visibility:hidden}}
+/* ---- loading splash: vector mascot draws + swings its katana, once per session ---- */
+*{box-sizing:border-box} body{margin:0;font-family:system-ui}
+  #tsd-splash{position:fixed;inset:0;z-index:100000;display:grid;place-items:center;
+    background:radial-gradient(130% 130% at 50% 34%,#ffffff 0%,#eaf2fc 52%,#d7e6f8 100%);
+    animation:sp-out .55s ease 2.35s forwards}
+  .sp-in{display:grid;place-items:center;text-align:center}
+  .mwrap{animation:sp-oomph 1.7s ease-in-out .35s both;transform-origin:100px 150px}
+  .mascot{width:210px;height:231px;animation:sp-enter .55s cubic-bezier(.2,.85,.3,1.5) both;transform-origin:50% 70%}
+  .sword-arm{transform-box:view-box;transform-origin:72px 132px;transform:rotate(6deg);animation:sp-sword 1.7s ease-in-out .35s both}
+  .slash-arc{animation:sp-slash 1.7s ease-out .35s both}
+  .sp-word{margin-top:6px;font-weight:900;font-size:1.6rem;letter-spacing:-.02em;color:#173257;opacity:0;animation:sp-word .5s ease 1.5s both}
+  .sp-word small{display:block;font-weight:600;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:#5f97d8;margin-top:6px}
+  @keyframes sp-enter{0%{opacity:0;transform:translateY(16px) scale(.55)}55%{opacity:1;transform:translateY(0) scale(1.05)}75%{transform:scale(.98)}100%{opacity:1;transform:scale(1)}}
+  @keyframes sp-sword{0%,22%{transform:rotate(6deg)}40%{transform:rotate(64deg)}54%{transform:rotate(-84deg)}62%{transform:rotate(-68deg)}82%,100%{transform:rotate(6deg)}}
+  @keyframes sp-oomph{0%,40%{transform:rotate(0) translateY(0)}48%{transform:rotate(-3deg) translateY(-3px)}56%{transform:rotate(3deg) translateY(1px)}70%,100%{transform:rotate(0) translateY(0)}}
+  @keyframes sp-slash{0%,46%{opacity:0;stroke-dasharray:200;stroke-dashoffset:200}54%{opacity:1;stroke-dashoffset:0}70%{opacity:0;stroke-dashoffset:-40}100%{opacity:0}}
+  @keyframes sp-word{0%{opacity:0;transform:translateY(12px)}100%{opacity:1;transform:translateY(0)}}
+  @keyframes sp-out{0%{opacity:1}100%{opacity:0;visibility:hidden}}
 @media (prefers-reduced-motion:reduce){#tsd-splash{display:none!important}}
