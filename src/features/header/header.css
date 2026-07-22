@@ -6,7 +6,7 @@
   .brand{display:flex;align-items:center;gap:12px;font-family:var(--font-display);font-weight:900;letter-spacing:-.02em;font-size:1.26rem;}
   /* round LongWave logo badge — the real cloud mark, on a clean disc so it reads
      on both the light header and the dark footer */
-  .brand .logo{width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;flex:none;overflow:hidden;box-shadow:0 0 0 1px rgba(29,70,112,.10), 0 6px 16px -9px rgba(29,70,112,.5);transition:transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease;}
+  .brand .logo{width:46px;height:46px;border-radius:50%;background:var(--tsd-logo) center/cover no-repeat;position:relative;animation:tsd-bob 3.4s ease-in-out infinite;display:grid;place-items:center;flex:none;overflow:hidden;box-shadow:0 0 0 1px rgba(29,70,112,.10), 0 6px 16px -9px rgba(29,70,112,.5);transition:transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease;}
   .brand .logo img{width:80%;height:80%;object-fit:contain;}
   .brand:hover .logo{transform:scale(1.06) rotate(-3deg);box-shadow:0 0 0 1px rgba(29,70,112,.16), 0 10px 22px -9px rgba(29,70,112,.6);}
   .nav-links{display:flex;gap:24px;margin-left:8px;}
