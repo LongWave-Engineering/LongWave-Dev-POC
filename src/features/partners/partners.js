@@ -30,9 +30,15 @@
   }
 
   /* which slice of the roster a marquee shows: data-partner-set="placements" → only
-     companies where we've placed an engineer (jobs page); default → the whole roster. */
+     companies where we've placed an engineer (jobs page); "home" → companies the admin
+     flagged for the home hero (falling back to the whole roster while none are flagged,
+     so the wall is never empty); default → the whole roster. */
   function partnerList(set){
     if(set === "placements") return PARTNERS.filter(function(p){ return p.placement; });
+    if(set === "home"){
+      var picked = PARTNERS.filter(function(p){ return p.home; });
+      return picked.length ? picked : PARTNERS;
+    }
     return PARTNERS;
   }
 

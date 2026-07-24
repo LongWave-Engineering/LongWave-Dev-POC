@@ -236,7 +236,8 @@
           if(p.logo) logos[p.name]=p.logo;
           else if(typeof PARTNER_LOGOS!=="undefined" && PARTNER_LOGOS[p.name]) logos[p.name]=PARTNER_LOGOS[p.name];
           var rec={ name:p.name, mono:p.mono||String(p.name).slice(0,2), color:p.color||"#5E7185",
-            placement:!!p.placement, featured:!!p.featured };
+            placement:!!p.placement, featured:!!p.featured,
+            home:p.home===true||p.home===1||p.home==="1" };   /* hero-wall pick (admin Home toggle); tolerate 0/1 dialects */
           /* bilingual copy rides along in the same nested {en,ja} shape the baked roster uses */
           if(p.industry && typeof p.industry==="object") rec.industry=p.industry;
           if(p.blurb && typeof p.blurb==="object") rec.blurb=p.blurb;
@@ -277,8 +278,21 @@
       if(!Array.isArray(list) || !list.length) return;
       try{
         var rows=[];
+        /* Two wire dialects reach this block: the proxy's nested rows ({title:{en,ja},
+           body:{en:[…],ja:[…]}}) and the backend's flat columns (title_en/title_ja,
+           body_en/body_ja as blank-line-separated text). Normalize flat → nested up
+           front so the guards below treat both the same; paragraph split is CRLF-safe. */
+        var paras=function(t){ return String(t||"").split(/\r?\n\s*\r?\n/).map(function(s){ return s.trim(); }).filter(Boolean); };
         list.forEach(function(a){
           if(!a || typeof a!=="object") return;
+          if((!a.title || typeof a.title!=="object") && (a.title_en || a.title_ja)){
+            a = {
+              cat:   { en:a.cat_en||"", ja:a.cat_ja||"" },
+              title: { en:a.title_en||"", ja:a.title_ja||"" },
+              dek:   (a.dek_en || a.dek_ja) ? { en:a.dek_en||"", ja:a.dek_ja||"" } : null,
+              body:  { en:paras(a.body_en), ja:paras(a.body_ja) }
+            };
+          }
           if(!a.title || typeof a.title!=="object" || !(a.title.en || a.title.ja)) return;
           if(!a.body || typeof a.body!=="object" || !Array.isArray(a.body.en) || !Array.isArray(a.body.ja)) return;
           var isStr=function(p){ return typeof p==="string"; };

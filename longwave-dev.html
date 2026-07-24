@@ -997,7 +997,7 @@
       </div>
       <div class="partners">
         <span class="lab" data-i18n="partners_lab">Hiring with us</span>
-        <div class="partner-wall" data-partner-marquee aria-label="Companies hiring through Tokyo Samurai Dev"></div>
+        <div class="partner-wall" data-partner-marquee data-partner-set="home" aria-label="Companies hiring through Tokyo Samurai Dev"></div>
       </div>
     </div>
   </section>
@@ -4041,9 +4041,15 @@
   }
 
   /* which slice of the roster a marquee shows: data-partner-set="placements" → only
-     companies where we've placed an engineer (jobs page); default → the whole roster. */
+     companies where we've placed an engineer (jobs page); "home" → companies the admin
+     flagged for the home hero (falling back to the whole roster while none are flagged,
+     so the wall is never empty); default → the whole roster. */
   function partnerList(set){
     if(set === "placements") return PARTNERS.filter(function(p){ return p.placement; });
+    if(set === "home"){
+      var picked = PARTNERS.filter(function(p){ return p.home; });
+      return picked.length ? picked : PARTNERS;
+    }
     return PARTNERS;
   }
 
@@ -4475,18 +4481,23 @@
    data-article="<index>"; clicking one opens an in-app reading view (no real blog yet).
    Fill/open are split so a language toggle re-renders it (repaintOpenModal). */
   var artOverlay=$("#artOverlay");
+  /* currentArticle holds the article OBJECT (like currentJob), never its index: the
+     articles hydrate reassigns ARTICLES while a modal can be open, and an index into
+     the old array would repaint the modal onto a DIFFERENT live article (or no-op and
+     strand the open modal untranslated after a language toggle). */
   var currentArticle=null;
-  function fillArticle(i){
-    var a=ARTICLES[i]; if(!a) return;
+  function fillArticle(a){
+    if(!a || !a.title) return;
     if($("#artCat")) $("#artCat").textContent = a.cat[lang];
     if($("#artTitle")) $("#artTitle").textContent = a.title[lang];
     var dek=$("#artDek"); if(dek){ var d=a.dek?a.dek[lang]:""; dek.textContent=d; dek.style.display=d?"":"none"; }
     var body=$("#artBody"); if(body){ body.innerHTML=((a.body&&a.body[lang])||[]).map(function(p){ return "<p>"+esc(p)+"</p>"; }).join(""); }
   }
   function openArticle(i){
-    if(!artOverlay || !ARTICLES[i]) return;
-    currentArticle=i; lastFocus=document.activeElement;
-    fillArticle(i);
+    var a=ARTICLES[i];
+    if(!artOverlay || !a) return;
+    currentArticle=a; lastFocus=document.activeElement;
+    fillArticle(a);
     openOverlay(artOverlay); $("#artClose").focus();
   }
   document.addEventListener("click", function(e){ var c=e.target.closest("[data-article]"); if(c){ e.preventDefault(); openArticle(+c.getAttribute("data-article")); } });
@@ -4959,7 +4970,8 @@
           if(p.logo) logos[p.name]=p.logo;
           else if(typeof PARTNER_LOGOS!=="undefined" && PARTNER_LOGOS[p.name]) logos[p.name]=PARTNER_LOGOS[p.name];
           var rec={ name:p.name, mono:p.mono||String(p.name).slice(0,2), color:p.color||"#5E7185",
-            placement:!!p.placement, featured:!!p.featured };
+            placement:!!p.placement, featured:!!p.featured,
+            home:p.home===true||p.home===1||p.home==="1" };   /* hero-wall pick (admin Home toggle); tolerate 0/1 dialects */
           /* bilingual copy rides along in the same nested {en,ja} shape the baked roster uses */
           if(p.industry && typeof p.industry==="object") rec.industry=p.industry;
           if(p.blurb && typeof p.blurb==="object") rec.blurb=p.blurb;
@@ -5000,8 +5012,21 @@
       if(!Array.isArray(list) || !list.length) return;
       try{
         var rows=[];
+        /* Two wire dialects reach this block: the proxy's nested rows ({title:{en,ja},
+           body:{en:[…],ja:[…]}}) and the backend's flat columns (title_en/title_ja,
+           body_en/body_ja as blank-line-separated text). Normalize flat → nested up
+           front so the guards below treat both the same; paragraph split is CRLF-safe. */
+        var paras=function(t){ return String(t||"").split(/\r?\n\s*\r?\n/).map(function(s){ return s.trim(); }).filter(Boolean); };
         list.forEach(function(a){
           if(!a || typeof a!=="object") return;
+          if((!a.title || typeof a.title!=="object") && (a.title_en || a.title_ja)){
+            a = {
+              cat:   { en:a.cat_en||"", ja:a.cat_ja||"" },
+              title: { en:a.title_en||"", ja:a.title_ja||"" },
+              dek:   (a.dek_en || a.dek_ja) ? { en:a.dek_en||"", ja:a.dek_ja||"" } : null,
+              body:  { en:paras(a.body_en), ja:paras(a.body_ja) }
+            };
+          }
           if(!a.title || typeof a.title!=="object" || !(a.title.en || a.title.ja)) return;
           if(!a.body || typeof a.body!=="object" || !Array.isArray(a.body.en) || !Array.isArray(a.body.ja)) return;
           var isStr=function(p){ return typeof p==="string"; };
