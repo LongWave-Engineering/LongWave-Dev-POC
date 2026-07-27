@@ -205,23 +205,45 @@
       return "";
     }
 
+    /* Internal ATS bookkeeping ("assigned-to:T-804QJ") leaks in from HRMOS at the tail of
+       some JDs, under an "Other"/"その他" heading. It is recruiter-only and must never reach
+       candidates, so formatJdText() drops those lines (and the heading they orphan). */
+    var JD_ATS_TAG = /^[\s　]*assigned-to:/i;
+    /* Section-heading test for orphan trimming: a markdown "## …" line OR a jdHeading() one. */
+    function jdIsHeadingLine(line){ return /^[\s　]*#{1,6}[ \t　]+\S/.test(line) || !!jdHeading(line); }
+
     /* Deterministic, idempotent cleanup of JD plain text: LF-normalized, per-line
        trailing whitespace stripped, bullet glyphs unified to "- ", blank runs collapsed
        to one blank line, a blank line guaranteed before each heading, outer blank lines
-       trimmed. Language-agnostic — it never touches the words, only the layout. */
+       trimmed, and internal ATS tags (with any heading they leave empty) removed. Beyond
+       those tags it never touches the words, only the layout. */
     function formatJdText(text){
       if(typeof text !== "string" || text === "") return "";
       var lines = text.replace(/\r\n?/g,"\n").split("\n");
-      var out = [];
+      var out = [], droppedTag = false;
       for(var i=0;i<lines.length;i++){
         var line = lines[i].replace(/[ \t　]+$/,"");
+        if(JD_ATS_TAG.test(line)){ droppedTag = true; continue; }   /* strip internal ATS tag */
         var bm = line.match(JD_BULLET);
         if(bm) line = "- " + bm[1];
         /* let section headings breathe: ensure one blank line before them */
         if(out.length && out[out.length-1] !== "" && jdHeading(line)) out.push("");
         out.push(line);
       }
-      return out.join("\n").replace(/\n{3,}/g,"\n\n").replace(/^\n+/,"").replace(/\n+$/,"");
+      var s = out.join("\n").replace(/\n{3,}/g,"\n\n").replace(/^\n+/,"").replace(/\n+$/,"");
+      /* Only when a tag was actually removed: if that emptied its trailing section, drop the
+         now-bodyless heading(s) too. Guarded by droppedTag so a genuine trailing empty
+         heading in the source is preserved unchanged. */
+      if(droppedTag){
+        var chunks = s.split("\n\n");
+        while(chunks.length){
+          var body = chunks[chunks.length-1].split("\n").filter(function(l){ return l !== ""; });
+          if(body.length === 1 && jdIsHeadingLine(body[0])) chunks.pop();
+          else break;
+        }
+        s = chunks.join("\n\n").replace(/\n+$/,"");
+      }
+      return s;
     }
 
     /* Parse a JD section into renderable blocks (runs formatJdText first):

@@ -240,6 +240,23 @@ test("formatJdText() is idempotent on messy JP and EN samples", () => {
   }
 });
 
+test("formatJdText() strips internal ATS tags and the heading they orphan", () => {
+  // "assigned-to:…" lines under a trailing Other/その他 section are recruiter-only → dropped,
+  // and the now-bodyless heading is dropped with them.
+  assert.equal(
+    LW.formatJdText("## Probation\n\nYes (3 months)\n\n## Other\n\nassigned-to:T-804QJ"),
+    "## Probation\n\nYes (3 months)");
+  assert.equal(
+    LW.formatJdText("本文\n\n## その他\n\nassigned-to:T-8421L\nassigned-to:T-804QJ"),
+    "本文");
+  // a tag elsewhere still goes, but a real trailing section with a body is untouched
+  assert.equal(
+    LW.formatJdText("assigned-to:T-1\n\n## 条件\n\n週休2日"),
+    "## 条件\n\n週休2日");
+  // guard: a genuine trailing empty heading (no tag) is preserved (see idempotency test)
+  assert.equal(LW.formatJdText("intro\n\n【募集背景】"), "intro\n\n【募集背景】");
+});
+
 test("jdBlocks() returns [] for empty / non-string input", () => {
   assert.deepEqual(LW.jdBlocks(""), []);
   assert.deepEqual(LW.jdBlocks(null), []);
