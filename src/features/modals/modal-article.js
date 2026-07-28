@@ -73,7 +73,12 @@
     /* omit `about` entirely when there is no category — an empty string is invalid */
     var about=(a.category && (a.category.name[lang]||a.category.name.en)) || (a.cat && (a.cat[lang]||a.cat.en)) || "";
     if(about) art.about=about;
-    if(a.image && a.image.src && a.image.src.indexOf("http")===0) art.image=[a.image.src];
+    /* absolutise a proxy-relative /api/media/<id> so the claim is fetchable */
+    if(a.image && a.image.src){
+      var iu=a.image.src;
+      if(iu.indexOf("/")===0) iu=location.origin+iu;
+      if(iu.indexOf("http")===0) art.image=[iu];
+    }
     if(a.tags && a.tags.length) art.keywords=a.tags.join(", ");
     /* the canonical address of this article — the same deep link the card shares */
     var canon=articleUrl(a);
@@ -107,12 +112,11 @@
     currentArticle=a; lastFocus=document.activeElement;
     fillArticle(a);
     openOverlay(artOverlay); $("#artClose").focus();
-    /* reflect the open article in the URL so it can be copied/shared/reloaded */
+    /* Reflect the open article in the URL so it can be copied/shared/reloaded.
+       replaceState, not location.hash: assigning the hash fires hashchange, which
+       re-runs the router and scroll-resets the list behind the modal. */
     var slug=a.seo && a.seo.slug;
-    if(slug && location.hash !== "#/articles/" + slug){
-      _suppressHashOpen=true;
-      location.hash="#/articles/" + slug;
-    }
+    if(slug && location.hash !== "#/articles/" + slug) setHash("#/articles/" + slug);
   }
   /* Open the article named in #/articles/<slug>, if any — this is what makes a
      shared link land on the article instead of the bare list. */
@@ -120,7 +124,14 @@
   function openArticleFromHash(){
     if(_suppressHashOpen){ _suppressHashOpen=false; return; }
     var m=String(location.hash||"").match(/^#\/articles\/([a-z0-9-]+)$/);
-    if(!m) return;
+    /* Back/Forward off an article: the reader expects the modal gone. Without this
+       the overlay stayed open with body scroll locked and its FAQPage markup still
+       in <head>, asserting FAQs for a page the reader had navigated away from. */
+    if(!m){
+      if(artOverlay && artOverlay.classList.contains("open")) closeOverlay(artOverlay);
+      return;
+    }
+    if(artOverlay && artOverlay.classList.contains("open") && currentArticle && currentArticle.seo && currentArticle.seo.slug===m[1]) return;  /* already showing it */
     for(var i=0;i<ARTICLES.length;i++){
       var s=ARTICLES[i].seo;
       if(s && s.slug===m[1]){ openArticle(i); return; }
@@ -133,9 +144,15 @@
      renderArticles) reopen an article the reader had closed. */
   LW_ARTICLE_HOOKS.onClose=function(){
     clearArticleSchema();
-    if(/^#\/articles\/.+/.test(String(location.hash||""))){
-      _suppressHashOpen=true;
-      location.hash="#/articles";
-    }
+    if(/^#\/articles\/.+/.test(String(location.hash||""))) setHash("#/articles");
   };
+  /* Update the address bar without firing hashchange (no router re-render, no
+     scroll reset); history.replaceState keeps Back pointing where it did. */
+  function setHash(h){
+    if(window.history && window.history.replaceState){
+      try{ window.history.replaceState(null, "", h); return; }catch(e){}
+    }
+    _suppressHashOpen=true;
+    location.hash=h;
+  }
   document.addEventListener("click", function(e){ var c=e.target.closest("[data-article]"); if(c){ e.preventDefault(); openArticle(+c.getAttribute("data-article")); } });

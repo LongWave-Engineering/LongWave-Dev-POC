@@ -28,7 +28,11 @@
       var about=(a.category && (a.category.name[lang]||a.category.name.en)) || (a.cat && (a.cat[lang]||a.cat.en)) || "";
       if(about) post.about=about;
       if(a.tags && a.tags.length) post.keywords=a.tags.join(", ");
-      if(a.image && a.image.src && a.image.src.indexOf("http")===0) post.image=[a.image.src];
+      if(a.image && a.image.src){
+        var iu=a.image.src;
+        if(iu.indexOf("/")===0) iu=location.origin+iu;
+        if(iu.indexOf("http")===0) post.image=[iu];
+      }
       if(seo.slug) post.url=location.origin + location.pathname + "#/articles/" + seo.slug;
       return post;
     });
@@ -52,9 +56,14 @@
       /* An editor-chosen category record wins over the free-text chip, and carries
          its own colour; the hero image and byline are optional in the same way. */
       var chip = (a.category && (a.category.name[lang] || a.category.name.en)) || a.cat[lang];
-      var chipStyle = (a.category && a.category.color) ? ' style="color:'+ esc(a.category.color) +'"' : '';
+      /* Only a plain colour literal may reach a style attribute: esc() leaves ";"
+         and ":" alive, so an unvalidated value could append its own declarations
+         (a full-viewport overlay, say). The proxy already narrows this; a second
+         backend speaking the same wire might not. */
+      var safeCol = (a.category && /^(#[0-9a-fA-F]{3,8}|rgba?\([\d.,\s%]+\))$/.test(String(a.category.color||"").trim())) ? String(a.category.color).trim() : "";
+      var chipStyle = safeCol ? ' style="color:'+ esc(safeCol) +'"' : '';
       node.innerHTML=
-        (a.image ? '<img class="art-img" src="'+ esc(a.image.src) +'" alt="'+ esc(a.image.alt||"") +'" loading="lazy">' : '')+
+        (a.image && a.image.src ? '<img class="art-img" src="'+ esc(a.image.src) +'" alt="'+ esc(a.image.alt||"") +'" loading="lazy">' : '')+
         '<span class="cat"'+ chipStyle +'>'+ esc(chip) +'</span><h4>'+ esc(a.title[lang]) +'</h4>'+
         (a.dek ? '<p class="art-dek">'+ esc(a.dek[lang]) +'</p>' : '')+
         (a.author ? '<span class="art-by">'+ esc(a.author.name) +

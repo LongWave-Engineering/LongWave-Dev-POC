@@ -293,6 +293,10 @@
               body:  { en:paras(a.body_en), ja:paras(a.body_ja) },
               /* flat SEO columns → the nested sidecar the modal reads */
               seo:   { slug:a.slug||"", metaTitle:a.meta_title||"", directAnswer:a.direct_answer||"", metaDescription:a.meta_description||"", faqs:a.faqs||[] },
+              /* the flat dialect carries ids, not resolved records — a backend that
+                 wants bylines/images on the site must resolve them like the proxy
+                 does (BACKEND-GUIDE §4.5); passing the nested keys through keeps a
+                 hybrid payload working */
               author: a.author||null, image: a.image||null, category: a.category||null, tags: a.tags||[]
             };
           }
@@ -319,7 +323,9 @@
             seo: { slug:String(s.slug||""), metaTitle:String(s.metaTitle||""), directAnswer:String(s.directAnswer||""), metaDescription:String(s.metaDescription||""), faqs:faqs },
             /* resolved links from the proxy: shapes forced, each independently optional */
             author: (a.author && a.author.name) ? { name:String(a.author.name), role:(a.author.role&&typeof a.author.role==="object")?a.author.role:null, sameAs:String(a.author.sameAs||"")||null } : null,
-            image: (a.image && a.image.src) ? { src:String(a.image.src), alt:String(a.image.alt||"") } : null,
+            /* the proxy ships {url, alt} (bytes are fetched separately, not inlined);
+               a src is still accepted so a backend speaking the older shape works */
+            image: (a.image && (a.image.url || a.image.src)) ? { src:String(a.image.url || a.image.src), alt:String(a.image.alt||"") } : null,
             category: (a.category && a.category.name && typeof a.category.name==="object") ? { name:a.category.name, slug:String(a.category.slug||""), color:String(a.category.color||"")||null } : null,
             tags: (Array.isArray(a.tags)?a.tags:[]).filter(function(x){ return typeof x==="string" && x.trim(); }).slice(0,12)
           });
