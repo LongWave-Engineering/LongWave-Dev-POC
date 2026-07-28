@@ -503,6 +503,13 @@
   .art-read .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
   .art-read-title{font-size:1.7rem;line-height:1.2;margin:10px 0 0;}
   .art-read-dek{color:var(--slate);font-size:1.1rem;line-height:1.5;margin:12px 0 0;}
+  /* direct-answer block: the quotable summary (admin's SEO panel scores its length) */
+  .art-read-answer{margin:16px 0 0;padding:14px 16px;border-left:3px solid var(--sky);background:var(--sky-wash);border-radius:0 10px 10px 0;color:var(--ink);font-size:1.05rem;line-height:1.6;}
+  /* FAQ pairs — also emitted as FAQPage structured data */
+  .art-read-faq{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);}
+  .art-read-faq h3{margin:0 0 12px;font-size:1.1rem;}
+  .art-read-faq dt{font-weight:700;color:var(--ink);margin-top:14px;}
+  .art-read-faq dd{margin:5px 0 0;color:var(--ink-soft);line-height:1.65;}
   .art-read-body{margin-top:18px;}
   .art-read-body p{color:var(--ink-soft);font-size:1.02rem;line-height:1.7;margin:0 0 14px;}
   .art-read-cta{margin:22px 0 0;padding-top:18px;border-top:1px solid var(--line);color:var(--slate);font-size:1rem;line-height:1.5;}
@@ -1535,7 +1542,14 @@
       <span class="cat" id="artCat"></span>
       <h2 class="art-read-title" id="artTitle"></h2>
       <p class="art-read-dek" id="artDek"></p>
+      <!-- direct answer: the quotable summary an AI answer engine can lift whole -->
+      <p class="art-read-answer" id="artAnswer"></p>
       <div class="art-read-body" id="artBody"></div>
+      <!-- FAQ pairs; also emitted as FAQPage JSON-LD by fillArticle -->
+      <section class="art-read-faq" id="artFaq" hidden>
+        <h3 data-i18n="art_faq_h">Frequently asked</h3>
+        <dl id="artFaqList"></dl>
+      </section>
       <p class="art-read-cta" data-i18n="art_cta">Looking for roles like the ones above? <button class="linklike" data-signup type="button">Sign up</button> and a bilingual recruiter brings you matched openings.</p>
     </article>
   </div>
@@ -2124,6 +2138,7 @@
       art_h1:"Articles",
       art_sub:"Notes on being a bilingual engineer in Japan. (Placeholder posts to replace with your own.)",
       art_read:"Read →",
+      art_faq_h:"Frequently asked",
       art_cta:"Looking for roles like these? <button class=\"linklike\" data-signup type=\"button\">Sign up</button> and a bilingual recruiter brings you matched openings.",
       cv_h1:"Japanese CV generator",
       cv_sub:"Fill in your details and we'll build your 履歴書 (rirekisho) and 職務経歴書 (shokumukeirekisho). Switch between the two (both update live), then print or save the one you need as PDF.",
@@ -2225,6 +2240,7 @@
       art_h1:"記事",
       art_sub:"日本でバイリンガルエンジニアとして働くためのヒント。（差し替え用のサンプル記事です。）",
       art_read:"読む →",
+      art_faq_h:"よくある質問",
       art_cta:"こんな求人をお探しですか？ <button class=\"linklike\" data-signup type=\"button\">登録する</button>と、バイリンガルのリクルーターがあなたに合った求人をご紹介します。",
       cv_h1:"履歴書・職務経歴書ジェネレーター",
       cv_sub:"必要事項を入力すると、履歴書と職務経歴書を作成します。2つを切り替えながらその場で編集でき、必要な書類を印刷またはPDFで保存できます。",
@@ -4522,7 +4538,45 @@
     if($("#artCat")) $("#artCat").textContent = a.cat[lang];
     if($("#artTitle")) $("#artTitle").textContent = a.title[lang];
     var dek=$("#artDek"); if(dek){ var d=a.dek?a.dek[lang]:""; dek.textContent=d; dek.style.display=d?"":"none"; }
+    /* SEO/AIEO extras (admin-authored, optional on every article): the direct-answer
+       block sits above the body as a quotable summary, the FAQ pairs render below it,
+       and both feed the JSON-LD an answer engine reads. */
+    var ans=$("#artAnswer"); if(ans){ var t=(a.seo&&a.seo.directAnswer)||""; ans.textContent=t; ans.style.display=t?"":"none"; }
     var body=$("#artBody"); if(body){ body.innerHTML=((a.body&&a.body[lang])||[]).map(function(p){ return "<p>"+esc(p)+"</p>"; }).join(""); }
+    var faqs=(a.seo&&a.seo.faqs&&a.seo.faqs.length)?a.seo.faqs:null;
+    var faqWrap=$("#artFaq"), faqList=$("#artFaqList");
+    if(faqWrap && faqList){
+      faqWrap.hidden=!faqs;
+      faqList.innerHTML = faqs ? faqs.map(function(f){
+        return "<dt>"+esc(f.q)+"</dt><dd>"+esc(f.a)+"</dd>";
+      }).join("") : "";
+    }
+    setArticleSchema(a);
+  }
+  /* One <script type="application/ld+json"> kept in sync with the open article:
+     Article always, FAQPage only when the editor wrote FAQs. Crawlers that execute
+     JS (and AI engines fetching rendered HTML) read it; it never affects layout. */
+  function setArticleSchema(a){
+    var id="lw-article-schema", node=document.getElementById(id);
+    if(!node){ node=document.createElement("script"); node.type="application/ld+json"; node.id=id; document.head.appendChild(node); }
+    var seo=a.seo||{}, blocks=[{
+      "@context":"https://schema.org", "@type":"Article",
+      headline: a.title[lang] || a.title.en || "",
+      description: seo.metaDescription || seo.directAnswer || (a.dek?a.dek[lang]:"") || "",
+      about: a.cat ? (a.cat[lang]||a.cat.en||"") : "",
+      inLanguage: lang,
+      author: { "@type":"Organization", name:"LongWave株式会社" },
+      publisher: { "@type":"Organization", name:"LongWave株式会社" }
+    }];
+    if(seo.faqs && seo.faqs.length){
+      blocks.push({
+        "@context":"https://schema.org", "@type":"FAQPage",
+        mainEntity: seo.faqs.map(function(f){
+          return { "@type":"Question", name:f.q, acceptedAnswer:{ "@type":"Answer", text:f.a } };
+        })
+      });
+    }
+    try{ node.textContent=JSON.stringify(blocks.length>1?blocks:blocks[0]); }catch(e){}
   }
   function openArticle(i){
     var a=ARTICLES[i];
@@ -5055,7 +5109,9 @@
               cat:   { en:a.cat_en||"", ja:a.cat_ja||"" },
               title: { en:a.title_en||"", ja:a.title_ja||"" },
               dek:   (a.dek_en || a.dek_ja) ? { en:a.dek_en||"", ja:a.dek_ja||"" } : null,
-              body:  { en:paras(a.body_en), ja:paras(a.body_ja) }
+              body:  { en:paras(a.body_en), ja:paras(a.body_ja) },
+              /* flat SEO columns → the nested sidecar the modal reads */
+              seo:   { directAnswer:a.direct_answer||"", metaDescription:a.meta_description||"", faqs:a.faqs||[] }
             };
           }
           if(!a.title || typeof a.title!=="object" || !(a.title.en || a.title.ja)) return;
@@ -5066,11 +5122,19 @@
           if(!bodyEn.length) bodyEn=bodyJa;
           if(!bodyJa.length) bodyJa=bodyEn;
           var cat=(a.cat && typeof a.cat==="object") ? a.cat : {en:"",ja:""};
+          /* SEO sidecar: every piece optional, shapes forced — the modal renders
+             whatever survives and simply omits what didn't. */
+          var s=(a.seo && typeof a.seo==="object") ? a.seo : {};
+          var faqs=(Array.isArray(s.faqs)?s.faqs:[])
+            .filter(function(f){ return f && typeof f==="object" && f.q && f.a; })
+            .slice(0,5)
+            .map(function(f){ return { q:String(f.q), a:String(f.a) }; });
           rows.push({
             cat: { en:String(cat.en||cat.ja||""), ja:String(cat.ja||cat.en||"") },   /* renderArticles reads cat[lang] unguarded */
             title: { en:String(a.title.en||a.title.ja), ja:String(a.title.ja||a.title.en) },
             dek: (a.dek && typeof a.dek==="object") ? a.dek : null,   /* dek is optional in the renderer */
-            body: { en:bodyEn, ja:bodyJa }
+            body: { en:bodyEn, ja:bodyJa },
+            seo: { directAnswer:String(s.directAnswer||""), metaDescription:String(s.metaDescription||""), faqs:faqs }
           });
         });
         if(!rows.length) return;   /* nothing usable — keep the baked posts */

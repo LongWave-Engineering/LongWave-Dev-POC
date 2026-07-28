@@ -290,7 +290,9 @@
               cat:   { en:a.cat_en||"", ja:a.cat_ja||"" },
               title: { en:a.title_en||"", ja:a.title_ja||"" },
               dek:   (a.dek_en || a.dek_ja) ? { en:a.dek_en||"", ja:a.dek_ja||"" } : null,
-              body:  { en:paras(a.body_en), ja:paras(a.body_ja) }
+              body:  { en:paras(a.body_en), ja:paras(a.body_ja) },
+              /* flat SEO columns → the nested sidecar the modal reads */
+              seo:   { directAnswer:a.direct_answer||"", metaDescription:a.meta_description||"", faqs:a.faqs||[] }
             };
           }
           if(!a.title || typeof a.title!=="object" || !(a.title.en || a.title.ja)) return;
@@ -301,11 +303,19 @@
           if(!bodyEn.length) bodyEn=bodyJa;
           if(!bodyJa.length) bodyJa=bodyEn;
           var cat=(a.cat && typeof a.cat==="object") ? a.cat : {en:"",ja:""};
+          /* SEO sidecar: every piece optional, shapes forced — the modal renders
+             whatever survives and simply omits what didn't. */
+          var s=(a.seo && typeof a.seo==="object") ? a.seo : {};
+          var faqs=(Array.isArray(s.faqs)?s.faqs:[])
+            .filter(function(f){ return f && typeof f==="object" && f.q && f.a; })
+            .slice(0,5)
+            .map(function(f){ return { q:String(f.q), a:String(f.a) }; });
           rows.push({
             cat: { en:String(cat.en||cat.ja||""), ja:String(cat.ja||cat.en||"") },   /* renderArticles reads cat[lang] unguarded */
             title: { en:String(a.title.en||a.title.ja), ja:String(a.title.ja||a.title.en) },
             dek: (a.dek && typeof a.dek==="object") ? a.dek : null,   /* dek is optional in the renderer */
-            body: { en:bodyEn, ja:bodyJa }
+            body: { en:bodyEn, ja:bodyJa },
+            seo: { directAnswer:String(s.directAnswer||""), metaDescription:String(s.metaDescription||""), faqs:faqs }
           });
         });
         if(!rows.length) return;   /* nothing usable — keep the baked posts */

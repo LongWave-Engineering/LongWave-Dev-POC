@@ -12,6 +12,13 @@
   .art-read .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
   .art-read-title{font-size:1.7rem;line-height:1.2;margin:10px 0 0;}
   .art-read-dek{color:var(--slate);font-size:1.1rem;line-height:1.5;margin:12px 0 0;}
+  /* direct-answer block: the quotable summary (admin's SEO panel scores its length) */
+  .art-read-answer{margin:16px 0 0;padding:14px 16px;border-left:3px solid var(--sky);background:var(--sky-wash);border-radius:0 10px 10px 0;color:var(--ink);font-size:1.05rem;line-height:1.6;}
+  /* FAQ pairs — also emitted as FAQPage structured data */
+  .art-read-faq{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);}
+  .art-read-faq h3{margin:0 0 12px;font-size:1.1rem;}
+  .art-read-faq dt{font-weight:700;color:var(--ink);margin-top:14px;}
+  .art-read-faq dd{margin:5px 0 0;color:var(--ink-soft);line-height:1.65;}
   .art-read-body{margin-top:18px;}
   .art-read-body p{color:var(--ink-soft);font-size:1.02rem;line-height:1.7;margin:0 0 14px;}
   .art-read-cta{margin:22px 0 0;padding-top:18px;border-top:1px solid var(--line);color:var(--slate);font-size:1rem;line-height:1.5;}
