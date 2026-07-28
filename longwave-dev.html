@@ -503,6 +503,14 @@
   .art-read .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
   .art-read-title{font-size:1.7rem;line-height:1.2;margin:10px 0 0;}
   .art-read-dek{color:var(--slate);font-size:1.1rem;line-height:1.5;margin:12px 0 0;}
+  /* editor-chosen hero image on the card; fixed ratio so a mixed library still
+     produces an even grid */
+  .art-img{display:block;width:100%;height:150px;object-fit:cover;border-radius:10px;margin:0 0 12px;background:var(--paper);}
+  .art-by{display:block;margin-top:10px;color:var(--slate);font-size:.86rem;font-weight:600;}
+  .art-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .art-tag{font-size:.72rem;font-weight:700;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:2px 9px;}
+  .art-read-img{display:block;width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin:0 0 16px;background:var(--paper);}
+  .art-read-by{margin:10px 0 0;color:var(--slate);font-size:.95rem;font-weight:600;}
   /* direct-answer block: the quotable summary (admin's SEO panel scores its length) */
   .art-read-answer{margin:16px 0 0;padding:14px 16px;border-left:3px solid var(--sky);background:var(--sky-wash);border-radius:0 10px 10px 0;color:var(--ink);font-size:1.05rem;line-height:1.6;}
   /* FAQ pairs — also emitted as FAQPage structured data */
@@ -1539,9 +1547,12 @@
   <div class="modal narrow">
     <button class="modal-close" id="artClose" aria-label="Close">×</button>
     <article class="art-read">
+      <img class="art-read-img" id="artImg" alt="" hidden>
       <span class="cat" id="artCat"></span>
       <h2 class="art-read-title" id="artTitle"></h2>
       <p class="art-read-dek" id="artDek"></p>
+      <!-- byline: a named author with a linked profile, when the editor set one -->
+      <p class="art-read-by" id="artBy" hidden></p>
       <!-- direct answer: the quotable summary an AI answer engine can lift whole -->
       <p class="art-read-answer" id="artAnswer"></p>
       <div class="art-read-body" id="artBody"></div>
@@ -4154,18 +4165,74 @@
   }
 /* features/articles/articles.js — articles page render */
   /* ---------------- articles page ---------------- */
+  /* Filled in by modals/modal-article.js (which loads after this file) so the
+     overlay registry and the router can reach the reading modal's lifecycle. */
+  var LW_ARTICLE_HOOKS={};
+
+  /* Crawler-facing structured data for the WHOLE list, emitted on first paint and
+     after every hydrate — no click required, which is the point: the per-article
+     block in modal-article.js only exists while a reader has that article open.
+     Deliberately no FAQPage here (those answers aren't on screen yet). */
+  function setArticlesListSchema(){
+    var id="lw-articles-schema", node=document.getElementById(id);
+    if(!ARTICLES.length){ if(node && node.parentNode) node.parentNode.removeChild(node); return; }
+    if(!node){ node=document.createElement("script"); node.type="application/ld+json"; node.id=id; document.head.appendChild(node); }
+    var org={ "@type":"Organization", name:"LongWave\u682a\u5f0f\u4f1a\u793e" };
+    var posts=ARTICLES.map(function(a){
+      var seo=a.seo||{};
+      var post={
+        "@type":"BlogPosting",
+        headline: a.title[lang] || a.title.en || "",
+        description: seo.metaDescription || seo.directAnswer || (a.dek ? (a.dek[lang]||a.dek.en||"") : "") || "",
+        inLanguage: lang,
+        author: (a.author && a.author.name)
+          ? (function(){ var pr={ "@type":"Person", name:a.author.name }; if(a.author.sameAs) pr.sameAs=a.author.sameAs; return pr; })()
+          : org,
+        publisher: org
+      };
+      var about=(a.category && (a.category.name[lang]||a.category.name.en)) || (a.cat && (a.cat[lang]||a.cat.en)) || "";
+      if(about) post.about=about;
+      if(a.tags && a.tags.length) post.keywords=a.tags.join(", ");
+      if(a.image && a.image.src && a.image.src.indexOf("http")===0) post.image=[a.image.src];
+      if(seo.slug) post.url=location.origin + location.pathname + "#/articles/" + seo.slug;
+      return post;
+    });
+    try{
+      node.textContent=JSON.stringify({
+        "@context":"https://schema.org", "@type":"Blog",
+        name: t("nav_articles") || "Articles",
+        publisher: org,
+        blogPost: posts
+      });
+    }catch(e){}
+  }
+
   function renderArticles(){
     var grid=$("#artGrid"); if(!grid) return;
     grid.innerHTML="";
     ARTICLES.forEach(function(a, i){
       var node=el("a","art");
-      node.href="#/articles";
+      node.href=(a.seo && a.seo.slug) ? "#/articles/"+a.seo.slug : "#/articles";
       node.setAttribute("data-article", i);   /* modals/modal-article.js delegates the click → opens the reading modal */
-      node.innerHTML='<span class="cat">'+ esc(a.cat[lang]) +'</span><h4>'+ esc(a.title[lang]) +'</h4>'+
+      /* An editor-chosen category record wins over the free-text chip, and carries
+         its own colour; the hero image and byline are optional in the same way. */
+      var chip = (a.category && (a.category.name[lang] || a.category.name.en)) || a.cat[lang];
+      var chipStyle = (a.category && a.category.color) ? ' style="color:'+ esc(a.category.color) +'"' : '';
+      node.innerHTML=
+        (a.image ? '<img class="art-img" src="'+ esc(a.image.src) +'" alt="'+ esc(a.image.alt||"") +'" loading="lazy">' : '')+
+        '<span class="cat"'+ chipStyle +'>'+ esc(chip) +'</span><h4>'+ esc(a.title[lang]) +'</h4>'+
         (a.dek ? '<p class="art-dek">'+ esc(a.dek[lang]) +'</p>' : '')+
+        (a.author ? '<span class="art-by">'+ esc(a.author.name) +
+          (a.author.role && a.author.role[lang] ? ' · '+ esc(a.author.role[lang]) : '') +'</span>' : '')+
+        ((a.tags && a.tags.length) ? '<span class="art-tags">'+ a.tags.slice(0,4).map(function(tg){
+          return '<span class="art-tag">'+ esc(tg) +'</span>'; }).join("") +'</span>' : '')+
         '<span class="read">'+ t("art_read") +'</span>';
       grid.appendChild(node);
     });
+    setArticlesListSchema();
+    /* a shared #/articles/<slug> link must land on the article — retried here
+       because the hydrate replaces ARTICLES after first paint */
+    if(LW_ARTICLE_HOOKS.openFromHash) LW_ARTICLE_HOOKS.openFromHash();
   }
 
 /* features/privacy/privacy.js — LongWave's privacy policy, bilingual (rendered into
@@ -4389,6 +4456,8 @@
   function openOverlay(o){ o.classList.add("open"); document.body.style.overflow="hidden"; }
   function closeOverlay(o){
     o.classList.remove("open");
+    /* the article modal owns a <script type=ld+json> that must not outlive it */
+    if(o && o.id==="artOverlay" && LW_ARTICLE_HOOKS.onClose) LW_ARTICLE_HOOKS.onClose();
     /* only unlock body scroll once NO overlay is open — the signup can stack on the job modal */
     var anyOpen=OVERLAYS.some(function(e){ return e.ov && e.ov.classList.contains("open"); });
     if(!anyOpen) document.body.style.overflow="";
@@ -4535,9 +4604,28 @@
   var currentArticle=null;
   function fillArticle(a){
     if(!a || !a.title) return;
-    if($("#artCat")) $("#artCat").textContent = a.cat[lang];
+    /* a managed category record (name + colour) wins over the free-text chip */
+    var chipEl=$("#artCat");
+    if(chipEl){
+      chipEl.textContent = (a.category && (a.category.name[lang] || a.category.name.en)) || a.cat[lang];
+      chipEl.style.color = (a.category && a.category.color) ? a.category.color : "";
+    }
     if($("#artTitle")) $("#artTitle").textContent = a.title[lang];
     var dek=$("#artDek"); if(dek){ var d=a.dek?a.dek[lang]:""; dek.textContent=d; dek.style.display=d?"":"none"; }
+    /* hero image: alt comes from the library record — never invented here */
+    var img=$("#artImg");
+    if(img){
+      if(a.image && a.image.src){ img.src=a.image.src; img.alt=a.image.alt||""; img.hidden=false; }
+      else { img.removeAttribute("src"); img.alt=""; img.hidden=true; }
+    }
+    var by=$("#artBy");
+    if(by){
+      if(a.author && a.author.name){
+        var role=(a.author.role && a.author.role[lang]) ? a.author.role[lang] : "";
+        by.textContent = a.author.name + (role ? " · " + role : "");
+        by.hidden=false;
+      } else { by.textContent=""; by.hidden=true; }
+    }
     /* SEO/AIEO extras (admin-authored, optional on every article): the direct-answer
        block sits above the body as a quotable summary, the FAQ pairs render below it,
        and both feed the JSON-LD an answer engine reads. */
@@ -4553,21 +4641,39 @@
     }
     setArticleSchema(a);
   }
-  /* One <script type="application/ld+json"> kept in sync with the open article:
-     Article always, FAQPage only when the editor wrote FAQs. Crawlers that execute
-     JS (and AI engines fetching rendered HTML) read it; it never affects layout. */
+  /* Structured data for the OPEN article — Article plus, when the editor wrote
+     FAQs, FAQPage. Both are removed again by clearArticleSchema when the modal
+     closes: FAQPage may only be asserted while those answers are on screen, and a
+     stale block left in <head> would advertise one article's FAQs on every other
+     page for the rest of the session.
+
+     The crawler-facing markup is NOT this — it's the Blog/ItemList that
+     articles.js emits for the whole list on load (setArticlesListSchema), which
+     needs no click to exist. This block is the on-screen truth while reading. */
   function setArticleSchema(a){
     var id="lw-article-schema", node=document.getElementById(id);
     if(!node){ node=document.createElement("script"); node.type="application/ld+json"; node.id=id; document.head.appendChild(node); }
-    var seo=a.seo||{}, blocks=[{
+    var seo=a.seo||{}, art={
       "@context":"https://schema.org", "@type":"Article",
       headline: a.title[lang] || a.title.en || "",
       description: seo.metaDescription || seo.directAnswer || (a.dek?a.dek[lang]:"") || "",
-      about: a.cat ? (a.cat[lang]||a.cat.en||"") : "",
       inLanguage: lang,
-      author: { "@type":"Organization", name:"LongWave株式会社" },
+      /* a named Person (with its profile as sameAs) is what ties the byline to a
+         real identity; without an author record the company is the author */
+      author: (a.author && a.author.name)
+        ? (function(){ var p={ "@type":"Person", name:a.author.name }; if(a.author.sameAs) p.sameAs=a.author.sameAs; return p; })()
+        : { "@type":"Organization", name:"LongWave株式会社" },
       publisher: { "@type":"Organization", name:"LongWave株式会社" }
-    }];
+    };
+    /* omit `about` entirely when there is no category — an empty string is invalid */
+    var about=(a.category && (a.category.name[lang]||a.category.name.en)) || (a.cat && (a.cat[lang]||a.cat.en)) || "";
+    if(about) art.about=about;
+    if(a.image && a.image.src && a.image.src.indexOf("http")===0) art.image=[a.image.src];
+    if(a.tags && a.tags.length) art.keywords=a.tags.join(", ");
+    /* the canonical address of this article — the same deep link the card shares */
+    var canon=articleUrl(a);
+    if(canon){ art.url=canon; art.mainEntityOfPage={ "@type":"WebPage", "@id":canon }; }
+    var blocks=[art];
     if(seo.faqs && seo.faqs.length){
       blocks.push({
         "@context":"https://schema.org", "@type":"FAQPage",
@@ -4578,13 +4684,55 @@
     }
     try{ node.textContent=JSON.stringify(blocks.length>1?blocks:blocks[0]); }catch(e){}
   }
+  /* Remove the open-article markup again. FAQPage may only be asserted while its
+     answers are visible, and a leftover block would follow the reader onto every
+     other route. Called by the overlay registry when #artOverlay closes. */
+  function clearArticleSchema(){
+    var n=document.getElementById("lw-article-schema");
+    if(n && n.parentNode) n.parentNode.removeChild(n);
+  }
+  /* Every article with a slug has a shareable deep link: #/articles/<slug>. */
+  function articleUrl(a){
+    var slug=a.seo && a.seo.slug;
+    return slug ? location.origin + location.pathname + "#/articles/" + slug : "";
+  }
   function openArticle(i){
     var a=ARTICLES[i];
     if(!artOverlay || !a) return;
     currentArticle=a; lastFocus=document.activeElement;
     fillArticle(a);
     openOverlay(artOverlay); $("#artClose").focus();
+    /* reflect the open article in the URL so it can be copied/shared/reloaded */
+    var slug=a.seo && a.seo.slug;
+    if(slug && location.hash !== "#/articles/" + slug){
+      _suppressHashOpen=true;
+      location.hash="#/articles/" + slug;
+    }
   }
+  /* Open the article named in #/articles/<slug>, if any — this is what makes a
+     shared link land on the article instead of the bare list. */
+  var _suppressHashOpen=false;
+  function openArticleFromHash(){
+    if(_suppressHashOpen){ _suppressHashOpen=false; return; }
+    var m=String(location.hash||"").match(/^#\/articles\/([a-z0-9-]+)$/);
+    if(!m) return;
+    for(var i=0;i<ARTICLES.length;i++){
+      var s=ARTICLES[i].seo;
+      if(s && s.slug===m[1]){ openArticle(i); return; }
+    }
+  }
+  window.addEventListener("hashchange", openArticleFromHash);
+  LW_ARTICLE_HOOKS.openFromHash=openArticleFromHash;
+  /* Closing drops BOTH the per-article markup and the slug from the URL: leaving
+     the slug behind would let any later re-render (a language toggle re-runs
+     renderArticles) reopen an article the reader had closed. */
+  LW_ARTICLE_HOOKS.onClose=function(){
+    clearArticleSchema();
+    if(/^#\/articles\/.+/.test(String(location.hash||""))){
+      _suppressHashOpen=true;
+      location.hash="#/articles";
+    }
+  };
   document.addEventListener("click", function(e){ var c=e.target.closest("[data-article]"); if(c){ e.preventDefault(); openArticle(+c.getAttribute("data-article")); } });
 /* features/modals/lead-forms.js — the four lead-capture modals: candidate signup,
    company inquiry, contact / enquiry, and post-a-job. They share the form helpers +
@@ -5111,7 +5259,8 @@
               dek:   (a.dek_en || a.dek_ja) ? { en:a.dek_en||"", ja:a.dek_ja||"" } : null,
               body:  { en:paras(a.body_en), ja:paras(a.body_ja) },
               /* flat SEO columns → the nested sidecar the modal reads */
-              seo:   { directAnswer:a.direct_answer||"", metaDescription:a.meta_description||"", faqs:a.faqs||[] }
+              seo:   { slug:a.slug||"", metaTitle:a.meta_title||"", directAnswer:a.direct_answer||"", metaDescription:a.meta_description||"", faqs:a.faqs||[] },
+              author: a.author||null, image: a.image||null, category: a.category||null, tags: a.tags||[]
             };
           }
           if(!a.title || typeof a.title!=="object" || !(a.title.en || a.title.ja)) return;
@@ -5134,7 +5283,12 @@
             title: { en:String(a.title.en||a.title.ja), ja:String(a.title.ja||a.title.en) },
             dek: (a.dek && typeof a.dek==="object") ? a.dek : null,   /* dek is optional in the renderer */
             body: { en:bodyEn, ja:bodyJa },
-            seo: { directAnswer:String(s.directAnswer||""), metaDescription:String(s.metaDescription||""), faqs:faqs }
+            seo: { slug:String(s.slug||""), metaTitle:String(s.metaTitle||""), directAnswer:String(s.directAnswer||""), metaDescription:String(s.metaDescription||""), faqs:faqs },
+            /* resolved links from the proxy: shapes forced, each independently optional */
+            author: (a.author && a.author.name) ? { name:String(a.author.name), role:(a.author.role&&typeof a.author.role==="object")?a.author.role:null, sameAs:String(a.author.sameAs||"")||null } : null,
+            image: (a.image && a.image.src) ? { src:String(a.image.src), alt:String(a.image.alt||"") } : null,
+            category: (a.category && a.category.name && typeof a.category.name==="object") ? { name:a.category.name, slug:String(a.category.slug||""), color:String(a.category.color||"")||null } : null,
+            tags: (Array.isArray(a.tags)?a.tags:[]).filter(function(x){ return typeof x==="string" && x.trim(); }).slice(0,12)
           });
         });
         if(!rows.length) return;   /* nothing usable — keep the baked posts */

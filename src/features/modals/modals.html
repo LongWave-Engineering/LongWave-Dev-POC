@@ -161,9 +161,12 @@
   <div class="modal narrow">
     <button class="modal-close" id="artClose" aria-label="Close">×</button>
     <article class="art-read">
+      <img class="art-read-img" id="artImg" alt="" hidden>
       <span class="cat" id="artCat"></span>
       <h2 class="art-read-title" id="artTitle"></h2>
       <p class="art-read-dek" id="artDek"></p>
+      <!-- byline: a named author with a linked profile, when the editor set one -->
+      <p class="art-read-by" id="artBy" hidden></p>
       <!-- direct answer: the quotable summary an AI answer engine can lift whole -->
       <p class="art-read-answer" id="artAnswer"></p>
       <div class="art-read-body" id="artBody"></div>

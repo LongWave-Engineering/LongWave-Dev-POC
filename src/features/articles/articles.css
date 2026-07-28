@@ -12,6 +12,14 @@
   .art-read .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
   .art-read-title{font-size:1.7rem;line-height:1.2;margin:10px 0 0;}
   .art-read-dek{color:var(--slate);font-size:1.1rem;line-height:1.5;margin:12px 0 0;}
+  /* editor-chosen hero image on the card; fixed ratio so a mixed library still
+     produces an even grid */
+  .art-img{display:block;width:100%;height:150px;object-fit:cover;border-radius:10px;margin:0 0 12px;background:var(--paper);}
+  .art-by{display:block;margin-top:10px;color:var(--slate);font-size:.86rem;font-weight:600;}
+  .art-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .art-tag{font-size:.72rem;font-weight:700;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:2px 9px;}
+  .art-read-img{display:block;width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin:0 0 16px;background:var(--paper);}
+  .art-read-by{margin:10px 0 0;color:var(--slate);font-size:.95rem;font-weight:600;}
   /* direct-answer block: the quotable summary (admin's SEO panel scores its length) */
   .art-read-answer{margin:16px 0 0;padding:14px 16px;border-left:3px solid var(--sky);background:var(--sky-wash);border-radius:0 10px 10px 0;color:var(--ink);font-size:1.05rem;line-height:1.6;}
   /* FAQ pairs — also emitted as FAQPage structured data */

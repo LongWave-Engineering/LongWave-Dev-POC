@@ -43,6 +43,8 @@
   function openOverlay(o){ o.classList.add("open"); document.body.style.overflow="hidden"; }
   function closeOverlay(o){
     o.classList.remove("open");
+    /* the article modal owns a <script type=ld+json> that must not outlive it */
+    if(o && o.id==="artOverlay" && LW_ARTICLE_HOOKS.onClose) LW_ARTICLE_HOOKS.onClose();
     /* only unlock body scroll once NO overlay is open — the signup can stack on the job modal */
     var anyOpen=OVERLAYS.some(function(e){ return e.ov && e.ov.classList.contains("open"); });
     if(!anyOpen) document.body.style.overflow="";

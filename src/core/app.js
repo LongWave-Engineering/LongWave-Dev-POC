@@ -292,7 +292,8 @@
               dek:   (a.dek_en || a.dek_ja) ? { en:a.dek_en||"", ja:a.dek_ja||"" } : null,
               body:  { en:paras(a.body_en), ja:paras(a.body_ja) },
               /* flat SEO columns → the nested sidecar the modal reads */
-              seo:   { directAnswer:a.direct_answer||"", metaDescription:a.meta_description||"", faqs:a.faqs||[] }
+              seo:   { slug:a.slug||"", metaTitle:a.meta_title||"", directAnswer:a.direct_answer||"", metaDescription:a.meta_description||"", faqs:a.faqs||[] },
+              author: a.author||null, image: a.image||null, category: a.category||null, tags: a.tags||[]
             };
           }
           if(!a.title || typeof a.title!=="object" || !(a.title.en || a.title.ja)) return;
@@ -315,7 +316,12 @@
             title: { en:String(a.title.en||a.title.ja), ja:String(a.title.ja||a.title.en) },
             dek: (a.dek && typeof a.dek==="object") ? a.dek : null,   /* dek is optional in the renderer */
             body: { en:bodyEn, ja:bodyJa },
-            seo: { directAnswer:String(s.directAnswer||""), metaDescription:String(s.metaDescription||""), faqs:faqs }
+            seo: { slug:String(s.slug||""), metaTitle:String(s.metaTitle||""), directAnswer:String(s.directAnswer||""), metaDescription:String(s.metaDescription||""), faqs:faqs },
+            /* resolved links from the proxy: shapes forced, each independently optional */
+            author: (a.author && a.author.name) ? { name:String(a.author.name), role:(a.author.role&&typeof a.author.role==="object")?a.author.role:null, sameAs:String(a.author.sameAs||"")||null } : null,
+            image: (a.image && a.image.src) ? { src:String(a.image.src), alt:String(a.image.alt||"") } : null,
+            category: (a.category && a.category.name && typeof a.category.name==="object") ? { name:a.category.name, slug:String(a.category.slug||""), color:String(a.category.color||"")||null } : null,
+            tags: (Array.isArray(a.tags)?a.tags:[]).filter(function(x){ return typeof x==="string" && x.trim(); }).slice(0,12)
           });
         });
         if(!rows.length) return;   /* nothing usable — keep the baked posts */
