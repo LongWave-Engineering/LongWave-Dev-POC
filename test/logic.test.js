@@ -257,6 +257,22 @@ test("formatJdText() strips internal ATS tags and the heading they orphan", () =
   assert.equal(LW.formatJdText("intro\n\n【募集背景】"), "intro\n\n【募集背景】");
 });
 
+test("jdBlocks() reads markdown ## / ### as headings and strips [url](url) dumps", () => {
+  assert.deepEqual(LW.jdBlocks("## Working Conditions\n\n- Flextime\n- Remote OK"), [
+    { t: "h", x: "Working Conditions" },
+    { t: "ul", items: ["Flextime", "Remote OK"] },
+  ]);
+  assert.deepEqual(LW.jdBlocks("### Probation Period\n\nYes (3 months)"), [
+    { t: "h", x: "Probation Period" },
+    { t: "p", x: "Yes (3 months)" },
+  ]);
+  // "#1" (no space after the hash) stays prose, not a heading
+  assert.deepEqual(LW.jdBlocks("#1 priority is quality"), [{ t: "p", x: "#1 priority is quality" }]);
+  // markdown reference link collapses to its label — kills the doubled-URL clutter
+  assert.equal(LW.formatJdText("See [https://x.co/a](https://x.co/a) for more"), "See https://x.co/a for more");
+  assert.equal(LW.formatJdText("Docs: [Company deck](https://x.co/deck)"), "Docs: Company deck");
+});
+
 test("jdBlocks() returns [] for empty / non-string input", () => {
   assert.deepEqual(LW.jdBlocks(""), []);
   assert.deepEqual(LW.jdBlocks(null), []);

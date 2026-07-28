@@ -5,11 +5,14 @@
 
   /* JD body HTML from LW.jdBlocks(text): real headings/lists/paragraphs instead of a
      nl2br() wall. Every piece of text is esc()'d here — jdBlocks returns plain strings. */
+  /* markdown bold (**label**) → <strong>. Runs on ALREADY-ESCAPED text, and excludes
+     '<' so it can never span the <br> nl2br injects — the only HTML it adds is <strong>. */
+  function mdBold(s){ return s.replace(/\*\*([^*<]+?)\*\*/g,"<strong>$1</strong>"); }
   function jdHtml(text){
     return LW.jdBlocks(text).map(function(b){
-      if(b.t==="h") return '<h5 class="jd-h">'+esc(b.x)+'</h5>';
-      if(b.t==="ul") return '<ul class="jd-ul">'+b.items.map(function(it){ return '<li>'+esc(it)+'</li>'; }).join("")+'</ul>';
-      return '<p>'+nl2br(b.x)+'</p>';   /* nl2br esc()'s, then \n → <br> within the group */
+      if(b.t==="h") return '<h5 class="jd-h">'+mdBold(esc(b.x))+'</h5>';
+      if(b.t==="ul") return '<ul class="jd-ul">'+b.items.map(function(it){ return '<li>'+mdBold(esc(it))+'</li>'; }).join("")+'</ul>';
+      return '<p>'+mdBold(nl2br(b.x))+'</p>';   /* nl2br esc()'s, then \n → <br> within the group */
     }).join("");
   }
   /* one labelled detail section; renders "N/A" when `always` is set and the field is empty */

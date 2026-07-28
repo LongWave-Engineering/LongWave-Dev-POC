@@ -183,14 +183,17 @@
        "1." only counts when NOT followed by a digit, so "1.5 years" stays prose. */
     var JD_NUMBERED = /^[\s　]*(?:[①-⑳]|\d{1,4}[．）]|\d{1,4}[.)](?!\d))/;
 
-    /* Heading detection — returns the heading TEXT (【】/▼/◆ wrappers and one trailing
-       ：/: stripped) or "" when the line is not a heading. A heading is (a) a line wrapped
-       in 【…】, (b) a short (≤40 chars) non-bullet line ending with ： or :, or (c) a
-       ▼/◆ marker followed by ≤30 chars of text. Shared by formatJdText (which inserts a
-       blank line before headings) and jdBlocks (which emits them as {t:"h"}). */
+    /* Heading detection — returns the heading TEXT (markers/wrappers and one trailing
+       ：/: stripped) or "" when the line is not a heading. A heading is (a) a markdown
+       ATX heading "## Title" (1–6 #, a space required so "#1" stays prose), (b) a line
+       wrapped in 【…】, (c) a short (≤40 chars) non-bullet line ending with ： or :, or
+       (d) a ▼/◆ marker followed by ≤30 chars of text. Shared by formatJdText (which inserts
+       a blank line before headings) and jdBlocks (which emits them as {t:"h"}). */
     function jdHeading(line){
       var s = String(line).trim(), m, x;
       if(!s || JD_BULLET.test(s)) return "";
+      m = s.match(/^#{1,6}[ \t　]+(.+?)[ \t　#]*$/);   /* markdown "## Working Conditions" */
+      if(m) return m[1].replace(/\*\*/g,"").replace(/[：:]$/,"").trim();
       m = s.match(/^【(.+)】[：:]?$/);
       if(m) return m[1].trim().replace(/[：:]$/,"").trim();
       m = s.match(/^[▼◆](.+)$/);
@@ -219,6 +222,9 @@
        those tags it never touches the words, only the layout. */
     function formatJdText(text){
       if(typeof text !== "string" || text === "") return "";
+      /* markdown link [label](https://…) → just the label. The imported JDs are riddled
+         with [url](url) reference dumps that otherwise render as an ugly doubled URL. */
+      text = text.replace(/\[([^\]\n]+)\]\((https?:\/\/[^)\s]+)\)/g, "$1");
       var lines = text.replace(/\r\n?/g,"\n").split("\n");
       var out = [], droppedTag = false;
       for(var i=0;i<lines.length;i++){
