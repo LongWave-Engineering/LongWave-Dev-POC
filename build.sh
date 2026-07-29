@@ -86,6 +86,13 @@ for f in "${CSS[@]}" "${BODY[@]}" "${JS[@]}"; do
   [ -f "$f" ] || { echo "build.sh: missing source file listed in a manifest: $f" >&2; exit 1; }
 done
 
+# Reverse pre-flight: fail loudly if a source file exists that NO manifest (or this
+# script) mentions — otherwise a new .css/.js/.html under src/ builds green, ships
+# missing from the bundle, and nothing (pre-commit, CI's bundle-in-sync check) notices.
+while IFS= read -r f; do
+  grep -qF "$f" "$0" || { echo "build.sh: $f exists under src/ but no manifest lists it — add it (or remove the file)" >&2; exit 1; }
+done < <(find src shared -type f \( -name '*.css' -o -name '*.js' -o -name '*.html' \) | sort)
+
 # Build atomically: assemble into a temp file and move into place only on full success, so a
 # mid-stream failure can never truncate/corrupt the committed, double-clickable bundle.
 TMP="$(mktemp "${OUT}.XXXXXX")"

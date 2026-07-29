@@ -11,6 +11,7 @@
 <meta property="og:description" content="Bilingual software developer jobs at Japan's best product companies. Salary and Japanese level clear from the start." />
 <meta property="og:locale" content="en" />
 <meta property="og:locale:alternate" content="ja" />
+<meta property="og:url" content="https://tokyo-samurai-dev.jp/" />
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:title" content="Tokyo Samurai Dev: Bilingual jobs in Japan" />
 <meta name="twitter:description" content="Bilingual software developer jobs at Japan's best product companies." />
@@ -1443,6 +1444,7 @@
       <div class="field"><label for="suGithub" data-i18n="su_github">GitHub URL (optional)</label><input type="url" id="suGithub" placeholder="https://github.com/…"></div>
       <div class="field"><label for="suComments" data-i18n="su_comments_q">Anything else you'd like to add? (optional)</label><textarea id="suComments" rows="3" data-i18n-ph="su_comments_ph" placeholder="Anything you'd like us to know"></textarea></div>
       <div class="cv-prompt"><span data-i18n="su_cv_q">No Japanese CV yet?</span> <a href="#/cv" data-go="cv" data-i18n="su_cv_link">Generate your rirekisho →</a></div>
+      <p class="form-note consent-note" data-i18n="consent_note">By submitting, you agree to our <a href="#/privacy">Privacy Policy</a>.</p>
       <button class="btn btn--primary btn--xl btn--block" type="submit" id="suSubmit" data-i18n="su_submit">Sign up</button>
       <div class="form-success" id="suSuccess" role="status" style="display:none"><span class="tsd-mascot tsd-mascot--cheer" aria-hidden="true"></span><span class="msg" data-i18n="su_success">You're in. We'll be in touch shortly.</span></div>
     </form>
@@ -1483,6 +1485,7 @@
       </div>
       <div class="field"><label for="coName" data-i18n="su_name">Name</label><input type="text" id="coName" required></div>
       <div class="field"><label for="coEmail" data-i18n="su_email">Email</label><input type="email" id="coEmail" required></div>
+      <p class="form-note consent-note" data-i18n="consent_note">By submitting, you agree to our <a href="#/privacy">Privacy Policy</a>.</p>
       <button class="btn btn--primary btn--xl btn--block" type="submit" id="coSubmit" data-i18n="co_submit">Send to our team</button>
       <div class="form-success" id="coSuccess" role="status" style="display:none"><span class="tsd-mascot tsd-mascot--cheer" aria-hidden="true"></span><span class="msg"></span></div>
     </form>
@@ -1509,6 +1512,7 @@
       </div>
       <div class="field" id="ctCompanyField" style="display:none"><label for="ctCompany" data-i18n="ct_company">Company name</label><input type="text" id="ctCompany"></div>
       <div class="field"><label for="ctMessage" data-i18n="ct_message">Tell us a bit more</label><textarea id="ctMessage" rows="4" required></textarea></div>
+      <p class="form-note consent-note" data-i18n="consent_note">By submitting, you agree to our <a href="#/privacy">Privacy Policy</a>.</p>
       <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="ct_submit">Send message</button>
       <div class="form-success" id="ctSuccess" role="status" style="display:none"><span class="tsd-mascot tsd-mascot--cheer" aria-hidden="true"></span><span class="msg" data-i18n="ct_success">Thanks! We'll get back to you soon.</span></div>
     </form>
@@ -1540,6 +1544,7 @@
       <div class="field"><label for="pjServices" data-i18n="pj_services">Which services or tools are you using? (optional)</label><input type="text" id="pjServices" data-i18n-ph="pj_services_ph" placeholder="e.g. LinkedIn, YOUTRUST, an agency…"></div>
       <div class="field"><label for="pjNeeds" data-i18n="pj_needs">What do you most need from us? (optional)</label><textarea id="pjNeeds" rows="2" data-i18n-ph="pj_needs_ph" placeholder="e.g. bilingual candidates, faster hiring, hard-to-fill roles, employer branding…"></textarea></div>
       <div class="field"><label for="pjNotes" data-i18n="pj_notes">Anything else we should know? (optional)</label><textarea id="pjNotes" rows="2"></textarea></div>
+      <p class="form-note consent-note" data-i18n="consent_note">By submitting, you agree to our <a href="#/privacy">Privacy Policy</a>.</p>
       <button class="btn btn--primary btn--xl btn--block" type="submit" data-i18n="pj_submit">Send to our team</button>
       <div class="form-success" id="pjSuccess" role="status" style="display:none"><span class="tsd-mascot tsd-mascot--cheer" aria-hidden="true"></span><span class="msg" data-i18n="pj_success">Thanks! A bilingual recruiter will reach out shortly to learn what you need.</span></div>
     </form>
@@ -2095,6 +2100,7 @@
       su_eng_q:"What type of engineer are you?", su_eng_ph:"e.g. Backend, SRE, Full-stack, ML",
       su_comments_q:"Anything else you'd like to add? (optional)", su_comments_ph:"Anything you'd like us to know",
       su_submit:"Sign up", su_success:"You're in. We'll be in touch shortly.",
+      consent_note:'By submitting, you agree to our <a href="#/privacy">Privacy Policy</a>.',
       lead_offline:"Thanks for your interest! This preview site can't receive submissions directly. Please reach us at longwave.co.jp and we'll follow up.",
       su_resume:"Resume / CV", su_resume_note:"Required · PDF, DOC or DOCX",
       su_linkedin:"LinkedIn URL (optional)", su_github:"GitHub URL (optional)",
@@ -2157,7 +2163,7 @@
       ct_company:"Company name", ct_message:"Tell us a bit more", ct_submit:"Send message",
       ct_success:"Thanks! We'll get back to you soon.",
       art_h1:"Articles",
-      art_sub:"Notes on being a bilingual engineer in Japan. (Placeholder posts to replace with your own.)",
+      art_sub:"Notes on being a bilingual engineer in Japan.",
       art_read:"Read →",
       art_faq_h:"Frequently asked",
       art_cta:"Looking for roles like these? <button class=\"linklike\" data-signup type=\"button\">Sign up</button> and a bilingual recruiter brings you matched openings.",
@@ -2197,6 +2203,7 @@
       su_eng_q:"ご専門の分野は？", su_eng_ph:"例：バックエンド、SRE、フルスタック、ML",
       su_comments_q:"その他、伝えておきたいこと（任意）", su_comments_ph:"ご自由にご記入ください",
       su_submit:"登録する", su_success:"ご登録ありがとうございます。担当より折り返しご連絡します。",
+      consent_note:'送信により、<a href="#/privacy">プライバシーポリシー</a>に同意したものとみなされます。',
       lead_offline:"ご関心ありがとうございます。このプレビューサイトでは送信を受け付けていません。longwave.co.jp までご連絡ください。",
       su_resume:"履歴書・職務経歴書", su_resume_note:"必須｜PDF・DOC・DOCX",
       su_linkedin:"LinkedIn URL（任意）", su_github:"GitHub URL（任意）",
@@ -2259,7 +2266,7 @@
       ct_company:"会社名", ct_message:"詳しくお聞かせください", ct_submit:"送信する",
       ct_success:"ありがとうございます。追ってご連絡します。",
       art_h1:"記事",
-      art_sub:"日本でバイリンガルエンジニアとして働くためのヒント。（差し替え用のサンプル記事です。）",
+      art_sub:"日本でバイリンガルエンジニアとして働くためのヒント。",
       art_read:"読む →",
       art_faq_h:"よくある質問",
       art_cta:"こんな求人をお探しですか？ <button class=\"linklike\" data-signup type=\"button\">登録する</button>と、バイリンガルのリクルーターがあなたに合う求人をご紹介します。",
