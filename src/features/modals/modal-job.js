@@ -6,7 +6,9 @@
   /* JD body HTML from LW.jdBlocks(text): real headings/lists/paragraphs instead of a
      nl2br() wall. Every piece of text is esc()'d here — jdBlocks returns plain strings. */
   /* markdown bold (**label**) → <strong>. Runs on ALREADY-ESCAPED text, and excludes
-     '<' so it can never span the <br> nl2br injects — the only HTML it adds is <strong>. */
+     '<' so it can never span the <br> nl2br injects — the only HTML it adds is <strong>.
+     This is the RENDERER half of JD formatting; block structure (## headings, lists,
+     [links]) is parsed upstream by LW.jdBlocks/formatJdText in shared/logic.js. */
   function mdBold(s){ return s.replace(/\*\*([^*<]+?)\*\*/g,"<strong>$1</strong>"); }
   function jdHtml(text){
     return LW.jdBlocks(text).map(function(b){

@@ -1807,8 +1807,12 @@
        some JDs, under an "Other"/"その他" heading. It is recruiter-only and must never reach
        candidates, so formatJdText() drops those lines (and the heading they orphan). */
     var JD_ATS_TAG = /^[\s　]*assigned-to:/i;
-    /* Section-heading test for orphan trimming: a markdown "## …" line OR a jdHeading() one. */
-    function jdIsHeadingLine(line){ return /^[\s　]*#{1,6}[ \t　]+\S/.test(line) || !!jdHeading(line); }
+    /* Is this line a section heading? jdHeading() already recognizes every heading form
+       (markdown "## …", 【…】, ▼/◆, trailing-colon), so this is just its boolean view. */
+    function jdIsHeadingLine(line){ return !!jdHeading(line); }
+    /* NOTE: this module is PURE (returns plain strings/blocks). Inline emphasis — markdown
+       **bold** → <strong> — is applied by the RENDERER, not here: see mdBold() in
+       features/modals/modal-job.js, which runs on the escaped output of jdBlocks(). */
 
     /* Deterministic, idempotent cleanup of JD plain text: LF-normalized, per-line
        trailing whitespace stripped, bullet glyphs unified to "- ", blank runs collapsed
@@ -4509,7 +4513,9 @@
   /* JD body HTML from LW.jdBlocks(text): real headings/lists/paragraphs instead of a
      nl2br() wall. Every piece of text is esc()'d here — jdBlocks returns plain strings. */
   /* markdown bold (**label**) → <strong>. Runs on ALREADY-ESCAPED text, and excludes
-     '<' so it can never span the <br> nl2br injects — the only HTML it adds is <strong>. */
+     '<' so it can never span the <br> nl2br injects — the only HTML it adds is <strong>.
+     This is the RENDERER half of JD formatting; block structure (## headings, lists,
+     [links]) is parsed upstream by LW.jdBlocks/formatJdText in shared/logic.js. */
   function mdBold(s){ return s.replace(/\*\*([^*<]+?)\*\*/g,"<strong>$1</strong>"); }
   function jdHtml(text){
     return LW.jdBlocks(text).map(function(b){

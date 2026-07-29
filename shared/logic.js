@@ -212,8 +212,12 @@
        some JDs, under an "Other"/"その他" heading. It is recruiter-only and must never reach
        candidates, so formatJdText() drops those lines (and the heading they orphan). */
     var JD_ATS_TAG = /^[\s　]*assigned-to:/i;
-    /* Section-heading test for orphan trimming: a markdown "## …" line OR a jdHeading() one. */
-    function jdIsHeadingLine(line){ return /^[\s　]*#{1,6}[ \t　]+\S/.test(line) || !!jdHeading(line); }
+    /* Is this line a section heading? jdHeading() already recognizes every heading form
+       (markdown "## …", 【…】, ▼/◆, trailing-colon), so this is just its boolean view. */
+    function jdIsHeadingLine(line){ return !!jdHeading(line); }
+    /* NOTE: this module is PURE (returns plain strings/blocks). Inline emphasis — markdown
+       **bold** → <strong> — is applied by the RENDERER, not here: see mdBold() in
+       features/modals/modal-job.js, which runs on the escaped output of jdBlocks(). */
 
     /* Deterministic, idempotent cleanup of JD plain text: LF-normalized, per-line
        trailing whitespace stripped, bullet glyphs unified to "- ", blank runs collapsed
