@@ -166,7 +166,7 @@
       corner.appendChild(sel);
     }
     var open=el("button","jc-open",cardHTML(job));
-    open.setAttribute("aria-label", roleL(job)+" at "+COMPANIES[job.co].name);
+    open.setAttribute("aria-label", t("aria_open_role").replace("{role}", roleL(job)).replace("{co}", COMPANIES[job.co].name));
     open.addEventListener("click", function(){ openJob(idx); });
     /* content first (fills the row), then the save/select cluster at the right edge — matches
        the CSS design intent and keeps the HOT badge (top-left, over the logo) clear of it */

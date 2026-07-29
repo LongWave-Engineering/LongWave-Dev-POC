@@ -16,7 +16,11 @@
   /* focus ring only — do NOT set border-radius here (it would override each element's own
      shape and flatten pill buttons to 8px corners on keyboard focus). The outline hugs the
      element's real radius via outline-offset in modern browsers. */
-  :focus-visible{outline:3px solid var(--banana);outline-offset:2px;}
+  /* Two-tone focus ring: the banana outline alone is 1.44:1 against white — invisible
+     to exactly the keyboard users it exists for. The navy halo underneath carries the
+     3:1 non-text contrast (WCAG 1.4.11) on light surfaces; the banana carries it on
+     dark ones. Keep both — neither works alone across the site's surfaces. */
+  :focus-visible{outline:3px solid var(--banana);outline-offset:2px;box-shadow:0 0 0 2px var(--navy), 0 0 0 6px var(--banana);}
 
 
 

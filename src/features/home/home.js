@@ -21,7 +21,7 @@
         '<div class="jt-co">'+ esc(c.name) +'</div>'+
         (blurbL(job) ? '<div class="jt-blurb">'+ esc(blurbL(job)) +'</div>' : '')+
         '<div class="jt-sal">'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe"))) +'</div>');
-      node.setAttribute("aria-label", roleL(job)+" at "+c.name);
+      node.setAttribute("aria-label", t("aria_open_role").replace("{role}", roleL(job)).replace("{co}", c.name));
       node.addEventListener("click", function(){ openJob(idx); });
       grid.appendChild(node);
     });

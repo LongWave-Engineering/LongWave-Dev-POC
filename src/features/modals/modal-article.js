@@ -109,8 +109,7 @@
   function openArticle(i){
     var a=ARTICLES[i];
     if(!artOverlay || !a) return;
-    currentArticle=a; lastFocus=document.activeElement;
-    fillArticle(a);
+    currentArticle=a; fillArticle(a);
     openOverlay(artOverlay); $("#artClose").focus();
     /* Reflect the open article in the URL so it can be copied/shared/reloaded.
        replaceState, not location.hash: assigning the hash fires hashchange, which

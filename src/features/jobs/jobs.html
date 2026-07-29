@@ -11,12 +11,12 @@
         </button>
       </div>
       <div class="jobs-layout">
-        <aside class="filters-side reveal" aria-label="Filters">
+        <aside class="filters-side reveal" aria-label="Filters" data-i18n-aria="aria_filters">
           <div class="fgroup">
             <label class="glab" data-i18n="f_grp_search">Search</label>
             <div class="search">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-              <input type="text" id="filterSearch" data-i18n-ph="filter_search_ph" placeholder="" aria-label="Search roles" />
+              <input type="text" id="filterSearch" data-i18n-ph="filter_search_ph" placeholder="" aria-label="Search roles" data-i18n-aria="aria_search" />
             </div>
           </div>
           <div class="fgroup">
@@ -57,7 +57,7 @@
           <p class="result-count reveal" id="resultCount" role="status" aria-live="polite"></p>
           <div class="apply-notice" id="applyNotice" role="status" aria-live="polite" hidden></div>
           <div class="job-grid reveal" id="jobGrid"></div>
-          <div class="select-bar" id="selectBar" hidden role="region" aria-label="Selected roles">
+          <div class="select-bar" id="selectBar" hidden role="region" aria-label="Selected roles" data-i18n-aria="aria_selected">
             <span class="sb-count" id="selCount"></span>
             <span class="sb-actions">
               <button class="btn btn--ghost" id="selClear" type="button" data-i18n="sel_clear">Clear</button>

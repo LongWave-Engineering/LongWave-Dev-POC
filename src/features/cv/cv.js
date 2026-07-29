@@ -16,7 +16,7 @@
       '<input class="e-year" placeholder="年" value="'+esc(y||"")+'">'+
       '<input class="e-month" placeholder="月" value="'+esc(m||"")+'">'+
       '<input class="e-text" placeholder="例：◯◯大学 入学 ／ △△株式会社 入社" value="'+esc(txt||"")+'">'+
-      '<button class="rm" type="button" aria-label="remove">×</button>';
+      '<button class="rm" type="button" aria-label="'+t("aria_remove")+'">×</button>';
     if(type) row.querySelector(".e-type").value=type;
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
     $("#eduRows").appendChild(row);
@@ -26,7 +26,7 @@
     row.innerHTML='<input class="l-year" placeholder="年" value="'+esc(y||"")+'">'+
       '<input class="l-month" placeholder="月" value="'+esc(m||"")+'">'+
       '<input class="l-text" placeholder="例：日本語能力試験 N1 合格" value="'+esc(txt||"")+'">'+
-      '<button class="rm" type="button" aria-label="remove">×</button>';
+      '<button class="rm" type="button" aria-label="'+t("aria_remove")+'">×</button>';
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
     $("#licRows").appendChild(row);
   }
@@ -34,7 +34,7 @@
   /* ---- shokumukeirekisho: experience / projects / education / skills / languages ---- */
   function addCareer(title,period,co,loc,det){
     var b=el("div","cv-career");
-    b.innerHTML='<button class="rm" type="button" aria-label="remove">×</button>'+
+    b.innerHTML='<button class="rm" type="button" aria-label="'+t("aria_remove")+'">×</button>'+
       '<div class="cv-field"><label>役職・タイトル / Role title</label><input class="c-title" placeholder="QA Engineer / QA Automation Engineer"></div>'+
       '<div class="cv-two"><div class="cv-field"><label>会社名 / Company</label><input class="c-co" placeholder="例：株式会社サンプル"></div>'+
       '<div class="cv-field"><label>期間 / Period</label><input class="c-period" placeholder="例：2019年4月 – 現在"></div></div>'+
@@ -47,7 +47,7 @@
   }
   function addProj(name,desc){
     var b=el("div","cv-career");
-    b.innerHTML='<button class="rm" type="button" aria-label="remove">×</button>'+
+    b.innerHTML='<button class="rm" type="button" aria-label="'+t("aria_remove")+'">×</button>'+
       '<div class="cv-field"><label>プロジェクト名 / Project</label><input class="p-name" placeholder="例：決済プラットフォーム刷新"></div>'+
       '<div class="cv-field"><label>説明 / Description</label><textarea class="p-desc" placeholder="何を作り、どんな成果が出たか / what you built + the impact"></textarea></div>';
     b.querySelector(".p-name").value=name||""; b.querySelector(".p-desc").value=desc||"";
@@ -56,7 +56,7 @@
   }
   function addSkEdu(school,period,loc){
     var b=el("div","cv-career");
-    b.innerHTML='<button class="rm" type="button" aria-label="remove">×</button>'+
+    b.innerHTML='<button class="rm" type="button" aria-label="'+t("aria_remove")+'">×</button>'+
       '<div class="cv-field"><label>学校・専攻 / School &amp; major</label><input class="se-school" placeholder="例：◯◯大学 工学部 情報工学科"></div>'+
       '<div class="cv-two"><div class="cv-field"><label>期間 / Period</label><input class="se-period" placeholder="例：2019年4月 – 2021年3月"></div>'+
       '<div class="cv-field"><label>所在地 / Location</label><input class="se-loc" placeholder="例：東京都、日本"></div></div>';
@@ -68,7 +68,7 @@
     var row=el("div","cv-row skill");
     row.innerHTML='<input class="sk-cat" placeholder="例：言語 / Category" value="'+esc(cat||"")+'">'+
       '<input class="sk-items" placeholder="例：Go, TypeScript, Python（カンマ区切り）" value="'+esc(items||"")+'">'+
-      '<button class="rm" type="button" aria-label="remove">×</button>';
+      '<button class="rm" type="button" aria-label="'+t("aria_remove")+'">×</button>';
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
     $("#skillRows").appendChild(row);
   }
@@ -77,7 +77,7 @@
     row.innerHTML='<input class="lg-name" placeholder="例：日本語 / Language" value="'+esc(name||"")+'">'+
       '<input class="lg-level" placeholder="例：ビジネスレベル / Level" value="'+esc(level||"")+'">'+
       '<input class="lg-test" placeholder="例：JLPT N1 / TOEIC 900" value="'+esc(test||"")+'">'+
-      '<button class="rm" type="button" aria-label="remove">×</button>';
+      '<button class="rm" type="button" aria-label="'+t("aria_remove")+'">×</button>';
     row.querySelector(".rm").addEventListener("click",function(){ row.remove(); renderCV(); });
     $("#langRows").appendChild(row);
   }
@@ -262,7 +262,26 @@
         return;
       }
       var r=new FileReader();
-      r.onload=function(){ if(PHOTO_OK.test(String(r.result))){ cvPhoto=r.result; renderCV(); } };
+      r.onload=function(){
+        if(!PHOTO_OK.test(String(r.result))) return;
+        /* Downscale before storing: the draft (photo included, as a data URI) lives in
+           localStorage, and a full-size camera photo blows the ~5MB per-origin quota —
+           the old behaviour was a draft that saved fine but silently LOST the photo on
+           restore. A 履歴書 photo prints at 3×4cm; 600px is generous. */
+        var img=new Image();
+        img.onload=function(){
+          var MAX=600, w=img.width, h=img.height;
+          if(w<=MAX && h<=MAX && f.size<=512*1024){ cvPhoto=String(r.result); renderCV(); return; }
+          var scale=Math.min(MAX/w, MAX/h, 1);
+          var c=document.createElement("canvas");
+          c.width=Math.round(w*scale); c.height=Math.round(h*scale);
+          c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+          cvPhoto=c.toDataURL("image/jpeg",0.85);
+          renderCV();
+        };
+        img.onerror=function(){ cvPhoto=String(r.result); renderCV(); }; /* undecodable? keep the original behaviour */
+        img.src=String(r.result);
+      };
       r.readAsDataURL(f);
     });
     $("#addEdu").addEventListener("click", function(){ addEduRow("職歴","","",""); renderCV(); });

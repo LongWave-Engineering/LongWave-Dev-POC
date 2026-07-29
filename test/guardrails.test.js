@@ -72,8 +72,9 @@ test("every partner company has an inlined logo (no monogram/wordmark gaps)", ()
     "roster companies without a brand mark (they'd render as monograms/wordmarks): " + missing.join(", ") +
     " — hunt the official mark (site og-image / GitHub org avatar / X avatar / press kit), run it through the white-canvas-removal pipeline, and add it to PARTNER_LOGOS");
   for (const [name, uri] of Object.entries(PARTNER_LOGOS)) {
-    assert.match(uri, /^data:image\/(png|svg\+xml);base64,/,
-      `${name}'s logo must be an inlined data: URI — external URLs break the offline/no-external-loads guarantee`);
+    assert.match(uri, /^data:image\/(webp|svg\+xml);base64,/,
+      `${name}'s logo must be an inlined WebP/SVG data: URI — external URLs break the offline guarantee, and PNG ` +
+      "means tools/reencode-logos.py wasn't run after regenerating (PNGs made the logos 59% of the whole bundle)");
   }
 });
 
@@ -85,7 +86,7 @@ test("every data-i18n attribute in the markup resolves to a real dictionary key"
   const bad = [];
   for (const rel of htmlFiles) {
     const h = fs.readFileSync(path.join(ROOT, rel), "utf8");
-    const re = /data-i18n(?:-ph)?="([^"]+)"/g;
+    const re = /data-i18n(?:-ph|-aria)?="([^"]+)"/g;
     let m;
     while ((m = re.exec(h))) if (!keys.has(m[1])) bad.push(`${m[1]} (${rel})`);
   }
@@ -101,4 +102,27 @@ test("no hardcoded bilingual ternary outside i18n.js / logic.js (route strings t
     if (/\b[lL](?:ang)?\s*===?\s*["']ja["']\s*\?/.test(s)) offenders.push(rel);
   }
   assert.deepEqual(offenders, [], "bilingual strings must go through t()/I18N, not an inline lang===\"ja\"?… ternary");
+});
+
+/* --- weight + a11y regressions that once shipped silently: keep them impossible --- */
+test("no latin-ext font subsets in the bundle (dead bytes — the content has zero latin-ext chars)", () => {
+  const bundle = fs.readFileSync(path.join(ROOT, "longwave-dev.html"), "utf8");
+  assert.equal(bundle.includes("U+0100-02BA"), false,
+    "a latin-ext @font-face is back in fonts.css — re-strip it (fetchfonts.mjs regenerates both subsets; " +
+    "the latin-ext half was measured as 207KB of wire for zero renderable characters)");
+});
+
+test("the focus ring keeps its two-tone halo (banana alone is 1.44:1 on white — invisible)", () => {
+  const css = fs.readFileSync(path.join(ROOT, "src/core/buttons.css"), "utf8");
+  const rule = css.split(":focus-visible")[1] || "";
+  assert.match(rule, /box-shadow:[^;]*var\(--navy\)/,
+    "the :focus-visible rule lost its navy halo — keyboard focus fails WCAG 1.4.11 non-text contrast on light surfaces");
+});
+
+test("every lead form carries the consent line and a focusable success node", () => {
+  const h = fs.readFileSync(path.join(ROOT, "src/features/modals/modals.html"), "utf8");
+  const forms = (h.match(/btn--block" type="submit"/g) || []).length;
+  const consents = (h.match(/data-i18n="consent_note"/g) || []).length;
+  assert.equal(consents, forms,
+    `every PII-collecting form needs the consent line next to its submit button (found ${consents} lines for ${forms} forms) — APPI point-of-collection`);
 });

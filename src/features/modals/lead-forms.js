@@ -13,7 +13,6 @@
   /* `preset` is accepted (call sites still pass "job") but ignored — the signup is always a candidate.
      `jobs` is an array of job OBJECTS (so we can mark them against the cap even without a DB id). */
   function openSignup(preset, jobs){
-    lastFocus=document.activeElement;
     var arr = Array.isArray(jobs) ? jobs.filter(Boolean) : [];
     /* hard cap safety-net: never carry more than the applications left, even if a control
        slips through — the picker/modal already gate this; this is defence-in-depth. */
@@ -64,26 +63,34 @@
     if(isAbroad("#suLoc")){ var w=$("#suLocWarn"); if(w) w.style.display=""; if($("#suSubmit")) $("#suSubmit").disabled=true; return; }
     var n=pendingApplyJobs.length;
     var appliedJobs=pendingApplyJobs.slice();   /* snapshot: markAppliedJobs/clearSelection reset the live array */
+    var succ=$("#suSuccess");
     if(pendingApplyJobIds.length){
       /* applying to specific roles → /api/applications; read the response so we can honour
-         the backend's authoritative remaining count (served only — a file has no API) */
+         the backend's authoritative remaining count AND only mark roles as applied when the
+         backend confirms it recorded them ({forwarded:N}) — a swallowed application must
+         neither consume the lifetime cap nor show a fake "Applied" state */
       if(apiReady){
         var body=collectSignup(); body.job_ids=pendingApplyJobIds;
         fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) })
           .then(function(r){ return r.ok ? r.json() : null; })
-          .then(function(d){ if(d && typeof syncAppliesFromServer==="function") syncAppliesFromServer(d.remaining); })
-          .catch(function(){});
+          .then(function(d){
+            if(d && typeof syncAppliesFromServer==="function") syncAppliesFromServer(d.remaining);
+            if(d && d.forwarded){ if(typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs); repaintOpenModal(); return true; }
+            return false;
+          })
+          .catch(function(){ return false; })
+          .then(function(delivered){ if(!delivered && succ){ var m=succ.querySelector(".msg")||succ; m.textContent=t("lead_retry"); } });
       }
     } else {
-      postLead(collectSignup());   /* plain signup → a lead */
+      leadConfirm(postLead(collectSignup()), succ);   /* plain signup → a lead */
     }
-    var succ=$("#suSuccess");
     /* honest confirmation: only claim it went through if a backend actually received it */
     if(succ){ var sm=succ.querySelector(".msg")||succ; sm.textContent = !apiReady ? t("lead_offline") : (n ? t("apply_success").replace("{n}",n) : t("su_success")); succ.style.display="block"; }
     $("#suForm").style.display="none";
-    /* record the applied roles against the lifetime cap (also re-renders the grid) — only
-       when a backend actually recorded them, so we don't show a fake "Applied" state */
-    if(apiReady && n && typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs);
+    /* move focus to the confirmation: the submit button just vanished with its form, which
+       silently dropped keyboard/screen-reader users onto <body> — and focusing the status
+       node is also what makes AT reliably announce it */
+    if(succ){ succ.setAttribute("tabindex","-1"); succ.focus(); }
     /* if this apply came from a JD modal (still open behind the signup), flip its Apply
        button to "Applied" so it isn't a stale, re-openable CTA once the signup closes */
     repaintOpenModal();
@@ -99,8 +106,7 @@
   function findPartner(name){ if(typeof PARTNERS==="undefined") return null; for(var i=0;i<PARTNERS.length;i++){ if(PARTNERS[i].name===name) return PARTNERS[i]; } return null; }
   function openCompany(name){
     var p=findPartner(name); if(!p || !coOverlay) return;
-    currentCompany=name; lastFocus=document.activeElement;
-    var logo=(typeof PARTNER_LOGOS!=="undefined") ? PARTNER_LOGOS[name] : null;
+    currentCompany=name; var logo=(typeof PARTNER_LOGOS!=="undefined") ? PARTNER_LOGOS[name] : null;
     var av=$("#coAvatar");
     if(logo){ av.innerHTML='<img src="'+ esc(logo) +'" alt="">'; av.style.background="#fff"; }
     else { av.innerHTML=""; av.textContent=p.mono||"?"; av.style.background=p.color||"#888"; }
@@ -124,9 +130,11 @@
     if(loc && LOC_LABEL[loc]) parts.push("based: "+LOC_LABEL[loc]);
     var body={ kind:"job", name:val("#coName")||undefined, email:val("#coEmail")||undefined, message:parts.join(" · "),
       source_channel:"company", heard_via: source||undefined };
-    postLead(body);
+    var coP=postLead(body);
     leadDone($("#coSuccess"), t("co_success").replace("{co}",currentCompany));
     $("#coForm").style.display="none";
+    var coS=$("#coSuccess"); if(coS){ coS.setAttribute("tabindex","-1"); coS.focus(); }
+    leadConfirm(coP, coS);
   }
   if($("#coForm")) $("#coForm").addEventListener("submit", function(e){ e.preventDefault(); submitCompanyInquiry(); });
   document.addEventListener("click", function(e){
@@ -149,7 +157,6 @@
   if($("#ctReason")) $("#ctReason").addEventListener("change", ctToggleCompany);
   function openContact(preset){
     if(!ctOverlay) return;
-    lastFocus=document.activeElement;
     $("#ctForm").style.display=""; $("#ctSuccess").style.display="none";
     clearFields(["#ctName","#ctEmail","#ctPhone","#ctCompany","#ctMessage"]);
     if($("#ctReason")) $("#ctReason").value = (preset==="job"||preset==="hire"||preset==="other") ? preset : "";
@@ -161,8 +168,10 @@
     var label=CT_LABEL[reason]||"General enquiry";
     var body={ kind:CT_KIND[reason]||"contact", name:val("#ctName")||undefined, email:val("#ctEmail")||undefined,
       phone:val("#ctPhone")||undefined, company:company||undefined, message:"["+label+"] "+msg, source_channel:"contact" };
-    postLead(body);
+    var ctP=postLead(body);
     $("#ctForm").style.display="none"; leadDone($("#ctSuccess"));
+    var ctS=$("#ctSuccess"); if(ctS){ ctS.setAttribute("tabindex","-1"); ctS.focus(); }
+    leadConfirm(ctP, ctS);
   }
   if($("#ctForm")) $("#ctForm").addEventListener("submit", function(e){ e.preventDefault(); submitContact(); });
   document.addEventListener("click", function(e){ var c=e.target.closest("[data-contact]"); if(c){ e.preventDefault(); openContact(c.getAttribute("data-contact")||undefined); } });
@@ -173,7 +182,6 @@
   var pjOverlay=$("#pjOverlay");
   function openPostJob(){
     if(!pjOverlay) return;
-    lastFocus=document.activeElement;
     $("#pjForm").style.display=""; $("#pjSuccess").style.display="none";
     clearFields(["#pjCompany","#pjName","#pjRole","#pjEmail","#pjPhone","#pjSite","#pjLooking","#pjServices","#pjNeeds","#pjNotes"]);
     if($("#pjUsing")) $("#pjUsing").value="";
@@ -191,8 +199,10 @@
     if(notes) parts.push("Notes: "+notes);
     var body={ kind:"hire", name:val("#pjName")||undefined, email:val("#pjEmail")||undefined,
       phone:val("#pjPhone")||undefined, company:val("#pjCompany")||undefined, message:parts.join("\n"), source_channel:"post_job" };
-    postLead(body);
+    var pjP=postLead(body);
     $("#pjForm").style.display="none"; leadDone($("#pjSuccess"));
+    var pjS=$("#pjSuccess"); if(pjS){ pjS.setAttribute("tabindex","-1"); pjS.focus(); }
+    leadConfirm(pjP, pjS);
   }
   if($("#pjForm")) $("#pjForm").addEventListener("submit", function(e){ e.preventDefault(); submitPostJob(); });
   document.addEventListener("click", function(e){ var p=e.target.closest("[data-postjob]"); if(p){ e.preventDefault(); openPostJob(); } });

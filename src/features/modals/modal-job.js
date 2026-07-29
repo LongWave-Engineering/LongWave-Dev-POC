@@ -75,7 +75,6 @@
   function openJob(idx){
     var job=JOBS[idx];
     currentJob=job;
-    lastFocus=document.activeElement;
     fillJobModal(job);
     openOverlay(jobOverlay); $("#jobModalClose").focus();
   }
