@@ -3,15 +3,10 @@
   function renderTeaser(){
     var grid=$("#hotTeaser"); if(!grid) return;
     grid.innerHTML="";
-    /* a diverse 3×3: roles spread across different companies (hot first within each) */
-    var byCo={}; JOBS.forEach(function(j){ (byCo[j.co]=byCo[j.co]||[]).push(j); });
-    Object.keys(byCo).forEach(function(k){ byCo[k].sort(function(a,b){ return (b.hot?1:0)-(a.hot?1:0); }); });
-    var _cos=Object.keys(byCo), list=[], _round=0;
-    while(list.length<9){
-      var _added=false;
-      for(var _ci=0; _ci<_cos.length && list.length<9; _ci++){ var _arr=byCo[_cos[_ci]]; if(_arr[_round]){ list.push(_arr[_round]); _added=true; } }
-      if(!_added) break; _round++;
-    }
+    /* The admin's Hot 3×3 picks lead (in curated order — the proxy fronts them on
+       the wire); the diverse per-company spread fills whatever curation doesn't.
+       Selection logic is pure and lives in shared/logic.js (guardrail-tested). */
+    var list=LW.teaserPick(JOBS, 9);
     list.forEach(function(job){
       var idx=job._i, c=COMPANIES[job.co];
       var node=el("button","jt",

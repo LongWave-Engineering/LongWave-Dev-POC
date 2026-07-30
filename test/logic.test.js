@@ -342,3 +342,33 @@ test("calcAge() computes whole years with an injectable 'now'", () => {
   assert.equal(LW.calcAge("2030-01-01", "2026-06-27"), ""); // future -> out of range (lower bound)
   assert.equal(LW.calcAge("1850-01-01", "2026-06-27"), ""); // 176y -> out of range (upper 140 cap)
 });
+
+test("teaserPick(): curated hot picks lead the home 3×3 in wire order", () => {
+  const J = (co, role, hot) => ({ co, role, hot: !!hot });
+  // 9 hot picks scattered through the wire — including TWO from the same company
+  // (the old per-company round-robin could never show both) — lead in wire order.
+  const hot9 = [
+    J("a","a1"), J("b","b1",1), J("a","a2",1), J("c","c1"), J("a","a3",1),
+    J("d","d1",1), J("e","e1",1), J("f","f1",1), J("g","g1",1), J("h","h1",1),
+    J("i","i1",1), J("j","j1"),
+  ];
+  const picked = LW.teaserPick(hot9, 9);
+  assert.deepEqual(picked.map((j) => j.role), ["b1","a2","a3","d1","e1","f1","g1","h1","i1"]);
+
+  // no curation → the original diverse spread: one role per company, round-robin
+  const plain = [J("a","a1"), J("a","a2"), J("b","b1"), J("c","c1"), J("d","d1")];
+  assert.deepEqual(LW.teaserPick(plain, 4).map((j) => j.role), ["a1","b1","c1","d1"]);
+  // second round only after every company contributed
+  assert.deepEqual(LW.teaserPick(plain, 5).map((j) => j.role), ["a1","b1","c1","d1","a2"]);
+
+  // partial curation: picks lead, the diverse fill covers the rest, no duplicates
+  const mixed = [J("a","a1"), J("b","b1",1), J("b","b2"), J("c","c1"), J("d","d1",1)];
+  const part = LW.teaserPick(mixed, 4);
+  assert.deepEqual(part.map((j) => j.role), ["b1","d1","a1","b2"]);
+  assert.equal(new Set(part).size, part.length, "no job appears twice");
+
+  // more hot than n → first n only; fewer jobs than n → all, and it terminates
+  assert.equal(LW.teaserPick(hot9, 3).length, 3);
+  assert.deepEqual(LW.teaserPick([J("a","a1")], 9).map((j) => j.role), ["a1"]);
+  assert.deepEqual(LW.teaserPick(null, 9), []);
+});

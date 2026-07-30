@@ -143,6 +143,38 @@
       return out;
     }
 
+    /* The home "Roles hiring right now" 3×3. The admin's Hot picks arrive first on
+       the wire (the proxy leads /api/jobs with the featured list in its curated drag
+       order) flagged job.hot — so curated picks LEAD the grid, in order, even when
+       two share a company. Whatever the picks don't fill (no curation, or fewer than
+       `n` picks) falls back to the original diverse spread: round-robin one role per
+       company in wire order, so no single employer walls the title page. */
+    function teaserPick(jobs, n){
+      if(!Array.isArray(jobs)) return [];
+      var picked=[], isPicked=[];
+      for(var i=0;i<jobs.length && picked.length<n;i++){
+        if(jobs[i] && jobs[i].hot){ picked.push(jobs[i]); isPicked[i]=true; }
+      }
+      if(picked.length>=n) return picked;
+      var byCo={}, cos=[];
+      for(var k=0;k<jobs.length;k++){
+        if(isPicked[k] || !jobs[k]) continue;
+        var co=jobs[k].co;
+        if(!byCo[co]){ byCo[co]=[]; cos.push(co); }
+        byCo[co].push(jobs[k]);
+      }
+      var round=0;
+      while(picked.length<n){
+        var added=false;
+        for(var c=0;c<cos.length && picked.length<n;c++){
+          var arr=byCo[cos[c]];
+          if(arr[round]){ picked.push(arr[round]); added=true; }
+        }
+        if(!added) break; round++;
+      }
+      return picked;
+    }
+
     /* Age in whole years from an ISO date string. `now` is injectable for tests.
        Returns "" for empty/invalid/out-of-range input. Parses yyyy-mm-dd in LOCAL time
        (not UTC, which new Date("yyyy-mm-dd") would use) so the age never flips a day early
@@ -322,6 +354,7 @@
       matchesFilter: matchesFilter,
       filterJobs: filterJobs,
       normalizeJobIds: normalizeJobIds,
+      teaserPick: teaserPick,
       calcAge: calcAge,
       formatJdText: formatJdText,
       jdBlocks: jdBlocks
