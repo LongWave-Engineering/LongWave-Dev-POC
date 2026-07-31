@@ -18,11 +18,15 @@ function dataUri(css, varName) {
   return m ? { mime: m[1], b64: m[2], buf: Buffer.from(m[2], "base64") } : null;
 }
 
-/* Minimal PNG sanity: signature + IHDR dimensions. */
+/* PNG sanity: signature + IHDR dimensions + a terminal IEND chunk. The IEND check
+   matters — mutation testing showed a tail-truncated PNG (broken image, header intact)
+   sails through a header-only check. */
 function pngInfo(buf) {
   const SIG = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+  const IEND = Buffer.from([0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82]);
   if (buf.length < 24 || !buf.subarray(0, 8).equals(SIG)) return null;
   if (buf.subarray(12, 16).toString("latin1") !== "IHDR") return null;
+  if (!buf.subarray(buf.length - 12).equals(IEND)) return null;
   return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(24 - 4) };
 }
 
@@ -64,6 +68,8 @@ test("pose assets stay inside the size budget", () => {
     const u = dataUri(baseCss, name);
     assert.ok(u.buf.length <= 80 * 1024,
       `--${name} is ${(u.buf.length / 1024).toFixed(1)}KB decoded — over the 80KB budget; re-quantize before shipping (the originals are ~24KB)`);
+    assert.ok(u.buf.length >= 10 * 1024,
+      `--${name} is only ${(u.buf.length / 1024).toFixed(1)}KB decoded — the originals are ~24KB, this looks truncated or swapped for a placeholder`);
   }
 });
 
@@ -81,7 +87,9 @@ test("the pose vars are actually wired to the mascot classes and used in the UI"
 test("the shipped bundle carries the exact same pose art as src (stale-bundle guard)", () => {
   for (const name of [...POSES, "tsd-logo"]) {
     const u = dataUri(baseCss, name);
-    assert.ok(bundle.includes(u.b64.slice(0, 512)),
-      `longwave-dev.html does not carry src's --${name} — run ./build.sh`);
+    // full-payload match, not a prefix — mutation testing showed a prefix check misses
+    // any src edit (or truncation) past the compared window
+    assert.ok(bundle.includes(u.b64),
+      `longwave-dev.html does not carry src's exact --${name} payload — run ./build.sh`);
   }
 });
