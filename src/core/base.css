@@ -97,7 +97,6 @@
 @keyframes tsd-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 @media (prefers-reduced-motion:reduce){.brand .logo,.cta-logo{animation:none!important}}
 /* ---- loading splash: katana slash cuts through the logo, halves split, fades ---- */
-*{box-sizing:border-box} body{margin:0;font-family:system-ui}
   #tsd-splash{position:fixed;inset:0;z-index:100000;pointer-events:none;display:grid;place-items:center;
     background:radial-gradient(120% 120% at 50% 40%,#16385a 0%,#0e2f4f 55%,#0a2540 100%);
     animation:sp-out .5s ease 1.2s both}

@@ -126,3 +126,9 @@ test("every lead form carries the consent line and a focusable success node", ()
   assert.equal(consents, forms,
     `every PII-collecting form needs the consent line next to its submit button (found ${consents} lines for ${forms} forms) — APPI point-of-collection`);
 });
+
+test("base.css never re-declares body font as system-ui (the f881ace splash-paste regression)", () => {
+  const css = require("node:fs").readFileSync(require("node:path").join(__dirname, "..", "src", "core", "base.css"), "utf8");
+  assert.equal(/font-family\s*:\s*system-ui/.test(css), false,
+    "a pasted prototype reset once overrode var(--font-body) site-wide — delete it, don't ship it");
+});
