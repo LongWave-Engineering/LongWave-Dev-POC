@@ -49,7 +49,10 @@
        repeat it — in English. */
     if(lang==="ja") return "";
     var f=j.role_full;
-    return (f && f!==j.role) ? f : "";
+    /* Only when it actually says MORE: role_full is the posting's own title, and
+       when that title was an abbreviation the canonical label spells out
+       ("PdM" under "Product Manager") a second line is noise, not detail. */
+    return (f && f!==j.role && f.length > j.role.length) ? f : "";
   }
   function bodyL(j){ return jf(j,"body"); }
   function pointsL(j){ return jf(j,"points"); }
