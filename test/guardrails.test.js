@@ -132,3 +132,17 @@ test("base.css never re-declares body font as system-ui (the f881ace splash-past
   assert.equal(/font-family\s*:\s*system-ui/.test(css), false,
     "a pasted prototype reset once overrode var(--font-body) site-wide — delete it, don't ship it");
 });
+
+/* --- Analytics: the CSP must keep Google Analytics loadable ---
+   The live proxy injects gtag.js at SERVE time (the static bundle stays clean — the
+   zero-external-requests guardrail above still holds). 2026-08-06: a no-third-party CSP
+   silently blocked the injected tag, so GA looked installed but collected NOTHING; only
+   the nightly smoke's console-clean check caught it. If you tighten the CSP, keep these
+   three GA allowances (or remove analytics deliberately, everywhere at once). */
+test("the CSP meta allows Google Analytics (script, beacons, pixels)", () => {
+  const csp = (bundle.match(/http-equiv="Content-Security-Policy"\s+content="([^"]+)"/) || [])[1];
+  assert.ok(csp, "the CSP meta tag is missing from the bundle");
+  assert.match(csp, /script-src[^;]*googletagmanager\.com/, "script-src must allow *.googletagmanager.com or the injected gtag.js is refused");
+  assert.match(csp, /connect-src[^;]*google-analytics\.com/, "connect-src must allow *.google-analytics.com or GA4 beacons are refused");
+  assert.match(csp, /img-src[^;]*google-analytics\.com/, "img-src must allow *.google-analytics.com for the pixel fallback");
+});

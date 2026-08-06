@@ -19,8 +19,10 @@
 <!-- Fonts are self-hosted (see core/fonts.css) — no external font request. -->
 <!-- CSP for the static (GitHub Pages) deploy, which can't set response headers; the backend
      also sends the header form (with frame-ancestors) in server.js. Everything the app needs
-     is inline/self/data: — no third-party origin is allowed. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'" />
+     is inline/self/data: — the ONLY third-party origins allowed are Google Analytics' (the
+     live proxy injects gtag.js at serve time; 2026-08-06: the old no-third-party policy was
+     silently blocking it, so GA collected nothing while looking installed). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google-analytics.com https://*.googletagmanager.com; font-src 'self' data:; connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com; base-uri 'self'; object-src 'none'; form-action 'self'" />
 
 <style>
 /* core/fonts.css — GENERATED (do not hand-edit). Self-hosted Libre Franklin + IBM
