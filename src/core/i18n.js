@@ -37,6 +37,12 @@
     return j[f];
   }
   function roleL(j){ return jf(j,"role"); }
+  /* The card headline is a canonical label ("Backend Engineer"); the adapter
+     ships the posting's own title as role_full when the two differ. Rendered as
+     a quiet second line, it keeps the board scannable AND keeps two same-label
+     postings at one company distinguishable. Empty string when there is nothing
+     extra to say. */
+  function roleDetailL(j){ var f=jf(j,"role_full"); return (f && f!==roleL(j)) ? f : ""; }
   function bodyL(j){ return jf(j,"body"); }
   function pointsL(j){ return jf(j,"points"); }
   function locL(j){ return (lang==="ja" && j.loc==="Tokyo · Ginza") ? "東京・銀座" : j.loc; }

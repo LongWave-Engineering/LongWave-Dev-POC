@@ -385,6 +385,9 @@
   /* the whole role title is shown on the row — it wraps to a second line if long,
      never clipped or ellipsised, so you can always read the full role name */
   .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.2rem;line-height:1.28;overflow-wrap:break-word;}
+  /* the posting's own title under the canonical headline: present enough to tell
+     two same-label roles apart, quiet enough that the board still scans */
+  .jc-role-detail{display:block;margin-top:2px;color:var(--slate);font-size:.86rem;line-height:1.35;overflow-wrap:break-word;}
   .jc-co{font-size:.96rem;color:var(--slate);overflow-wrap:break-word;}
   .jc-dot{color:var(--line-strong);margin:0 2px;}
   .jc-main .tags{margin-top:3px;}
@@ -593,6 +596,7 @@
   .modal .m-head{display:flex;gap:16px;align-items:center;padding-right:44px;}
   .modal .m-head>div{min-width:0;}   /* let the text block shrink so a long title wraps instead of overflowing */
   .modal .m-role{font-family:var(--font-display);font-weight:800;font-size:1.58rem;line-height:1.16;overflow-wrap:break-word;}
+.m-role-detail{margin:2px 0 0;color:var(--slate);font-size:.9rem;line-height:1.4;}
   .modal .m-co{color:var(--slate);font-size:1.04rem;margin-top:2px;overflow-wrap:break-word;}
   .modal .m-salary{font-family:var(--font-display);font-weight:800;font-size:1.48rem;margin:22px 0 8px;}
   .modal .m-salary span{display:block;font-size:.94rem;font-weight:600;color:var(--slate);margin-bottom:2px;}
@@ -1398,7 +1402,8 @@
     <button class="modal-close" id="jobModalClose" aria-label="Close" data-i18n-aria="aria_close">×</button>
     <div class="m-head">
       <span class="avatar" id="mAvatar"></span>
-      <div><div class="m-role" id="mRole"></div><div class="m-co" id="mCo"></div></div>
+      <div><div class="m-role" id="mRole"></div>
+      <p id="mRoleDetail" class="m-role-detail" hidden></p><div class="m-co" id="mCo"></div></div>
     </div>
     <div class="m-salary" id="mSalary"></div>
     <div class="m-tags tags" id="mTags"></div>
@@ -2389,6 +2394,12 @@
     return j[f];
   }
   function roleL(j){ return jf(j,"role"); }
+  /* The card headline is a canonical label ("Backend Engineer"); the adapter
+     ships the posting's own title as role_full when the two differ. Rendered as
+     a quiet second line, it keeps the board scannable AND keeps two same-label
+     postings at one company distinguishable. Empty string when there is nothing
+     extra to say. */
+  function roleDetailL(j){ var f=jf(j,"role_full"); return (f && f!==roleL(j)) ? f : ""; }
   function bodyL(j){ return jf(j,"body"); }
   function pointsL(j){ return jf(j,"points"); }
   function locL(j){ return (lang==="ja" && j.loc==="Tokyo · Ginza") ? "東京・銀座" : j.loc; }
@@ -2602,6 +2613,7 @@
       '<span class="jc-logo">'+ avatarHTML(c) +'</span>'+
       '<span class="jc-main">'+
         '<span class="jc-role">'+ softBreak(esc(roleL(job))) +'</span>'+
+        (roleDetailL(job) ? '<span class="jc-role-detail">'+ esc(roleDetailL(job)) +'</span>' : '')+
         '<span class="jc-co">'+ esc(c.name) +' <span class="jc-dot">·</span> <span class="jc-loc">'+ esc(locL(job)) +'</span></span>'+
         '<span class="tags">'+ tags +'</span>'+
       '</span>'+
@@ -4615,6 +4627,8 @@
     var _av=$("#mAvatar"); var _logo=(typeof bestLogo==="function")?bestLogo(c):c.logo;
     if(_logo){ _av.innerHTML='<img src="'+ esc(_logo) +'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
     $("#mRole").textContent=softBreak(roleL(job));
+    /* the posting's own title, when the headline above is a canonical label */
+    var _rd=$("#mRoleDetail"); if(_rd){ _rd.textContent=roleDetailL(job); _rd.hidden=!roleDetailL(job); }
     $("#mCo").textContent=c.name+" · "+c.sector[lang]+(job.loc?" · "+locL(job):"");
     $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe")));
     var tags=jpTag(job.jp)+'<span class="tag tag--meta">'+esc(remoteLabel(job.remote))+'</span>';

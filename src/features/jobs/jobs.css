@@ -74,6 +74,9 @@
   /* the whole role title is shown on the row — it wraps to a second line if long,
      never clipped or ellipsised, so you can always read the full role name */
   .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.2rem;line-height:1.28;overflow-wrap:break-word;}
+  /* the posting's own title under the canonical headline: present enough to tell
+     two same-label roles apart, quiet enough that the board still scans */
+  .jc-role-detail{display:block;margin-top:2px;color:var(--slate);font-size:.86rem;line-height:1.35;overflow-wrap:break-word;}
   .jc-co{font-size:.96rem;color:var(--slate);overflow-wrap:break-word;}
   .jc-dot{color:var(--line-strong);margin:0 2px;}
   .jc-main .tags{margin-top:3px;}

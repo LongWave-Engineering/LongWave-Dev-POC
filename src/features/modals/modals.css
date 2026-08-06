@@ -17,6 +17,7 @@
   .modal .m-head{display:flex;gap:16px;align-items:center;padding-right:44px;}
   .modal .m-head>div{min-width:0;}   /* let the text block shrink so a long title wraps instead of overflowing */
   .modal .m-role{font-family:var(--font-display);font-weight:800;font-size:1.58rem;line-height:1.16;overflow-wrap:break-word;}
+.m-role-detail{margin:2px 0 0;color:var(--slate);font-size:.9rem;line-height:1.4;}
   .modal .m-co{color:var(--slate);font-size:1.04rem;margin-top:2px;overflow-wrap:break-word;}
   .modal .m-salary{font-family:var(--font-display);font-weight:800;font-size:1.48rem;margin:22px 0 8px;}
   .modal .m-salary span{display:block;font-size:.94rem;font-weight:600;color:var(--slate);margin-bottom:2px;}
