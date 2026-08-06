@@ -2399,7 +2399,15 @@
      a quiet second line, it keeps the board scannable AND keeps two same-label
      postings at one company distinguishable. Empty string when there is nothing
      extra to say. */
-  function roleDetailL(j){ var f=jf(j,"role_full"); return (f && f!==roleL(j)) ? f : ""; }
+  function roleDetailL(j){
+    /* EN ONLY. The adapter canonicalizes the ENGLISH title and parks the
+       posting's own title in role_full; role_ja is never canonicalized, so in
+       Japanese the headline IS the full title and a second line would just
+       repeat it — in English. */
+    if(lang==="ja") return "";
+    var f=j.role_full;
+    return (f && f!==j.role) ? f : "";
+  }
   function bodyL(j){ return jf(j,"body"); }
   function pointsL(j){ return jf(j,"points"); }
   function locL(j){ return (lang==="ja" && j.loc==="Tokyo · Ginza") ? "東京・銀座" : j.loc; }
