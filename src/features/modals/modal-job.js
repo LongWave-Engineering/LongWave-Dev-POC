@@ -17,17 +17,23 @@
       return '<p>'+mdBold(nl2br(b.x))+'</p>';   /* nl2br esc()'s, then \n → <br> within the group */
     }).join("");
   }
+  /* True while this job's JD is being fetched (see hydrateJob): the sections must NOT
+     claim "Not listed" for prose that is merely still in flight — that flash reads as
+     "this job has no description" for the ~0.2s before it lands. */
+  var jdPending = false;
   /* one labelled detail section; renders "N/A" when `always` is set and the field is empty */
   function jdSec(labelKey,val,always){
     var has = val!=null && String(val).trim()!=="";
     if(!has && !always) return "";
-    var body = has ? jdHtml(val) : '<span style="color:var(--slate)">'+esc(t("jd_na"))+'</span>';
+    var body = has ? jdHtml(val)
+      : '<span style="color:var(--slate)">'+esc(t(jdPending ? "jd_loading" : "jd_na"))+'</span>';
     return '<h4 class="m-sub">'+esc(t(labelKey))+'</h4><div class="m-body">'+body+'</div>';
   }
   /* Fill the JD modal body from a job. Split out of openJob so a language toggle while the
      modal is open (repaintOpenModal) fully re-renders it — role, company, salary, tags and
      every section — instead of leaving it half-translated. */
   function fillJobModal(job){
+    jdPending = !!job._jdLoading;
     var c=COMPANIES[job.co];
     /* use the crisp curated mark (same as the job cards), not the low-res HRMOS favicon */
     var _av=$("#mAvatar"); var _logo=(typeof bestLogo==="function")?bestLogo(c):c.logo;
@@ -82,7 +88,7 @@
      a failed fetch leaves the sections empty rather than blocking the modal. */
   function hasProse(j){ return !!(j.scope || j.body || j.required || j.nice || j.benefits); }
   function hydrateJob(job){
-    if(hasProse(job) || job._jdLoading || !served() || job.id==null) return;
+    if(job._jd || hasProse(job) || job._jdLoading || !served() || job.id==null) return;
     job._jdLoading = true;
     fetch("/api/jobs/"+encodeURIComponent(job.id))
       .then(function(r){ return r.ok ? r.json() : null; })
@@ -91,6 +97,7 @@
           /* merge the prose in place so reopening is instant and a language
              switch (repaintOpenModal) finds it already there */
           for(var k in full){ if(!(k in job) || job[k]==null) job[k]=full[k]; }
+          job._jd = true; /* even if the row's prose is empty — do not refetch on reopen */
           if(currentJob===job && jobOverlay && !jobOverlay.hidden) fillJobModal(job);
         }
       })
