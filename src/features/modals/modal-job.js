@@ -74,9 +74,33 @@
     var comp=$("#mCompany"); var site=(c.site && /^https?:\/\//i.test(c.site)) ? c.site : ""; if(site){ comp.href=site; comp.style.display=""; } else { comp.style.display="none"; }
     paintModalSave(); paintModalApply();
   }
+  /* The list payload ships CARD fields only — the JD prose (scope/body/required/
+     nice/benefits) is 98% of its weight and only this modal renders it, so the
+     server strips it and we fetch the one job on open. Everything degrades
+     gracefully: a job that already carries prose (the embedded demo snapshot,
+     file:// builds, anything pre-hydrated) renders instantly and never fetches;
+     a failed fetch leaves the sections empty rather than blocking the modal. */
+  function hasProse(j){ return !!(j.scope || j.body || j.required || j.nice || j.benefits); }
+  function hydrateJob(job){
+    if(hasProse(job) || job._jdLoading || !served() || job.id==null) return;
+    job._jdLoading = true;
+    fetch("/api/jobs/"+encodeURIComponent(job.id))
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(full){
+        if(full && typeof full==="object"){
+          /* merge the prose in place so reopening is instant and a language
+             switch (repaintOpenModal) finds it already there */
+          for(var k in full){ if(!(k in job) || job[k]==null) job[k]=full[k]; }
+          if(currentJob===job && jobOverlay && !jobOverlay.hidden) fillJobModal(job);
+        }
+      })
+      .catch(function(){ /* offline or 404 — the modal still shows the header */ })
+      .then(function(){ job._jdLoading = false; });
+  }
   function openJob(idx){
     var job=JOBS[idx];
     currentJob=job;
+    hydrateJob(job);
     fillJobModal(job);
     openOverlay(jobOverlay); $("#jobModalClose").focus();
   }
