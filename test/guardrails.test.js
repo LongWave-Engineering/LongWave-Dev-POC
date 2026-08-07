@@ -146,3 +146,23 @@ test("the CSP meta allows Google Analytics (script, beacons, pixels)", () => {
   assert.match(csp, /connect-src[^;]*google-analytics\.com/, "connect-src must allow *.google-analytics.com or GA4 beacons are refused");
   assert.match(csp, /img-src[^;]*google-analytics\.com/, "img-src must allow *.google-analytics.com for the pixel fallback");
 });
+
+/* --- UX: a submitted form's confirmation must not be hidden along with the form ---
+   Every lead form hides itself on submit (`$("#xxForm").style.display="none"`) and then
+   shows its .form-success. While the success block lived INSIDE the <form>, hiding the
+   form hid the confirmation too: all four modals (apply/signup, company inquiry, contact,
+   post-a-job) went blank on success, so a candidate who applied saw nothing and had every
+   reason to think it failed. Keep each success block a SIBLING of its form. */
+test("each form-success block sits outside the form that hides itself on submit", () => {
+  const forms = [...bundle.matchAll(/<form\b[^>]*\bid="(\w+)"[\s\S]*?<\/form>/g)];
+  const offenders = forms
+    .filter(([html]) => /class="form-success"/.test(html))
+    .map(([, id]) => id);
+  assert.deepEqual(offenders, [],
+    `these forms still contain their .form-success block, so submitting shows a blank modal: ${offenders.join(", ")}`);
+});
+
+test("every form-success block is still present in the bundle (the move didn't drop one)", () => {
+  assert.equal((bundle.match(/class="form-success"/g) || []).length, 4,
+    "expected 4 confirmation blocks — signup/apply, company inquiry, contact, post-a-job");
+});
