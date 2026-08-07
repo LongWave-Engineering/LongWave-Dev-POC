@@ -4695,6 +4695,15 @@
   function hydrateJob(job){
     if(job._jd || hasProse(job) || job._jdLoading || !served() || job.id==null) return;
     job._jdLoading = true;
+    /* Clearing the flag BEFORE the re-render is load-bearing: fillJobModal reads it to
+       decide between "Loading…" and "Not listed (N/A)", so leaving it set here left every
+       genuinely-empty section (e.g. Language requirement) saying "Loading…" forever —
+       caught on the live board, not by any test. Re-render on failure too, for the same
+       reason. */
+    var settle = function(){
+      job._jdLoading = false;
+      if(currentJob===job && jobOverlay && !jobOverlay.hidden) fillJobModal(job);
+    };
     fetch("/api/jobs/"+encodeURIComponent(job.id))
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(full){
@@ -4703,11 +4712,10 @@
              switch (repaintOpenModal) finds it already there */
           for(var k in full){ if(!(k in job) || job[k]==null) job[k]=full[k]; }
           job._jd = true; /* even if the row's prose is empty — do not refetch on reopen */
-          if(currentJob===job && jobOverlay && !jobOverlay.hidden) fillJobModal(job);
         }
+        settle();
       })
-      .catch(function(){ /* offline or 404 — the modal still shows the header */ })
-      .then(function(){ job._jdLoading = false; });
+      .catch(function(){ settle(); /* offline or 404 — sections fall back to "Not listed" */ });
   }
   function openJob(idx){
     var job=JOBS[idx];
