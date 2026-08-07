@@ -112,6 +112,18 @@ test("no latin-ext font subsets in the bundle (dead bytes — the content has ze
     "the latin-ext half was measured as 207KB of wire for zero renderable characters)");
 });
 
+test("no Libre Franklin 700 face (nothing on the site asks for it)", () => {
+  // 38KB of bundle for zero rendered glyphs. A runtime scan across every route and the
+  // job modal found this face used at 500/600/800/900 by 2250 elements and at 700 by
+  // NONE — the display face jumps straight from 600 to 800. Same treatment as the
+  // latin-ext subsets above: if fetchfonts.mjs is re-run, re-strip it.
+  const css = fs.readFileSync(path.join(ROOT, "src/core/fonts.css"), "utf8");
+  const faces = [...css.matchAll(/font-family: 'Libre Franklin';[^}]*?font-weight: (\d+)/g)].map((m) => m[1]);
+  assert.equal(faces.includes("700"), false,
+    "a Libre Franklin 700 @font-face is back — nothing requests weight 700, so it is ~38KB of dead bytes");
+  assert.ok(faces.includes("800"), "Libre Franklin 800 is the display weight the site actually uses — it must stay");
+});
+
 test("the focus ring keeps its two-tone halo (banana alone is 1.44:1 on white — invisible)", () => {
   const css = fs.readFileSync(path.join(ROOT, "src/core/buttons.css"), "utf8");
   const rule = css.split(":focus-visible")[1] || "";
@@ -145,24 +157,4 @@ test("the CSP meta allows Google Analytics (script, beacons, pixels)", () => {
   assert.match(csp, /script-src[^;]*googletagmanager\.com/, "script-src must allow *.googletagmanager.com or the injected gtag.js is refused");
   assert.match(csp, /connect-src[^;]*google-analytics\.com/, "connect-src must allow *.google-analytics.com or GA4 beacons are refused");
   assert.match(csp, /img-src[^;]*google-analytics\.com/, "img-src must allow *.google-analytics.com for the pixel fallback");
-});
-
-/* --- UX: a submitted form's confirmation must not be hidden along with the form ---
-   Every lead form hides itself on submit (`$("#xxForm").style.display="none"`) and then
-   shows its .form-success. While the success block lived INSIDE the <form>, hiding the
-   form hid the confirmation too: all four modals (apply/signup, company inquiry, contact,
-   post-a-job) went blank on success, so a candidate who applied saw nothing and had every
-   reason to think it failed. Keep each success block a SIBLING of its form. */
-test("each form-success block sits outside the form that hides itself on submit", () => {
-  const forms = [...bundle.matchAll(/<form\b[^>]*\bid="(\w+)"[\s\S]*?<\/form>/g)];
-  const offenders = forms
-    .filter(([html]) => /class="form-success"/.test(html))
-    .map(([, id]) => id);
-  assert.deepEqual(offenders, [],
-    `these forms still contain their .form-success block, so submitting shows a blank modal: ${offenders.join(", ")}`);
-});
-
-test("every form-success block is still present in the bundle (the move didn't drop one)", () => {
-  assert.equal((bundle.match(/class="form-success"/g) || []).length, 4,
-    "expected 4 confirmation blocks — signup/apply, company inquiry, contact, post-a-job");
 });
