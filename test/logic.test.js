@@ -372,3 +372,29 @@ test("teaserPick(): curated hot picks lead the home 3×3 in wire order", () => {
   assert.deepEqual(LW.teaserPick([J("a","a1")], 9).map((j) => j.role), ["a1"]);
   assert.deepEqual(LW.teaserPick(null, 9), []);
 });
+
+// safeColor(): admin- and ATS-authored colours reach STYLE ATTRIBUTES on the public
+// page (avatar tiles, partner monograms, quote cards, category chips). esc() alone
+// would keep an attacker inside the attribute; validating the VALUE keeps the sink
+// closed even if a server-side guard is ever relaxed.
+test("safeColor accepts real colours and refuses anything that could break out", () => {
+  for (const good of ["#fff", "#FFFFFF", "#0ea5a4", "#0ea5a4ff", "rgb(1, 2, 3)", "rgba(1,2,3,.5)", "  #abc  "]) {
+    assert.equal(LW.safeColor(good), good.trim(), `${good} should pass through`);
+  }
+  for (const bad of [
+    'x"><img src=y onerror=alert(1)>',
+    "red; background:url(//evil)",
+    "url(javascript:alert(1))",
+    "expression(alert(1))",
+    "",
+    null,
+    undefined,
+    123,
+    "#12",                       // too short to be a hex colour
+    "rgb(1,2,3);x:y",
+  ]) {
+    assert.equal(LW.safeColor(bad), "#5E7185", `${String(bad)} must fall back`);
+  }
+  assert.equal(LW.safeColor("nope", "#888"), "#888", "callers may choose the fallback");
+  assert.equal(LW.safeColor("nope", ""), "", "…including an empty one, so a chip can opt out");
+});

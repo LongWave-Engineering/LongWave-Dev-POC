@@ -60,7 +60,7 @@
          and ":" alive, so an unvalidated value could append its own declarations
          (a full-viewport overlay, say). The proxy already narrows this; a second
          backend speaking the same wire might not. */
-      var safeCol = (a.category && /^(#[0-9a-fA-F]{3,8}|rgba?\([\d.,\s%]+\))$/.test(String(a.category.color||"").trim())) ? String(a.category.color).trim() : "";
+      var safeCol = (a.category && a.category.color) ? safeColor(a.category.color, "") : "";
       var chipStyle = safeCol ? ' style="color:'+ esc(safeCol) +'"' : '';
       node.innerHTML=
         (a.image && a.image.src ? '<img class="art-img" src="'+ esc(a.image.src) +'" alt="'+ esc(a.image.alt||"") +'" loading="lazy">' : '')+

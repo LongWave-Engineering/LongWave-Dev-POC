@@ -9,6 +9,20 @@
     /* HTML-escape — the one helper that's both pure and used app-wide. */
     function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 
+    /* A colour that is SAFE to interpolate into a style attribute. Admin- and
+       ATS-authored colours reach these sinks (avatar tiles, partner monograms,
+       quote cards, category chips), so validate the VALUE — a plain hex or
+       rgb()/rgba() — and fall back rather than trusting esc() alone. Both server
+       implementations narrow this too (dev-platform-web content.js safeColor and
+       the backend's models.js); this is the last line, not the only one. */
+    function safeColor(c, fallback){
+      var s = (c == null ? "" : String(c)).trim();
+      /* `fallback === undefined`, not `||`: a caller may deliberately pass "" to mean
+         "render no colour at all" (the article category chip does), and `||` would
+         quietly hand it the default instead — turning an opt-out into a styled chip. */
+      return /^(#[0-9a-fA-F]{3,8}|rgba?\([\d.,\s%]+\))$/.test(s) ? s : (fallback === undefined ? "#5E7185" : fallback);
+    }
+
     /* Hard cap: a candidate (identified by one email) may apply to at most this many
        DISTINCT jobs, EVER — cumulative across every visit/batch, not per session. The
        frontend picker uses it to gate selection; the backend enforces it authoritatively
@@ -340,6 +354,7 @@
 
     return {
       esc: esc,
+      safeColor: safeColor,
       MAX_APPLICATIONS: MAX_APPLICATIONS,
       ROUTES: ROUTES,
       routeFor: routeFor,

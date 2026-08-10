@@ -6,7 +6,9 @@
     list.forEach(function(r){
       grid.appendChild(el("article","rev",
         '<p class="quote">“'+ esc(r.q[lang]||r.q.en) +'”</p>'+
-        '<div class="who"><span class="avatar sm" style="background:'+r.color+'">'+ esc(r.init) +'</span>'+
+        /* safeColor(): admin-authored and reaches a style attribute — validate the
+           value, don't just escape it (LW.safeColor, shared with every other sink) */
+        '<div class="who"><span class="avatar sm" style="background:'+ esc(safeColor(r.color)) +'">'+ esc(r.init) +'</span>'+
         '<div><div class="nm">'+ esc(r.name) +'</div><div class="rl">'+ esc(r.role[lang]||r.role.en) +'</div></div></div>'));
     });
   }

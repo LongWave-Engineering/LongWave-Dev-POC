@@ -51,7 +51,7 @@
     var logo = (typeof PARTNER_LOGOS !== "undefined") ? PARTNER_LOGOS[p.name] : null;
     var mark = logo
       ? '<span class="pf-mark"><img src="'+ esc(logo) +'" alt=""></span>'
-      : '<span class="pf-mark pf-mono" style="background:'+ esc(p.color) +'">'+ esc(p.mono) +'</span>';
+      : '<span class="pf-mark pf-mono" style="background:'+ esc(safeColor(p.color)) +'">'+ esc(p.mono) +'</span>';
     var word = '<span class="pf-name"'+ (logo ? '' : ' style="color:'+ esc(p.color) +'"') +'>'+ esc(p.name) +'</span>';
     return '<div class="pf-card" title="'+ esc(p.name) +'">'+ mark + word +'</div>';
   }

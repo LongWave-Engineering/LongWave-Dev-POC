@@ -17,7 +17,7 @@
      really reach a backend or tell the user honestly that they didn't. */
   var apiReady=false;
   /* pure helpers live in shared/logic.js (LW.*); alias the app-wide ones for brevity */
-  var esc = LW.esc, salaryMax = LW.salaryMax;
+  var esc = LW.esc, safeColor = LW.safeColor, salaryMax = LW.salaryMax;
   function nl2br(s){ return esc(s).replace(/\n/g,"<br>"); }
 
   /* NOTE: the lbl_jp_* and lbl_remote_* keys above are referenced dynamically by suffix
@@ -101,7 +101,7 @@
        an unescaped value could break out of the attribute (injection surface). */
     var logo = bestLogo(c);
     if(logo) return '<span'+k+' style="background:#fff"><img src="'+ esc(logo) +'" alt="" loading="lazy"></span>';
-    return '<span'+k+' style="background:'+ esc((c&&c.color)||"#888") +'">'+ esc((c&&c.mono)||"?") +'</span>';
+    return '<span'+k+' style="background:'+ esc(safeColor(c&&c.color, "#888")) +'">'+ esc((c&&c.mono)||"?") +'</span>';
   }
   var BLURB = {
     "Data Engineer":{en:"Own the Snowflake / dbt pipelines behind a 10M-user DAP.", ja:"1,000万ユーザーのDAPを支えるSnowflake / dbt基盤を担当。"},

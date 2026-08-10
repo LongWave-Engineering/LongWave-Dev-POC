@@ -1614,6 +1614,20 @@
     /* HTML-escape — the one helper that's both pure and used app-wide. */
     function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
 
+    /* A colour that is SAFE to interpolate into a style attribute. Admin- and
+       ATS-authored colours reach these sinks (avatar tiles, partner monograms,
+       quote cards, category chips), so validate the VALUE — a plain hex or
+       rgb()/rgba() — and fall back rather than trusting esc() alone. Both server
+       implementations narrow this too (dev-platform-web content.js safeColor and
+       the backend's models.js); this is the last line, not the only one. */
+    function safeColor(c, fallback){
+      var s = (c == null ? "" : String(c)).trim();
+      /* `fallback === undefined`, not `||`: a caller may deliberately pass "" to mean
+         "render no colour at all" (the article category chip does), and `||` would
+         quietly hand it the default instead — turning an opt-out into a styled chip. */
+      return /^(#[0-9a-fA-F]{3,8}|rgba?\([\d.,\s%]+\))$/.test(s) ? s : (fallback === undefined ? "#5E7185" : fallback);
+    }
+
     /* Hard cap: a candidate (identified by one email) may apply to at most this many
        DISTINCT jobs, EVER — cumulative across every visit/batch, not per session. The
        frontend picker uses it to gate selection; the backend enforces it authoritatively
@@ -1945,6 +1959,7 @@
 
     return {
       esc: esc,
+      safeColor: safeColor,
       MAX_APPLICATIONS: MAX_APPLICATIONS,
       ROUTES: ROUTES,
       routeFor: routeFor,
@@ -2376,7 +2391,7 @@
      really reach a backend or tell the user honestly that they didn't. */
   var apiReady=false;
   /* pure helpers live in shared/logic.js (LW.*); alias the app-wide ones for brevity */
-  var esc = LW.esc, salaryMax = LW.salaryMax;
+  var esc = LW.esc, safeColor = LW.safeColor, salaryMax = LW.salaryMax;
   function nl2br(s){ return esc(s).replace(/\n/g,"<br>"); }
 
   /* NOTE: the lbl_jp_* and lbl_remote_* keys above are referenced dynamically by suffix
@@ -2460,7 +2475,7 @@
        an unescaped value could break out of the attribute (injection surface). */
     var logo = bestLogo(c);
     if(logo) return '<span'+k+' style="background:#fff"><img src="'+ esc(logo) +'" alt="" loading="lazy"></span>';
-    return '<span'+k+' style="background:'+ esc((c&&c.color)||"#888") +'">'+ esc((c&&c.mono)||"?") +'</span>';
+    return '<span'+k+' style="background:'+ esc(safeColor(c&&c.color, "#888")) +'">'+ esc((c&&c.mono)||"?") +'</span>';
   }
   var BLURB = {
     "Data Engineer":{en:"Own the Snowflake / dbt pipelines behind a 10M-user DAP.", ja:"1,000万ユーザーのDAPを支えるSnowflake / dbt基盤を担当。"},
@@ -4204,7 +4219,7 @@
     var logo = (typeof PARTNER_LOGOS !== "undefined") ? PARTNER_LOGOS[p.name] : null;
     var mark = logo
       ? '<span class="pf-mark"><img src="'+ esc(logo) +'" alt=""></span>'
-      : '<span class="pf-mark pf-mono" style="background:'+ esc(p.color) +'">'+ esc(p.mono) +'</span>';
+      : '<span class="pf-mark pf-mono" style="background:'+ esc(safeColor(p.color)) +'">'+ esc(p.mono) +'</span>';
     var word = '<span class="pf-name"'+ (logo ? '' : ' style="color:'+ esc(p.color) +'"') +'>'+ esc(p.name) +'</span>';
     return '<div class="pf-card" title="'+ esc(p.name) +'">'+ mark + word +'</div>';
   }
@@ -4312,7 +4327,7 @@
          and ":" alive, so an unvalidated value could append its own declarations
          (a full-viewport overlay, say). The proxy already narrows this; a second
          backend speaking the same wire might not. */
-      var safeCol = (a.category && /^(#[0-9a-fA-F]{3,8}|rgba?\([\d.,\s%]+\))$/.test(String(a.category.color||"").trim())) ? String(a.category.color).trim() : "";
+      var safeCol = (a.category && a.category.color) ? safeColor(a.category.color, "") : "";
       var chipStyle = safeCol ? ' style="color:'+ esc(safeCol) +'"' : '';
       node.innerHTML=
         (a.image && a.image.src ? '<img class="art-img" src="'+ esc(a.image.src) +'" alt="'+ esc(a.image.alt||"") +'" loading="lazy">' : '')+
@@ -4498,7 +4513,9 @@
     list.forEach(function(r){
       grid.appendChild(el("article","rev",
         '<p class="quote">“'+ esc(r.q[lang]||r.q.en) +'”</p>'+
-        '<div class="who"><span class="avatar sm" style="background:'+r.color+'">'+ esc(r.init) +'</span>'+
+        /* safeColor(): admin-authored and reaches a style attribute — validate the
+           value, don't just escape it (LW.safeColor, shared with every other sink) */
+        '<div class="who"><span class="avatar sm" style="background:'+ esc(safeColor(r.color)) +'">'+ esc(r.init) +'</span>'+
         '<div><div class="nm">'+ esc(r.name) +'</div><div class="rl">'+ esc(r.role[lang]||r.role.en) +'</div></div></div>'));
     });
   }
