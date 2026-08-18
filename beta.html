@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tokyo Samurai Dev — Beta Preview</title>
+
+<!-- Keep this page OUT of search results. It is a preview shown to partners, and it
+     must never compete with, or be mistaken for, the live board at tokyo-samurai-dev.jp. -->
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+
+<!-- WHY THIS IS A WRAPPER AND NOT A COPY.
+     longwave-dev.html is the same bundle the live site serves (dev-platform-web vendors
+     it through the upstream/poc submodule). Editing it to add a banner would put "BETA"
+     across production. Framing it instead leaves that file byte-identical, and this page
+     stays ~2KB rather than duplicating 1.8MB into the repo on every build. -->
+<style>
+  :root { --beta-bg:#1f2d3d; --beta-fg:#fff; --beta-accent:#ffc93c; --beta-h:auto; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; height:100%; background:var(--beta-bg); }
+  .beta-bar {
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    background:var(--beta-bg); color:var(--beta-fg);
+    padding:10px 18px; display:flex; align-items:center; gap:12px;
+    flex-wrap:wrap; line-height:1.4; border-bottom:3px solid var(--beta-accent);
+  }
+  .beta-tag {
+    background:var(--beta-accent); color:#1f2d3d; font-weight:800;
+    font-size:12px; letter-spacing:.09em; padding:4px 10px; border-radius:4px;
+    white-space:nowrap;
+  }
+  .beta-msg { font-size:14px; font-weight:500; }
+  .beta-msg strong { font-weight:800; }
+  .beta-sub { font-size:13px; opacity:.75; }
+  /* Fill whatever height the bar leaves, without hard-coding the bar's height —
+     it wraps to two lines on a phone. */
+  .beta-frame { flex:1 1 auto; width:100%; border:0; display:block; }
+  body { display:flex; flex-direction:column; }
+  @media (max-width:640px) { .beta-msg { font-size:13px; } .beta-sub { display:none; } }
+</style>
+</head>
+<body>
+
+<div class="beta-bar" role="note" aria-label="Preview notice">
+  <span class="beta-tag">BETA PREVIEW</span>
+  <span class="beta-msg">
+    <strong>Not a live service.</strong> A preview build shown with sample listings.
+  </span>
+  <span class="beta-sub">Features and content are still changing.</span>
+</div>
+
+<iframe class="beta-frame" src="./longwave-dev.html"
+        title="Tokyo Samurai Dev preview"
+        referrerpolicy="no-referrer"></iframe>
+
+</body>
+</html>
