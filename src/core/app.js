@@ -173,15 +173,22 @@
     } else { document.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); }); }
   }
 
-  /* ---------------- backend probe ----------------
-     One-shot /api/health check at boot: proves a real backend is reachable (vs. a static
-     host that has no /api), so the write path can be honest instead of firing form submits
-     into a 404 and faking success. Runs early; resolves well before a user finishes a form. */
+  /* ---------------- lead-capture probe ----------------
+     One-shot /healthz check at boot: proves THE PROXY that captures leads is present (vs. a
+     static host like GitHub Pages that has no /api), so the write path is honest instead of
+     firing form submits into a 404 and faking success.
+
+     Deliberately /healthz, NOT /api/health: /healthz is the proxy's OWN liveness and stays
+     200 even when the backend is napping, whereas /api/health mirrors the backend and 503s
+     during a cold start. The proxy captures every lead durably BEFORE forwarding (capture-
+     first), so a sleeping backend must never gate submission — probing /api/health here is
+     exactly what silently switched lead capture off for the first visitor after any idle
+     period. Runs early; resolves well before a user finishes a form. */
   function probeApi(){
     if(!served()) return;   /* file:// → definitely no API */
     var ctrl=(typeof AbortController!=="undefined")?new AbortController():null;
     var timer=ctrl?setTimeout(function(){ ctrl.abort(); },5000):null;
-    fetch("/api/health", ctrl?{signal:ctrl.signal}:undefined)
+    fetch("/healthz", ctrl?{signal:ctrl.signal}:undefined)
       .then(function(r){ apiReady = !!(r && r.ok); })
       .catch(function(){ apiReady=false; })
       .then(function(){ if(timer) clearTimeout(timer); });

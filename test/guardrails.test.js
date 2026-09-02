@@ -158,3 +158,15 @@ test("the CSP meta allows Google Analytics (script, beacons, pixels)", () => {
   assert.match(csp, /connect-src[^;]*google-analytics\.com/, "connect-src must allow *.google-analytics.com or GA4 beacons are refused");
   assert.match(csp, /img-src[^;]*google-analytics\.com/, "img-src must allow *.google-analytics.com for the pixel fallback");
 });
+
+/* --- Reliability: a napping backend must not silently disable lead capture --- */
+test("lead-capture probe targets /healthz (proxy liveness), never /api/health (backend)", () => {
+  /* The proxy captures every lead durably BEFORE forwarding, so submission must depend on
+     the PROXY being up, not on the backend being warm. Probing /api/health (which 503s during
+     a backend cold start) is exactly what dropped the first applicant after any idle period:
+     it flipped apiReady false and the form silently discarded the lead behind a success box. */
+  assert.match(bundle, /fetch\(\s*["']\/healthz["']/,
+    "the boot probe must hit /healthz (the proxy's own liveness), so a sleeping backend can't disable lead capture");
+  assert.doesNotMatch(bundle, /fetch\(\s*["']\/api\/health["']/,
+    "the lead-capture gate is probing /api/health again — that 503s on a cold backend and silently drops submissions; probe /healthz instead");
+});

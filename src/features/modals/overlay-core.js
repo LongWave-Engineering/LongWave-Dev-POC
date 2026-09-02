@@ -14,16 +14,18 @@
   function val(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; }
   /* blank every listed field so a returning visitor never sees a previous person's input */
   function clearFields(ids){ ids.forEach(function(s){ if($(s)) $(s).value=""; }); }
-  /* fire-and-forget a lead — only when a backend is actually reachable (apiReady). On a
-     static host / offline there's no /api, so we DON'T pretend to submit (see leadDone). */
+  /* fire-and-forget a lead — only when a lead-capturing proxy is present (apiReady, set by
+     probing /healthz). On a static host / offline there's no /api, so we DON'T pretend to
+     submit (see leadDone). */
   function postLead(body){
     if(!apiReady) return Promise.resolve(false);
-    /* resolve true only when the proxy confirms a backend actually RECEIVED it
-       ({forwarded:true}) — a reachable proxy whose upstream rejected the lead
-       (rate limit, validation, outage) must not count as delivered */
+    /* Success = the proxy answered 200. It captures every lead durably BEFORE it tries the
+       backend (capture-first), so a 200 means "we have it and will keep trying to forward",
+       even when the backend is asleep. Gating success on {forwarded:true} instead used to
+       tell an applicant whose lead WAS safely captured to try again — the capture is the
+       delivery that counts here, forwarding is the proxy's problem after that. */
     return fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
-      .then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(d){ return !!(d && d.forwarded); })
+      .then(function(r){ return !!(r && r.ok); })
       .catch(function(){ return false; });
   }
   /* Optimistic-but-honest confirmation: callers show success immediately, then this
