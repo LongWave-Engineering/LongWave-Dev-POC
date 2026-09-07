@@ -41,7 +41,11 @@
     $("#mRole").textContent=softBreak(roleL(job));
     /* the posting's own title, when the headline above is a canonical label */
     var _rd=$("#mRoleDetail"); if(_rd){ _rd.textContent=roleDetailL(job); _rd.hidden=!roleDetailL(job); }
-    $("#mCo").textContent=c.name+" · "+c.sector[lang]+(job.loc?" · "+locL(job):"");
+    /* guard EACH separator: every company currently ships an empty sector, which
+       rendered "mico ·  · Osaka" (a doubled dot around the blank). Show a " · " only
+       before a part that actually has text. */
+    var _sec=(c.sector&&c.sector[lang])||"";
+    $("#mCo").textContent=c.name+(_sec?" · "+_sec:"")+(job.loc?" · "+locL(job):"");
     $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe")));
     var tags=jpTag(job.jp)+'<span class="tag tag--meta">'+esc(remoteLabel(job.remote))+'</span>';
     if(job.flexHours) tags+='<span class="tag tag--meta">'+esc(t("jd_flex"))+'</span>';
