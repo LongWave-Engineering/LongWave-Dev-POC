@@ -4540,16 +4540,18 @@
   function val(id){ var n=$(id); return n && n.value.trim() ? n.value.trim() : ""; }
   /* blank every listed field so a returning visitor never sees a previous person's input */
   function clearFields(ids){ ids.forEach(function(s){ if($(s)) $(s).value=""; }); }
-  /* fire-and-forget a lead — only when a backend is actually reachable (apiReady). On a
-     static host / offline there's no /api, so we DON'T pretend to submit (see leadDone). */
+  /* fire-and-forget a lead — only when a lead-capturing proxy is present (apiReady, set by
+     probing /healthz). On a static host / offline there's no /api, so we DON'T pretend to
+     submit (see leadDone). */
   function postLead(body){
     if(!apiReady) return Promise.resolve(false);
-    /* resolve true only when the proxy confirms a backend actually RECEIVED it
-       ({forwarded:true}) — a reachable proxy whose upstream rejected the lead
-       (rate limit, validation, outage) must not count as delivered */
+    /* Success = the proxy answered 200. It captures every lead durably BEFORE it tries the
+       backend (capture-first), so a 200 means "we have it and will keep trying to forward",
+       even when the backend is asleep. Gating success on {forwarded:true} instead used to
+       tell an applicant whose lead WAS safely captured to try again — the capture is the
+       delivery that counts here, forwarding is the proxy's problem after that. */
     return fetch("/api/leads",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)})
-      .then(function(r){ return r.ok ? r.json() : null; })
-      .then(function(d){ return !!(d && d.forwarded); })
+      .then(function(r){ return !!(r && r.ok); })
       .catch(function(){ return false; });
   }
   /* Optimistic-but-honest confirmation: callers show success immediately, then this
@@ -5013,11 +5015,19 @@
       if(apiReady){
         var body=collectSignup(); body.job_ids=pendingApplyJobIds;
         fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) })
-          .then(function(r){ return r.ok ? r.json() : null; })
-          .then(function(d){
-            if(d && typeof syncAppliesFromServer==="function") syncAppliesFromServer(d.remaining);
-            if(d && d.forwarded){ if(typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs); repaintOpenModal(); return true; }
-            return false;
+          .then(function(r){
+            var captured = !!(r && r.ok);   /* 200 = the capture-first proxy has it durably */
+            return (captured ? r.json().catch(function(){ return null; }) : Promise.resolve(null))
+              .then(function(d){
+                if(d && typeof syncAppliesFromServer==="function") syncAppliesFromServer(d.remaining);
+                /* mark roles applied (and spend the lifetime cap) only when the BACKEND
+                   confirms it recorded them — a capture that hasn't forwarded yet must not
+                   fake an "Applied" state or burn the cap. */
+                if(d && d.forwarded){ if(typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs); repaintOpenModal(); }
+                /* but the applicant succeeded the moment the proxy captured it; only a genuine
+                   non-delivery (network error / proxy !ok) asks them to retry. */
+                return captured;
+              });
           })
           .catch(function(){ return false; })
           .then(function(delivered){ if(!delivered && succ){ var m=succ.querySelector(".msg")||succ; m.textContent=t("lead_retry"); } });
@@ -5355,15 +5365,22 @@
     } else { document.querySelectorAll(".reveal").forEach(function(n){ n.classList.add("in"); }); }
   }
 
-  /* ---------------- backend probe ----------------
-     One-shot /api/health check at boot: proves a real backend is reachable (vs. a static
-     host that has no /api), so the write path can be honest instead of firing form submits
-     into a 404 and faking success. Runs early; resolves well before a user finishes a form. */
+  /* ---------------- lead-capture probe ----------------
+     One-shot /healthz check at boot: proves THE PROXY that captures leads is present (vs. a
+     static host like GitHub Pages that has no /api), so the write path is honest instead of
+     firing form submits into a 404 and faking success.
+
+     Deliberately /healthz, NOT /api/health: /healthz is the proxy's OWN liveness and stays
+     200 even when the backend is napping, whereas /api/health mirrors the backend and 503s
+     during a cold start. The proxy captures every lead durably BEFORE forwarding (capture-
+     first), so a sleeping backend must never gate submission — probing /api/health here is
+     exactly what silently switched lead capture off for the first visitor after any idle
+     period. Runs early; resolves well before a user finishes a form. */
   function probeApi(){
     if(!served()) return;   /* file:// → definitely no API */
     var ctrl=(typeof AbortController!=="undefined")?new AbortController():null;
     var timer=ctrl?setTimeout(function(){ ctrl.abort(); },5000):null;
-    fetch("/api/health", ctrl?{signal:ctrl.signal}:undefined)
+    fetch("/healthz", ctrl?{signal:ctrl.signal}:undefined)
       .then(function(r){ apiReady = !!(r && r.ok); })
       .catch(function(){ apiReady=false; })
       .then(function(){ if(timer) clearTimeout(timer); });

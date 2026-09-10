@@ -72,11 +72,19 @@
       if(apiReady){
         var body=collectSignup(); body.job_ids=pendingApplyJobIds;
         fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) })
-          .then(function(r){ return r.ok ? r.json() : null; })
-          .then(function(d){
-            if(d && typeof syncAppliesFromServer==="function") syncAppliesFromServer(d.remaining);
-            if(d && d.forwarded){ if(typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs); repaintOpenModal(); return true; }
-            return false;
+          .then(function(r){
+            var captured = !!(r && r.ok);   /* 200 = the capture-first proxy has it durably */
+            return (captured ? r.json().catch(function(){ return null; }) : Promise.resolve(null))
+              .then(function(d){
+                if(d && typeof syncAppliesFromServer==="function") syncAppliesFromServer(d.remaining);
+                /* mark roles applied (and spend the lifetime cap) only when the BACKEND
+                   confirms it recorded them — a capture that hasn't forwarded yet must not
+                   fake an "Applied" state or burn the cap. */
+                if(d && d.forwarded){ if(typeof markAppliedJobs==="function") markAppliedJobs(appliedJobs); repaintOpenModal(); }
+                /* but the applicant succeeded the moment the proxy captured it; only a genuine
+                   non-delivery (network error / proxy !ok) asks them to retry. */
+                return captured;
+              });
           })
           .catch(function(){ return false; })
           .then(function(delivered){ if(!delivered && succ){ var m=succ.querySelector(".msg")||succ; m.textContent=t("lead_retry"); } });
