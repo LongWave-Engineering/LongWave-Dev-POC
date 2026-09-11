@@ -225,6 +225,16 @@
        which is normalized even when glued ("-content" → "- content"). */
     var JD_BULLET = /^[\s　]*(?:[・•●○◦‣▪▫■][ \t　]*|[*‐‑–—][ \t　]+|-[ \t　]*)(\S.*)$/;
 
+    /* Divider line → "---". A line made ONLY of 3+ rule glyphs: markdown thematic breaks
+       ("---" "***" "___", spaced "* * *" / "- - -"), plain "=====" rulers, and the JP /
+       fullwidth rules the live JDs use (ーーー ――― ─── ━━━ ＝＝＝ －－－ ￣￣￣ ———).
+       Tested BEFORE JD_BULLET, which would otherwise read "---" as the bullet "- --" and
+       "* * *" as "- * *". A rule directly under a text line is still a divider, never a
+       markdown setext heading: in the live data that shape is a rule under a sentence
+       ("…duties determined by the company\n---"), not a title. Prose never matches:
+       "--flag", "3-5 years", "- item" all carry a non-rule character. */
+    var JD_RULE = /^[\s　]*(?:(?:[-*_=][ \t　]*){3,}|[ー―─━＝－￣—–]{3,}[\s　]*)$/;
+
     /* Numbered markers (1.  2)  ３．  ①…⑳) are KEPT as-is, not converted to "- ".
        "1." only counts when NOT followed by a digit, so "1.5 years" stays prose. */
     var JD_NUMBERED = /^[\s　]*(?:[①-⑳]|\d{1,4}[．）]|\d{1,4}[.)](?!\d))/;
@@ -266,7 +276,8 @@
        features/modals/modal-job.js, which runs on the escaped output of jdBlocks(). */
 
     /* Deterministic, idempotent cleanup of JD plain text: LF-normalized, per-line
-       trailing whitespace stripped, bullet glyphs unified to "- ", blank runs collapsed
+       trailing whitespace stripped, bullet glyphs unified to "- ", divider lines unified
+       to "---" (see JD_RULE), blank runs collapsed
        to one blank line, a blank line guaranteed before each heading, outer blank lines
        trimmed, and internal ATS tags (with any heading they leave empty) removed. Beyond
        those tags it never touches the words, only the layout. */
@@ -280,8 +291,11 @@
       for(var i=0;i<lines.length;i++){
         var line = lines[i].replace(/[ \t　]+$/,"");
         if(JD_ATS_TAG.test(line)){ droppedTag = true; continue; }   /* strip internal ATS tag */
-        var bm = line.match(JD_BULLET);
-        if(bm) line = "- " + bm[1];
+        if(JD_RULE.test(line)) line = "---";   /* divider first: never let it become a bullet */
+        else {
+          var bm = line.match(JD_BULLET);
+          if(bm) line = "- " + bm[1];
+        }
         /* let section headings breathe: ensure one blank line before them */
         if(out.length && out[out.length-1] !== "" && jdHeading(line)) out.push("");
         out.push(line);
@@ -308,6 +322,10 @@
                                   numbered lines join the run with their marker kept
          {t:"p",  x:"a\nb"}       remaining lines of a blank-line-delimited chunk,
                                   joined with \n (the renderer decides <br>)
+         {t:"hr"}                 a divider line; it closes any open list/paragraph run.
+                                  Leading, trailing and back-to-back dividers are dropped:
+                                  the section label above already separates, so a rule
+                                  there would only double it.
        Blank-line chunks delimit blocks. Empty input → []. */
     function jdBlocks(text){
       var blocks = [];
@@ -320,6 +338,12 @@
         for(var j=0;j<lines.length;j++){
           var line = lines[j];
           if(line === "") continue;
+          if(JD_RULE.test(line)){
+            ul = null; para = null;
+            var prev = blocks[blocks.length-1];
+            if(prev && prev.t !== "hr") blocks.push({ t:"hr" });   /* none leading, none doubled */
+            continue;
+          }
           var h = jdHeading(line);
           if(h){ ul = null; para = null; blocks.push({ t:"h", x:h }); continue; }
           if(line.indexOf("- ") === 0 || JD_NUMBERED.test(line)){
@@ -333,6 +357,7 @@
           else { para.x += "\n" + line; }
         }
       }
+      if(blocks.length && blocks[blocks.length-1].t === "hr") blocks.pop();   /* none trailing */
       return blocks;
     }
 
