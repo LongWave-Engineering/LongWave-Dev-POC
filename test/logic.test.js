@@ -214,6 +214,24 @@ test("formatJdText() keeps numbered markers, ※ notes, and prose dashes/asteris
   assert.equal(LW.formatJdText("—glued em dash stays"), "—glued em dash stays");
 });
 
+test("formatJdText() unifies divider lines to '---' instead of reading them as bullets", () => {
+  // markdown thematic breaks, plain rulers, and the JP / fullwidth rules the live JDs use
+  const rules = ["---", "***", "___", "* * *", "- - -", "=====", "-------", "  ---  ", "*\t*\t*",
+    "ーーーー", "ーーー", "────", "――――", "━━━━", "＝＝＝＝", "－－－－", "￣￣￣￣", "———"];
+  for (const rule of rules) {
+    assert.equal(LW.formatJdText("a\n" + rule + "\nb"), "a\n---\nb", `${JSON.stringify(rule)} should be a divider`);
+  }
+  // the regression: "---" used to become the bullet "- --", "* * *" the bullet "- * *"
+  assert.equal(LW.formatJdText("---"), "---");
+  assert.equal(LW.formatJdText("* * *"), "---");
+  // real bullets are still bullets
+  assert.equal(LW.formatJdText("- item\n* item\n・item"), "- item\n- item\n- item");
+  // too short / mixed with text → not a divider
+  for (const s of ["--", "ーー", "3-5 years", "a --- b", "=== Title ===", "サーバー", "**bold**"]) {
+    assert.notEqual(LW.formatJdText(s), "---", `${JSON.stringify(s)} must not be a divider`);
+  }
+});
+
 test("formatJdText() inserts a blank line before headings so sections breathe", () => {
   assert.equal(LW.formatJdText("intro\n【募集背景】\n増員です。"), "intro\n\n【募集背景】\n増員です。");
   assert.equal(LW.formatJdText("intro\n▼業務内容\n開発"), "intro\n\n▼業務内容\n開発");
@@ -233,6 +251,7 @@ test("formatJdText() is idempotent on messy JP and EN samples", () => {
     "【募集背景】  \r\n事業拡大につき増員。\n\n\n▼業務内容\n・フロントエンド開発\n・コードレビュー\n選考フロー：\n①書類選考\n②面接\n※応相談",
     "About us\nOverview:\nWe build things.\n* TypeScript\n– Teamwork\n-Ownership\n\n\n\nBenefits:\n1. Insurance\n2) Stock",
     "", "plain single line",
+    "intro\n---\n・a\n* * *\nーーーー\n\n\n━━━\n- - -\ntext\n  ___  ",
   ];
   for (const s of samples) {
     const once = LW.formatJdText(s);
@@ -331,6 +350,48 @@ test("jdBlocks() handles the live-data shapes: ・-joined demo items and '- '-pr
   assert.deepEqual(LW.jdBlocks("Health insurance\nStock options"), [
     { t: "p", x: "Health insurance\nStock options" },
   ]);
+});
+
+test("jdBlocks() emits {t:'hr'} for dividers, closing the open list / paragraph run", () => {
+  assert.deepEqual(LW.jdBlocks("## Role\n\nWe build.\n\n---\n\n## Perks\n\n- Remote"), [
+    { t: "h", x: "Role" },
+    { t: "p", x: "We build." },
+    { t: "hr" },
+    { t: "h", x: "Perks" },
+    { t: "ul", items: ["Remote"] },
+  ]);
+  // a rule glued to its neighbours (no blank lines) still splits the runs: both live shapes
+  assert.deepEqual(LW.jdBlocks("- one\n- two\n---\nafter"), [
+    { t: "ul", items: ["one", "two"] },
+    { t: "hr" },
+    { t: "p", x: "after" },
+  ]);
+  // …and a rule under a sentence is a divider, not a setext heading
+  assert.deepEqual(LW.jdBlocks("line a\nline b\nーーーーーーーーー\nline c"), [
+    { t: "p", x: "line a\nline b" },
+    { t: "hr" },
+    { t: "p", x: "line c" },
+  ]);
+});
+
+test("jdBlocks() drops leading, trailing and back-to-back dividers (the section label already separates)", () => {
+  assert.deepEqual(LW.jdBlocks("---\nintro\n\n* * *\n\n***\n\nbody\n\n━━━━"), [
+    { t: "p", x: "intro" },
+    { t: "hr" },
+    { t: "p", x: "body" },
+  ]);
+  assert.deepEqual(LW.jdBlocks("---"), []);
+  assert.deepEqual(LW.jdBlocks("---\n\n* * *"), []);
+  // stripping a trailing ATS tag + its heading must not leave a dangling rule behind
+  assert.deepEqual(LW.jdBlocks("body\n\n---\n\n## Other\n\nassigned-to:T-804QJ"), [{ t: "p", x: "body" }]);
+});
+
+test("jdBlocks() never reads bullets or dash-bearing prose as a divider", () => {
+  assert.deepEqual(LW.jdBlocks("- item\n* item\n・item"), [{ t: "ul", items: ["item", "item", "item"] }]);
+  assert.deepEqual(LW.jdBlocks("3-5 years of experience"), [{ t: "p", x: "3-5 years of experience" }]);
+  for (const s of ["--flag", "-- note", "--", "a --- b", "ーー", "サーバー", "**bold**", "=== Title ==="]) {
+    assert.ok(!LW.jdBlocks(s).some((b) => b.t === "hr"), `${JSON.stringify(s)} must not be a divider`);
+  }
 });
 
 test("calcAge() computes whole years with an injectable 'now'", () => {

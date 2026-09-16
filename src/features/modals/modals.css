@@ -31,6 +31,8 @@
   .modal .m-body ul.jd-ul{margin:.6em 0;padding-left:1.2em;list-style:disc;}
   .modal .m-body .jd-ul li{margin:.35em 0;}
   .modal .m-body h5.jd-h{font-size:1.04rem;font-weight:700;color:var(--ink);margin:1.1em 0 .35em;}
+  /* JD divider (a source "---" / "ーーー" line), drawn as the same hairline as the actions bar */
+  .modal .m-body hr.jd-hr{border:0;border-top:1px solid var(--line);margin:1.1em 0;}
   .modal .m-body>:first-child{margin-top:0;}
   .modal .m-body>:last-child{margin-bottom:0;}
   /* JD content is view-only on the site: selection and printing are disabled as a

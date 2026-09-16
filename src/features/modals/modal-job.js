@@ -3,8 +3,8 @@
   var jobOverlay=$("#jobOverlay");
   var currentJob=null;   /* the job whose detail modal is open (for "Sign up to apply") */
 
-  /* JD body HTML from LW.jdBlocks(text): real headings/lists/paragraphs instead of a
-     nl2br() wall. Every piece of text is esc()'d here — jdBlocks returns plain strings. */
+  /* JD body HTML from LW.jdBlocks(text): real headings/lists/paragraphs/dividers instead
+     of a nl2br() wall. Every piece of text is esc()'d here — jdBlocks returns plain strings. */
   /* markdown bold (**label**) → <strong>. Runs on ALREADY-ESCAPED text, and excludes
      '<' so it can never span the <br> nl2br injects — the only HTML it adds is <strong>.
      This is the RENDERER half of JD formatting; block structure (## headings, lists,
@@ -13,6 +13,7 @@
   function jdHtml(text){
     return LW.jdBlocks(text).map(function(b){
       if(b.t==="h") return '<h5 class="jd-h">'+mdBold(esc(b.x))+'</h5>';
+      if(b.t==="hr") return '<hr class="jd-hr">';
       if(b.t==="ul") return '<ul class="jd-ul">'+b.items.map(function(it){ return '<li>'+mdBold(esc(it))+'</li>'; }).join("")+'</ul>';
       return '<p>'+mdBold(nl2br(b.x))+'</p>';   /* nl2br esc()'s, then \n → <br> within the group */
     }).join("");
