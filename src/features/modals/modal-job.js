@@ -14,7 +14,11 @@
     return LW.jdBlocks(text).map(function(b){
       if(b.t==="h") return '<h5 class="jd-h">'+mdBold(esc(b.x))+'</h5>';
       if(b.t==="hr") return '<hr class="jd-hr">';
-      if(b.t==="ul") return '<ul class="jd-ul">'+b.items.map(function(it){ return '<li>'+mdBold(esc(it))+'</li>'; }).join("")+'</ul>';
+      if(b.t==="ul") return '<ul class="jd-ul">'+b.items.map(function(it){
+        /* an item that numbers itself ("1." "①") drops the disc, or it shows two markers */
+        var liCls = LW.jdItemIsNumbered(it) ? ' class="jd-li-num"' : "";
+        return '<li'+liCls+'>'+mdBold(esc(it))+'</li>';
+      }).join("")+'</ul>';
       return '<p>'+mdBold(nl2br(b.x))+'</p>';   /* nl2br esc()'s, then \n → <br> within the group */
     }).join("");
   }

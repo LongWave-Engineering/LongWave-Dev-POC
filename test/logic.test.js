@@ -252,6 +252,7 @@ test("formatJdText() is idempotent on messy JP and EN samples", () => {
     "About us\nOverview:\nWe build things.\n* TypeScript\n– Teamwork\n-Ownership\n\n\n\nBenefits:\n1. Insurance\n2) Stock",
     "", "plain single line",
     "intro\n---\n・a\n* * *\nーーーー\n\n\n━━━\n- - -\ntext\n  ___  ",
+    "**Perks**\n- Remote\n\n**選考フロー**\n1. 書類選考\n2) 面接",
   ];
   for (const s of samples) {
     const once = LW.formatJdText(s);
@@ -392,6 +393,54 @@ test("jdBlocks() never reads bullets or dash-bearing prose as a divider", () => 
   for (const s of ["--flag", "-- note", "--", "a --- b", "ーー", "サーバー", "**bold**", "=== Title ==="]) {
     assert.ok(!LW.jdBlocks(s).some((b) => b.t === "hr"), `${JSON.stringify(s)} must not be a divider`);
   }
+});
+
+test("jdBlocks() reads a short all-bold line as a section title", () => {
+  assert.deepEqual(LW.jdBlocks("**Team Structure**\n\nFive engineers, two designers."), [
+    { t: "h", x: "Team Structure" },
+    { t: "p", x: "Five engineers, two designers." },
+  ]);
+  assert.deepEqual(LW.jdBlocks("**具体的な業務**："), [{ t: "h", x: "具体的な業務" }]);
+  // the wrapper/marker an imported title carries is stripped, like the 【…】 form
+  assert.deepEqual(LW.jdBlocks("**[About DealOn]**"), [{ t: "h", x: "About DealOn" }]);
+  assert.deepEqual(LW.jdBlocks("**■What work you will engage in**"), [{ t: "h", x: "What work you will engage in" }]);
+  assert.deepEqual(LW.jdBlocks("**▼募集背景**"), [{ t: "h", x: "募集背景" }]);
+  // …but a bracket that is the whole title keeps its words
+  assert.deepEqual(LW.jdBlocks("**[]**"), [{ t: "p", x: "**[]**" }]);
+  // a bolded SENTENCE stays prose, and inline bold is untouched
+  const sentence = "**This bolded line is far too long to be read as a section title**";
+  assert.deepEqual(LW.jdBlocks(sentence), [{ t: "p", x: sentence }]);
+  assert.deepEqual(LW.jdBlocks("We write **Go** and **TypeScript** here"), [
+    { t: "p", x: "We write **Go** and **TypeScript** here" },
+  ]);
+  // and it gets the same blank line above as every other heading form
+  assert.equal(LW.formatJdText("intro\n**Perks**\n- Remote"), "intro\n\n**Perks**\n- Remote");
+});
+
+test("every heading form yields the same tidy title (wrapper, marker and trailing colon off)", () => {
+  const title = (src) => LW.jdBlocks(src)[0];
+  assert.deepEqual(title("### [Appeal of This Position]"), { t: "h", x: "Appeal of This Position" });
+  assert.deepEqual(title("## ■Duties："), { t: "h", x: "Duties" });
+  assert.deepEqual(title("【募集背景】"), { t: "h", x: "募集背景" });
+  assert.deepEqual(title("▼業務内容"), { t: "h", x: "業務内容" });
+  assert.deepEqual(title("Overview:"), { t: "h", x: "Overview" });
+  assert.deepEqual(title("**[About DealOn]**"), { t: "h", x: "About DealOn" });
+  // the words themselves are never touched, only the wrapping
+  assert.deepEqual(title("## Working Conditions"), { t: "h", x: "Working Conditions" });
+});
+
+test("jdItemIsNumbered(): an item that numbers itself must not also get a disc", () => {
+  // fullwidth digits ("３．") are not markers to JD_NUMBERED and never appear on the
+  // board (measured 2026-09-29: 0 lines), so they stay prose, same as before.
+  for (const yes of ["1. Screening", "2) Interview", "①内定", "1．書類選考"]) {
+    assert.equal(LW.jdItemIsNumbered(yes), true, `${yes} numbers itself`);
+  }
+  for (const no of ["Health insurance", "1.5 years of experience", "", null, undefined, 42]) {
+    assert.equal(LW.jdItemIsNumbered(no), false, `${String(no)} does not`);
+  }
+  // live JDs mix numbered steps and plain bullets in ONE run: only the numbered ones drop it
+  const items = LW.jdBlocks("- Remote OK\n1. Screening\n2) Interview")[0].items;
+  assert.deepEqual(items.map(LW.jdItemIsNumbered), [false, true, true]);
 });
 
 test("calcAge() computes whole years with an injectable 'now'", () => {
