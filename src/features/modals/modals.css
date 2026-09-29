@@ -22,15 +22,28 @@
   .modal .m-salary{font-family:var(--font-display);font-weight:800;font-size:1.48rem;margin:22px 0 8px;}
   .modal .m-salary span{display:block;font-size:.94rem;font-weight:600;color:var(--slate);margin-bottom:2px;}
   .modal .m-tags{margin:14px 0 8px;}
-  .modal h4.m-sub{font-size:1.14rem;margin:24px 0 10px;}
+  .modal h4.m-sub{font-size:1.14rem;margin:24px 0 10px;color:var(--ink);}
+  /* Long JDs are a wall of sections. Give every section label after the first a
+     hairline above it, so the eye can find where one section ends and the next
+     begins without reading. The first label keeps hugging the salary block. */
+  .modal .m-body + h4.m-sub{border-top:1px solid var(--line);padding-top:20px;margin-top:26px;}
   /* JD section body — structured by LW.jdBlocks (headings / lists / paragraphs).
      Airy line-height for long bilingual JDs; first/last margins collapse so each
      section hugs its m-sub label instead of double-spacing. */
-  .modal .m-body{color:var(--ink-soft);font-size:1.07rem;line-height:1.7;}
+  /* overflow-wrap:anywhere so a long unbroken URL (JDs are full of them) wraps instead
+     of pushing the modal sideways. CJK prose already wraps anywhere by itself. */
+  .modal .m-body{color:var(--ink-soft);font-size:1.07rem;line-height:1.7;overflow-wrap:anywhere;}
   .modal .m-body p{margin:.6em 0;}
-  .modal .m-body ul.jd-ul{margin:.6em 0;padding-left:1.2em;list-style:disc;}
-  .modal .m-body .jd-ul li{margin:.35em 0;}
-  .modal .m-body h5.jd-h{font-size:1.04rem;font-weight:700;color:var(--ink);margin:1.1em 0 .35em;}
+  .modal .m-body ul.jd-ul{margin:.7em 0;padding-left:1.15em;list-style:disc;}
+  .modal .m-body .jd-ul li{margin:.42em 0;}
+  /* the disc is punctuation, not content: mute it so 100-bullet JDs read as text */
+  .modal .m-body .jd-ul>li::marker{color:var(--line-strong);}
+  /* an item that numbers itself ("1." "①") drops the disc, or it shows two markers.
+     Its text still lines up with the bulleted items around it. */
+  .modal .m-body .jd-ul>li.jd-li-num{list-style:none;}
+  .modal .m-body h5.jd-h{font-size:1.04rem;font-weight:700;color:var(--ink);margin:1.35em 0 .3em;}
+  /* a title belongs to what follows it, so keep the gap under it small */
+  .modal .m-body h5.jd-h + p,.modal .m-body h5.jd-h + ul.jd-ul{margin-top:.15em;}
   /* JD divider (a source "---" / "ーーー" line), drawn as the same hairline as the actions bar */
   .modal .m-body hr.jd-hr{border:0;border-top:1px solid var(--line);margin:1.1em 0;}
   .modal .m-body>:first-child{margin-top:0;}

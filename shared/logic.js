@@ -243,22 +243,43 @@
        ：/: stripped) or "" when the line is not a heading. A heading is (a) a markdown
        ATX heading "## Title" (1–6 #, a space required so "#1" stays prose), (b) a line
        wrapped in 【…】, (c) a short (≤40 chars) non-bullet line ending with ： or :, or
-       (d) a ▼/◆ marker followed by ≤30 chars of text. Shared by formatJdText (which inserts
+       (d) a ▼/◆ marker followed by ≤30 chars of text, or (e) a short line that is
+       entirely **bold** (imported JDs title their sections that way). Shared by formatJdText (which inserts
        a blank line before headings) and jdBlocks (which emits them as {t:"h"}). */
+    /* One shape for every heading form. Imported JDs title sections as "### [Appeal]",
+       "**■Duties**", "【募集背景】", "Overview:" and mix them inside one JD, so the
+       wrapper/marker/trailing colon comes off here and the modal reads as one style. */
+    function jdTitleText(x){
+      var s = String(x).trim(), i;
+      for(i = 0; i < 2; i++){
+        s = s.replace(/[：:]$/, "").trim();
+        s = s.replace(/^[\[［](.+)[\]］]$/, "$1").trim();
+        s = s.replace(/^[・•●○◦‣▪▫■◆▼◇☆★]+[ \t　]*/, "").trim();
+      }
+      return s;
+    }
+
     function jdHeading(line){
       var s = String(line).trim(), m, x;
       if(!s || JD_BULLET.test(s)) return "";
       m = s.match(/^#{1,6}[ \t　]+(.+?)[ \t　#]*$/);   /* markdown "## Working Conditions" */
-      if(m) return m[1].replace(/\*\*/g,"").replace(/[：:]$/,"").trim();
+      if(m) return jdTitleText(m[1].replace(/\*\*/g,""));
       m = s.match(/^【(.+)】[：:]?$/);
-      if(m) return m[1].trim().replace(/[：:]$/,"").trim();
+      if(m) return jdTitleText(m[1]);
+      m = s.match(/^\*\*([^*]+)\*\*[：:]?$/);           /* "**Specific Job Duties**" */
+      if(m){
+        x = jdTitleText(m[1]);
+        /* after unwrapping, a title must still say something: "**[]**" is not a heading */
+        if(!/[0-9A-Za-z\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7a3]/.test(x)) return "";
+        return (x.length <= 40) ? x : "";        /* a bolded SENTENCE stays prose */
+      }
       m = s.match(/^[▼◆](.+)$/);
       if(m){
-        x = m[1].trim();
-        return (x && x.length <= 30) ? x.replace(/[：:]$/,"").trim() : "";
+        x = jdTitleText(m[1]);
+        return (x && x.length <= 30) ? x : "";
       }
       if(s.length <= 40 && /[：:]$/.test(s)){
-        x = s.replace(/[：:]$/,"").trim();
+        x = jdTitleText(s);
         return x; /* "" (a bare colon line) falls through as not-a-heading */
       }
       return "";
@@ -361,6 +382,14 @@
       return blocks;
     }
 
+    /* This list item carries its own number marker ("1." "2)" "①"), so the renderer must
+       not put a disc in front of it as well. Per ITEM, not per run: live JDs mix numbered
+       steps and plain bullets inside one run, and only the numbered ones double up.
+       Lives here (pure, unit-tested) rather than in the renderer, which has no tests. */
+    function jdItemIsNumbered(item){
+      return typeof item === "string" && JD_NUMBERED.test(item);
+    }
+
     /* Router mapping kept here (pure) so the route set lives in ONE place and the
        hash→route resolution is unit-testable without a DOM. */
     var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", articles:"#/articles", cv:"#/cv", post:"#/post", privacy:"#/privacy" };
@@ -397,7 +426,8 @@
       teaserPick: teaserPick,
       calcAge: calcAge,
       formatJdText: formatJdText,
-      jdBlocks: jdBlocks
+      jdBlocks: jdBlocks,
+      jdItemIsNumbered: jdItemIsNumbered
     };
   })();
 

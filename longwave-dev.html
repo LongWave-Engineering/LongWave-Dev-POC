@@ -603,15 +603,28 @@
   .modal .m-salary{font-family:var(--font-display);font-weight:800;font-size:1.48rem;margin:22px 0 8px;}
   .modal .m-salary span{display:block;font-size:.94rem;font-weight:600;color:var(--slate);margin-bottom:2px;}
   .modal .m-tags{margin:14px 0 8px;}
-  .modal h4.m-sub{font-size:1.14rem;margin:24px 0 10px;}
+  .modal h4.m-sub{font-size:1.14rem;margin:24px 0 10px;color:var(--ink);}
+  /* Long JDs are a wall of sections. Give every section label after the first a
+     hairline above it, so the eye can find where one section ends and the next
+     begins without reading. The first label keeps hugging the salary block. */
+  .modal .m-body + h4.m-sub{border-top:1px solid var(--line);padding-top:20px;margin-top:26px;}
   /* JD section body — structured by LW.jdBlocks (headings / lists / paragraphs).
      Airy line-height for long bilingual JDs; first/last margins collapse so each
      section hugs its m-sub label instead of double-spacing. */
-  .modal .m-body{color:var(--ink-soft);font-size:1.07rem;line-height:1.7;}
+  /* overflow-wrap:anywhere so a long unbroken URL (JDs are full of them) wraps instead
+     of pushing the modal sideways. CJK prose already wraps anywhere by itself. */
+  .modal .m-body{color:var(--ink-soft);font-size:1.07rem;line-height:1.7;overflow-wrap:anywhere;}
   .modal .m-body p{margin:.6em 0;}
-  .modal .m-body ul.jd-ul{margin:.6em 0;padding-left:1.2em;list-style:disc;}
-  .modal .m-body .jd-ul li{margin:.35em 0;}
-  .modal .m-body h5.jd-h{font-size:1.04rem;font-weight:700;color:var(--ink);margin:1.1em 0 .35em;}
+  .modal .m-body ul.jd-ul{margin:.7em 0;padding-left:1.15em;list-style:disc;}
+  .modal .m-body .jd-ul li{margin:.42em 0;}
+  /* the disc is punctuation, not content: mute it so 100-bullet JDs read as text */
+  .modal .m-body .jd-ul>li::marker{color:var(--line-strong);}
+  /* an item that numbers itself ("1." "①") drops the disc, or it shows two markers.
+     Its text still lines up with the bulleted items around it. */
+  .modal .m-body .jd-ul>li.jd-li-num{list-style:none;}
+  .modal .m-body h5.jd-h{font-size:1.04rem;font-weight:700;color:var(--ink);margin:1.35em 0 .3em;}
+  /* a title belongs to what follows it, so keep the gap under it small */
+  .modal .m-body h5.jd-h + p,.modal .m-body h5.jd-h + ul.jd-ul{margin-top:.15em;}
   /* JD divider (a source "---" / "ーーー" line), drawn as the same hairline as the actions bar */
   .modal .m-body hr.jd-hr{border:0;border-top:1px solid var(--line);margin:1.1em 0;}
   .modal .m-body>:first-child{margin-top:0;}
@@ -1850,22 +1863,43 @@
        ：/: stripped) or "" when the line is not a heading. A heading is (a) a markdown
        ATX heading "## Title" (1–6 #, a space required so "#1" stays prose), (b) a line
        wrapped in 【…】, (c) a short (≤40 chars) non-bullet line ending with ： or :, or
-       (d) a ▼/◆ marker followed by ≤30 chars of text. Shared by formatJdText (which inserts
+       (d) a ▼/◆ marker followed by ≤30 chars of text, or (e) a short line that is
+       entirely **bold** (imported JDs title their sections that way). Shared by formatJdText (which inserts
        a blank line before headings) and jdBlocks (which emits them as {t:"h"}). */
+    /* One shape for every heading form. Imported JDs title sections as "### [Appeal]",
+       "**■Duties**", "【募集背景】", "Overview:" and mix them inside one JD, so the
+       wrapper/marker/trailing colon comes off here and the modal reads as one style. */
+    function jdTitleText(x){
+      var s = String(x).trim(), i;
+      for(i = 0; i < 2; i++){
+        s = s.replace(/[：:]$/, "").trim();
+        s = s.replace(/^[\[［](.+)[\]］]$/, "$1").trim();
+        s = s.replace(/^[・•●○◦‣▪▫■◆▼◇☆★]+[ \t　]*/, "").trim();
+      }
+      return s;
+    }
+
     function jdHeading(line){
       var s = String(line).trim(), m, x;
       if(!s || JD_BULLET.test(s)) return "";
       m = s.match(/^#{1,6}[ \t　]+(.+?)[ \t　#]*$/);   /* markdown "## Working Conditions" */
-      if(m) return m[1].replace(/\*\*/g,"").replace(/[：:]$/,"").trim();
+      if(m) return jdTitleText(m[1].replace(/\*\*/g,""));
       m = s.match(/^【(.+)】[：:]?$/);
-      if(m) return m[1].trim().replace(/[：:]$/,"").trim();
+      if(m) return jdTitleText(m[1]);
+      m = s.match(/^\*\*([^*]+)\*\*[：:]?$/);           /* "**Specific Job Duties**" */
+      if(m){
+        x = jdTitleText(m[1]);
+        /* after unwrapping, a title must still say something: "**[]**" is not a heading */
+        if(!/[0-9A-Za-z\u3040-\u30ff\u4e00-\u9fff\uac00-\ud7a3]/.test(x)) return "";
+        return (x.length <= 40) ? x : "";        /* a bolded SENTENCE stays prose */
+      }
       m = s.match(/^[▼◆](.+)$/);
       if(m){
-        x = m[1].trim();
-        return (x && x.length <= 30) ? x.replace(/[：:]$/,"").trim() : "";
+        x = jdTitleText(m[1]);
+        return (x && x.length <= 30) ? x : "";
       }
       if(s.length <= 40 && /[：:]$/.test(s)){
-        x = s.replace(/[：:]$/,"").trim();
+        x = jdTitleText(s);
         return x; /* "" (a bare colon line) falls through as not-a-heading */
       }
       return "";
@@ -1968,6 +2002,14 @@
       return blocks;
     }
 
+    /* This list item carries its own number marker ("1." "2)" "①"), so the renderer must
+       not put a disc in front of it as well. Per ITEM, not per run: live JDs mix numbered
+       steps and plain bullets inside one run, and only the numbered ones double up.
+       Lives here (pure, unit-tested) rather than in the renderer, which has no tests. */
+    function jdItemIsNumbered(item){
+      return typeof item === "string" && JD_NUMBERED.test(item);
+    }
+
     /* Router mapping kept here (pure) so the route set lives in ONE place and the
        hash→route resolution is unit-testable without a DOM. */
     var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", articles:"#/articles", cv:"#/cv", post:"#/post", privacy:"#/privacy" };
@@ -2004,7 +2046,8 @@
       teaserPick: teaserPick,
       calcAge: calcAge,
       formatJdText: formatJdText,
-      jdBlocks: jdBlocks
+      jdBlocks: jdBlocks,
+      jdItemIsNumbered: jdItemIsNumbered
     };
   })();
 
@@ -4667,7 +4710,11 @@
     return LW.jdBlocks(text).map(function(b){
       if(b.t==="h") return '<h5 class="jd-h">'+mdBold(esc(b.x))+'</h5>';
       if(b.t==="hr") return '<hr class="jd-hr">';
-      if(b.t==="ul") return '<ul class="jd-ul">'+b.items.map(function(it){ return '<li>'+mdBold(esc(it))+'</li>'; }).join("")+'</ul>';
+      if(b.t==="ul") return '<ul class="jd-ul">'+b.items.map(function(it){
+        /* an item that numbers itself ("1." "①") drops the disc, or it shows two markers */
+        var liCls = LW.jdItemIsNumbered(it) ? ' class="jd-li-num"' : "";
+        return '<li'+liCls+'>'+mdBold(esc(it))+'</li>';
+      }).join("")+'</ul>';
       return '<p>'+mdBold(nl2br(b.x))+'</p>';   /* nl2br esc()'s, then \n → <br> within the group */
     }).join("");
   }
