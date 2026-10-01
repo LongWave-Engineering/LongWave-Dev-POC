@@ -308,8 +308,7 @@ test("jdBlocks() parses a JP job description into heading / list / paragraph blo
     { t: "p", x: "事業拡大につき増員します。" },
     { t: "h", x: "業務内容" },                                    // ▼ marker stripped
     { t: "ul", items: ["フロントエンド開発", "コードレビュー"] },  // "- " prefix stripped
-    { t: "h", x: "選考フロー" },                                  // trailing ： stripped
-    { t: "ul", items: ["①書類選考", "②面接"] },                  // numbered keep their marker
+    // the 選考フロー section is deliberately absent: see the selection-process test below
   ]);
 });
 
@@ -441,6 +440,31 @@ test("jdItemIsNumbered(): an item that numbers itself must not also get a disc",
   // live JDs mix numbered steps and plain bullets in ONE run: only the numbered ones drop it
   const items = LW.jdBlocks("- Remote OK\n1. Screening\n2) Interview")[0].items;
   assert.deepEqual(items.map(LW.jdItemIsNumbered), [false, true, true]);
+});
+
+test("jdBlocks() never renders the selection-process section (the board is public)", () => {
+  // opened by a real heading -> dropped until the NEXT heading
+  assert.deepEqual(LW.jdBlocks("## 選考フロー\n\n1. 書類選考\n2. 面接\n\n## Benefits\n\n- Remote"), [
+    { t: "h", x: "Benefits" },
+    { t: "ul", items: ["Remote"] },
+  ]);
+  for (const title of ["選考フロー：", "【Selection Process１】", "【Hiring Process】", "## 【選考フロー】", "▼採用プロセス", "**Interview Process**"]) {
+    assert.deepEqual(LW.jdBlocks(title + "\n\n1. 書類選考\n2. 面接"), [], `${title} must be dropped`);
+  }
+  // opened by a bare or bulleted title -> only its own block, because what follows the
+  // blank line is often not a heading either ("■参考情報") and would otherwise be eaten
+  assert.deepEqual(LW.jdBlocks("選考フロー\n書類 → 面接 → 内定\n\n■参考情報\n動画はこちら"), [
+    { t: "ul", items: ["参考情報"] },
+    { t: "p", x: "動画はこちら" },
+  ]);
+  // the same words inside a DUTY are not a section title, and neither is 選考基準
+  assert.deepEqual(LW.jdBlocks("- 採用戦略の主導（要件定義、選考プロセス設計、候補者面接、オファー交渉）"), [
+    { t: "ul", items: ["採用戦略の主導（要件定義、選考プロセス設計、候補者面接、オファー交渉）"] },
+  ]);
+  assert.deepEqual(LW.jdBlocks("## 選考基準\n\n実力重視"), [
+    { t: "h", x: "選考基準" },
+    { t: "p", x: "実力重視" },
+  ]);
 });
 
 test("calcAge() computes whole years with an injectable 'now'", () => {

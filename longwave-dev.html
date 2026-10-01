@@ -1873,7 +1873,7 @@
       var s = String(x).trim(), i;
       for(i = 0; i < 2; i++){
         s = s.replace(/[：:]$/, "").trim();
-        s = s.replace(/^[\[［](.+)[\]］]$/, "$1").trim();
+        s = s.replace(/^[\[［【](.+)[\]］】]$/, "$1").trim();
         s = s.replace(/^[・•●○◦‣▪▫■◆▼◇☆★]+[ \t　]*/, "").trim();
       }
       return s;
@@ -1957,12 +1957,22 @@
       return s;
     }
 
+    /* Section titles whose body is the interview / selection steps. The board is public
+       and the hiring flow is the client's internal business, so these sections are not
+       rendered at all: the heading and every line under it, up to the next heading, are
+       dropped. Matched against the TIDIED heading text, so "【Selection Process１】" and
+       "■選考フロー" both land here. A duty that merely mentions the words
+       ("採用戦略の主導（…選考プロセス設計…）") is a bullet, never a heading, so it is kept. */
+    var JD_PROCESS_HEADING = /^[0-9０-９\s.．、]*(?:選考(?:フロー|プロセス|の流れ|方法|ステップ|について)|採用(?:フロー|プロセス|の流れ)|面接(?:フロー|プロセス|の流れ)|面談フロー|hiring\s*process|selection\s*(?:process|flow)|interview\s*(?:process|flow|steps)|recruitment\s*process|application\s*process|screening\s*process)(?:について|の詳細)?[0-9０-９\s.．、:：・\-]*$/i;
+    function jdIsProcessHeading(x){ return JD_PROCESS_HEADING.test(String(x == null ? "" : x).trim()); }
+
     /* Parse a JD section into renderable blocks (runs formatJdText first):
          {t:"h",  x:"…"}          heading (wrapper chars / trailing colon stripped)
          {t:"ul", items:["…"]}    run of consecutive "- " lines (prefix stripped);
                                   numbered lines join the run with their marker kept
          {t:"p",  x:"a\nb"}       remaining lines of a blank-line-delimited chunk,
                                   joined with \n (the renderer decides <br>)
+         (a selection-process section is dropped entirely: see JD_PROCESS_HEADING)
          {t:"hr"}                 a divider line; it closes any open list/paragraph run.
                                   Leading, trailing and back-to-back dividers are dropped:
                                   the section label above already separates, so a rule
@@ -1973,19 +1983,32 @@
       var s = formatJdText(text);
       if(!s) return blocks;
       var chunks = s.split("\n\n");
+      /* inside a selection-process section (never rendered). A section opened by a real
+         heading runs until the NEXT heading; one opened by a plain or bulleted title line
+         ("選考フロー" with the steps right under it) runs only to the end of its block,
+         because what follows the blank line is usually a new section that is not a
+         heading either ("■参考情報"), and eating it would swallow the rest of the JD. */
+      var dropping = false, dropToBlockEnd = false;
       for(var i=0;i<chunks.length;i++){
         var lines = chunks[i].split("\n");
+        if(dropToBlockEnd){ dropping = false; dropToBlockEnd = false; }
         var ul = null, para = null;   /* open runs within this chunk */
         for(var j=0;j<lines.length;j++){
           var line = lines[j];
           if(line === "") continue;
+          var h = jdHeading(line);
+          /* a heading ends any section being dropped, and may start a new one */
+          if(h){ dropping = jdIsProcessHeading(h); dropToBlockEnd = false; }
+          else if(!dropping && jdIsProcessHeading(jdTitleText(line.indexOf("- ") === 0 ? line.slice(2) : line))){
+            dropping = true; dropToBlockEnd = true;   /* a bare or bulleted "選考フロー" line */
+          }
+          if(dropping){ ul = null; para = null; continue; }
           if(JD_RULE.test(line)){
             ul = null; para = null;
             var prev = blocks[blocks.length-1];
             if(prev && prev.t !== "hr") blocks.push({ t:"hr" });   /* none leading, none doubled */
             continue;
           }
-          var h = jdHeading(line);
           if(h){ ul = null; para = null; blocks.push({ t:"h", x:h }); continue; }
           if(line.indexOf("- ") === 0 || JD_NUMBERED.test(line)){
             para = null;
@@ -2047,7 +2070,8 @@
       calcAge: calcAge,
       formatJdText: formatJdText,
       jdBlocks: jdBlocks,
-      jdItemIsNumbered: jdItemIsNumbered
+      jdItemIsNumbered: jdItemIsNumbered,
+      jdIsProcessHeading: jdIsProcessHeading
     };
   })();
 
@@ -4777,7 +4801,8 @@
     H+=jdSec("jd_benefits", jf(job,"benefits"), false);
     H+=jdSec("jd_holiday", jf(job,"holiday"), false);
     H+=jdSec("jd_probation", jf(job,"probation"), false);
-    H+=jdSec("jd_selection", jf(job,"selection"), false);
+    /* the selection flow is client-internal and is NOT shown on the public board;
+       prose sections naming it are dropped upstream by jdBlocks (JD_PROCESS_HEADING) */
     H+=jdSec("jd_notes", jf(job,"notes"), false);
     $("#mDetail").innerHTML=H;
     /* only link out to http(s) — never assign a javascript:/data: URL to href, even from
