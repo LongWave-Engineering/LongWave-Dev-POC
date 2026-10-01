@@ -81,7 +81,8 @@
     H+=jdSec("jd_benefits", jf(job,"benefits"), false);
     H+=jdSec("jd_holiday", jf(job,"holiday"), false);
     H+=jdSec("jd_probation", jf(job,"probation"), false);
-    H+=jdSec("jd_selection", jf(job,"selection"), false);
+    /* the selection flow is client-internal and is NOT shown on the public board;
+       prose sections naming it are dropped upstream by jdBlocks (JD_PROCESS_HEADING) */
     H+=jdSec("jd_notes", jf(job,"notes"), false);
     $("#mDetail").innerHTML=H;
     /* only link out to http(s) — never assign a javascript:/data: URL to href, even from
