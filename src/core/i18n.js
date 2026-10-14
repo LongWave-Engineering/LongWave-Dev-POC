@@ -131,10 +131,17 @@
        _i   = original index into JOBS (so render loops avoid O(n) indexOf)
        _hay = lowercased free-text search index (so filtering never rebuilds it) */
   function enrichJobs(){
+    /* Pass 1: classify, then drop non-tech specialties (LW.HIDDEN_SPECS) IN PLACE
+       so the whole board — counts, filter facets, pagination — reflects the
+       tech-only set. Splice in reverse so indices stay valid while removing. */
+    for (var _hi=JOBS.length-1; _hi>=0; _hi--){
+      JOBS[_hi].spec = LW.classifySpec(JOBS[_hi]);
+      if (LW.HIDDEN_SPECS.indexOf(JOBS[_hi].spec) > -1) JOBS.splice(_hi, 1);
+    }
+    /* Pass 2: _i must index into the FILTERED array (render loops rely on it). */
     for (var _ji=0; _ji<JOBS.length; _ji++){
       var _job = JOBS[_ji];
       _job._i = _ji;
-      _job.spec = LW.classifySpec(_job);
       var _nl = LW.locFromAddr(_job.office || _job.loc);
       if(_nl) _job.loc = _nl;
       var _jaRole = JOBS_JA[_job.role] ? JOBS_JA[_job.role].role : "";
