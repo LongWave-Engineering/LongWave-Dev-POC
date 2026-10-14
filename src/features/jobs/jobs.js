@@ -247,7 +247,9 @@
     fillSelect($("#filterSpec"), t("filter_spec_all"), SPECS.filter(function(s){return n[s];}).map(function(s){return {v:s,t:s+" ("+n[s]+")"};}));
   }
   function buildStackSelect(){
-    var n={}; JOBS.forEach(function(j){ (j.stack||[]).forEach(function(s){ n[s]=(n[s]||0)+1; }); });
+    /* tech-stack facet = REAL technologies only; drop the discipline/role labels that ride
+       in on job.stack (DevOps, Engineering Manager, Backend, …) so it is not buzzword soup. */
+    var n={}; JOBS.forEach(function(j){ (j.stack||[]).forEach(function(s){ if(LW.NON_TECH.indexOf(s)===-1) n[s]=(n[s]||0)+1; }); });
     fillSelect($("#filterStack"), t("filter_stack_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(s){return {v:s,t:s+" ("+n[s]+")"};}));
   }
   function buildLocSelect(){

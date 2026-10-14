@@ -33,36 +33,45 @@
        Every value classifySpec() can return MUST appear here — guarded by a test. */
     var SPECS = ["Frontend","Backend","Full-Stack","Software Engineering","Mobile","AI / ML","Data Engineering","SRE / Infra","Security","QA / Test","UI/UX & Design","Hardware & Mfg","Product Management","Project / Program Mgmt","Engineering Management","Consulting","Sales & BD","Management","Corporate & Ops","Other"];
 
+    /* Tech-axis vocabulary only: these discipline/role labels ride in on job.stack
+       but are NOT technologies — stripped from classification AND the tech-stack facet so
+       it lists real tech, not buzzwords, and so a DevOps/Data&AI tag can't hijack the spec. */
+    var NON_TECH = ["DevOps", "Data & AI", "Engineering Manager", "Backend", "Frontend", "Mobile Engineer", "Product Management", "Quality Assurance", "UI/UX"];
+
     /* Specialty classification rules, FIRST MATCH WINS — order matters (e.g. QA
        before generic Engineering, Hardware before generic Engineering). Matched as
        substrings against " <role-before-—> <stack> " lowercased. Tune keywords here. */
     var SPEC_RULES = [
-      { spec:"QA / Test", kw:["qa engineer","qa manager","qa lead","qa)"," qa ","sdet","engineer in test","quality engineer","quality assurance","test engineer","test automation"] },
-      { spec:"Engineering Management", kw:["engineering manager","engineering lead","vpoe","vp of engineering","vp of technology","vpot","head of engineering","director of engineering","senior engineering manager"] },
-      { spec:"UI/UX & Design", kw:["ui/ux","ux design","ux)","designer","product design","communication design","web design","cg design","3d / cg","3d/cg","blender"] },
-      { spec:"AI / ML", kw:["ai engineer","ml engineer","ai/ml","ml/ai","machine learning","data scientist","data science","data & ai","ml platform","ai platform","ml modeling","ai researcher","research engineer","llm","deep learning"," nlp ","agent harness","ai evaluation","ai success","ai application engineer","ai agent engineer","prompt"] },
-      { spec:"Data Engineering", kw:["data engineer","analytics engineer","data analyst","data platform","data infrastructure","data enablement"," dbt"," etl"] },
-      { spec:"SRE / Infra", kw:["sre","site reliability","infrastructure","platform engineer","platform microservices","cloud engineer","cloud security","cloud infrastructure","devops","dbre","network engineer","iam ","reliability engineer"] },
-      { spec:"Security", kw:["security","ciso","vulnerab","csirt"] },
-      { spec:"Mobile", kw:["android","ios ","ios)","mobile engineer","flutter","react native"] },
-      { spec:"Frontend", kw:["frontend","front-end","front end"] },
-      { spec:"Full-Stack", kw:["full-stack","full stack","fullstack"] },
-      { spec:"Backend", kw:["backend","back-end","server-side","server side"] },
-      { spec:"Hardware & Mfg", kw:["electrical","mechanical","hardware","robotics","image processing","circuit","plc","automation-line","inspection equipment","field engineer","x-ray","manufacturing","cg designer"] },
-      { spec:"Product Management", kw:["product manager","product owner","product planner","head of product","chief product officer"," cpo","product lead","(pdm","pdm)"," pdm"," pmm","product management"] },
-      { spec:"Project / Program Mgmt", kw:["project manager","project leader","program manager","scrum master","pmo","(pjm","pjm)","project promotion"] },
-      { spec:"Consulting", kw:["consultant","consulting","solutions architect","solution consultant","forward deployed","(fde","fde)"," fde","deployment strategist","pre-sales","presales","pre sales"] },
-      { spec:"Sales & BD", kw:[" sales","(sales","sales)","account executive","account manager","account sales","business development"," bd ","(bd","inside sales","enterprise sales","headhunter","marketer","marketing"] },
-      { spec:"Software Engineering", kw:["engineer","developer","architect","programmer","swe"] },
-      { spec:"Corporate & Ops", kw:["recruit"," hr ","hr ","human resources","legal","complian","accounting","accountant"," finance","fp&a"," ir ","investor","corporate","labor","general affairs","administration","secretary"," planning","planner","operations","procurement","purchasing","policy","public affairs"," pr ","public relations","talent","organizational","audit","screening","customer success","customer support","support desk","liaison"] },
-      { spec:"Management", kw:["manager","director","head of"," officer","vp of","cfo","cao","cmo","cro","executive","lead candidate","chief","strategist"] }
+      { spec:"QA / Test", kw:["qa engineer","qa manager","qa lead","qa)"," qa ","sdet","engineer in test","quality engineer","quality assurance","test engineer","test automation","テストエンジニア","品質保証","qaエンジニア"] },
+      { spec:"Engineering Management", kw:["engineering manager","engineering lead","vpoe","vp of engineering","vp of technology","vpot","head of engineering","director of engineering","senior engineering manager","エンジニアリングマネージャー","エンジニアリングマネジャー","開発責任者","技術責任者","開発部長","エンジニアリング部長"] },
+      { spec:"UI/UX & Design", kw:["ui/ux","ux design","ux)","designer","product design","communication design","web design","cg design","3d / cg","3d/cg","blender","デザイナー","デザイン","フォトグラファー","video editor","動画","映像","クリエイティブ","creator","カメラ"] },
+      { spec:"AI / ML", kw:["ai engineer","ml engineer","ai/ml","ml/ai","machine learning","data scientist","data science","data & ai","ml platform","ai platform","ml modeling","ai researcher","research engineer","llm","deep learning"," nlp ","agent harness","ai evaluation","ai success","ai application engineer","ai agent engineer","prompt","データサイエン","機械学習","生成ai","aiエンジニア"] },
+      { spec:"Data Engineering", kw:["data engineer","analytics engineer","data analyst","data platform","data infrastructure","data enablement"," dbt"," etl","データエンジニア","データ基盤"] },
+      { spec:"SRE / Infra", kw:["sre","site reliability","infrastructure","platform engineer","platform microservices","cloud engineer","cloud security","cloud infrastructure","devops","dbre","network engineer","iam ","reliability engineer","インフラ","基盤エンジニア","ネットワークエンジニア","クラウドエンジニア"] },
+      { spec:"Security", kw:["security","ciso","vulnerab","csirt","セキュリティ","情報セキュリティ","aml","金融犯罪","不正検知"] },
+      { spec:"Mobile", kw:["android","ios ","ios)","mobile engineer","flutter","react native","モバイル","アプリエンジニア"] },
+      { spec:"Frontend", kw:["frontend","front-end","front end","フロントエンド"] },
+      { spec:"Full-Stack", kw:["full-stack","full stack","fullstack","フルスタック"] },
+      { spec:"Backend", kw:["backend","back-end","server-side","server side","バックエンド","サーバーサイド"] },
+      { spec:"Hardware & Mfg", kw:["electrical","mechanical","hardware","robotics","image processing","circuit","plc","automation-line","inspection equipment","field engineer","x-ray","manufacturing","cg designer","メカ","回路","車載","整備","修理","メンテナンス","cad","建築設計","機械整備","車両整備","ハードウェア","hw開発","hw ","電気設計","機械設計","衛星","航空宇宙","医療機器"] },
+      { spec:"Product Management", kw:["product manager","product owner","product planner","head of product","chief product officer"," cpo","product lead","(pdm","pdm)"," pdm"," pmm","product management","プロダクトマネージャー","プロダクトマネジャー","プロダクトオーナー","プロダクト企画","hrプロダクト"] },
+      { spec:"Project / Program Mgmt", kw:["project manager","project leader","program manager","scrum master","pmo","(pjm","pjm)","project promotion","プロジェクトマネージャー","スクラムマスター","プロジェクトリーダー"] },
+      { spec:"Consulting", kw:["consultant","consulting","solutions architect","solution consultant","forward deployed","(fde","fde)"," fde","deployment strategist","pre-sales","presales","pre sales","コンサル"] },
+      { spec:"Sales & BD", kw:[" sales","(sales","sales)","account executive","account manager","account sales","business development"," bd ","(bd","inside sales","enterprise sales","headhunter","marketer","marketing","営業","セールス","事業開発","マーケティング","broker","ブローカー","leasing","リーシング","solution partner","sns"] },
+      { spec:"Software Engineering", kw:["engineer","developer","architect","programmer","swe","tech lead","テックリード","エンジニア","ソフトウェア開発","プログラマ"] },
+      { spec:"Corporate & Ops", kw:["recruit"," hr ","hr ","human resources","legal","complian","accounting","accountant"," finance","fp&a"," ir ","investor","corporate","labor","general affairs","administration","secretary"," planning","planner","operations","procurement","purchasing","policy","public affairs"," pr ","public relations","talent","organizational","audit","screening","customer success","customer support","support desk","liaison","企画","人事","経理","法務","財務","総務","採用","広報","カスタマーサクセス","カスタマーサポート","コーポレート","障害者雇用","community","ドライバー","軽貨物","配送","ルート巡回","バッテリー交換","フィールドドライバー","業務推進","バックオフィス","ミドルバック","サクセス","賃貸管理","車両管理","global it","device management","オンボーディング","業務委託","債権","トレジャリー","treasury","cs部","onboarding","アシスタント","assistant","経営企画"] },
+      { spec:"Management", kw:["manager","director","head of"," officer","vp of","cfo","cao","cmo","cro","executive","lead candidate","chief","strategist","マネージャー","マネジャー","部長","本部長","責任者","役員","部門長","cto","cio","coo","cpo","ディレクター","business leader"] }
     ];
 
     function classifySpec(job){
       /* classify on the role part BEFORE the "— Division" suffix, padded so
          leading-space keys also match at the start of the title */
       var primary = String((job && job.role) || "").split(/—|–/)[0];
-      var hay = (" " + primary + " " + (((job && job.stack) || []).join(" ")) + " ").toLowerCase();
+      /* classify on role + REAL tech only: discipline tags (NON_TECH) carried on the
+         stack were hijacking the spec — DevOps -> SRE, Data & AI -> AI/ML on hundreds of
+         jobs. Real tech (e.g. dbt -> Data Engineering) still refines a generic title. */
+      var tech = (((job && job.stack) || [])).filter(function(s){ return NON_TECH.indexOf(s) === -1; });
+      var hay = (" " + primary + " " + tech.join(" ") + " ").toLowerCase();
       for(var i=0; i<SPEC_RULES.length; i++){
         var kw = SPEC_RULES[i].kw;
         for(var j=0; j<kw.length; j++){ if(hay.indexOf(kw[j]) > -1) return SPEC_RULES[i].spec; }
@@ -436,6 +445,7 @@
       ROUTES: ROUTES,
       routeFor: routeFor,
       SPECS: SPECS,
+      NON_TECH: NON_TECH,
       SPEC_RULES: SPEC_RULES,
       classifySpec: classifySpec,
       locFromAddr: locFromAddr,
