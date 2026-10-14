@@ -23,7 +23,7 @@
     /* clear every field so a returning visitor (or a second person on the same device)
        never sees the previous applicant's name / email / links / attached CV */
     clearFields(["#suName","#suEmail","#suEng","#suComments","#suLinkedin","#suGithub"]);
-    if($("#suResume")) $("#suResume").value="";
+    if($("#suResume")){ $("#suResume").value=""; $("#suResume").setCustomValidity(""); }
     if($("#suLoc")) $("#suLoc").value=""; if($("#suLocWarn")) $("#suLocWarn").style.display="none";
     if($("#suSubmit")) $("#suSubmit").disabled=false;
     if($("#suJp")) $("#suJp").value=""; if($("#suYears")) $("#suYears").value="";
@@ -35,7 +35,35 @@
     var trig=e.target.closest("[data-signup]");
     if(trig){ e.preventDefault(); openSignup(trig.getAttribute("data-signup")); }
   });
-  function collectSignup(){
+  /* The resume travels inline as base64 on the same JSON post as the rest of the signup, so the
+     proxy needs no multipart handling. Type comes from the extension (a browser's f.type is
+     often empty for .doc/.docx); the backend re-checks the real bytes, so this is for the
+     candidate's benefit — a clear message now instead of a silent drop later. */
+  var RESUME_MAX=5*1024*1024;
+  var RESUME_TYPES={ pdf:"application/pdf", doc:"application/msword", docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+  function resumeExt(f){ var m=/\.([a-z0-9]+)$/i.exec(f.name||""); return m ? m[1].toLowerCase() : ""; }
+  function resumeProblem(f){
+    if(!f) return "";
+    if(!RESUME_TYPES[resumeExt(f)]) return t("su_resume_type");
+    if(f.size>RESUME_MAX) return t("su_resume_big");
+    return "";
+  }
+  var resumeInput=$("#suResume");
+  if(resumeInput) resumeInput.addEventListener("change", function(){
+    /* native validity: the required field then blocks submit and shows the message */
+    resumeInput.setCustomValidity(resumeProblem(resumeInput.files && resumeInput.files[0]));
+  });
+  function readResume(){
+    var f=resumeInput && resumeInput.files && resumeInput.files[0];
+    if(!f || resumeProblem(f)) return Promise.resolve(null);
+    return new Promise(function(resolve){
+      var fr=new FileReader();
+      fr.onload=function(){ var s=String(fr.result), i=s.indexOf(","); resolve(i<0 ? null : { content_type:RESUME_TYPES[resumeExt(f)], data_base64:s.slice(i+1) }); };
+      fr.onerror=function(){ resolve(null); };   /* the signup must still go through without the file */
+      fr.readAsDataURL(f);
+    });
+  }
+  function collectSignup(resumeFile){
     var resume=$("#suResume");
     /* fold the free-text answers (engineer type, residence, comments) into the lead message,
        same as the company/contact forms — one human-readable line for the recruiter. */
@@ -53,13 +81,15 @@
       years_exp: ($("#suYears") && $("#suYears").value!=="") ? $("#suYears").value : undefined,
       message: parts.length ? parts.join(" · ") : undefined,
       resume_filename: (resume && resume.files && resume.files[0]) ? resume.files[0].name : undefined,
+      resume_file: resumeFile || undefined,
       source_channel: "signup"
     };
   }
   /* Submit: when the site is SERVED, POST to /api/applications (applying to one or
      many selected jobs) or /api/leads (plain signup). Opened as a standalone file →
      no backend → just confirm. Fire-and-forget; the user always sees a success state. */
-  function submitSignup(){
+  function submitSignup(){ readResume().then(doSubmitSignup); }
+  function doSubmitSignup(resumeFile){
     if(isAbroad("#suLoc")){ var w=$("#suLocWarn"); if(w) w.style.display=""; if($("#suSubmit")) $("#suSubmit").disabled=true; return; }
     var n=pendingApplyJobs.length;
     var appliedJobs=pendingApplyJobs.slice();   /* snapshot: markAppliedJobs/clearSelection reset the live array */
@@ -70,7 +100,7 @@
          backend confirms it recorded them ({forwarded:N}) — a swallowed application must
          neither consume the lifetime cap nor show a fake "Applied" state */
       if(apiReady){
-        var body=collectSignup(); body.job_ids=pendingApplyJobIds;
+        var body=collectSignup(resumeFile); body.job_ids=pendingApplyJobIds;
         fetch("/api/applications", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body) })
           .then(function(r){ return r.ok ? r.json() : null; })
           .then(function(d){
@@ -82,7 +112,7 @@
           .then(function(delivered){ if(!delivered && succ){ var m=succ.querySelector(".msg")||succ; m.textContent=t("lead_retry"); } });
       }
     } else {
-      leadConfirm(postLead(collectSignup()), succ);   /* plain signup → a lead */
+      leadConfirm(postLead(collectSignup(resumeFile)), succ);   /* plain signup → a lead */
     }
     /* honest confirmation: only claim it went through if a backend actually received it */
     if(succ){ var sm=succ.querySelector(".msg")||succ; sm.textContent = !apiReady ? t("lead_offline") : (n ? t("apply_success").replace("{n}",n) : t("su_success")); succ.style.display="block"; }
