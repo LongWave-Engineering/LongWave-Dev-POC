@@ -43,6 +43,25 @@ test("classifySpec() considers the tech stack, not just the title", () => {
   assert.equal(LW.classifySpec({ role: "Engineer" }), "Software Engineering");
 });
 
+test("classifySpec() ignores non-tech discipline tags on the stack (no DevOps->SRE / Data&AI->AI hijack)", () => {
+  // the bug: discipline labels ride in on job.stack and swept hundreds of jobs into SRE/AI
+  assert.equal(LW.classifySpec({ role: "Backend Engineer", stack: ["DevOps", "AWS", "Data & AI"] }), "Backend");
+  assert.equal(LW.classifySpec({ role: "Product Manager", stack: ["DevOps"] }), "Product Management");
+  assert.equal(LW.classifySpec({ role: "Security Engineer", stack: ["DevOps", "Data & AI"] }), "Security");
+});
+
+test("NON_TECH is exposed and lists disciplines, not technologies", () => {
+  assert.ok(LW.NON_TECH.includes("DevOps") && LW.NON_TECH.includes("Engineering Manager"));
+  assert.ok(!LW.NON_TECH.includes("AWS") && !LW.NON_TECH.includes("Python"));
+});
+
+test("classifySpec() handles Japanese role titles", () => {
+  assert.equal(LW.classifySpec({ role: "セキュリティエンジニア" }), "Security");
+  assert.equal(LW.classifySpec({ role: "プロダクトマネージャー" }), "Product Management");
+  assert.equal(LW.classifySpec({ role: "データサイエンティスト" }), "AI / ML");
+  assert.equal(LW.classifySpec({ role: "軽貨物ドライバー" }), "Corporate & Ops");
+});
+
 test("classifySpec() classifies on the part before the — division suffix", () => {
   assert.equal(LW.classifySpec({ role: "Frontend Engineer — Platform Division" }), "Frontend");
 });
