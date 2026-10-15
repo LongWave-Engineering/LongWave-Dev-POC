@@ -336,9 +336,18 @@
   .filters-side .search{display:flex;align-items:center;gap:10px;border:2px solid var(--line-strong);border-radius:11px;padding:0 13px;}
   .filters-side .search input{border:0;outline:0;background:transparent;padding:12px 0;font-size:1rem;width:100%;color:var(--ink);}
   .filters-side .search svg{width:18px;height:18px;color:var(--slate);flex:none;}
-  .selectwrap{position:relative;}
-  .filters-side select{appearance:none;width:100%;background:#fff;border:2px solid var(--line-strong);border-radius:11px;padding:12px 38px 12px 13px;font-size:1rem;color:var(--ink-soft);font-family:inherit;font-weight:600;}
-  .selectwrap::after{content:"▾";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--slate);pointer-events:none;}
+  /* ---- multi-select facet widget (button + checkbox popover) ---- */
+  .msel{position:relative;}
+  .msel-btn{display:flex;align-items:center;gap:8px;width:100%;background:var(--surface);border:2px solid var(--line-strong);border-radius:11px;padding:12px 13px;font-size:1rem;color:var(--ink-soft);font-family:inherit;font-weight:600;cursor:pointer;text-align:left;}
+  .msel-btn:hover{border-color:var(--slate);}
+  .msel-btn.has-sel{border-color:var(--accent-deep);color:var(--ink);}
+  .msel-label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .msel-chev{width:16px;height:16px;flex:none;color:var(--slate);transition:transform .15s ease;}
+  .msel-btn[aria-expanded="true"] .msel-chev{transform:rotate(180deg);}
+  .msel-pop{position:absolute;z-index:40;left:0;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--line-strong);border-radius:11px;box-shadow:var(--shadow);padding:6px;max-height:280px;overflow-y:auto;}
+  .msel-opt{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;font-size:.96rem;font-weight:600;color:var(--ink-soft);cursor:pointer;}
+  .msel-opt:hover{background:var(--wash,rgba(0,0,0,.04));color:var(--ink);}
+  .msel-opt input{flex:none;width:16px;height:16px;accent-color:var(--accent-deep);cursor:pointer;}
   .fclear{background:transparent;border:0;color:var(--accent-deep);font-weight:700;font-size:.98rem;padding:4px 0;}
   .fclear:hover{color:var(--ink);}
   .result-count{font-size:1.02rem;color:var(--slate);margin-bottom:20px;font-weight:600;}
@@ -1118,34 +1127,24 @@
             </div>
           </div>
           <div class="fgroup">
-            <label class="glab" for="filterSpec" data-i18n="f_grp_spec">Specialty</label>
-            <div class="selectwrap"><select id="filterSpec"></select></div>
+            <label class="glab" id="lbl-filterSpec" data-i18n="f_grp_spec">Specialty</label>
+            <div class="msel" id="filterSpec"></div>
           </div>
           <div class="fgroup">
-            <label class="glab" for="filterStack" data-i18n="f_grp_stack">Tech stack</label>
-            <div class="selectwrap"><select id="filterStack"></select></div>
+            <label class="glab" id="lbl-filterStack" data-i18n="f_grp_stack">Tech stack</label>
+            <div class="msel" id="filterStack"></div>
           </div>
           <div class="fgroup">
-            <label class="glab" for="filterJp" data-i18n="f_grp_jp">Japanese level</label>
-            <div class="selectwrap"><select id="filterJp">
-              <option value="" data-i18n="filter_jp_all">Any level</option>
-              <option value="none" data-i18n="filter_jp_none">No Japanese required</option>
-              <option value="conversational" data-i18n="filter_jp_conv">Conversational</option>
-              <option value="business" data-i18n="filter_jp_biz">Business</option>
-            </select></div>
+            <label class="glab" id="lbl-filterJp" data-i18n="f_grp_jp">Japanese level</label>
+            <div class="msel" id="filterJp"></div>
           </div>
           <div class="fgroup">
-            <label class="glab" for="filterRemote" data-i18n="f_grp_rem">Work style</label>
-            <div class="selectwrap"><select id="filterRemote">
-              <option value="" data-i18n="filter_rem_all">Any work style</option>
-              <option value="full" data-i18n="filter_rem_full">Full remote</option>
-              <option value="partial" data-i18n="filter_rem_part">Hybrid</option>
-              <option value="no" data-i18n="filter_rem_no">On-site</option>
-            </select></div>
+            <label class="glab" id="lbl-filterRemote" data-i18n="f_grp_rem">Work style</label>
+            <div class="msel" id="filterRemote"></div>
           </div>
           <div class="fgroup">
-            <label class="glab" for="filterLoc" data-i18n="f_grp_loc">Location</label>
-            <div class="selectwrap"><select id="filterLoc"></select></div>
+            <label class="glab" id="lbl-filterLoc" data-i18n="f_grp_loc">Location</label>
+            <div class="msel" id="filterLoc"></div>
           </div>
           <div class="fgroup">
             <button class="fclear" id="filterClear" data-i18n="filter_clear">Clear filters</button>
@@ -1663,7 +1662,7 @@
     /* Tech-axis vocabulary only: these discipline/role labels ride in on job.stack
        but are NOT technologies — stripped from classification AND the tech-stack facet so
        it lists real tech, not buzzwords, and so a DevOps/Data&AI tag can't hijack the spec. */
-    var NON_TECH = ["DevOps", "Data & AI", "Engineering Manager", "Backend", "Frontend", "Mobile Engineer", "Product Management", "Quality Assurance", "UI/UX"];
+    var NON_TECH = ["DevOps", "Data & AI", "Engineering Manager", "Backend", "Frontend", "Mobile Engineer", "Product Management", "Quality Assurance", "UI/UX", "GitHub"];
 
     /* Specialty classification rules, FIRST MATCH WINS — order matters (e.g. QA
        before generic Engineering, Hardware before generic Engineering). Matched as
@@ -1690,23 +1689,32 @@
       { spec:"Management", kw:["manager","director","head of"," officer","vp of","cfo","cao","cmo","cro","executive","lead candidate","chief","strategist","マネージャー","マネジャー","部長","本部長","責任者","役員","部門長","cto","cio","coo","cpo","ディレクター","business leader"] }
     ];
 
-    function classifySpec(job){
-      /* classify on the role part BEFORE the "— Division" suffix, padded so
-         leading-space keys also match at the start of the title */
-      var primary = String((job && job.role) || "").split(/—|–/)[0];
-      /* classify on role + REAL tech only: discipline tags (NON_TECH) carried on the
-         stack were hijacking the spec — DevOps -> SRE, Data & AI -> AI/ML on hundreds of
-         jobs. Real tech (e.g. dbt -> Data Engineering) still refines a generic title. */
-      var tech = (((job && job.stack) || [])).filter(function(s){ return NON_TECH.indexOf(s) === -1; });
-      var hay = (" " + primary + " " + tech.join(" ") + " ").toLowerCase();
+    function specForHay(hay){
       for(var i=0; i<SPEC_RULES.length; i++){
         var kw = SPEC_RULES[i].kw;
         for(var j=0; j<kw.length; j++){ if(hay.indexOf(kw[j]) > -1) return SPEC_RULES[i].spec; }
       }
-      /* Last resort: a backend-supplied hint (job.domain, a SPECS value) for titles no
-         keyword recognises. It never overrides a title/tech match — the source's role
-         enum is unreliable on non-engineering rows — it only rescues what would
-         otherwise fall into the hidden "Other" bucket. */
+      return null;
+    }
+    function classifySpec(job){
+      /* classify on the role part BEFORE the "— Division" suffix, padded so
+         leading-space keys also match at the start of the title */
+      var primary = String((job && job.role) || "").split(/—|–/)[0];
+      var stack = ((job && job.stack) || []);
+      /* 1) role + REAL tech only. Discipline tags (NON_TECH) are held out of this pass so
+         a "DevOps"/"Data & AI" tag can't hijack a job the TITLE already classifies — that
+         was the SRE 154 / AI 115 bug. Real tech (e.g. dbt -> Data Engineering) still refines. */
+      var tech = stack.filter(function(s){ return NON_TECH.indexOf(s) === -1; });
+      var s = specForHay((" " + primary + " " + tech.join(" ") + " ").toLowerCase());
+      if(s) return s;
+      /* 2) fallback: for a job the title alone couldn't place (e.g. a Japanese-only title),
+         let a discipline tag carry the spec. Role still wins in pass 1, so this restores the
+         backend's ROLE_TAG signal without reopening the hijack — and keeps "Other" tiny. */
+      var disc = stack.filter(function(s2){ return NON_TECH.indexOf(s2) > -1; });
+      if(disc.length){ s = specForHay((" " + disc.join(" ") + " ").toLowerCase()); if(s) return s; }
+      /* 3) last resort: a backend-supplied hint (job.domain, a SPECS value) for titles no
+         keyword recognises (from PR #15). Never overrides a title/tech/tag match; it only
+         rescues what would otherwise fall into the hidden "Other" bucket. */
       var d = job && job.domain;
       if(typeof d === "string" && SPECS.indexOf(d) > -1) return d;
       return "Other";
@@ -1763,18 +1771,30 @@
       return (job.role + " " + (jaRole || "") + " " + (coName || "") + " " + (((job.stack) || []).join(" ")) + " " + (job.spec || "")).toLowerCase();
     }
 
+    /* A facet selection is EITHER a scalar (legacy single-select) OR an array
+       (multi-select). Empty string / empty array / falsy = no constraint. Within one
+       facet, multiple picks are OR'd; across facets they AND — standard faceted search. */
+    function selActive(v){ return Array.isArray(v) ? v.length > 0 : !!v; }
+    function selHas(v, val){ return Array.isArray(v) ? v.indexOf(val) > -1 : v === val; }
+
     /* True if any facet of the filter object is set. */
-    function hasActiveFilter(f){ return !!(f && (f.q || f.jp || f.remote || f.spec || f.loc || f.stack)); }
+    function hasActiveFilter(f){ return !!(f && (f.q || selActive(f.jp) || selActive(f.remote) || selActive(f.spec) || selActive(f.loc) || selActive(f.stack))); }
 
     /* Does a single job pass the filter? Uses precomputed job._hay for the text
        query when present, else builds the haystack on the fly. */
     function matchesFilter(job, f){
       if(!f) return true;
-      if(f.jp && job.jp !== f.jp) return false;
-      if(f.remote && job.remote !== f.remote) return false;
-      if(f.spec && job.spec !== f.spec) return false;
-      if(f.loc && job.loc !== f.loc) return false;
-      if(f.stack && (job.stack || []).indexOf(f.stack) === -1) return false;
+      if(selActive(f.jp)     && !selHas(f.jp, job.jp))         return false;
+      if(selActive(f.remote) && !selHas(f.remote, job.remote)) return false;
+      if(selActive(f.spec)   && !selHas(f.spec, job.spec))     return false;
+      if(selActive(f.loc)    && !selHas(f.loc, job.loc))       return false;
+      if(selActive(f.stack)){
+        /* job.stack is a list; the job matches if it carries ANY selected tech */
+        var js = job.stack || [];
+        var ok = Array.isArray(f.stack) ? f.stack.some(function(s){ return js.indexOf(s) > -1; })
+                                        : js.indexOf(f.stack) > -1;
+        if(!ok) return false;
+      }
       if(f.q){ var hay = job._hay || searchHay(job); if(hay.indexOf(f.q) === -1) return false; }
       return true;
     }
@@ -2775,7 +2795,7 @@
         '<span class="jc-link">'+ esc(t("viewrole")) +'</span>'+
       '</span>';
   }
-  function getFilters(){ return { q:($("#filterSearch").value||"").trim().toLowerCase(), jp:$("#filterJp").value, remote:$("#filterRemote").value, spec:$("#filterSpec").value, loc:($("#filterLoc")?$("#filterLoc").value:""), stack:($("#filterStack")?$("#filterStack").value:"") }; }
+  function getFilters(){ return { q:($("#filterSearch").value||"").trim().toLowerCase(), jp:mselVals("filterJp"), remote:mselVals("filterRemote"), spec:mselVals("filterSpec"), loc:mselVals("filterLoc"), stack:mselVals("filterStack") }; }
   /* card = wrapper (visual + selected ring) holding a corner with two separate controls
      (a save heart and a selection checkbox) plus a clickable open-button. Keeping the
      controls as siblings of the open-button avoids nested buttons, so a heart/checkbox
@@ -2881,26 +2901,72 @@
     updateSelBar(); updateSavedToggle();
     resultCount.textContent = t("result").replace("{n}",shown.length).replace("{total}",JOBS.length);
   }
-  /* shared select builder: keeps the current value, shows "(count)" per option */
-  function fillSelect(sel, allLabel, items){
-    if(!sel) return; var cur=sel.value;
-    sel.innerHTML='<option value="">'+ allLabel +'</option>';
-    items.forEach(function(it){ var o=document.createElement("option"); o.value=it.v; o.textContent=it.t; sel.appendChild(o); });
-    sel.value=cur||"";
+  /* ---------------- multi-select facet widget ----------------
+     Each facet is a summary button + a checkbox popover. Several picks in one facet
+     are OR'd (see LW.matchesFilter); facets AND together. State lives in MSEL[id].sel
+     (an object used as a set); getFilters() reads it; it survives applyLang() rebuilds. */
+  var MSEL = {};
+  function mselVals(id){ var m=MSEL[id]; return m ? Object.keys(m.sel) : []; }
+  function mselSummary(m){
+    var ks=Object.keys(m.sel);
+    if(!ks.length) return m.allLabel;
+    var label=function(v){ var it=m.items.filter(function(i){return i.v===v;})[0]; return it?it.label:v; };
+    return ks.length===1 ? label(ks[0]) : label(ks[0])+" +"+(ks.length-1);
   }
+  function mselSync(m){
+    var lbl=m.host.querySelector(".msel-label"); if(lbl) lbl.textContent=mselSummary(m);
+    var btn=m.host.querySelector(".msel-btn"); if(btn) btn.classList.toggle("has-sel", Object.keys(m.sel).length>0);
+  }
+  function closeAllMsel(){ Object.keys(MSEL).forEach(function(id){ var h=MSEL[id].host; var p=h.querySelector(".msel-pop"); if(p) p.hidden=true; var b=h.querySelector(".msel-btn"); if(b) b.setAttribute("aria-expanded","false"); }); }
+  function resetMultiSelects(){ Object.keys(MSEL).forEach(function(id){ var m=MSEL[id]; m.sel={}; m.host.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked=false; }); mselSync(m); }); }
+  function makeMultiSelect(id, allLabel, items){
+    var host=$("#"+id); if(!host) return;
+    /* preserve any still-valid selections across a rebuild (language switch / hydration) */
+    var prev=MSEL[id]?MSEL[id].sel:{}, valid={}; items.forEach(function(it){ valid[it.v]=1; });
+    var sel={}; Object.keys(prev).forEach(function(k){ if(valid[k]) sel[k]=1; });
+    var m={ host:host, allLabel:allLabel, items:items, sel:sel }; MSEL[id]=m;
+    host.innerHTML="";
+    var btn=el("button","msel-btn"); btn.type="button";
+    btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false"); btn.setAttribute("aria-labelledby","lbl-"+id);
+    btn.innerHTML='<span class="msel-label"></span><svg class="msel-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+    var pop=el("div","msel-pop"); pop.setAttribute("role","listbox"); pop.setAttribute("aria-multiselectable","true"); pop.hidden=true;
+    items.forEach(function(it){
+      var lab=el("label","msel-opt");
+      var cb=document.createElement("input"); cb.type="checkbox"; cb.value=it.v; cb.checked=!!sel[it.v];
+      cb.addEventListener("change", function(){ if(cb.checked) m.sel[it.v]=1; else delete m.sel[it.v]; mselSync(m); renderJobs(); });
+      lab.appendChild(cb); lab.appendChild(document.createTextNode(" "+it.label));
+      pop.appendChild(lab);
+    });
+    btn.addEventListener("click", function(e){ e.stopPropagation(); var willOpen=pop.hidden; closeAllMsel(); pop.hidden=!willOpen; btn.setAttribute("aria-expanded", String(willOpen)); });
+    host.appendChild(btn); host.appendChild(pop);
+    mselSync(m);
+  }
+  /* one document-level handler closes any open popover on an outside click */
+  if(!window.__mselOutside){ window.__mselOutside=1; document.addEventListener("click", function(e){ if(!(e.target.closest && e.target.closest(".msel"))) closeAllMsel(); }); }
+
   function buildSpecSelect(){
     var n={}; JOBS.forEach(function(j){ if(j.spec) n[j.spec]=(n[j.spec]||0)+1; });
-    fillSelect($("#filterSpec"), t("filter_spec_all"), SPECS.filter(function(s){return n[s];}).map(function(s){return {v:s,t:s+" ("+n[s]+")"};}));
+    makeMultiSelect("filterSpec", t("filter_spec_all"), SPECS.filter(function(s){return n[s];}).map(function(s){return {v:s,label:s+" ("+n[s]+")"};}));
   }
   function buildStackSelect(){
     /* tech-stack facet = REAL technologies only; drop the discipline/role labels that ride
-       in on job.stack (DevOps, Engineering Manager, Backend, …) so it is not buzzword soup. */
+       in on job.stack (DevOps, Engineering Manager, GitHub, …) so it is not buzzword soup. */
     var n={}; JOBS.forEach(function(j){ (j.stack||[]).forEach(function(s){ if(LW.NON_TECH.indexOf(s)===-1) n[s]=(n[s]||0)+1; }); });
-    fillSelect($("#filterStack"), t("filter_stack_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(s){return {v:s,t:s+" ("+n[s]+")"};}));
+    makeMultiSelect("filterStack", t("filter_stack_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(s){return {v:s,label:s+" ("+n[s]+")"};}));
   }
   function buildLocSelect(){
     var n={}; JOBS.forEach(function(j){ var p=j.loc; if(p) n[p]=(n[p]||0)+1; });
-    fillSelect($("#filterLoc"), t("filter_loc_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(p){return {v:p,t:p+" ("+n[p]+")"};}));
+    makeMultiSelect("filterLoc", t("filter_loc_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(p){return {v:p,label:p+" ("+n[p]+")"};}));
+  }
+  function buildJpSelect(){
+    makeMultiSelect("filterJp", t("filter_jp_all"), [
+      {v:"none",label:t("filter_jp_none")},{v:"conversational",label:t("filter_jp_conv")},{v:"business",label:t("filter_jp_biz")}
+    ]);
+  }
+  function buildRemoteSelect(){
+    makeMultiSelect("filterRemote", t("filter_rem_all"), [
+      {v:"full",label:t("filter_rem_full")},{v:"partial",label:t("filter_rem_part")},{v:"no",label:t("filter_rem_no")}
+    ]);
   }
 
   /* selection-bar actions: Clear, and batch "Apply to selected" (opens signup in
@@ -5368,7 +5434,7 @@
     /* aria-labels must switch language with the page too — a JA screen-reader user was
        hearing "Close", "Menu", "Filters" in English while html lang said ja */
     document.querySelectorAll("[data-i18n-aria]").forEach(function(n){ var k=n.getAttribute("data-i18n-aria"); var v=I18N[lang][k]!=null?I18N[lang][k]:I18N.en[k]; if(v!=null) n.setAttribute("aria-label", v); });
-    buildSpecSelect(); buildStackSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners(); renderPrivacy();
+    buildSpecSelect(); buildStackSelect(); buildJpSelect(); buildRemoteSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners(); renderPrivacy();
     var jc=$("#jobCount"); if(jc) jc.innerHTML = t("jobcount").replace("{n}","<b>"+JOBS.length+"</b>");
     document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
     /* an open JD modal's Save/Apply buttons hold runtime state the data-i18n sweep above
@@ -5417,12 +5483,13 @@
      not on every keystroke. Dropdowns fire on `change`, so they animate instantly. */
   function debounce(fn,ms){ var tid; return function(){ var c=this,a=arguments; clearTimeout(tid); tid=setTimeout(function(){ fn.apply(c,a); }, ms); }; }
   var renderJobsDebounced=debounce(renderJobs,170);
-  ["#filterSearch","#filterJp","#filterRemote","#filterSpec","#filterStack","#filterLoc"].forEach(function(sel){
-    var n=$(sel); if(n) n.addEventListener(sel==="#filterSearch"?"input":"change", sel==="#filterSearch"?renderJobsDebounced:renderJobs);
-  });
+  /* The five facet dropdowns are custom multi-selects (jobs.js) that call renderJobs
+     themselves on change; only the free-text box is wired here. */
+  var _fs=$("#filterSearch"); if(_fs) _fs.addEventListener("input", renderJobsDebounced);
   var _clear=$("#filterClear");
   if(_clear) _clear.addEventListener("click", function(){
-    ["#filterSearch","#filterJp","#filterRemote","#filterSpec","#filterStack","#filterLoc"].forEach(function(s){ if($(s)) $(s).value=""; });
+    if($("#filterSearch")) $("#filterSearch").value="";
+    resetMultiSelects();
     showAllJobs=false;
     renderJobs();
   });

@@ -50,6 +50,37 @@ test("classifySpec() ignores non-tech discipline tags on the stack (no DevOps->S
   assert.equal(LW.classifySpec({ role: "Security Engineer", stack: ["DevOps", "Data & AI"] }), "Security");
 });
 
+test("classifySpec() falls back to a discipline tag when the title alone can't place the job", () => {
+  // a Japanese-only / generic title classifies via its ROLE_TAG stack chip — role still wins first
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["Frontend"] }), "Frontend");
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["DevOps"] }), "SRE / Infra");
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["Data & AI"] }), "AI / ML");
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["Engineering Manager"] }), "Engineering Management");
+  // but a classifiable title is NOT overridden by the tag (no hijack)
+  assert.equal(LW.classifySpec({ role: "Security Engineer", stack: ["Frontend"] }), "Security");
+});
+
+test("NON_TECH denylists GitHub (not a skill) so it never shows in the tech-stack facet", () => {
+  assert.ok(LW.NON_TECH.indexOf("GitHub") > -1);
+});
+
+test("matchesFilter() supports multi-select (arrays OR within a facet, still AND across)", () => {
+  const be = { spec: "Backend", stack: ["AWS", "Go"], jp: "business", loc: "Tokyo", remote: "full" };
+  const fe = { spec: "Frontend", stack: ["React"], jp: "none", loc: "Osaka", remote: "no" };
+  // spec array: either matches
+  assert.equal(LW.matchesFilter(be, { spec: ["Backend", "Frontend"] }), true);
+  assert.equal(LW.matchesFilter(fe, { spec: ["Backend", "Frontend"] }), true);
+  assert.equal(LW.matchesFilter(be, { spec: ["Frontend"] }), false);
+  // stack array: job matches if it carries ANY selected tech
+  assert.equal(LW.matchesFilter(be, { stack: ["Go", "Rust"] }), true);
+  assert.equal(LW.matchesFilter(be, { stack: ["Rust"] }), false);
+  // facets AND together
+  assert.equal(LW.matchesFilter(be, { spec: ["Backend"], loc: ["Osaka"] }), false);
+  // empty array = no constraint; scalar form still works (back-compat)
+  assert.equal(LW.matchesFilter(be, { spec: [] }), true);
+  assert.equal(LW.matchesFilter(be, { spec: "Backend" }), true);
+});
+
 test("NON_TECH is exposed and lists disciplines, not technologies", () => {
   assert.ok(LW.NON_TECH.includes("DevOps") && LW.NON_TECH.includes("Engineering Manager"));
   assert.ok(!LW.NON_TECH.includes("AWS") && !LW.NON_TECH.includes("Python"));
