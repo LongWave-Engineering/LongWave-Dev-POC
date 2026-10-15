@@ -1659,10 +1659,15 @@
        an unclassifiable row never shows; keep that in mind if the catch-all grows. */
     var HIDDEN_SPECS = ["Corporate & Ops","Management","Sales & BD","Consulting","Other"];
 
-    /* Tech-axis vocabulary only: these discipline/role labels ride in on job.stack
-       but are NOT technologies — stripped from classification AND the tech-stack facet so
-       it lists real tech, not buzzwords, and so a DevOps/Data&AI tag can't hijack the spec. */
-    var NON_TECH = ["DevOps", "Data & AI", "Engineering Manager", "Backend", "Frontend", "Mobile Engineer", "Product Management", "Quality Assurance", "UI/UX", "GitHub"];
+    /* Tech-axis vocabulary only: stripped from classification AND the tech-stack facet.
+       Two kinds live here:
+         - discipline/role labels that ride in on job.stack (DevOps, Engineering Manager, …)
+           so a tag can't hijack the spec and the facet isn't buzzword soup;
+         - "just a tool" products that aren't an engineering skill a candidate filters by
+           (GitHub = Git hosting, Datadog = monitoring SaaS, Salesforce = CRM). Salesforce
+           also removes a latent bug: "salesforce" contains "sales", which could mis-sort a
+           generic-role job into the hidden Sales & BD bucket. */
+    var NON_TECH = ["DevOps", "Data & AI", "Engineering Manager", "Backend", "Frontend", "Full-Stack", "Mobile Engineer", "Product Management", "Quality Assurance", "UI/UX", "GitHub", "Datadog", "Salesforce"];
 
     /* Specialty classification rules, FIRST MATCH WINS — order matters (e.g. QA
        before generic Engineering, Hardware before generic Engineering). Matched as

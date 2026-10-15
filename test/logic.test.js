@@ -59,8 +59,17 @@ test("classifySpec() falls back to the backend job.domain hint for titles it can
   assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", domain: "NotASpec" }), "Other");
 });
 
-test("NON_TECH denylists GitHub (not a skill) so it never shows in the tech-stack facet", () => {
-  assert.ok(LW.NON_TECH.indexOf("GitHub") > -1);
+test("NON_TECH denylists 'just a tool' tags so they never show in the tech-stack facet", () => {
+  // products/tools, not engineering skills a candidate filters by
+  for (const tool of ["GitHub", "Datadog", "Salesforce"]) assert.ok(LW.NON_TECH.indexOf(tool) > -1, tool);
+  // the leaked discipline label
+  assert.ok(LW.NON_TECH.indexOf("Full-Stack") > -1);
+  // real skills stay IN the facet
+  for (const skill of ["AWS", "Python", "Kubernetes", "Terraform", "Airflow", "BigQuery", "Snowflake"]) {
+    assert.ok(LW.NON_TECH.indexOf(skill) === -1, skill);
+  }
+  // Salesforce no longer leaks into the Sales & BD bucket via the "sales" substring
+  assert.notEqual(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["Salesforce"] }), "Sales & BD");
 });
 
 test("matchesFilter() supports multi-select (arrays OR within a facet, still AND across)", () => {
