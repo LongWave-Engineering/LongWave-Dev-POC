@@ -76,6 +76,18 @@ test("classifySpec() classifies on the part before the — division suffix", () 
   assert.equal(LW.classifySpec({ role: "Frontend Engineer — Platform Division" }), "Frontend");
 });
 
+test("classifySpec() falls back to job.domain only when nothing else matches", () => {
+  // unrecognised title: the hint rescues it from the hidden "Other" bucket
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: [], domain: "Frontend" }), "Frontend");
+  // a real title/tech match always wins over the hint (enum is unreliable on non-eng rows)
+  assert.equal(LW.classifySpec({ role: "採用担当", domain: "Backend" }), "Corporate & Ops");
+  assert.equal(LW.classifySpec({ role: "Backend Engineer", domain: "SRE / Infra" }), "Backend");
+  // junk / non-SPECS hints are ignored
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", domain: "Wizard" }), "Other");
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", domain: 7 }), "Other");
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ" }), "Other");
+});
+
 test("every classifySpec() result is a member of the canonical SPECS list", () => {
   const rolesProbe = ["Data Engineer","QA Engineer","iOS Engineer","Security Lead","Marketing","Recruiter","zzz"];
   for (const role of rolesProbe) assert.ok(LW.SPECS.includes(LW.classifySpec({ role })));

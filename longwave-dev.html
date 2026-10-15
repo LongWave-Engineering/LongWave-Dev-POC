@@ -1703,6 +1703,12 @@
         var kw = SPEC_RULES[i].kw;
         for(var j=0; j<kw.length; j++){ if(hay.indexOf(kw[j]) > -1) return SPEC_RULES[i].spec; }
       }
+      /* Last resort: a backend-supplied hint (job.domain, a SPECS value) for titles no
+         keyword recognises. It never overrides a title/tech match — the source's role
+         enum is unreliable on non-engineering rows — it only rescues what would
+         otherwise fall into the hidden "Other" bucket. */
+      var d = job && job.domain;
+      if(typeof d === "string" && SPECS.indexOf(d) > -1) return d;
       return "Other";
     }
 
