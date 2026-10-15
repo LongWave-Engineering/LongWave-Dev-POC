@@ -43,7 +43,7 @@
     /* Tech-axis vocabulary only: these discipline/role labels ride in on job.stack
        but are NOT technologies — stripped from classification AND the tech-stack facet so
        it lists real tech, not buzzwords, and so a DevOps/Data&AI tag can't hijack the spec. */
-    var NON_TECH = ["DevOps", "Data & AI", "Engineering Manager", "Backend", "Frontend", "Mobile Engineer", "Product Management", "Quality Assurance", "UI/UX"];
+    var NON_TECH = ["DevOps", "Data & AI", "Engineering Manager", "Backend", "Frontend", "Mobile Engineer", "Product Management", "Quality Assurance", "UI/UX", "GitHub"];
 
     /* Specialty classification rules, FIRST MATCH WINS — order matters (e.g. QA
        before generic Engineering, Hardware before generic Engineering). Matched as
@@ -70,23 +70,32 @@
       { spec:"Management", kw:["manager","director","head of"," officer","vp of","cfo","cao","cmo","cro","executive","lead candidate","chief","strategist","マネージャー","マネジャー","部長","本部長","責任者","役員","部門長","cto","cio","coo","cpo","ディレクター","business leader"] }
     ];
 
-    function classifySpec(job){
-      /* classify on the role part BEFORE the "— Division" suffix, padded so
-         leading-space keys also match at the start of the title */
-      var primary = String((job && job.role) || "").split(/—|–/)[0];
-      /* classify on role + REAL tech only: discipline tags (NON_TECH) carried on the
-         stack were hijacking the spec — DevOps -> SRE, Data & AI -> AI/ML on hundreds of
-         jobs. Real tech (e.g. dbt -> Data Engineering) still refines a generic title. */
-      var tech = (((job && job.stack) || [])).filter(function(s){ return NON_TECH.indexOf(s) === -1; });
-      var hay = (" " + primary + " " + tech.join(" ") + " ").toLowerCase();
+    function specForHay(hay){
       for(var i=0; i<SPEC_RULES.length; i++){
         var kw = SPEC_RULES[i].kw;
         for(var j=0; j<kw.length; j++){ if(hay.indexOf(kw[j]) > -1) return SPEC_RULES[i].spec; }
       }
-      /* Last resort: a backend-supplied hint (job.domain, a SPECS value) for titles no
-         keyword recognises. It never overrides a title/tech match — the source's role
-         enum is unreliable on non-engineering rows — it only rescues what would
-         otherwise fall into the hidden "Other" bucket. */
+      return null;
+    }
+    function classifySpec(job){
+      /* classify on the role part BEFORE the "— Division" suffix, padded so
+         leading-space keys also match at the start of the title */
+      var primary = String((job && job.role) || "").split(/—|–/)[0];
+      var stack = ((job && job.stack) || []);
+      /* 1) role + REAL tech only. Discipline tags (NON_TECH) are held out of this pass so
+         a "DevOps"/"Data & AI" tag can't hijack a job the TITLE already classifies — that
+         was the SRE 154 / AI 115 bug. Real tech (e.g. dbt -> Data Engineering) still refines. */
+      var tech = stack.filter(function(s){ return NON_TECH.indexOf(s) === -1; });
+      var s = specForHay((" " + primary + " " + tech.join(" ") + " ").toLowerCase());
+      if(s) return s;
+      /* 2) fallback: for a job the title alone couldn't place (e.g. a Japanese-only title),
+         let a discipline tag carry the spec. Role still wins in pass 1, so this restores the
+         backend's ROLE_TAG signal without reopening the hijack — and keeps "Other" tiny. */
+      var disc = stack.filter(function(s2){ return NON_TECH.indexOf(s2) > -1; });
+      if(disc.length){ s = specForHay((" " + disc.join(" ") + " ").toLowerCase()); if(s) return s; }
+      /* 3) last resort: a backend-supplied hint (job.domain, a SPECS value) for titles no
+         keyword recognises (from PR #15). Never overrides a title/tech/tag match; it only
+         rescues what would otherwise fall into the hidden "Other" bucket. */
       var d = job && job.domain;
       if(typeof d === "string" && SPECS.indexOf(d) > -1) return d;
       return "Other";
@@ -143,18 +152,30 @@
       return (job.role + " " + (jaRole || "") + " " + (coName || "") + " " + (((job.stack) || []).join(" ")) + " " + (job.spec || "")).toLowerCase();
     }
 
+    /* A facet selection is EITHER a scalar (legacy single-select) OR an array
+       (multi-select). Empty string / empty array / falsy = no constraint. Within one
+       facet, multiple picks are OR'd; across facets they AND — standard faceted search. */
+    function selActive(v){ return Array.isArray(v) ? v.length > 0 : !!v; }
+    function selHas(v, val){ return Array.isArray(v) ? v.indexOf(val) > -1 : v === val; }
+
     /* True if any facet of the filter object is set. */
-    function hasActiveFilter(f){ return !!(f && (f.q || f.jp || f.remote || f.spec || f.loc || f.stack)); }
+    function hasActiveFilter(f){ return !!(f && (f.q || selActive(f.jp) || selActive(f.remote) || selActive(f.spec) || selActive(f.loc) || selActive(f.stack))); }
 
     /* Does a single job pass the filter? Uses precomputed job._hay for the text
        query when present, else builds the haystack on the fly. */
     function matchesFilter(job, f){
       if(!f) return true;
-      if(f.jp && job.jp !== f.jp) return false;
-      if(f.remote && job.remote !== f.remote) return false;
-      if(f.spec && job.spec !== f.spec) return false;
-      if(f.loc && job.loc !== f.loc) return false;
-      if(f.stack && (job.stack || []).indexOf(f.stack) === -1) return false;
+      if(selActive(f.jp)     && !selHas(f.jp, job.jp))         return false;
+      if(selActive(f.remote) && !selHas(f.remote, job.remote)) return false;
+      if(selActive(f.spec)   && !selHas(f.spec, job.spec))     return false;
+      if(selActive(f.loc)    && !selHas(f.loc, job.loc))       return false;
+      if(selActive(f.stack)){
+        /* job.stack is a list; the job matches if it carries ANY selected tech */
+        var js = job.stack || [];
+        var ok = Array.isArray(f.stack) ? f.stack.some(function(s){ return js.indexOf(s) > -1; })
+                                        : js.indexOf(f.stack) > -1;
+        if(!ok) return false;
+      }
       if(f.q){ var hay = job._hay || searchHay(job); if(hay.indexOf(f.q) === -1) return false; }
       return true;
     }

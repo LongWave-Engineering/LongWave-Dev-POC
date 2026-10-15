@@ -129,7 +129,7 @@
         '<span class="jc-link">'+ esc(t("viewrole")) +'</span>'+
       '</span>';
   }
-  function getFilters(){ return { q:($("#filterSearch").value||"").trim().toLowerCase(), jp:$("#filterJp").value, remote:$("#filterRemote").value, spec:$("#filterSpec").value, loc:($("#filterLoc")?$("#filterLoc").value:""), stack:($("#filterStack")?$("#filterStack").value:"") }; }
+  function getFilters(){ return { q:($("#filterSearch").value||"").trim().toLowerCase(), jp:mselVals("filterJp"), remote:mselVals("filterRemote"), spec:mselVals("filterSpec"), loc:mselVals("filterLoc"), stack:mselVals("filterStack") }; }
   /* card = wrapper (visual + selected ring) holding a corner with two separate controls
      (a save heart and a selection checkbox) plus a clickable open-button. Keeping the
      controls as siblings of the open-button avoids nested buttons, so a heart/checkbox
@@ -235,26 +235,72 @@
     updateSelBar(); updateSavedToggle();
     resultCount.textContent = t("result").replace("{n}",shown.length).replace("{total}",JOBS.length);
   }
-  /* shared select builder: keeps the current value, shows "(count)" per option */
-  function fillSelect(sel, allLabel, items){
-    if(!sel) return; var cur=sel.value;
-    sel.innerHTML='<option value="">'+ allLabel +'</option>';
-    items.forEach(function(it){ var o=document.createElement("option"); o.value=it.v; o.textContent=it.t; sel.appendChild(o); });
-    sel.value=cur||"";
+  /* ---------------- multi-select facet widget ----------------
+     Each facet is a summary button + a checkbox popover. Several picks in one facet
+     are OR'd (see LW.matchesFilter); facets AND together. State lives in MSEL[id].sel
+     (an object used as a set); getFilters() reads it; it survives applyLang() rebuilds. */
+  var MSEL = {};
+  function mselVals(id){ var m=MSEL[id]; return m ? Object.keys(m.sel) : []; }
+  function mselSummary(m){
+    var ks=Object.keys(m.sel);
+    if(!ks.length) return m.allLabel;
+    var label=function(v){ var it=m.items.filter(function(i){return i.v===v;})[0]; return it?it.label:v; };
+    return ks.length===1 ? label(ks[0]) : label(ks[0])+" +"+(ks.length-1);
   }
+  function mselSync(m){
+    var lbl=m.host.querySelector(".msel-label"); if(lbl) lbl.textContent=mselSummary(m);
+    var btn=m.host.querySelector(".msel-btn"); if(btn) btn.classList.toggle("has-sel", Object.keys(m.sel).length>0);
+  }
+  function closeAllMsel(){ Object.keys(MSEL).forEach(function(id){ var h=MSEL[id].host; var p=h.querySelector(".msel-pop"); if(p) p.hidden=true; var b=h.querySelector(".msel-btn"); if(b) b.setAttribute("aria-expanded","false"); }); }
+  function resetMultiSelects(){ Object.keys(MSEL).forEach(function(id){ var m=MSEL[id]; m.sel={}; m.host.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked=false; }); mselSync(m); }); }
+  function makeMultiSelect(id, allLabel, items){
+    var host=$("#"+id); if(!host) return;
+    /* preserve any still-valid selections across a rebuild (language switch / hydration) */
+    var prev=MSEL[id]?MSEL[id].sel:{}, valid={}; items.forEach(function(it){ valid[it.v]=1; });
+    var sel={}; Object.keys(prev).forEach(function(k){ if(valid[k]) sel[k]=1; });
+    var m={ host:host, allLabel:allLabel, items:items, sel:sel }; MSEL[id]=m;
+    host.innerHTML="";
+    var btn=el("button","msel-btn"); btn.type="button";
+    btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false"); btn.setAttribute("aria-labelledby","lbl-"+id);
+    btn.innerHTML='<span class="msel-label"></span><svg class="msel-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
+    var pop=el("div","msel-pop"); pop.setAttribute("role","listbox"); pop.setAttribute("aria-multiselectable","true"); pop.hidden=true;
+    items.forEach(function(it){
+      var lab=el("label","msel-opt");
+      var cb=document.createElement("input"); cb.type="checkbox"; cb.value=it.v; cb.checked=!!sel[it.v];
+      cb.addEventListener("change", function(){ if(cb.checked) m.sel[it.v]=1; else delete m.sel[it.v]; mselSync(m); renderJobs(); });
+      lab.appendChild(cb); lab.appendChild(document.createTextNode(" "+it.label));
+      pop.appendChild(lab);
+    });
+    btn.addEventListener("click", function(e){ e.stopPropagation(); var willOpen=pop.hidden; closeAllMsel(); pop.hidden=!willOpen; btn.setAttribute("aria-expanded", String(willOpen)); });
+    host.appendChild(btn); host.appendChild(pop);
+    mselSync(m);
+  }
+  /* one document-level handler closes any open popover on an outside click */
+  if(!window.__mselOutside){ window.__mselOutside=1; document.addEventListener("click", function(e){ if(!(e.target.closest && e.target.closest(".msel"))) closeAllMsel(); }); }
+
   function buildSpecSelect(){
     var n={}; JOBS.forEach(function(j){ if(j.spec) n[j.spec]=(n[j.spec]||0)+1; });
-    fillSelect($("#filterSpec"), t("filter_spec_all"), SPECS.filter(function(s){return n[s];}).map(function(s){return {v:s,t:s+" ("+n[s]+")"};}));
+    makeMultiSelect("filterSpec", t("filter_spec_all"), SPECS.filter(function(s){return n[s];}).map(function(s){return {v:s,label:s+" ("+n[s]+")"};}));
   }
   function buildStackSelect(){
     /* tech-stack facet = REAL technologies only; drop the discipline/role labels that ride
-       in on job.stack (DevOps, Engineering Manager, Backend, …) so it is not buzzword soup. */
+       in on job.stack (DevOps, Engineering Manager, GitHub, …) so it is not buzzword soup. */
     var n={}; JOBS.forEach(function(j){ (j.stack||[]).forEach(function(s){ if(LW.NON_TECH.indexOf(s)===-1) n[s]=(n[s]||0)+1; }); });
-    fillSelect($("#filterStack"), t("filter_stack_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(s){return {v:s,t:s+" ("+n[s]+")"};}));
+    makeMultiSelect("filterStack", t("filter_stack_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(s){return {v:s,label:s+" ("+n[s]+")"};}));
   }
   function buildLocSelect(){
     var n={}; JOBS.forEach(function(j){ var p=j.loc; if(p) n[p]=(n[p]||0)+1; });
-    fillSelect($("#filterLoc"), t("filter_loc_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(p){return {v:p,t:p+" ("+n[p]+")"};}));
+    makeMultiSelect("filterLoc", t("filter_loc_all"), Object.keys(n).sort(function(a,b){return n[b]-n[a];}).map(function(p){return {v:p,label:p+" ("+n[p]+")"};}));
+  }
+  function buildJpSelect(){
+    makeMultiSelect("filterJp", t("filter_jp_all"), [
+      {v:"none",label:t("filter_jp_none")},{v:"conversational",label:t("filter_jp_conv")},{v:"business",label:t("filter_jp_biz")}
+    ]);
+  }
+  function buildRemoteSelect(){
+    makeMultiSelect("filterRemote", t("filter_rem_all"), [
+      {v:"full",label:t("filter_rem_full")},{v:"partial",label:t("filter_rem_part")},{v:"no",label:t("filter_rem_no")}
+    ]);
   }
 
   /* selection-bar actions: Clear, and batch "Apply to selected" (opens signup in
