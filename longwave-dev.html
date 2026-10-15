@@ -1689,32 +1689,23 @@
       { spec:"Management", kw:["manager","director","head of"," officer","vp of","cfo","cao","cmo","cro","executive","lead candidate","chief","strategist","マネージャー","マネジャー","部長","本部長","責任者","役員","部門長","cto","cio","coo","cpo","ディレクター","business leader"] }
     ];
 
-    function specForHay(hay){
-      for(var i=0; i<SPEC_RULES.length; i++){
-        var kw = SPEC_RULES[i].kw;
-        for(var j=0; j<kw.length; j++){ if(hay.indexOf(kw[j]) > -1) return SPEC_RULES[i].spec; }
-      }
-      return null;
-    }
     function classifySpec(job){
       /* classify on the role part BEFORE the "— Division" suffix, padded so
          leading-space keys also match at the start of the title */
       var primary = String((job && job.role) || "").split(/—|–/)[0];
-      var stack = ((job && job.stack) || []);
-      /* 1) role + REAL tech only. Discipline tags (NON_TECH) are held out of this pass so
-         a "DevOps"/"Data & AI" tag can't hijack a job the TITLE already classifies — that
-         was the SRE 154 / AI 115 bug. Real tech (e.g. dbt -> Data Engineering) still refines. */
-      var tech = stack.filter(function(s){ return NON_TECH.indexOf(s) === -1; });
-      var s = specForHay((" " + primary + " " + tech.join(" ") + " ").toLowerCase());
-      if(s) return s;
-      /* 2) fallback: for a job the title alone couldn't place (e.g. a Japanese-only title),
-         let a discipline tag carry the spec. Role still wins in pass 1, so this restores the
-         backend's ROLE_TAG signal without reopening the hijack — and keeps "Other" tiny. */
-      var disc = stack.filter(function(s2){ return NON_TECH.indexOf(s2) > -1; });
-      if(disc.length){ s = specForHay((" " + disc.join(" ") + " ").toLowerCase()); if(s) return s; }
-      /* 3) last resort: a backend-supplied hint (job.domain, a SPECS value) for titles no
-         keyword recognises (from PR #15). Never overrides a title/tech/tag match; it only
-         rescues what would otherwise fall into the hidden "Other" bucket. */
+      /* classify on role + REAL tech only: discipline tags (NON_TECH) carried on the
+         stack were hijacking the spec — DevOps -> SRE, Data & AI -> AI/ML on hundreds of
+         jobs. Real tech (e.g. dbt -> Data Engineering) still refines a generic title. */
+      var tech = (((job && job.stack) || [])).filter(function(s){ return NON_TECH.indexOf(s) === -1; });
+      var hay = (" " + primary + " " + tech.join(" ") + " ").toLowerCase();
+      for(var i=0; i<SPEC_RULES.length; i++){
+        var kw = SPEC_RULES[i].kw;
+        for(var j=0; j<kw.length; j++){ if(hay.indexOf(kw[j]) > -1) return SPEC_RULES[i].spec; }
+      }
+      /* Last resort: a backend-supplied hint (job.domain, a SPECS value) for titles no
+         keyword recognises (PR #15 + web #28, which sends the specialty as job.domain). It
+         never overrides a title/tech match, and it is why the stripped display tags no
+         longer need to classify on their own — the domain hint carries them instead. */
       var d = job && job.domain;
       if(typeof d === "string" && SPECS.indexOf(d) > -1) return d;
       return "Other";

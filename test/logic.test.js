@@ -50,14 +50,13 @@ test("classifySpec() ignores non-tech discipline tags on the stack (no DevOps->S
   assert.equal(LW.classifySpec({ role: "Security Engineer", stack: ["DevOps", "Data & AI"] }), "Security");
 });
 
-test("classifySpec() falls back to a discipline tag when the title alone can't place the job", () => {
-  // a Japanese-only / generic title classifies via its ROLE_TAG stack chip — role still wins first
-  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["Frontend"] }), "Frontend");
-  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["DevOps"] }), "SRE / Infra");
-  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["Data & AI"] }), "AI / ML");
-  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["Engineering Manager"] }), "Engineering Management");
-  // but a classifiable title is NOT overridden by the tag (no hijack)
-  assert.equal(LW.classifySpec({ role: "Security Engineer", stack: ["Frontend"] }), "Security");
+test("classifySpec() falls back to the backend job.domain hint for titles it can't place", () => {
+  // the stripped display tags no longer classify on their own (web #28 sends job.domain)
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", stack: ["Frontend"] }), "Other");
+  // a valid domain hint rescues an otherwise-Other job; a title match still wins over it
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", domain: "AI / ML" }), "AI / ML");
+  assert.equal(LW.classifySpec({ role: "Security Engineer", domain: "AI / ML" }), "Security");
+  assert.equal(LW.classifySpec({ role: "日本語タイトルのみ", domain: "NotASpec" }), "Other");
 });
 
 test("NON_TECH denylists GitHub (not a skill) so it never shows in the tech-stack facet", () => {
