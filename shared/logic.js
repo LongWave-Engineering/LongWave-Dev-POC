@@ -33,6 +33,13 @@
        Every value classifySpec() can return MUST appear here — guarded by a test. */
     var SPECS = ["Frontend","Backend","Full-Stack","Software Engineering","Mobile","AI / ML","Data Engineering","SRE / Infra","Security","QA / Test","UI/UX & Design","Hardware & Mfg","Product Management","Project / Program Mgmt","Engineering Management","Consulting","Sales & BD","Management","Corporate & Ops","Other"];
 
+    /* Non-tech specialties hidden from the public board (a tech-only board, per
+       the 10/14 call). Jobs that classify into one of these are dropped in
+       enrichJobs() BEFORE they reach counts/filters/pagination — reversible by
+       emptying this list (nothing is deleted in the DB). "Other" is included so
+       an unclassifiable row never shows; keep that in mind if the catch-all grows. */
+    var HIDDEN_SPECS = ["Corporate & Ops","Management","Sales & BD","Consulting","Other"];
+
     /* Tech-axis vocabulary only: these discipline/role labels ride in on job.stack
        but are NOT technologies — stripped from classification AND the tech-stack facet so
        it lists real tech, not buzzwords, and so a DevOps/Data&AI tag can't hijack the spec. */
@@ -445,6 +452,7 @@
       ROUTES: ROUTES,
       routeFor: routeFor,
       SPECS: SPECS,
+      HIDDEN_SPECS: HIDDEN_SPECS,
       NON_TECH: NON_TECH,
       SPEC_RULES: SPEC_RULES,
       classifySpec: classifySpec,

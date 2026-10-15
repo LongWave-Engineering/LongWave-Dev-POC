@@ -55,6 +55,16 @@ test("NON_TECH is exposed and lists disciplines, not technologies", () => {
   assert.ok(!LW.NON_TECH.includes("AWS") && !LW.NON_TECH.includes("Python"));
 });
 
+test("HIDDEN_SPECS lists non-tech buckets, all members of SPECS", () => {
+  for (const s of ["Corporate & Ops", "Management", "Sales & BD", "Consulting", "Other"]) {
+    assert.ok(LW.HIDDEN_SPECS.includes(s), `${s} should be hidden`);
+  }
+  // never hide an engineering bucket, and every hidden value must be a real spec
+  assert.ok(!LW.HIDDEN_SPECS.includes("Software Engineering"));
+  assert.ok(!LW.HIDDEN_SPECS.includes("Security"));
+  for (const s of LW.HIDDEN_SPECS) assert.ok(LW.SPECS.includes(s), `hidden "${s}" not in SPECS`);
+});
+
 test("classifySpec() handles Japanese role titles", () => {
   assert.equal(LW.classifySpec({ role: "セキュリティエンジニア" }), "Security");
   assert.equal(LW.classifySpec({ role: "プロダクトマネージャー" }), "Product Management");
