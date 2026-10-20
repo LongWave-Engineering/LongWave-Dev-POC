@@ -1,8 +1,28 @@
 /* features/articles/articles.css — article cards */
   /* ---------- articles ---------- */
   .art-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-  .art{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:30px;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;display:flex;flex-direction:column;gap:12px;cursor:pointer;}
+  .art{
+    position:relative;isolation:isolate;overflow:hidden;
+    display:flex;flex-direction:column;gap:12px;cursor:pointer;
+    padding:30px;
+    background-color:var(--surface);
+    background-image:linear-gradient(135deg,var(--art-tint,var(--sky-wash)) 0%,var(--surface) 58%);
+    border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+    transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
+  }
+  /* gentle per-card tint cycle (sky / cool-navy / banana), matching the companies + why-us wash */
+  .art:nth-child(3n+1){--art-tint:var(--sky-wash);}
+  .art:nth-child(3n+2){--art-tint:var(--neu-bg);}
+  .art:nth-child(3n+3){--art-tint:var(--banana-wash);}
+  .art::after{
+    content:"";position:absolute;top:-8px;right:-16px;width:150px;height:92px;z-index:-1;
+    background:var(--navy);opacity:.06;pointer-events:none;
+    -webkit-mask:var(--wave-motif) no-repeat right top / contain;
+            mask:var(--wave-motif) no-repeat right top / contain;
+    transition:opacity .2s ease;
+  }
   .art:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--line-strong);}
+  .art:hover::after{opacity:.1;}
   .art .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
   .art h4{font-size:1.2rem;line-height:1.28;}
   .art .art-dek{color:var(--slate);font-size:.98rem;line-height:1.5;}
