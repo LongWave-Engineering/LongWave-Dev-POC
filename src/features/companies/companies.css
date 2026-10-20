@@ -1,15 +1,81 @@
-/* features/companies/companies.css — company cards */
+/* features/companies/companies.css — company cards (brand-elegant restyle, light-mode only) */
   /* ---------- companies ---------- */
+  /* Palette is strictly the core/base.css tokens. The grid leans sky + navy with rare
+     warm accents, so it reads as one calm, premium set rather than a loud redesign.
+     Column count is owned by core/responsive.css (3 → 2 → 1), like every other grid. */
+
   .co-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-  .co-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;}
+
+  /* ----- the card: a soft, name-hashed brand wash over white ----- */
+  .co-card{
+    position:relative;isolation:isolate;overflow:hidden;
+    display:flex;flex-direction:column;gap:16px;min-height:188px;
+    padding:24px 26px;
+    background-color:var(--surface);
+    background-image:linear-gradient(135deg,var(--co-tint,var(--sky-wash)) 0%,var(--surface) 58%);
+    border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    /* corner wave motif: the SHAPE is an alpha mask, the COLOUR stays a token (var(--navy)),
+       so nothing here invents a hex and the wave never fights the text. */
+    --co-wave:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 70'%3E%3Cg fill='none' stroke='%23000' stroke-width='6' stroke-linecap='round'%3E%3Cpath d='M-6 14 Q16 2 38 14 T82 14 T126 14'/%3E%3Cpath d='M-6 35 Q16 23 38 35 T82 35 T126 35'/%3E%3Cpath d='M-6 56 Q16 44 38 56 T82 56 T126 56'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* per-card tint, chosen by a stable name-hash in JS (.co-v0 … .co-v5).
+     Weighting (see companies.js) keeps sky + navy dominant; green / banana / peach are rare. */
+  .co-v0{--co-tint:var(--sky-wash);}      /* sky cloud (most common)    */
+  .co-v1{--co-tint:var(--neu-bg);}        /* cool navy-grey             */
+  .co-v2{--co-tint:var(--banana-wash);}   /* banana accent (rare)       */
+  .co-v3{--co-tint:var(--pos-bg);}        /* soft green accent (rare)   */
+  .co-v4{background-image:linear-gradient(135deg,var(--sky-wash) 0%,var(--neu-bg) 32%,var(--surface) 72%);} /* sky to navy wave */
+  .co-v5{--co-tint:var(--hot-bg);}        /* warm peach accent (rarest) */
+
+  /* whisper-soft corner wave — top-right, behind content, never over the top-left logo */
+  .co-card::after{
+    content:"";position:absolute;top:-8px;right:-14px;width:150px;height:92px;z-index:-1;
+    background:var(--navy);opacity:.06;pointer-events:none;
+    -webkit-mask:var(--co-wave) no-repeat right top / contain;
+            mask:var(--co-wave) no-repeat right top / contain;
+    transition:opacity .4s ease;
+  }
+
+  /* ----- status pill: frosted white + one coloured dot, on its own top row ----- */
+  /* It is a real flex child (align-self:flex-end), so a long company name can never run under it. */
+  .co-badge{
+    align-self:flex-end;
+    display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+    padding:5px 11px 5px 9px;border-radius:999px;
+    font-family:var(--font-body);font-size:.72rem;font-weight:700;letter-spacing:.02em;
+    color:var(--ink-soft);
+    background:rgba(255,255,255,.72);
+    -webkit-backdrop-filter:blur(8px) saturate(1.1);
+            backdrop-filter:blur(8px) saturate(1.1);
+    border:1px solid var(--line);
+    box-shadow:0 1px 2px rgba(14,34,53,.05);
+  }
+  .co-dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .co-badge--live    .co-dot{background:var(--pos-fg);box-shadow:0 0 0 3px var(--pos-bg);}  /* open roles */
+  .co-badge--partner .co-dot{background:var(--sky);box-shadow:0 0 0 3px var(--sky-wash);}   /* partner    */
+
+  /* ----- identity row ----- */
   .co-head{display:flex;align-items:center;gap:15px;}
-  .co-name{font-family:var(--font-display);font-weight:800;font-size:1.3rem;line-height:1.15;}
-  .co-sector{font-size:.98rem;color:var(--slate);}
-  /* whole card is a button → opens the company modal */
+  .co-head .avatar{box-shadow:0 0 0 1px var(--line);}   /* crisp chip edge over the tint; logo bg stays white */
+  .co-id{min-width:0;}                                  /* let long names wrap instead of overflowing */
+  .co-name{font-family:var(--font-display);font-weight:800;font-size:1.3rem;line-height:1.15;color:var(--ink);letter-spacing:-.01em;}
+  .co-sector{margin-top:3px;font-size:.95rem;line-height:1.3;color:var(--slate);}
+
+  /* ----- CTA with sliding arrow ----- */
+  .co-cta{margin-top:auto;display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:1rem;color:var(--accent-deep);}
+  .co-arrow{display:inline-block;transition:transform .35s cubic-bezier(.16,1,.3,1);}
+
+  /* ----- interaction: whole card is a button → opens the company modal ----- */
   .co-card--click{cursor:pointer;transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s cubic-bezier(.16,1,.3,1),border-color .4s ease;}
-  .co-card--click:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--line-strong);}
+  .co-card--click:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--line-strong);}
+  .co-card--click:hover::after{opacity:.1;}
+  .co-card--click:hover .co-arrow{transform:translateX(5px);}
   .co-card--click:focus-visible{outline:3px solid var(--banana);outline-offset:3px;}
-  .co-cta{margin-top:auto;font-weight:700;color:var(--accent-deep);font-size:1rem;}
 
-
-
+  @media (prefers-reduced-motion:reduce){
+    .co-card--click,.co-arrow,.co-card::after{transition:none;}
+    .co-card--click:hover{transform:none;}
+    .co-card--click:hover .co-arrow{transform:none;}
+  }

@@ -433,21 +433,87 @@
 
 
 
-/* features/companies/companies.css — company cards */
+/* features/companies/companies.css — company cards (brand-elegant restyle, light-mode only) */
   /* ---------- companies ---------- */
+  /* Palette is strictly the core/base.css tokens. The grid leans sky + navy with rare
+     warm accents, so it reads as one calm, premium set rather than a loud redesign.
+     Column count is owned by core/responsive.css (3 → 2 → 1), like every other grid. */
+
   .co-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-  .co-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;}
+
+  /* ----- the card: a soft, name-hashed brand wash over white ----- */
+  .co-card{
+    position:relative;isolation:isolate;overflow:hidden;
+    display:flex;flex-direction:column;gap:16px;min-height:188px;
+    padding:24px 26px;
+    background-color:var(--surface);
+    background-image:linear-gradient(135deg,var(--co-tint,var(--sky-wash)) 0%,var(--surface) 58%);
+    border:1px solid var(--line);border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    /* corner wave motif: the SHAPE is an alpha mask, the COLOUR stays a token (var(--navy)),
+       so nothing here invents a hex and the wave never fights the text. */
+    --co-wave:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 110 70'%3E%3Cg fill='none' stroke='%23000' stroke-width='6' stroke-linecap='round'%3E%3Cpath d='M-6 14 Q16 2 38 14 T82 14 T126 14'/%3E%3Cpath d='M-6 35 Q16 23 38 35 T82 35 T126 35'/%3E%3Cpath d='M-6 56 Q16 44 38 56 T82 56 T126 56'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* per-card tint, chosen by a stable name-hash in JS (.co-v0 … .co-v5).
+     Weighting (see companies.js) keeps sky + navy dominant; green / banana / peach are rare. */
+  .co-v0{--co-tint:var(--sky-wash);}      /* sky cloud (most common)    */
+  .co-v1{--co-tint:var(--neu-bg);}        /* cool navy-grey             */
+  .co-v2{--co-tint:var(--banana-wash);}   /* banana accent (rare)       */
+  .co-v3{--co-tint:var(--pos-bg);}        /* soft green accent (rare)   */
+  .co-v4{background-image:linear-gradient(135deg,var(--sky-wash) 0%,var(--neu-bg) 32%,var(--surface) 72%);} /* sky to navy wave */
+  .co-v5{--co-tint:var(--hot-bg);}        /* warm peach accent (rarest) */
+
+  /* whisper-soft corner wave — top-right, behind content, never over the top-left logo */
+  .co-card::after{
+    content:"";position:absolute;top:-8px;right:-14px;width:150px;height:92px;z-index:-1;
+    background:var(--navy);opacity:.06;pointer-events:none;
+    -webkit-mask:var(--co-wave) no-repeat right top / contain;
+            mask:var(--co-wave) no-repeat right top / contain;
+    transition:opacity .4s ease;
+  }
+
+  /* ----- status pill: frosted white + one coloured dot, on its own top row ----- */
+  /* It is a real flex child (align-self:flex-end), so a long company name can never run under it. */
+  .co-badge{
+    align-self:flex-end;
+    display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+    padding:5px 11px 5px 9px;border-radius:999px;
+    font-family:var(--font-body);font-size:.72rem;font-weight:700;letter-spacing:.02em;
+    color:var(--ink-soft);
+    background:rgba(255,255,255,.72);
+    -webkit-backdrop-filter:blur(8px) saturate(1.1);
+            backdrop-filter:blur(8px) saturate(1.1);
+    border:1px solid var(--line);
+    box-shadow:0 1px 2px rgba(14,34,53,.05);
+  }
+  .co-dot{width:7px;height:7px;border-radius:50%;flex:none;}
+  .co-badge--live    .co-dot{background:var(--pos-fg);box-shadow:0 0 0 3px var(--pos-bg);}  /* open roles */
+  .co-badge--partner .co-dot{background:var(--sky);box-shadow:0 0 0 3px var(--sky-wash);}   /* partner    */
+
+  /* ----- identity row ----- */
   .co-head{display:flex;align-items:center;gap:15px;}
-  .co-name{font-family:var(--font-display);font-weight:800;font-size:1.3rem;line-height:1.15;}
-  .co-sector{font-size:.98rem;color:var(--slate);}
-  /* whole card is a button → opens the company modal */
+  .co-head .avatar{box-shadow:0 0 0 1px var(--line);}   /* crisp chip edge over the tint; logo bg stays white */
+  .co-id{min-width:0;}                                  /* let long names wrap instead of overflowing */
+  .co-name{font-family:var(--font-display);font-weight:800;font-size:1.3rem;line-height:1.15;color:var(--ink);letter-spacing:-.01em;}
+  .co-sector{margin-top:3px;font-size:.95rem;line-height:1.3;color:var(--slate);}
+
+  /* ----- CTA with sliding arrow ----- */
+  .co-cta{margin-top:auto;display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:1rem;color:var(--accent-deep);}
+  .co-arrow{display:inline-block;transition:transform .35s cubic-bezier(.16,1,.3,1);}
+
+  /* ----- interaction: whole card is a button → opens the company modal ----- */
   .co-card--click{cursor:pointer;transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s cubic-bezier(.16,1,.3,1),border-color .4s ease;}
-  .co-card--click:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--line-strong);}
+  .co-card--click:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--line-strong);}
+  .co-card--click:hover::after{opacity:.1;}
+  .co-card--click:hover .co-arrow{transform:translateX(5px);}
   .co-card--click:focus-visible{outline:3px solid var(--banana);outline-offset:3px;}
-  .co-cta{margin-top:auto;font-weight:700;color:var(--accent-deep);font-size:1rem;}
 
-
-
+  @media (prefers-reduced-motion:reduce){
+    .co-card--click,.co-arrow,.co-card::after{transition:none;}
+    .co-card--click:hover{transform:none;}
+    .co-card--click:hover .co-arrow{transform:none;}
+  }
 /* features/partners/partners.css — rotating partner-logo wall.
    Multiple rows (three by default) scroll in ALTERNATING directions (←, →, ←) and run
    continuously — no pause on hover, no hover animation on the chips, by request.
@@ -2345,6 +2411,7 @@
       comp_h1:"Companies we work with",
       comp_sub:"Companies in our network, including teams hiring with us and companies where we've placed engineers. No role listed yet? Ask us; we often have unlisted positions.",
       comp_view_co:"Learn more & ask →", comp_view_co_a11y:"learn more and ask about roles",
+      comp_badge_live:"Open roles", comp_badge_partner:"Partner",
       co_inq_h:"Interested? Tell us a bit and we'll be in touch.",
       co_role:"Which role are you interested in?", co_source:"Where did you come across this?",
       co_src_pick:"Select…", co_src_net:"Internet / search", co_src_friend:"A friend", co_src_linkedin:"LinkedIn", co_src_event:"An event", co_src_other:"Other",
@@ -2453,6 +2520,7 @@
       comp_h1:"パートナー企業",
       comp_sub:"私たちとつながりのある企業です。採用を支援中のチームや、エンジニアをご紹介した企業を含みます。求人が未掲載でも、お気軽にお問い合わせください。非公開の求人をお預かりしていることもあります。",
       comp_view_co:"詳細・お問い合わせ →", comp_view_co_a11y:"詳細を見て問い合わせる",
+      comp_badge_live:"募集中", comp_badge_partner:"パートナー",
       co_inq_h:"ご興味があればお気軽にご連絡ください",
       co_role:"ご興味のある職種", co_source:"どこで知りましたか？",
       co_src_pick:"選択してください", co_src_net:"インターネット・検索", co_src_friend:"友人・知人", co_src_linkedin:"LinkedIn", co_src_event:"イベント", co_src_other:"その他",
@@ -3005,6 +3073,18 @@
    one-line industry tag. The whole card is a button — clicking it opens the company
    modal (short summary of what they do + an "interested?" inquiry form). Order: live
    roles first, then placement clients, then roster order. */
+
+  /* Stable name-hash → weighted gradient-variant class. The grid deliberately leans sky +
+     navy: 9 of the 12 VMAP slots are sky/navy (v0 sky-wash, v1 neu-bg, v4 sky→navy wave),
+     only 3 are warm/green accents (v2 banana, v3 green, v5 peach), so the set reads as one
+     cohesive wash, not a rainbow. A company keeps its colour across reloads and reordering. */
+  function coGradientClass(name){
+    var h=0, s=String(name||"");
+    for(var i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i)) >>> 0; }
+    var VMAP=["v0","v1","v4","v0","v1","v2","v4","v0","v1","v3","v4","v5"];
+    return "co-" + VMAP[h % VMAP.length];
+  }
+
   function renderCompanies(){
     var grid=$("#coGrid"); if(!grid) return;
     grid.innerHTML="";
@@ -3025,17 +3105,27 @@
       .forEach(function(it){
         var p=it.p, r=rich[p.name];
         var industry = (p.industry && p.industry[lang]) || (r && r.sector && r.sector[lang]) || "";
-        var card=el("div","co-card co-card--click");
+
+        /* public status keys off live open roles only (it.n>0 vs partner); p.placement is
+           never read here, so the confidential placement relationship never leaks. */
+        var live     = it.n > 0;
+        var badgeCls = live ? "co-badge--live" : "co-badge--partner";
+        var badgeTxt = live ? t("comp_badge_live") : t("comp_badge_partner");
+        /* strip the baked-in trailing arrow so our own arrow can slide independently */
+        var ctaTxt   = t("comp_view_co").replace(/\s*→\s*$/, "");
+
+        var card=el("div","co-card co-card--click "+ coGradientClass(p.name));
         card.setAttribute("data-company", p.name);
         card.setAttribute("role","button");
         card.setAttribute("tabindex","0");
         card.setAttribute("aria-label", p.name + ", " + t("comp_view_co_a11y"));
         card.innerHTML=
+          '<span class="co-badge '+ badgeCls +'"><span class="co-dot" aria-hidden="true"></span>'+ esc(badgeTxt) +'</span>'+
           '<div class="co-head">'+ avatarHTML({logo:(typeof PARTNER_LOGOS!=="undefined"?PARTNER_LOGOS[p.name]:null), color:p.color, mono:p.mono}) +
-            '<div><div class="co-name">'+ esc(p.name) +'</div>'+
+            '<div class="co-id"><div class="co-name">'+ esc(p.name) +'</div>'+
             (industry?'<div class="co-sector">'+ esc(industry) +'</div>':'')+'</div>'+
           '</div>'+
-          '<div class="co-cta">'+ t("comp_view_co") +'</div>';
+          '<div class="co-cta">'+ esc(ctaTxt) +'<span class="co-arrow" aria-hidden="true">→</span></div>';
         grid.appendChild(card);
       });
   }
