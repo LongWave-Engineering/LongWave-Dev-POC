@@ -1,7 +1,24 @@
 /* features/testimonials/testimonials.css — quote / review cards */
-  /* ---------- reviews ---------- */
+  /* ---------- reviews (gradient-tinted; NON-interactive, so no hover-lift) ---------- */
   .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-  .rev{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:30px;display:flex;flex-direction:column;gap:18px;box-shadow:var(--shadow);}
+  .rev{
+    position:relative;isolation:isolate;overflow:hidden;
+    display:flex;flex-direction:column;gap:18px;
+    padding:30px;
+    background-color:var(--surface);
+    background-image:linear-gradient(135deg,var(--rev-tint,var(--sky-wash)) 0%,var(--surface) 60%);
+    border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  }
+  /* same sky / cool-navy / banana tint cycle as the articles + why-us boxes */
+  .rev:nth-child(3n+1){--rev-tint:var(--sky-wash);}
+  .rev:nth-child(3n+2){--rev-tint:var(--neu-bg);}
+  .rev:nth-child(3n+3){--rev-tint:var(--banana-wash);}
+  .rev::after{
+    content:"";position:absolute;top:-8px;right:-16px;width:150px;height:92px;z-index:-1;
+    background:var(--navy);opacity:.06;pointer-events:none;
+    -webkit-mask:var(--wave-motif) no-repeat right top / contain;
+            mask:var(--wave-motif) no-repeat right top / contain;
+  }
   .rev .quote{font-size:1.14rem;line-height:1.5;color:var(--ink);font-weight:500;}
   .rev .who{display:flex;align-items:center;gap:13px;margin-top:auto;}
   .rev .who .nm{font-weight:700;font-size:1.02rem;}
