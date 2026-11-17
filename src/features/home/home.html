@@ -1,67 +1,90 @@
 <div class="page" id="page-home">
 
-  <section class="hero">
-    <div class="wrap">
-      <div class="hero-inner">
-        <h1 data-i18n="t_h1">Bilingual talent, meet Japan's best teams</h1>
-        <p class="lede" data-i18n="t_sub">Tokyo Samurai Dev connects bilingual and international engineers with Japan's leading product companies — with salary and Japanese level clear from the start.</p>
-        <div class="hero-cta">
-          <a class="btn btn--primary btn--xl" href="#/jobs" data-go="jobs" data-i18n="t_cta">Browse jobs</a>
-          <a class="btn btn--ghost btn--xl" href="#/companies" data-go="companies" data-i18n="t_cta2">See companies</a>
-        </div>
-        <p class="jobcount" id="jobCount"></p>
+  <!-- HERO: headline + quick-filter card + 3D mascot -->
+  <section class="h-hero">
+    <div class="wrap h-hero-grid">
+      <div class="h-hero-copy">
+        <h1 class="h-h1"><span data-i18n="hh_l1">Your skills.</span><span data-i18n="hh_l2">Your Japanese.</span><span class="accent" data-i18n="hh_l3">Your Japan.</span></h1>
+        <p class="h-sub" data-i18n="t_sub">Tech jobs in Japan, filtered by your Japanese level.</p>
+        <form class="h-search" id="homeSearch" aria-label="Quick job search">
+          <fieldset class="h-levels-field">
+            <legend data-i18n="hs_level">Your Japanese level</legend>
+            <div class="h-levels" role="group">
+              <label><input type="radio" name="jp" value="" checked><span data-i18n="jp_none">None</span></label>
+              <label><input type="radio" name="jp" value="N3"><span>N3</span></label>
+              <label><input type="radio" name="jp" value="N2"><span>N2</span></label>
+              <label><input type="radio" name="jp" value="N1"><span>N1</span></label>
+            </div>
+          </fieldset>
+          <div class="h-fields">
+            <label class="h-field"><span data-i18n="hs_role">ROLE OR SKILL</span><input name="q" id="homeQ" data-i18n-ph="hs_role_ph" placeholder="React, Python, iOS…"></label>
+            <label class="h-field"><span data-i18n="hs_loc">LOCATION</span><select name="loc" id="homeLoc">
+              <option value="" data-i18n="loc_all">All Japan</option>
+              <option value="Tokyo">Tokyo</option>
+              <option value="Osaka">Osaka</option>
+              <option value="Fukuoka">Fukuoka</option>
+              <option value="Remote" data-i18n="loc_remote">Remote</option>
+            </select></label>
+            <button class="btn btn--primary h-go" type="submit"><span data-i18n="hs_go">Find my next move</span> →</button>
+          </div>
+        </form>
       </div>
-      <div class="partners">
-        <span class="lab" data-i18n="partners_lab">Hiring with us</span>
-        <div class="partner-wall" data-partner-marquee data-partner-set="home" aria-label="Companies hiring through Tokyo Samurai Dev" data-i18n-aria="aria_partners"></div>
-      </div>
+      <div class="h-hero-art" role="img" aria-label="Tokyo Samurai Dev mascot" data-i18n-aria="aria_mascot"></div>
     </div>
   </section>
 
-  <!-- why work with us (2 points) -->
-  <section class="section tinted">
-    <div class="wrap">
-      <div class="head center reveal">
-        <h2 data-i18n="pts_h2">Why work with us</h2>
-        <p class="sub" data-i18n="pts_sub">Our job is simple: get bilingual people into the roles that are right for them in Japan.</p>
-      </div>
-      <div class="boxes reveal stagger">
-        <div class="box">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 9l-4 3 4 3M16 9l4 3-4 3M13 6l-2 12"/></svg></div>
-          <h3 data-i18n="pt2_t">We talk tech, so you don't have to</h3>
-          <p data-i18n="pt2_b">We understand stacks, roles, and what teams actually need. You never have to translate yourself into recruiter-speak.</p>
-        </div>
-        <div class="box">
-          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
-          <h3 data-i18n="pt3_t">We match you to what's right</h3>
-          <p data-i18n="pt3_b">Tell us what you're after. We learn your needs and bring you roles that genuinely fit, not whatever happens to be open.</p>
-        </div>
-      </div>
+  <!-- client logo wall -->
+  <section class="wrap h-logostrip">
+    <span class="h-ls-label" data-i18n="partners_lab">Hiring with us</span>
+    <div class="partner-wall" data-partner-marquee data-partner-set="home" data-partner-rows="1" aria-label="Companies hiring through Tokyo Samurai Dev" data-i18n-aria="aria_partners"></div>
+  </section>
+
+  <!-- RÉSUMÉ / Get matched band -->
+  <section class="wrap h-resume reveal" aria-labelledby="h-rc-title">
+    <div class="h-rc-copy">
+      <h2 id="h-rc-title" data-i18n="rc_h2">Send your résumé. Get matched.</h2>
+      <p data-i18n="rc_sub">Share your résumé or LinkedIn once. A bilingual recruiter reads it and sends you the companies that fit your skills, your Japanese and your visa.</p>
+      <ol class="h-rc-steps">
+        <li><b>01</b><span><strong data-i18n="rc_s1">Upload your résumé</strong><small data-i18n="rc_s1b">PDF or Word · English is fine</small></span></li>
+        <li><b>02</b><span><strong data-i18n="rc_s2">A human reads it</strong><small data-i18n="rc_s2b">Personal feedback from a recruiter</small></span></li>
+        <li><b>03</b><span><strong data-i18n="rc_s3">Get matched companies</strong><small data-i18n="rc_s3b">Introductions in Japan with N3+. Direct-apply roles for everyone else.</small></span></li>
+      </ol>
+      <div class="h-rc-person"><span class="h-rc-face" role="img" aria-label="Neo Nishino"></span><p><b data-i18n="rc_rev">Reviewed by Neo Nishino（西野 稔央）</b><span data-i18n="rc_role">Global Talent Acquisition Lead, LongWave</span></p></div>
+    </div>
+    <div class="h-rc-cta">
+      <button type="button" class="h-rc-drop" data-signup aria-label="Upload your résumé" data-i18n-aria="rc_drop">
+        <span class="h-rc-ic" aria-hidden="true">↑</span><b data-i18n="rc_drop">Drop your résumé here</b><small data-i18n="rc_drop2">or click to choose a file</small>
+      </button>
+      <button type="button" class="btn btn--banana btn--xl h-rc-btn" data-signup><span data-i18n="rc_btn">Get matched</span> →</button>
+      <p class="h-rc-legal" data-i18n="rc_legal">Free for engineers. We share your profile with a company only after you agree.</p>
     </div>
   </section>
 
-  <!-- jobs teaser (smaller) -->
-  <section class="section">
-    <div class="wrap">
-      <div class="head-row reveal">
-        <h2 data-i18n="hot_h2">Roles hiring right now</h2>
-        <a class="more" href="#/jobs" data-go="jobs" data-i18n="hot_more">See all jobs →</a>
-      </div>
-      <div class="teaser-grid reveal stagger" id="hotTeaser"></div>
+  <!-- OPPORTUNITIES -->
+  <section class="wrap h-jobs reveal">
+    <div class="h-section-head">
+      <div><span class="h-eyebrow" data-i18n="opp_eyebrow">The opportunities</span><h2 data-i18n="hot_h2">Roles hiring right now</h2></div>
+      <a class="more" href="#/jobs" data-go="jobs" data-i18n="hot_more">See all jobs →</a>
+    </div>
+    <div class="h-joblist" id="hotTeaser"></div>
+  </section>
+
+  <!-- FIELD NOTES / tools -->
+  <section class="wrap h-resources reveal">
+    <div class="h-section-head"><span class="h-eyebrow" data-i18n="fn_eyebrow">Beyond the offer</span><h2 data-i18n="fn_h2">Build a life, too.</h2></div>
+    <div class="h-resource-grid stagger">
+      <a href="#/articles" data-go="articles"><span class="h-rn-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M8 16.5h8"/></svg></span><small>FIELD NOTES / 01</small><h3 data-i18n="fn1_t">Your visa, made clearer.</h3><p data-i18n="fn1_b">Understand work visa changes.</p><span class="h-read" data-i18n="fn_read">Read the article →</span></a>
+      <a href="#/articles" data-go="articles"><span class="h-rn-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M7.5 7.5l4.5 4 4.5-4"/><path d="M8 13h8M8 16.5h8"/></svg></span><small>FIELD NOTES / 02</small><h3 data-i18n="fn2_t">What your salary really means.</h3><p data-i18n="fn2_b">Compare salary and benefits.</p><span class="h-read" data-i18n="fn_read">Read the article →</span></a>
+      <a href="#/articles" data-go="articles"><span class="h-rn-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M8 7.5h8M8 11h8M8 14.5h5"/></svg></span><small>FIELD NOTES / 03</small><h3 data-i18n="fn3_t">Tax: from gross to take-home.</h3><p data-i18n="fn3_b">Estimate your take-home pay.</p><span class="h-read" data-i18n="fn_read">Read the article →</span></a>
+      <a href="#/cv" data-go="cv"><span class="h-rn-ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="1.5"/><rect x="7" y="6" width="5" height="5.5"/><path d="M14 7.5h3M14 10.5h3M7 15h10M7 18h10"/></svg></span><small>FIELD NOTES / 04</small><h3 data-i18n="fn4_t">The art of the rirekisho.</h3><p data-i18n="fn4_b">Prepare a Japanese résumé.</p><span class="h-read" data-i18n="fn_tool">Open the tool →</span></a>
     </div>
   </section>
 
-  <!-- signup band (bottom of title page) -->
-  <section class="section">
-    <div class="wrap">
-      <div class="cta-band reveal">
-        <span class="cta-logo" role="img" aria-label="Tokyo Samurai Dev"></span>
-        <h2 data-i18n="csu_h2">Tell us what you're looking for</h2>
-        <p data-i18n="csu_sub">Sign up and a bilingual recruiter brings you roles that fit, with salary and Japanese level up front. No spam, no cold lists.</p>
-        <button class="btn btn--banana btn--xl" data-signup data-i18n="csu_cta">Sign up free</button>
-        <p class="who-line" data-i18n="csu_trust">Curated in Tokyo. Maintained by LongWave.</p>
-      </div>
-    </div>
+  <!-- FOR EMPLOYERS -->
+  <section class="wrap h-employers reveal">
+    <span class="h-eyebrow" data-i18n="emp_eyebrow">For employers</span>
+    <h2 data-i18n="emp_h2">Your roles may already be here. Listing is free.</h2>
+    <a class="more" href="#/post" data-go="post" data-i18n="emp_cta">Find your company →</a>
   </section>
 </div>
 

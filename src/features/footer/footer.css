@@ -1,27 +1,30 @@
-/* features/footer/footer.css — site footer */
+/* features/footer/footer.css — redesign v3 "h-hero": the flat, light, multi-column footer.
+   GLOBAL chrome. A quiet paper panel closed off by a single hairline — the editorial
+   counterweight to the deep-navy header. This file loads AFTER header.css, so its
+   .foot-brand .brand rules (higher specificity) re-colour the shared brand for light. */
   /* ---------- footer ---------- */
-  /* deep-sea: brand navy at the crest, deepening toward the bottom */
-  footer.site{background:linear-gradient(180deg,var(--navy) 0%,#12314d 100%);color:#cdd9e4;padding:58px 0 34px;}
-  .foot-top{display:flex;justify-content:space-between;gap:36px;flex-wrap:wrap;margin-bottom:36px;align-items:flex-start;}
-  .foot-brand .brand{color:#fff;margin-bottom:14px;}
-  .foot-brand p{max-width:25em;color:#aab9c8;}
+  footer.site{background:var(--paper);color:var(--slate);border-top:1px solid var(--line);padding:64px 0 40px;}
+  .foot-top{display:flex;justify-content:space-between;gap:48px;flex-wrap:wrap;margin-bottom:44px;align-items:flex-start;}
+
+  /* brand: dark ink on the light panel (overrides header.css .brand{color:#fff}); the
+     footer mascot sits still — no idle bob down here. */
+  .foot-brand .brand{color:var(--ink);margin-bottom:16px;}
+  .foot-brand .brand .logo{width:42px;height:42px;border-radius:50%;background:var(--surface) var(--tsd-logo) center/cover no-repeat;box-shadow:0 0 0 1px var(--line);animation:none;}
+  .foot-brand p{max-width:26em;color:var(--slate);font-size:.95rem;line-height:1.7;}
   /* office address: quieter than the blurb, separated by a breath of space */
-  .foot-brand .foot-addr{margin-top:14px;font-size:.92rem;color:#a9b8c6;} /* 4.79:1 on the navy gradient — #8fa2b4 was 3.70:1, below AA */
+  .foot-brand .foot-addr{margin-top:14px;font-size:.88rem;color:var(--slate);}
+
+  /* ---------- link columns ---------- */
   .foot-links{display:flex;gap:56px;flex-wrap:wrap;}
-  .foot-col h5{font-size:1.02rem;color:#fff;margin:0 0 13px;font-weight:700;}
-  .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:#a9b8c6;padding:6px 0;font-size:1.02rem;background:transparent;border:0;font-family:inherit;cursor:pointer;}
-  .foot-col a:hover,.foot-col button:hover{color:var(--sky-soft);}
-  .foot-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center;color:#a6b6c4;font-size:1rem;}
-  .foot-bottom a:not(.btn){color:#cdd9e4;text-decoration:none;}
-  .foot-bottom a:not(.btn):hover{color:var(--sky-soft);text-decoration:underline;}
-  /* keep the white LinkedIn pill's label its designed dark ink, not the light footer text */
-  .foot-actions .btn--light{color:var(--ink);}
+  .foot-col h5{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin:0 0 14px;font-weight:700;}
+  .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:var(--ink-soft);padding:6px 0;font-size:.98rem;background:transparent;border:0;font-family:inherit;cursor:pointer;text-align:left;transition:color .15s ease;}
+  .foot-col a:hover,.foot-col button:hover{color:var(--navy);}
+
+  /* ---------- bottom row ---------- */
+  .foot-bottom{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center;color:var(--slate);font-size:.92rem;}
+  .foot-bottom a:not(.btn){color:var(--ink-soft);text-decoration:none;}
+  .foot-bottom a:not(.btn):hover{color:var(--navy);text-decoration:underline;}
   .foot-actions{display:flex;gap:12px;flex-wrap:wrap;}
-  .foot-actions .btn{padding:11px 20px;font-size:.98rem;}
+  .foot-actions .btn{padding:10px 18px;font-size:.92rem;}
   .foot-actions .btn svg{width:18px;height:18px;}
-
-
-
-
-  /* footer brand uses the flat white logo mark, not the circular badge */
-  .foot-brand .brand .logo{background:var(--tsd-logo) center/cover no-repeat;box-shadow:none;border-radius:50%;width:40px;height:40px;}
+  .foot-actions .ext{font-weight:700;}

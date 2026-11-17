@@ -1,5 +1,9 @@
-/* features/jobs/jobs.css — filters, tags, jobs grid, cards, pick-a-filter prompt */
-  /* ---------- filters / shared tags ---------- */
+/* features/jobs/jobs.css — redesign v3 "h-hero": flat, editorial jobs board.
+   Deep navy + amber gold, 1px hairlines, square corners, --paper panels.
+   The shared tag/badge primitives below stay GLOBAL (the JD modal reuses them);
+   everything else is scoped under #page-jobs so it can't collide with other pages. */
+
+  /* ---------- shared tag primitives (used by jobs rows AND the JD modal) ---------- */
   .tags{display:flex;flex-wrap:wrap;gap:8px;}
   .tag{font-size:.9rem;font-weight:600;padding:6px 12px;border-radius:999px;display:inline-flex;align-items:center;gap:6px;}
   .tag--jp-none{background:var(--pos-bg);color:var(--pos-fg);}
@@ -7,116 +11,157 @@
   .tag--jp-high{background:var(--warn-bg);color:var(--warn-fg);}
   .tag--meta{background:#eef1f4;color:var(--ink-soft);}
   .tag--tech{background:transparent;border:1.5px solid var(--line-strong);color:var(--slate);}
-  .badge-hot{background:var(--hot-bg);color:var(--hot-fg);font-weight:700;font-size:.86rem;padding:4px 11px;border-radius:999px;box-shadow:0 6px 14px -8px rgba(179,71,27,.5);}
+  .badge-hot{background:var(--hot-bg);color:var(--hot-fg);font-weight:700;font-size:.86rem;padding:4px 11px;border-radius:999px;}
 
-  /* ---------- jobs page (sidebar + grid) ---------- */
-  /* a touch wider than the site default so the full-width role list has room to breathe.
-     Extra side padding (scales with viewport) keeps the heading + filters + list from
-     sitting flush against the window edge on laptop widths, where a 1380 wrap would
-     otherwise run edge-to-edge with only the default 26px gutter. */
-  #page-jobs .wrap{max-width:1380px;padding-left:clamp(26px,3.4vw,58px);padding-right:clamp(26px,3.4vw,58px);}
-  .jobs-layout{display:grid;grid-template-columns:268px 1fr;gap:34px;align-items:start;}
-  .filters-side{position:sticky;top:100px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);}
-  .filters-side .fgroup{margin-bottom:20px;}
-  .filters-side .fgroup:last-child{margin-bottom:0;}
-  .filters-side label.glab{display:block;font-weight:700;font-size:.96rem;margin-bottom:9px;color:var(--ink);}
-  .filters-side .search{display:flex;align-items:center;gap:10px;border:2px solid var(--line-strong);border-radius:11px;padding:0 13px;}
-  .filters-side .search input{border:0;outline:0;background:transparent;padding:12px 0;font-size:1rem;width:100%;color:var(--ink);}
-  .filters-side .search svg{width:18px;height:18px;color:var(--slate);flex:none;}
-  /* ---- multi-select facet widget (button + checkbox popover) ---- */
-  .msel{position:relative;}
-  .msel-btn{display:flex;align-items:center;gap:8px;width:100%;background:var(--surface);border:2px solid var(--line-strong);border-radius:11px;padding:12px 13px;font-size:1rem;color:var(--ink-soft);font-family:inherit;font-weight:600;cursor:pointer;text-align:left;}
-  .msel-btn:hover{border-color:var(--slate);}
-  .msel-btn.has-sel{border-color:var(--accent-deep);color:var(--ink);}
-  .msel-label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-  .msel-chev{width:16px;height:16px;flex:none;color:var(--slate);transition:transform .15s ease;}
-  .msel-btn[aria-expanded="true"] .msel-chev{transform:rotate(180deg);}
-  .msel-pop{position:absolute;z-index:40;left:0;right:0;top:calc(100% + 6px);background:var(--surface);border:1px solid var(--line-strong);border-radius:11px;box-shadow:var(--shadow);padding:6px;max-height:280px;overflow-y:auto;}
-  .msel-opt{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:8px;font-size:.96rem;font-weight:600;color:var(--ink-soft);cursor:pointer;}
-  .msel-opt:hover{background:var(--wash,rgba(0,0,0,.04));color:var(--ink);}
-  .msel-opt input{flex:none;width:16px;height:16px;accent-color:var(--accent-deep);cursor:pointer;}
-  .fclear{background:transparent;border:0;color:var(--accent-deep);font-weight:700;font-size:.98rem;padding:4px 0;}
-  .fclear:hover{color:var(--ink);}
-  .result-count{font-size:1.02rem;color:var(--slate);margin-bottom:20px;font-weight:600;}
-  /* Full-width list: every role is ONE row spanning the whole content column, so the
-     entire title is always visible (no boxed grid, no 2-line clamp). Rows stack. */
-  .job-grid{display:flex;flex-direction:column;gap:14px;}
-  .jobs-prompt{text-align:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:64px 30px;}
-  .jobs-prompt .jp-ic{font-size:2.4rem;line-height:1;margin-bottom:12px;}
-  .jobs-prompt h3{font-size:1.55rem;margin-bottom:12px;}
-  .jobs-prompt p{color:var(--slate);font-size:1.08rem;line-height:1.5;max-width:36em;margin:0 auto 24px;}
-  /* card = full-width row: [.jc-open clickable content] + [.jc-corner save/select controls]
-     side by side. Keeping the controls a sibling of the open-button avoids nested buttons. */
-  .job-card{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .16s ease, box-shadow .16s ease, border-color .16s ease;position:relative;}
-  .jc-open{flex:1 1 auto;min-width:0;display:flex;flex-direction:row;align-items:center;gap:22px;padding:18px 24px;text-align:left;background:transparent;border:0;border-radius:var(--radius);color:inherit;font:inherit;cursor:pointer;}
-  .jc-logo{flex:0 0 auto;display:flex;}
-  .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;}
-  .jc-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:5px;text-align:right;margin-left:auto;padding-left:14px;}
-  /* save heart + selection checkbox as a control cluster at the row's right edge */
-  .jc-corner{flex:0 0 auto;z-index:3;display:flex;align-items:center;gap:10px;padding:0 20px;}
-  .jc-select{display:flex;align-items:center;line-height:0;}
-  .jc-select input{width:21px;height:21px;margin:0;cursor:pointer;accent-color:var(--sky-deep);}
-  .jc-save{width:30px;height:30px;padding:0;display:grid;place-items:center;border:0;background:transparent;border-radius:var(--radius-sm);color:var(--line-strong);transition:color .15s ease, transform .15s ease, background .15s ease;}
-  .jc-save svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2;}
-  .jc-save:hover{color:var(--save);background:var(--save-wash);transform:translateY(-1px);}
-  .jc-save.is-saved{color:var(--save);}
-  .jc-save.is-saved svg{fill:var(--save);stroke:var(--save);}
-  .job-card.sel{border-color:var(--sky);box-shadow:0 0 0 2px var(--sky), var(--shadow);}
-  /* Apple-style silky entrance: cards glide up + fade + de-blur, gently staggered.
-     Delay is set inline per-card in jobs.js; `both` keeps them hidden until their turn. */
-  @keyframes jcReveal{from{opacity:0;transform:translateY(15px) scale(.985);filter:blur(5px);}to{opacity:1;transform:none;filter:blur(0);}}
-  .job-card.jc-reveal{animation:jcReveal .62s cubic-bezier(.16,1,.3,1) both;will-change:opacity,transform,filter;}
-  .jobs-empty{animation:jcReveal .5s cubic-bezier(.16,1,.3,1) both;text-align:center;padding:26px 0 34px;}
-  .jobs-more{align-self:center;margin-top:6px;}
-  .job-card:hover,.job-card:focus-within{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--line-strong);}
-  .job-card.sel:hover{box-shadow:0 0 0 2px var(--sky), var(--shadow-lift);}
+  /* ====================================================================== */
+  /* ============================ JOBS BOARD ============================== */
+  /* ====================================================================== */
+
+  /* a touch wider than the site default so the full-width role list has room to breathe */
+  #page-jobs .wrap{max-width:1320px;padding-left:clamp(24px,3.4vw,56px);padding-right:clamp(24px,3.4vw,56px);}
+  #page-jobs .section{padding-block:40px 72px;}
+
+  /* ---------- page head: eyebrow · title · sub, with the Saved toggle at the right ---------- */
+  #page-jobs .jobs-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:34px;padding-bottom:26px;border-bottom:1px solid var(--line);}
+  #page-jobs .jobs-head-text{max-width:46rem;}
+  #page-jobs .jobs-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:12px;}
+  #page-jobs .jobs-head h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;line-height:1.02;font-size:clamp(34px,4.6vw,58px);color:var(--ink);}
+  #page-jobs .jobs-head .sub{color:var(--slate);font-size:1.1rem;line-height:1.5;margin-top:14px;max-width:40em;text-wrap:balance;}
+  #page-jobs .jobs-saved-toggle{flex:none;gap:9px;border-radius:0;align-self:center;}
+  #page-jobs .jobs-saved-toggle .jst-heart{font-size:1.08em;line-height:1;color:var(--line-strong);transition:color .15s ease;}
+  #page-jobs .jobs-saved-toggle:hover .jst-heart{color:var(--save);}
+  #page-jobs .jobs-saved-toggle.active{background:var(--save-wash);border-color:var(--save);color:var(--save-deep);}
+  #page-jobs .jobs-saved-toggle.active .jst-heart{color:var(--save);}
+
+  /* ---------- two-column workspace: filter rail + results ---------- */
+  #page-jobs .jobs-layout{display:grid;grid-template-columns:280px 1fr;gap:40px;align-items:start;}
+
+  /* ---------- filter rail: flat --paper panel ---------- */
+  #page-jobs .filters-side{position:sticky;top:96px;background:var(--paper);border:1px solid var(--line);border-radius:0;padding:24px 22px;}
+  #page-jobs .filters-title{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.12rem;color:var(--ink);margin:0 0 20px;padding-bottom:16px;border-bottom:1px solid var(--line);}
+  #page-jobs .filters-side .fgroup{margin-bottom:20px;}
+  #page-jobs .filters-side .fgroup:last-child{margin-bottom:0;}
+  /* labels become editorial micro-caps, matching the home quick-filter fields */
+  #page-jobs .filters-side label.glab{display:block;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--slate);margin-bottom:8px;}
+  #page-jobs .filters-side .search{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:0;padding:0 12px;transition:border-color .14s ease;}
+  #page-jobs .filters-side .search:focus-within{border-color:var(--sky-deep);}
+  #page-jobs .filters-side .search input{border:0;outline:0;background:transparent;padding:12px 0;font-size:.98rem;width:100%;color:var(--ink);}
+  #page-jobs .filters-side .search svg{width:17px;height:17px;color:var(--slate);flex:none;}
+
+  /* ---- multi-select facet widget (summary button + ARIA listbox popover) ---- */
+  #page-jobs .msel{position:relative;}
+  #page-jobs .msel-btn{display:flex;align-items:center;gap:8px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:0;padding:12px;font-size:.96rem;color:var(--slate);font-family:inherit;font-weight:600;cursor:pointer;text-align:left;transition:border-color .14s ease,color .14s ease;}
+  #page-jobs .msel-btn:hover{border-color:var(--line-strong);}
+  #page-jobs .msel-btn.has-sel{border-color:var(--navy);color:var(--ink);box-shadow:inset 3px 0 0 var(--navy);}
+  #page-jobs .msel-btn[aria-expanded="true"]{border-color:var(--sky-deep);}
+  #page-jobs .msel-label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #page-jobs .msel-chev{width:15px;height:15px;flex:none;color:var(--slate);transition:transform .15s ease;}
+  #page-jobs .msel-btn[aria-expanded="true"] .msel-chev{transform:rotate(180deg);}
+  #page-jobs .msel-pop{position:absolute;z-index:40;left:0;right:0;top:calc(100% - 1px);background:var(--surface);border:1px solid var(--navy);border-radius:0;box-shadow:var(--shadow);padding:5px;max-height:272px;overflow-y:auto;outline:none;}
+  #page-jobs .msel-opt{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:0;font-size:.95rem;font-weight:600;color:var(--ink-soft);cursor:pointer;}
+  #page-jobs .msel-opt:hover{background:var(--sky-wash);color:var(--ink);}
+  #page-jobs .msel-opt:focus-visible{outline:2px solid var(--sky-deep);outline-offset:-2px;background:var(--sky-wash);color:var(--ink);}
+  /* square check-box indicator (visual only; the option carries aria-selected) */
+  #page-jobs .msel-check{flex:none;width:16px;height:16px;border:1.5px solid var(--line-strong);background:var(--surface);display:grid;place-items:center;}
+  #page-jobs .msel-check::after{content:"";width:9px;height:9px;background:var(--navy);transform:scale(0);transition:transform .12s ease;}
+  #page-jobs .msel-opt[aria-selected="true"] .msel-check{border-color:var(--navy);}
+  #page-jobs .msel-opt[aria-selected="true"] .msel-check::after{transform:scale(1);}
+  #page-jobs .msel-opt[aria-selected="true"]{color:var(--ink);}
+  #page-jobs .msel-opt-label{flex:1 1 auto;min-width:0;}
+
+  #page-jobs .fclear{background:transparent;border:0;color:var(--navy);font-weight:700;font-size:.92rem;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  #page-jobs .fclear:hover{color:var(--sky-deep);}
+
+  /* ---------- results column ---------- */
+  #page-jobs .result-count{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-bottom:18px;font-weight:700;}
+  /* Full-width list: every role is ONE row spanning the whole column, title always fully visible */
+  #page-jobs .job-grid{display:flex;flex-direction:column;gap:0;}
+
+  /* pick-a-filter gate */
+  #page-jobs .jobs-prompt{text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:0;padding:64px 30px;}
+  #page-jobs .jobs-prompt .jp-ic{font-size:2.2rem;line-height:1;margin-bottom:14px;}
+  #page-jobs .jobs-prompt h3{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.6rem;margin-bottom:12px;color:var(--ink);}
+  #page-jobs .jobs-prompt p{color:var(--slate);font-size:1.04rem;line-height:1.55;max-width:34em;margin:0 auto 24px;}
+  #page-jobs .jobs-prompt .btn{border-radius:0;}
+
+  /* card = full-width row: [.jc-open clickable content] + [.jc-corner controls], hairline-stacked.
+     Rows share a single top/bottom hairline so the list reads as an editorial register, not boxes. */
+  #page-jobs .job-card{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:0;position:relative;transition:background .14s ease,box-shadow .16s ease;margin-top:-1px;}
+  #page-jobs .job-card:first-child{margin-top:0;}
+  #page-jobs .job-card:hover,#page-jobs .job-card:focus-within{background:var(--paper);z-index:2;box-shadow:inset 3px 0 0 var(--sky-deep);}
+  #page-jobs .jc-open{flex:1 1 auto;min-width:0;display:flex;flex-direction:row;align-items:center;gap:20px;padding:20px 22px;text-align:left;background:transparent;border:0;border-radius:0;color:inherit;font:inherit;cursor:pointer;}
+  #page-jobs .jc-logo{flex:0 0 auto;display:flex;}
+  #page-jobs .jc-logo .avatar{width:48px;height:48px;border-radius:0;font-size:1rem;}
+  #page-jobs .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  #page-jobs .jc-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px;text-align:right;margin-left:auto;padding-left:14px;}
+
+  /* save heart + selection checkbox cluster at the row's right edge */
+  #page-jobs .jc-corner{flex:0 0 auto;z-index:3;display:flex;align-items:center;gap:12px;padding:0 20px;}
+  #page-jobs .jc-select{display:flex;align-items:center;line-height:0;}
+  #page-jobs .jc-select input{width:20px;height:20px;margin:0;cursor:pointer;accent-color:var(--navy);border-radius:0;}
+  #page-jobs .jc-select input:disabled{cursor:not-allowed;opacity:.45;}
+  #page-jobs .jc-save{width:30px;height:30px;padding:0;display:grid;place-items:center;border:0;background:transparent;border-radius:0;color:var(--line-strong);cursor:pointer;transition:color .15s ease,transform .15s ease;}
+  #page-jobs .jc-save svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;}
+  #page-jobs .jc-save:hover{color:var(--save);transform:translateY(-1px);}
+  #page-jobs .jc-save.is-saved{color:var(--save);}
+  #page-jobs .jc-save.is-saved svg{fill:var(--save);stroke:var(--save);}
+
+  /* selected role: navy left rule + sky wash */
+  #page-jobs .job-card.sel{background:var(--sky-wash);box-shadow:inset 4px 0 0 var(--navy);z-index:2;}
+  #page-jobs .job-card.sel:hover{background:var(--sky-wash);box-shadow:inset 4px 0 0 var(--navy);}
+
+  /* entrance: gentle up-fade, staggered inline per-card in jobs.js */
+  @keyframes jcReveal{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+  #page-jobs .job-card.jc-reveal{animation:jcReveal .5s cubic-bezier(.16,1,.3,1) both;will-change:opacity,transform;}
+  #page-jobs .jobs-empty{animation:jcReveal .5s cubic-bezier(.16,1,.3,1) both;text-align:center;padding:40px 0 34px;}
+  #page-jobs .jobs-more{align-self:center;margin-top:20px;border-radius:0;}
+
+  /* the whole role title is shown — wraps to a second line if long, never clipped */
+  #page-jobs .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.22rem;line-height:1.24;letter-spacing:-.02em;color:var(--ink);overflow-wrap:break-word;}
+  #page-jobs .jc-role-detail{display:block;margin-top:2px;color:var(--slate);font-size:.84rem;line-height:1.35;overflow-wrap:break-word;}
+  #page-jobs .jc-co{font-size:.92rem;color:var(--slate);overflow-wrap:break-word;}
+  #page-jobs .jc-dot{color:var(--line-strong);margin:0 3px;}
+  #page-jobs .jc-main .tags{margin-top:4px;}
+  #page-jobs .jc-salary{font-family:var(--font-display);font-size:1.14rem;color:var(--ink);font-weight:800;letter-spacing:-.01em;white-space:nowrap;}
+  #page-jobs .jc-link{font-size:.82rem;font-weight:700;letter-spacing:.02em;color:var(--sky-deep);white-space:nowrap;}
+  #page-jobs .job-card .badge-hot{position:absolute;top:-1px;left:0;border-radius:0;}
+
+  /* flat, editorial tags for the board (modal keeps the global rounded pills) */
+  #page-jobs .tag{font-size:.74rem;font-weight:600;letter-spacing:.01em;padding:5px 9px;border-radius:0;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);}
+  #page-jobs .tag--jp-none{background:var(--pos-bg);border-color:transparent;color:var(--pos-fg);font-weight:700;}
+  #page-jobs .tag--jp-mid{background:var(--surface);border-color:var(--line-strong);color:var(--sky-deep);}
+  #page-jobs .tag--jp-high{background:var(--surface);border-color:var(--line-strong);color:var(--warn-fg);}
+  #page-jobs .tag--meta{background:var(--paper);border-color:var(--line);color:var(--slate);}
+  #page-jobs .tag--tech{background:transparent;border-color:var(--line-strong);color:var(--slate);}
+
+  /* already-applied role: a static "Applied" pill (no checkbox), row muted */
+  #page-jobs .jc-applied{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:700;color:var(--pos-fg);background:var(--pos-bg);border-radius:0;padding:6px 11px;white-space:nowrap;}
+  #page-jobs .job-card.applied{opacity:.7;}
+  #page-jobs .job-card.applied:hover{opacity:1;}
+
+  /* banner once all applications are used ("one and done") */
+  #page-jobs .apply-notice{display:flex;align-items:center;gap:12px;background:var(--pos-bg);color:var(--pos-fg);border:1px solid var(--pos-fg);border-radius:0;padding:14px 18px;margin-bottom:18px;font-weight:600;line-height:1.4;}
+  #page-jobs .apply-notice .an-ic{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--pos-fg);color:#fff;font-weight:800;font-size:.82rem;}
+  #page-jobs .apply-notice[hidden]{display:none;}
 
   /* sticky batch-apply bar — appears when ≥1 role is selected */
-  .select-bar{position:sticky;bottom:16px;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--navy);color:#fff;padding:14px 18px;border-radius:14px;box-shadow:0 18px 40px -16px rgba(14,34,53,.55);margin-top:22px;}
-  .select-bar[hidden]{display:none;}   /* a class rule beats the [hidden] UA default — restore it so the empty bar stays hidden */
-  .select-bar .sb-count{font-weight:700;}
-  .select-bar .sb-flash{animation:sbFlash .6s ease;}
-  @keyframes sbFlash{0%,100%{color:#fff;} 40%{color:var(--banana);}}
-  .select-bar .sb-actions{display:flex;gap:10px;}
-  .select-bar .btn--ghost{color:#fff;background:transparent;border-color:rgba(255,255,255,.55);}
-  .select-bar .btn--ghost:hover{background:rgba(255,255,255,.12);}
-  /* the whole role title is shown on the row — it wraps to a second line if long,
-     never clipped or ellipsised, so you can always read the full role name */
-  .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.2rem;line-height:1.28;overflow-wrap:break-word;}
-  /* the posting's own title under the canonical headline: present enough to tell
-     two same-label roles apart, quiet enough that the board still scans */
-  .jc-role-detail{display:block;margin-top:2px;color:var(--slate);font-size:.86rem;line-height:1.35;overflow-wrap:break-word;}
-  .jc-co{font-size:.96rem;color:var(--slate);overflow-wrap:break-word;}
-  .jc-dot{color:var(--line-strong);margin:0 2px;}
-  .jc-main .tags{margin-top:3px;}
-  .jc-salary{font-family:var(--font-display);font-size:1.12rem;color:var(--ink);font-weight:800;white-space:nowrap;}
-  .jc-link{font-size:.95rem;font-weight:700;color:var(--accent-deep);white-space:nowrap;}
-  .job-card .badge-hot{position:absolute;top:-11px;left:18px;}
-  /* a role you've already applied to: a static "Applied" pill (no checkbox), card muted */
-  .jc-applied{display:inline-flex;align-items:center;gap:5px;font-size:.82rem;font-weight:800;color:var(--pos-fg);background:var(--pos-bg);border-radius:999px;padding:6px 12px;white-space:nowrap;}
-  .job-card.applied{opacity:.72;}
-  .job-card.applied:hover{opacity:1;}
-  .jc-select input:disabled{cursor:not-allowed;opacity:.45;}
-  /* banner above the grid once all 10 applications are used ("one and done") */
-  .apply-notice{display:flex;align-items:center;gap:12px;background:var(--pos-bg);color:var(--pos-fg);border:1px solid var(--pos-fg);border-radius:14px;padding:14px 18px;margin-bottom:18px;font-weight:600;line-height:1.4;}
-  .apply-notice .an-ic{flex:none;display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--pos-fg);color:#fff;font-weight:800;font-size:.85rem;}
-  .apply-notice[hidden]{display:none;}
-  /* narrow screens: let the row wrap — salary/view drops below the title block */
-  @media (max-width:640px){
-    .jc-open{flex-wrap:wrap;gap:12px 16px;padding:16px 16px;}
-    .jc-end{width:100%;flex-direction:row;justify-content:space-between;align-items:center;margin-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:10px;}
-    .jc-corner{padding:0 12px;}
+  #page-jobs .select-bar{position:sticky;bottom:16px;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--navy);color:#fff;padding:16px 20px;border-radius:0;box-shadow:0 18px 40px -16px rgba(6,19,46,.6);margin-top:24px;}
+  #page-jobs .select-bar[hidden]{display:none;}
+  #page-jobs .select-bar .sb-count{font-weight:700;}
+  #page-jobs .select-bar .sb-flash{animation:sbFlash .6s ease;}
+  @keyframes sbFlash{0%,100%{color:#fff;}40%{color:var(--gold);}}
+  #page-jobs .select-bar .sb-actions{display:flex;gap:10px;}
+  #page-jobs .select-bar .btn{border-radius:0;}
+  #page-jobs .select-bar .btn--ghost{color:#fff;background:transparent;border-color:rgba(255,255,255,.55);}
+  #page-jobs .select-bar .btn--ghost:hover{background:rgba(255,255,255,.12);border-color:#fff;color:#fff;}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:900px){
+    #page-jobs .jobs-layout{grid-template-columns:1fr;gap:24px;}
+    #page-jobs .filters-side{position:static;top:auto;}
   }
-
-  /* jobs page header: title + sub on the left, the "Saved" view toggle on the right
-     (gives the previously-empty space beside the heading a purpose) */
-  .jobs-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;max-width:none;margin-bottom:34px;}
-  .jobs-head-text{max-width:44rem;}
-  .jobs-saved-toggle{flex:none;gap:9px;}
-  .jobs-saved-toggle .jst-heart{font-size:1.08em;line-height:1;color:var(--line-strong);transition:color .15s ease;}
-  .jobs-saved-toggle:hover .jst-heart{color:var(--save);}
-  .jobs-saved-toggle.active{background:var(--save-wash);border-color:var(--save);color:var(--save-deep);}
-  .jobs-saved-toggle.active .jst-heart{color:var(--save);}
-
-
-
+  @media (max-width:640px){
+    #page-jobs .jc-open{flex-wrap:wrap;gap:12px 16px;padding:16px;}
+    #page-jobs .jc-end{width:100%;flex-direction:row;justify-content:space-between;align-items:center;margin-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:10px;}
+    #page-jobs .jc-corner{padding:0 14px;}
+  }

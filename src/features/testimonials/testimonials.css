@@ -1,26 +1,20 @@
-/* features/testimonials/testimonials.css — quote / review cards */
-  /* ---------- reviews (gradient-tinted; NON-interactive, so no hover-lift) ---------- */
-  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+/* features/testimonials/testimonials.css — quote / review cards (redesign v3 "h-hero").
+   Flat + editorial to match the rest of the site: 1px hairline, zero radius, no shadow,
+   no gradient tint. A short amber-gold rule tops each card (the brand "pop"); the quote
+   reads big, the attribution row sits at the card foot. These cards render only on the
+   Post-a-job page (#hrGrid / #revGrid), built by testimonials.js. */
+
+  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
   .rev{
-    position:relative;isolation:isolate;overflow:hidden;
     display:flex;flex-direction:column;gap:18px;
     padding:30px;
-    background-color:var(--surface);
-    background-image:linear-gradient(135deg,var(--rev-tint,var(--sky-wash)) 0%,var(--surface) 60%);
-    border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+    background:var(--surface);
+    border:1px solid var(--line);
   }
-  /* same sky / cool-navy / banana tint cycle as the articles + why-us boxes */
-  .rev:nth-child(3n+1){--rev-tint:var(--sky-wash);}
-  .rev:nth-child(3n+2){--rev-tint:var(--neu-bg);}
-  .rev:nth-child(3n+3){--rev-tint:var(--banana-wash);}
-  .rev::after{
-    content:"";position:absolute;top:-8px;right:-16px;width:150px;height:92px;z-index:-1;
-    background:var(--navy);opacity:.06;pointer-events:none;
-    -webkit-mask:var(--wave-motif) no-repeat right top / contain;
-            mask:var(--wave-motif) no-repeat right top / contain;
-  }
-  .rev .quote{font-size:1.14rem;line-height:1.5;color:var(--ink);font-weight:500;}
+  /* short gold rule — the editorial accent in place of the old wave motif / tint */
+  .rev::before{content:"";flex:none;width:34px;height:3px;background:var(--gold);}
+  .rev .quote{font-size:1.14rem;line-height:1.55;color:var(--ink);font-weight:500;letter-spacing:-.005em;}
   .rev .who{display:flex;align-items:center;gap:13px;margin-top:auto;}
-  .rev .who .nm{font-weight:700;font-size:1.02rem;}
-  .rev .who .rl{font-size:.96rem;color:var(--slate);}
-
+  .rev .who .avatar.sm{border-radius:0;}   /* square the monogram chip for the flat look */
+  .rev .who .nm{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:-.01em;color:var(--ink);}
+  .rev .who .rl{font-size:.9rem;color:var(--slate);}

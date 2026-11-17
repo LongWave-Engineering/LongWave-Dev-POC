@@ -1,78 +1,65 @@
-/* features/companies/companies.css — company cards (brand-elegant restyle, light-mode only) */
-  /* ---------- companies ---------- */
-  /* Palette is strictly the core/base.css tokens. The grid leans sky + navy with rare
-     warm accents, so it reads as one calm, premium set rather than a loud redesign.
-     Column count is owned by core/responsive.css (3 → 2 → 1), like every other grid. */
+/* features/companies/companies.css — redesign v3 "h-hero": the companies grid, flat &
+   editorial. Deep navy + amber gold, 1px --line hairlines, square panels, big display
+   names — the same idiom as the home page (see src/features/home/home.css). Everything is
+   scoped under #page-companies so it can't reach another page; the ONE exception is the
+   grid column count (see the grid note below). Palette is strictly the core/base.css tokens. */
 
-  .co-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+  /* ---------- intro (eyebrow · big display title · sub) ---------- */
+  #page-companies .co-intro{max-width:46rem;margin-bottom:38px;}
+  #page-companies .co-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
+  #page-companies .co-intro h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(34px,5vw,60px);margin:0;color:var(--ink);}
+  #page-companies .co-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:18px 0 0;max-width:40em;text-wrap:balance;}
 
-  /* ----- the card: a soft, name-hashed brand wash over white ----- */
-  .co-card{
-    position:relative;isolation:isolate;overflow:hidden;
-    display:flex;flex-direction:column;gap:16px;min-height:188px;
-    padding:24px 26px;
-    background-color:var(--surface);
-    background-image:linear-gradient(135deg,var(--co-tint,var(--sky-wash)) 0%,var(--surface) 58%);
-    border:1px solid var(--line);border-radius:var(--radius);
-    box-shadow:var(--shadow);
+  /* ---------- grid ----------
+     The 3 → 2 → 1 column count is owned by core/responsive.css via the bare .co-grid
+     class, which loads AFTER this file. So the base column-count must stay an UNSCOPED
+     .co-grid rule (same specificity as the responsive overrides) — scoping it under
+     #page-companies would out-specify the breakpoints and break the collapse. Only the
+     column count lives here unscoped; display + gap are safely scoped. */
+  .co-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
+  #page-companies .co-grid{display:grid;gap:18px;}
+
+  /* ---------- card: a flat white panel, 1px hairline, square corners ---------- */
+  #page-companies .co-card{
+    position:relative;display:flex;flex-direction:column;gap:16px;min-height:188px;
+    padding:24px;color:inherit;
+    background:var(--surface);border:1px solid var(--line);border-radius:0;
   }
 
-  /* per-card tint, chosen by a stable name-hash in JS (.co-v0 … .co-v5).
-     Weighting (see companies.js) keeps sky + navy dominant; green / banana / peach are rare. */
-  .co-v0{--co-tint:var(--sky-wash);}      /* sky cloud (most common)    */
-  .co-v1{--co-tint:var(--neu-bg);}        /* cool navy-grey             */
-  .co-v2{--co-tint:var(--banana-wash);}   /* banana accent (rare)       */
-  .co-v3{--co-tint:var(--pos-bg);}        /* soft green accent (rare)   */
-  .co-v4{background-image:linear-gradient(135deg,var(--sky-wash) 0%,var(--neu-bg) 32%,var(--surface) 72%);} /* sky to navy wave */
-  .co-v5{--co-tint:var(--hot-bg);}        /* warm peach accent (rarest) */
-
-  /* whisper-soft corner wave — top-right, behind content, never over the top-left logo */
-  .co-card::after{
-    content:"";position:absolute;top:-8px;right:-14px;width:150px;height:92px;z-index:-1;
-    background:var(--navy);opacity:.06;pointer-events:none;
-    -webkit-mask:var(--wave-motif) no-repeat right top / contain;
-            mask:var(--wave-motif) no-repeat right top / contain;
-    transition:opacity .4s ease;
-  }
-
-  /* ----- status pill: frosted white + one coloured dot, on its own top row ----- */
-  /* It is a real flex child (align-self:flex-end), so a long company name can never run under it. */
-  .co-badge{
-    align-self:flex-end;
+  /* status tag: a flat bordered chip with one coloured dot, on its own top row.
+     Public status keys off live open roles only (see companies.js) — "Open roles" vs
+     "Partner" — so the confidential placement relationship never leaks to the page. */
+  #page-companies .co-badge{
+    align-self:flex-start;
     display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
-    padding:5px 11px 5px 9px;border-radius:999px;
-    font-family:var(--font-body);font-size:.72rem;font-weight:700;letter-spacing:.02em;
-    color:var(--ink-soft);
-    background:rgba(255,255,255,.72);
-    -webkit-backdrop-filter:blur(8px) saturate(1.1);
-            backdrop-filter:blur(8px) saturate(1.1);
-    border:1px solid var(--line);
-    box-shadow:0 1px 2px rgba(14,34,53,.05);
+    padding:5px 10px;border:1px solid var(--line);
+    font-family:var(--font-body);font-size:.68rem;font-weight:700;letter-spacing:.03em;
+    color:var(--slate);
   }
-  .co-dot{width:7px;height:7px;border-radius:50%;flex:none;}
-  .co-badge--live    .co-dot{background:var(--pos-fg);box-shadow:0 0 0 3px var(--pos-bg);}  /* open roles */
-  .co-badge--partner .co-dot{background:var(--sky);box-shadow:0 0 0 3px var(--sky-wash);}   /* partner    */
+  #page-companies .co-dot{width:7px;height:7px;flex:none;border-radius:50%;background:var(--slate);}
+  #page-companies .co-badge--live{background:var(--pos-bg);border-color:transparent;color:var(--pos-fg);}
+  #page-companies .co-badge--live .co-dot{background:var(--pos-fg);}
+  #page-companies .co-badge--partner .co-dot{background:var(--sky-deep);}
 
-  /* ----- identity row ----- */
-  .co-head{display:flex;align-items:center;gap:15px;}
-  .co-head .avatar{box-shadow:0 0 0 1px var(--line);}   /* crisp chip edge over the tint; logo bg stays white */
-  .co-id{min-width:0;}                                  /* let long names wrap instead of overflowing */
-  .co-name{font-family:var(--font-display);font-weight:800;font-size:1.3rem;line-height:1.15;color:var(--ink);letter-spacing:-.01em;}
-  .co-sector{margin-top:3px;font-size:.95rem;line-height:1.3;color:var(--slate);}
+  /* identity row: square logo chip + name + one-line industry */
+  #page-companies .co-head{display:flex;align-items:center;gap:14px;}
+  #page-companies .co-head .avatar{width:48px;height:48px;border-radius:0;flex:none;box-shadow:0 0 0 1px var(--line);}
+  #page-companies .co-id{min-width:0;}   /* let a long company name wrap instead of overflowing */
+  #page-companies .co-name{font-family:var(--font-display);font-weight:800;font-size:1.3rem;line-height:1.14;letter-spacing:-.02em;color:var(--ink);overflow-wrap:anywhere;}
+  #page-companies .co-sector{margin-top:4px;font-size:.9rem;line-height:1.3;color:var(--slate);}
 
-  /* ----- CTA with sliding arrow ----- */
-  .co-cta{margin-top:auto;display:inline-flex;align-items:center;gap:7px;font-weight:700;font-size:1rem;color:var(--accent-deep);}
-  .co-arrow{display:inline-block;transition:transform .35s cubic-bezier(.16,1,.3,1);}
+  /* CTA: an editorial text link with a sliding arrow, pinned bottom-left */
+  #page-companies .co-cta{margin-top:auto;display:inline-flex;align-items:center;gap:7px;font-size:.9rem;font-weight:700;color:var(--accent-deep);}
+  #page-companies .co-arrow{display:inline-block;transition:transform .35s cubic-bezier(.16,1,.3,1);}
 
-  /* ----- interaction: whole card is a button → opens the company modal ----- */
-  .co-card--click{cursor:pointer;transition:transform .4s cubic-bezier(.16,1,.3,1),box-shadow .4s cubic-bezier(.16,1,.3,1),border-color .4s ease;}
-  .co-card--click:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--line-strong);}
-  .co-card--click:hover::after{opacity:.1;}
-  .co-card--click:hover .co-arrow{transform:translateX(5px);}
-  .co-card--click:focus-visible{outline:3px solid var(--banana);outline-offset:3px;}
+  /* interaction: the whole card is a button → opens the company inquiry modal */
+  #page-companies .co-card--click{cursor:pointer;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;}
+  #page-companies .co-card--click:hover{border-color:var(--line-strong);box-shadow:var(--shadow);transform:translateY(-3px);}
+  #page-companies .co-card--click:hover .co-arrow{transform:translateX(5px);}
+  #page-companies .co-card--click:focus-visible{outline:3px solid var(--sky-deep);outline-offset:3px;}
 
   @media (prefers-reduced-motion:reduce){
-    .co-card--click,.co-arrow,.co-card::after{transition:none;}
-    .co-card--click:hover{transform:none;}
-    .co-card--click:hover .co-arrow{transform:none;}
+    #page-companies .co-card--click,#page-companies .co-arrow{transition:none;}
+    #page-companies .co-card--click:hover{transform:none;}
+    #page-companies .co-card--click:hover .co-arrow{transform:none;}
   }

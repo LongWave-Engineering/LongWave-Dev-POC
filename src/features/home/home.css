@@ -1,39 +1,70 @@
-/* features/home/home.css — why-us boxes + compact job teaser */
-  /* ---------- boxes (why work with us) — gradient-tinted; NON-interactive, so no hover-lift ---------- */
-  .boxes{display:grid;grid-template-columns:repeat(2,1fr);gap:22px;max-width:760px;margin:0 auto;}
-  .box{
-    position:relative;isolation:isolate;overflow:hidden;
-    display:flex;flex-direction:column;gap:13px;
-    padding:34px 30px;
-    background-color:var(--surface);
-    background-image:linear-gradient(135deg,var(--box-tint,var(--sky-wash)) 0%,var(--surface) 60%);
-    border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
-  }
-  .box:nth-child(1){--box-tint:var(--sky-wash);}
-  .box:nth-child(2){--box-tint:var(--neu-bg);}
-  /* soft corner wave — top-right, behind content (the icon sits top-left) */
-  .box::after{
-    content:"";position:absolute;top:-10px;right:-18px;width:172px;height:104px;z-index:-1;
-    background:var(--navy);opacity:.06;pointer-events:none;
-    -webkit-mask:var(--wave-motif) no-repeat right top / contain;
-            mask:var(--wave-motif) no-repeat right top / contain;
-  }
-  /* white icon chip with a hairline ring so the mark reads on any wash */
-  .box .ic{width:54px;height:54px;border-radius:14px;background:var(--surface);box-shadow:0 0 0 1px var(--line);display:grid;place-items:center;color:var(--accent-deep);}
-  .box .ic svg{width:28px;height:28px;}
-  .box h3{font-size:1.38rem;}
-  .box p{color:var(--slate);font-size:1.07rem;}
+/* features/home/home.css — redesign v3 "h-hero": hero + quick-filter, logo wall,
+   opportunities, field notes, employers. Flat, editorial; deep navy + amber gold.
+   Résumé band lives in home-cta.css. */
 
-  /* ---------- compact job teaser (title page) ---------- */
-  .teaser-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-  .jt{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;text-align:left;width:100%;min-width:0;color:inherit;position:relative;transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;display:flex;flex-direction:column;gap:10px;min-height:172px;}
-  .jt .jt-role,.jt .jt-co,.jt .jt-blurb{overflow-wrap:anywhere;}
-  .jt:hover{transform:translateY(-4px);box-shadow:0 22px 44px -22px rgba(14,34,53,.38);border-color:var(--line-strong);}
-  .jt .jt-role{font-family:var(--font-display);font-weight:800;font-size:1.06rem;line-height:1.28;}
-  .jt .jt-co{font-size:.92rem;color:var(--slate);}
-  .jt .jt-sal{font-family:var(--font-display);font-weight:800;font-size:1rem;color:var(--ink);margin-top:auto;}
-  .jt .jt-blurb{color:var(--ink-soft);font-size:.92rem;line-height:1.42;margin-top:2px;}
-  .jt .badge-hot{position:absolute;top:-9px;right:14px;}
+  /* ---------- hero ---------- */
+  #page-home .h-hero{padding-block:34px 56px;}
+  #page-home .h-hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center;}
+  #page-home .h-h1{font-family:var(--font-display);font-weight:800;line-height:1.02;letter-spacing:-.045em;font-size:clamp(44px,6.4vw,88px);margin:0;color:var(--ink);}
+  #page-home .h-h1 span{display:block;}
+  #page-home .h-h1 .accent{color:#2f74b5;}
+  #page-home .h-sub{color:var(--slate);font-size:1.12rem;margin:18px 0 26px;max-width:30em;}
 
+  /* quick-filter card */
+  #page-home .h-search{background:var(--paper);border:1px solid var(--line);padding:22px;}
+  #page-home .h-levels-field{border:0;padding:0;margin:0;}
+  #page-home .h-levels-field legend{font-size:.56rem;letter-spacing:.14em;font-weight:700;color:var(--slate);text-transform:uppercase;padding:0;}
+  #page-home .h-levels{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 16px;}
+  #page-home .h-levels label{position:relative;}
+  #page-home .h-levels input{position:absolute;opacity:0;inset:0;margin:0;cursor:pointer;}
+  #page-home .h-levels span{display:flex;align-items:center;justify-content:center;min-height:46px;border:1px solid var(--line);font-weight:600;font-size:.95rem;background:var(--surface);transition:background .12s ease,color .12s ease,border-color .12s ease;}
+  #page-home .h-levels input:checked + span{background:var(--ink);color:#fff;border-color:var(--ink);}
+  #page-home .h-levels input:focus-visible + span{outline:3px solid var(--sky-deep);outline-offset:2px;}
+  #page-home .h-fields{display:grid;grid-template-columns:1.3fr 1fr auto;gap:12px;align-items:end;}
+  #page-home .h-field span{display:block;font-size:.56rem;letter-spacing:.12em;font-weight:700;color:var(--slate);text-transform:uppercase;margin-bottom:6px;}
+  #page-home .h-fields input,#page-home .h-fields select{width:100%;height:46px;border:1px solid var(--line);background:var(--surface);padding:0 12px;font-size:.95rem;color:var(--ink);border-radius:0;}
+  #page-home .h-go{height:46px;white-space:nowrap;}
 
+  /* hero mascot art (inlined via home-assets.css --mascot-hero) */
+  #page-home .h-hero-art{min-height:360px;background:var(--mascot-hero) center/contain no-repeat;}
 
+  /* ---------- logo wall ---------- */
+  #page-home .h-logostrip{display:flex;align-items:center;gap:34px;border-top:1px solid var(--line);padding-block:22px;margin-top:6px;}
+  #page-home .h-ls-label{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);flex:none;}
+  #page-home .h-logostrip .partner-wall{flex:1;min-width:0;}
+
+  /* ---------- section heads ---------- */
+  #page-home .h-section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:28px;}
+  #page-home .h-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:12px;}
+  #page-home .h-section-head h2,#page-home .h-employers h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;font-size:clamp(30px,3.6vw,48px);margin:0;color:var(--ink);line-height:1.05;}
+
+  /* ---------- opportunities ---------- */
+  #page-home .h-jobs{padding-block:20px 10px;}
+  #page-home .h-joblist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;}
+  #page-home .h-job{display:flex;flex-direction:column;gap:12px;padding:24px;background:var(--surface);border:1px solid var(--line);text-align:left;min-width:0;color:inherit;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;}
+  #page-home .h-job:hover{border-color:var(--line-strong);box-shadow:var(--shadow);transform:translateY(-3px);}
+  #page-home .h-job .h-job-top{display:flex;gap:12px;align-items:center;min-width:0;}
+  #page-home .h-job .avatar{width:40px;height:40px;border-radius:0;flex:none;}
+  #page-home .h-job .h-co{min-width:0;}
+  #page-home .h-job .h-co b{display:block;font-size:.84rem;font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  #page-home .h-job .h-co small{display:block;font-size:.72rem;color:var(--slate);}
+  #page-home .h-job .h-role{font-family:var(--font-display);font-weight:800;font-size:1.28rem;line-height:1.18;letter-spacing:-.02em;color:var(--ink);}
+  #page-home .h-job .h-jp{align-self:flex-start;font-size:.68rem;font-weight:700;padding:5px 9px;border:1px solid var(--line);color:var(--slate);}
+  #page-home .h-job .h-jp.none{background:var(--pos-bg);border-color:transparent;color:var(--pos-fg);}
+  #page-home .h-job .h-sal{font-family:var(--font-display);font-weight:800;font-size:1.02rem;color:var(--ink);}
+  #page-home .h-job .h-src{font-size:.72rem;color:var(--slate);margin-top:auto;}
+
+  /* ---------- field notes ---------- */
+  #page-home .h-resources{padding-block:40px;}
+  #page-home .h-resource-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;}
+  #page-home .h-resource-grid a{display:block;padding:24px 0;border-top:1px solid var(--line);color:inherit;}
+  #page-home .h-rn-ic{display:grid;place-items:center;width:46px;height:46px;background:var(--paper);border:1px solid var(--line);color:var(--navy);margin-bottom:18px;}
+  #page-home .h-rn-ic svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+  #page-home .h-resource-grid small{font-size:.58rem;letter-spacing:.12em;font-weight:700;color:var(--slate);text-transform:uppercase;}
+  #page-home .h-resource-grid h3{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.5rem;margin:20px 0;color:var(--ink);line-height:1.12;}
+  #page-home .h-resource-grid p{font-size:.92rem;color:var(--slate);margin:0 0 16px;}
+  #page-home .h-read{font-size:.82rem;font-weight:700;color:var(--accent-deep);}
+
+  /* ---------- employers ---------- */
+  #page-home .h-employers{background:var(--paper);padding:54px;margin-block:30px 50px;}
+  #page-home .h-employers h2{margin:14px 0 22px;max-width:16em;}

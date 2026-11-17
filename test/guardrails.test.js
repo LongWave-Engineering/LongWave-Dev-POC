@@ -112,16 +112,15 @@ test("no latin-ext font subsets in the bundle (dead bytes — the content has ze
     "the latin-ext half was measured as 207KB of wire for zero renderable characters)");
 });
 
-test("no Libre Franklin 700 face (nothing on the site asks for it)", () => {
-  // 38KB of bundle for zero rendered glyphs. A runtime scan across every route and the
-  // job modal found this face used at 500/600/800/900 by 2250 elements and at 700 by
-  // NONE — the display face jumps straight from 600 to 800. Same treatment as the
-  // latin-ext subsets above: if fetchfonts.mjs is re-run, re-strip it.
+test("the redesign fonts are self-hosted (Bricolage Grotesque display + Inter body)", () => {
+  // Redesign v3 (2026-11): the display/body fonts became Bricolage Grotesque + Inter,
+  // inlined as base64 woff2 (latin subset only — the latin-ext test above still strips the
+  // rest). They are self-hosted because the live CSP is no-third-party: a Google Fonts
+  // <link> is forbidden by the external-resources guardrail and blocked at runtime.
   const css = fs.readFileSync(path.join(ROOT, "src/core/fonts.css"), "utf8");
-  const faces = [...css.matchAll(/font-family: 'Libre Franklin';[^}]*?font-weight: (\d+)/g)].map((m) => m[1]);
-  assert.equal(faces.includes("700"), false,
-    "a Libre Franklin 700 @font-face is back — nothing requests weight 700, so it is ~38KB of dead bytes");
-  assert.ok(faces.includes("800"), "Libre Franklin 800 is the display weight the site actually uses — it must stay");
+  assert.match(css, /font-family:\s*'Bricolage Grotesque'/, "the Bricolage Grotesque display face is missing from fonts.css");
+  assert.match(css, /font-family:\s*'Inter'/, "the Inter body face is missing from fonts.css");
+  assert.match(css, /src:url\(data:font\/woff2;base64,/, "fonts must be inlined as base64 woff2 (self-hosted, zero external requests)");
 });
 
 test("the focus ring keeps its two-tone halo (banana alone is 1.44:1 on white — invisible)", () => {
