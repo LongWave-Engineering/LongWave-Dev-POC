@@ -1,19 +1,20 @@
 <!-- features/post/post.html — "Post a job" / for-employers page (redesign v3 "h-hero").
      Flat, editorial: deep navy + amber gold, 1px hairlines, zero radius. Mirrors the
-     for-employers mockup (employer hero + sample viewing report, partner wall, HR voices
-     + engineers quote grids). Page CSS is scoped under #page-post in the <style> below so
-     it can't collide with other pages; the .rev quote cards are styled in
-     features/testimonials/testimonials.css. Behaviour is unchanged: the CTAs still fire
-     the shared post-job / contact modals (data-postjob / data-contact), the partner wall
-     still builds from [data-partner-feature], and #hrGrid / #revGrid are still filled by
-     testimonials.js. -->
+     for-employers mockup (employer hero + sample viewing report + the "promise" stat band),
+     then keeps this site's own partner wall, HR voices and engineer-quote grids. Page CSS is
+     scoped under #page-post in the <style> below so it can't collide with other pages; the
+     .rev quote cards are styled in features/testimonials/testimonials.css. Behaviour is
+     unchanged: the CTAs still fire the shared post-job / contact modals (data-postjob /
+     data-contact), the partner wall still builds from [data-partner-feature], and
+     #hrGrid / #revGrid are still filled by testimonials.js. Spacing follows the home/jobs
+     section rhythm (tight, hairline-separated) so the sections no longer leave big gaps. -->
 <style id="page-post-styles">
   /* ---------- hero ---------- */
-  #page-post .p-hero{padding-block:40px 18px;}
+  #page-post .p-hero{padding-block:38px 40px;}
   #page-post .p-hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(32px,4vw,56px);align-items:center;}
-  #page-post .p-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:16px;}
+  #page-post .p-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:12px;}
   #page-post .p-h1{font-family:var(--font-display);font-weight:800;line-height:1.02;letter-spacing:-.045em;font-size:clamp(40px,5.4vw,74px);margin:0;color:var(--ink);}
-  #page-post .p-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:20px 0 28px;max-width:34em;}
+  #page-post .p-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:18px 0 26px;max-width:34em;}
   #page-post .p-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
 
   /* sample "viewing report" card — the mockup's signature hero art, flat */
@@ -35,12 +36,20 @@
   #page-post .p-bar>span:last-child{flex:none;width:32px;text-align:right;color:var(--slate);font-weight:600;font-size:.74rem;}
   #page-post .p-note{font-size:.72rem;color:var(--slate);line-height:1.5;margin:14px 0 0;}
 
-  /* ---------- sections + heads (left-aligned, flat, hairline rhythm) ---------- */
-  #page-post .p-sec{padding-block:clamp(52px,6.5vw,88px);}
+  /* ---------- promise band (mockup .promise): three dense, hairline-framed stats carrying
+       the "free to list / fee on hire / checked daily" message right under the hero ---------- */
+  #page-post .p-promise{border-bottom:1px solid var(--line);}
+  #page-post .p-promise-in{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,44px);padding-block:30px 32px;}
+  #page-post .p-promise-item{border-top:2px solid var(--gold);padding-top:14px;}
+  #page-post .p-promise-item strong{display:block;font-family:var(--font-display);font-weight:800;font-size:clamp(26px,3vw,36px);letter-spacing:-.03em;color:var(--ink);line-height:1.02;}
+  #page-post .p-promise-item span{display:block;margin-top:8px;font-size:.9rem;color:var(--slate);line-height:1.45;}
+
+  /* ---------- sections + heads (left-aligned, flat, hairline rhythm; tight like home/jobs) ---------- */
+  #page-post .p-sec{padding-block:clamp(42px,5vw,60px);}
   #page-post .p-sec--tint{background:var(--paper);}
-  #page-post .p-head{max-width:40rem;margin-bottom:34px;}
+  #page-post .p-head{max-width:40rem;margin-bottom:28px;}
   #page-post .p-head h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;font-size:clamp(30px,3.6vw,48px);margin:0;color:var(--ink);line-height:1.05;}
-  #page-post .p-head .p-subh{color:var(--slate);font-size:1.08rem;line-height:1.5;margin:16px 0 0;}
+  #page-post .p-head .p-subh{color:var(--slate);font-size:1.08rem;line-height:1.5;margin:14px 0 0;}
 
   /* ---------- partner wall: flatten the rounded, shadowed .pf-card ---------- */
   #page-post .pf-card{background:var(--surface);border:1px solid var(--line);border-radius:0;box-shadow:none;}
@@ -50,6 +59,9 @@
   /* ---------- responsive ---------- */
   @media (max-width:860px){
     #page-post .p-hero-grid{grid-template-columns:1fr;gap:34px;}
+  }
+  @media (max-width:560px){
+    #page-post .p-promise-in{grid-template-columns:1fr;gap:18px;padding-block:24px;}
   }
   @media (max-width:480px){
     #page-post .p-kpis{grid-template-columns:1fr;gap:14px;}
@@ -93,6 +105,24 @@
           <div class="p-bar"><span>Mobile</span><i style="width:48%"></i><span>214</span></div>
         </div>
         <p class="p-note" data-i18n="post_rep_note">All figures here are fictional examples. We send a real report once a role passes 50 views.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMISE BAND: free to list · fee only on hire · re-checked daily (mockup .promise) -->
+  <section class="p-promise">
+    <div class="wrap p-promise-in">
+      <div class="p-promise-item">
+        <strong data-i18n="post_promise1_v">¥0</strong>
+        <span data-i18n="post_promise1_l">To list your open roles</span>
+      </div>
+      <div class="p-promise-item">
+        <strong data-i18n="post_promise2_v">Only on hire</strong>
+        <span data-i18n="post_promise2_l">A fee only when someone we introduce is hired</span>
+      </div>
+      <div class="p-promise-item">
+        <strong data-i18n="post_promise3_v">7:00 daily</strong>
+        <span data-i18n="post_promise3_l">We re-check live roles against your own careers page</span>
       </div>
     </div>
   </section>
