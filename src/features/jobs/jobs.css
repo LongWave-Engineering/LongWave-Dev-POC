@@ -1,5 +1,6 @@
-/* features/jobs/jobs.css — redesign v3 "h-hero": flat, editorial jobs board.
-   Deep navy + amber gold, 1px hairlines, square corners, --paper panels.
+/* features/jobs/jobs.css — redesign v3 "h-hero": flat, editorial jobs board, rebuilt as a
+   LinkedIn-style TWO-PANE workspace. A sticky top filter bar + a full-height split: a
+   scrollable role list (left) and the selected role's JD rendered INLINE (right).
    The shared tag/badge primitives below stay GLOBAL (the JD modal reuses them);
    everything else is scoped under #page-jobs so it can't collide with other pages. */
 
@@ -17,47 +18,32 @@
   /* ============================ JOBS BOARD ============================== */
   /* ====================================================================== */
 
-  /* a touch wider than the site default so the full-width role list has room to breathe */
-  #page-jobs .wrap{max-width:1320px;padding-left:clamp(24px,3.4vw,56px);padding-right:clamp(24px,3.4vw,56px);}
-  #page-jobs .section{padding-block:40px 72px;}
+  /* header height the sticky site bar occupies; the board fills exactly the rest of the
+     viewport so the two panes scroll independently and there is no deadspace. */
+  #page-jobs{--hdr-h:77px;}
+  #page-jobs .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;}
 
-  /* ---------- page head: eyebrow · title · sub, with the Saved toggle at the right ---------- */
-  #page-jobs .jobs-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:34px;padding-bottom:26px;border-bottom:1px solid var(--line);}
-  #page-jobs .jobs-head-text{max-width:46rem;}
-  #page-jobs .jobs-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:12px;}
-  #page-jobs .jobs-head h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;line-height:1.02;font-size:clamp(34px,4.6vw,58px);color:var(--ink);}
-  #page-jobs .jobs-head .sub{color:var(--slate);font-size:1.1rem;line-height:1.5;margin-top:14px;max-width:40em;text-wrap:balance;}
-  #page-jobs .jobs-saved-toggle{flex:none;gap:9px;border-radius:0;align-self:center;}
-  #page-jobs .jobs-saved-toggle .jst-heart{font-size:1.08em;line-height:1;color:var(--line-strong);transition:color .15s ease;}
-  #page-jobs .jobs-saved-toggle:hover .jst-heart{color:var(--save);}
-  #page-jobs .jobs-saved-toggle.active{background:var(--save-wash);border-color:var(--save);color:var(--save-deep);}
-  #page-jobs .jobs-saved-toggle.active .jst-heart{color:var(--save);}
+  /* the whole board is one viewport-tall column: filter bar (auto) + split (fills the rest) */
+  #page-jobs .jobs-board{height:calc(100dvh - var(--hdr-h));display:flex;flex-direction:column;background:var(--surface);}
 
-  /* ---------- two-column workspace: filter rail + results ---------- */
-  #page-jobs .jobs-layout{display:grid;grid-template-columns:280px 1fr;gap:40px;align-items:start;}
-
-  /* ---------- filter rail: flat --paper panel ---------- */
-  #page-jobs .filters-side{position:sticky;top:96px;background:var(--paper);border:1px solid var(--line);border-radius:0;padding:24px 22px;}
-  #page-jobs .filters-title{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.12rem;color:var(--ink);margin:0 0 20px;padding-bottom:16px;border-bottom:1px solid var(--line);}
-  #page-jobs .filters-side .fgroup{margin-bottom:20px;}
-  #page-jobs .filters-side .fgroup:last-child{margin-bottom:0;}
-  /* labels become editorial micro-caps, matching the home quick-filter fields */
-  #page-jobs .filters-side label.glab{display:block;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--slate);margin-bottom:8px;}
-  #page-jobs .filters-side .search{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:0;padding:0 12px;transition:border-color .14s ease;}
-  #page-jobs .filters-side .search:focus-within{border-color:var(--sky-deep);}
-  #page-jobs .filters-side .search input{border:0;outline:0;background:transparent;padding:12px 0;font-size:.98rem;width:100%;color:var(--ink);}
-  #page-jobs .filters-side .search svg{width:17px;height:17px;color:var(--slate);flex:none;}
+  /* ---------- top filter bar: compact, horizontal, wraps when tight ---------- */
+  #page-jobs .jobs-filterbar{flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;padding:12px clamp(16px,2.4vw,28px);background:var(--surface);border-bottom:1px solid var(--line);}
+  #page-jobs .fb-search{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line-strong);border-radius:0;padding:0 12px;flex:1 1 220px;min-width:180px;max-width:360px;transition:border-color .14s ease;}
+  #page-jobs .fb-search:focus-within{border-color:var(--sky-deep);}
+  #page-jobs .fb-search input{border:0;outline:0;background:transparent;padding:10px 0;font-size:.96rem;width:100%;color:var(--ink);}
+  #page-jobs .fb-search svg{width:16px;height:16px;color:var(--slate);flex:none;}
+  #page-jobs .fb-facet{flex:0 1 auto;min-width:150px;}
 
   /* ---- multi-select facet widget (summary button + ARIA listbox popover) ---- */
   #page-jobs .msel{position:relative;}
-  #page-jobs .msel-btn{display:flex;align-items:center;gap:8px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:0;padding:12px;font-size:.96rem;color:var(--slate);font-family:inherit;font-weight:600;cursor:pointer;text-align:left;transition:border-color .14s ease,color .14s ease;}
-  #page-jobs .msel-btn:hover{border-color:var(--line-strong);}
+  #page-jobs .msel-btn{display:flex;align-items:center;gap:8px;width:100%;background:var(--surface);border:1px solid var(--line-strong);border-radius:0;padding:9px 11px;font-size:.92rem;color:var(--slate);font-family:inherit;font-weight:600;cursor:pointer;text-align:left;transition:border-color .14s ease,color .14s ease;}
+  #page-jobs .msel-btn:hover{border-color:var(--navy);}
   #page-jobs .msel-btn.has-sel{border-color:var(--navy);color:var(--ink);box-shadow:inset 3px 0 0 var(--navy);}
   #page-jobs .msel-btn[aria-expanded="true"]{border-color:var(--sky-deep);}
   #page-jobs .msel-label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   #page-jobs .msel-chev{width:15px;height:15px;flex:none;color:var(--slate);transition:transform .15s ease;}
   #page-jobs .msel-btn[aria-expanded="true"] .msel-chev{transform:rotate(180deg);}
-  #page-jobs .msel-pop{position:absolute;z-index:40;left:0;right:0;top:calc(100% - 1px);background:var(--surface);border:1px solid var(--navy);border-radius:0;box-shadow:var(--shadow);padding:5px;max-height:272px;overflow-y:auto;outline:none;}
+  #page-jobs .msel-pop{position:absolute;z-index:40;left:0;min-width:100%;top:calc(100% - 1px);background:var(--surface);border:1px solid var(--navy);border-radius:0;box-shadow:var(--shadow);padding:5px;max-height:272px;overflow-y:auto;outline:none;white-space:nowrap;}
   #page-jobs .msel-opt{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:0;font-size:.95rem;font-weight:600;color:var(--ink-soft);cursor:pointer;}
   #page-jobs .msel-opt:hover{background:var(--sky-wash);color:var(--ink);}
   #page-jobs .msel-opt:focus-visible{outline:2px solid var(--sky-deep);outline-offset:-2px;background:var(--sky-wash);color:var(--ink);}
@@ -69,65 +55,69 @@
   #page-jobs .msel-opt[aria-selected="true"]{color:var(--ink);}
   #page-jobs .msel-opt-label{flex:1 1 auto;min-width:0;}
 
-  #page-jobs .fclear{background:transparent;border:0;color:var(--navy);font-weight:700;font-size:.92rem;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  #page-jobs .fclear{background:transparent;border:0;color:var(--navy);font-weight:700;font-size:.88rem;padding:4px 2px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;}
   #page-jobs .fclear:hover{color:var(--sky-deep);}
 
-  /* ---------- results column ---------- */
-  #page-jobs .result-count{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-bottom:18px;font-weight:700;}
-  /* Full-width list: every role is ONE row spanning the whole column, title always fully visible */
+  /* live "N of M roles" count + the Saved toggle pinned to the right of the bar */
+  #page-jobs .result-count{font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--slate);font-weight:700;margin-left:auto;white-space:nowrap;}
+  #page-jobs .jobs-saved-toggle{flex:none;gap:8px;border-radius:0;padding:9px 15px;font-size:.9rem;}
+  #page-jobs .jobs-saved-toggle .jst-heart{font-size:1.04em;line-height:1;color:var(--line-strong);transition:color .15s ease;}
+  #page-jobs .jobs-saved-toggle:hover .jst-heart{color:var(--save);}
+  #page-jobs .jobs-saved-toggle.active{background:var(--save-wash);border-color:var(--save);color:var(--save-deep);}
+  #page-jobs .jobs-saved-toggle.active .jst-heart{color:var(--save);}
+
+  /* ---------- the split: scrollable list (left) + inline detail (right) ---------- */
+  #page-jobs .split-jobs{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(340px,40%) minmax(0,1fr);background:var(--surface);}
+  #page-jobs .job-scroll{height:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain;border-right:1px solid var(--line);display:flex;flex-direction:column;}
+  #page-jobs .detail-column{height:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain;background:var(--paper);}
+
+  /* ---------- left: the role list ---------- */
   #page-jobs .job-grid{display:flex;flex-direction:column;gap:0;}
 
-  /* pick-a-filter gate */
-  #page-jobs .jobs-prompt{text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:0;padding:64px 30px;}
-  #page-jobs .jobs-prompt .jp-ic{font-size:2.2rem;line-height:1;margin-bottom:14px;}
-  #page-jobs .jobs-prompt h3{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.6rem;margin-bottom:12px;color:var(--ink);}
-  #page-jobs .jobs-prompt p{color:var(--slate);font-size:1.04rem;line-height:1.55;max-width:34em;margin:0 auto 24px;}
-  #page-jobs .jobs-prompt .btn{border-radius:0;}
-
-  /* card = full-width row: [.jc-open clickable content] + [.jc-corner controls], hairline-stacked.
-     Rows share a single top/bottom hairline so the list reads as an editorial register, not boxes. */
-  #page-jobs .job-card{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:0;position:relative;transition:background .14s ease,box-shadow .16s ease;margin-top:-1px;}
-  #page-jobs .job-card:first-child{margin-top:0;}
-  #page-jobs .job-card:hover,#page-jobs .job-card:focus-within{background:var(--paper);z-index:2;box-shadow:inset 3px 0 0 var(--sky-deep);}
-  #page-jobs .jc-open{flex:1 1 auto;min-width:0;display:flex;flex-direction:row;align-items:center;gap:20px;padding:20px 22px;text-align:left;background:transparent;border:0;border-radius:0;color:inherit;font:inherit;cursor:pointer;}
+  /* row = [.jc-open clickable content] + [.jc-corner save/checkbox], hairline-stacked */
+  #page-jobs .job-card{display:flex;align-items:stretch;background:var(--surface);border-bottom:1px solid var(--line);border-left:4px solid transparent;border-radius:0;position:relative;transition:background .12s ease;}
+  #page-jobs .job-card:hover,#page-jobs .job-card:focus-within{background:var(--paper);}
+  #page-jobs .jc-open{flex:1 1 auto;min-width:0;display:flex;flex-direction:row;align-items:flex-start;gap:14px;padding:16px 10px 16px 16px;text-align:left;background:transparent;border:0;border-radius:0;color:inherit;font:inherit;cursor:pointer;}
   #page-jobs .jc-logo{flex:0 0 auto;display:flex;}
-  #page-jobs .jc-logo .avatar{width:48px;height:48px;border-radius:0;font-size:1rem;}
-  #page-jobs .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;}
-  #page-jobs .jc-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px;text-align:right;margin-left:auto;padding-left:14px;}
+  #page-jobs .jc-logo .avatar{width:44px;height:44px;border-radius:0;font-size:.95rem;}
+  #page-jobs .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px;}
+  #page-jobs .jc-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:2px;}
 
   /* save heart + selection checkbox cluster at the row's right edge */
-  #page-jobs .jc-corner{flex:0 0 auto;z-index:3;display:flex;align-items:center;gap:12px;padding:0 20px;}
+  #page-jobs .jc-corner{flex:0 0 auto;z-index:3;display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 12px 0 6px;}
   #page-jobs .jc-select{display:flex;align-items:center;line-height:0;}
-  #page-jobs .jc-select input{width:20px;height:20px;margin:0;cursor:pointer;accent-color:var(--navy);border-radius:0;}
+  #page-jobs .jc-select input{width:19px;height:19px;margin:0;cursor:pointer;accent-color:var(--navy);border-radius:0;}
   #page-jobs .jc-select input:disabled{cursor:not-allowed;opacity:.45;}
   #page-jobs .jc-save{width:30px;height:30px;padding:0;display:grid;place-items:center;border:0;background:transparent;border-radius:0;color:var(--line-strong);cursor:pointer;transition:color .15s ease,transform .15s ease;}
-  #page-jobs .jc-save svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;}
+  #page-jobs .jc-save svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;}
   #page-jobs .jc-save:hover{color:var(--save);transform:translateY(-1px);}
   #page-jobs .jc-save.is-saved{color:var(--save);}
   #page-jobs .jc-save.is-saved svg{fill:var(--save);stroke:var(--save);}
 
-  /* selected role: navy left rule + sky wash */
-  #page-jobs .job-card.sel{background:var(--sky-wash);box-shadow:inset 4px 0 0 var(--navy);z-index:2;}
-  #page-jobs .job-card.sel:hover{background:var(--sky-wash);box-shadow:inset 4px 0 0 var(--navy);}
+  /* the row being VIEWED in the right pane (navy left rule + sky wash) */
+  #page-jobs .job-card.current{background:var(--sky-wash);border-left-color:var(--navy);}
+  #page-jobs .job-card.current:hover{background:var(--sky-wash);}
+  /* a row ticked for batch-apply (independent of what's being viewed) */
+  #page-jobs .job-card.sel .jc-select input{outline:2px solid var(--navy);outline-offset:1px;}
 
   /* entrance: gentle up-fade, staggered inline per-card in jobs.js */
-  @keyframes jcReveal{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
-  #page-jobs .job-card.jc-reveal{animation:jcReveal .5s cubic-bezier(.16,1,.3,1) both;will-change:opacity,transform;}
-  #page-jobs .jobs-empty{animation:jcReveal .5s cubic-bezier(.16,1,.3,1) both;text-align:center;padding:40px 0 34px;}
-  #page-jobs .jobs-more{align-self:center;margin-top:20px;border-radius:0;}
+  @keyframes jcReveal{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  #page-jobs .job-card.jc-reveal{animation:jcReveal .45s cubic-bezier(.16,1,.3,1) both;will-change:opacity,transform;}
+  #page-jobs .jobs-empty{animation:jcReveal .45s cubic-bezier(.16,1,.3,1) both;text-align:center;padding:48px 24px;}
+  #page-jobs .jobs-more{align-self:center;margin:18px auto;border-radius:0;}
 
   /* the whole role title is shown — wraps to a second line if long, never clipped */
-  #page-jobs .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.22rem;line-height:1.24;letter-spacing:-.02em;color:var(--ink);overflow-wrap:break-word;}
-  #page-jobs .jc-role-detail{display:block;margin-top:2px;color:var(--slate);font-size:.84rem;line-height:1.35;overflow-wrap:break-word;}
-  #page-jobs .jc-co{font-size:.92rem;color:var(--slate);overflow-wrap:break-word;}
+  #page-jobs .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.06rem;line-height:1.22;letter-spacing:-.015em;color:var(--navy);overflow-wrap:break-word;}
+  #page-jobs .jc-role-detail{display:block;margin-top:1px;color:var(--slate);font-size:.78rem;line-height:1.35;overflow-wrap:break-word;}
+  #page-jobs .jc-co{font-size:.86rem;color:var(--slate);overflow-wrap:break-word;}
   #page-jobs .jc-dot{color:var(--line-strong);margin:0 3px;}
-  #page-jobs .jc-main .tags{margin-top:4px;}
-  #page-jobs .jc-salary{font-family:var(--font-display);font-size:1.14rem;color:var(--ink);font-weight:800;letter-spacing:-.01em;white-space:nowrap;}
-  #page-jobs .jc-link{font-size:.82rem;font-weight:700;letter-spacing:.02em;color:var(--sky-deep);white-space:nowrap;}
-  #page-jobs .job-card .badge-hot{position:absolute;top:-1px;left:0;border-radius:0;}
+  #page-jobs .jc-main .tags{margin-top:3px;}
+  #page-jobs .jc-salary{font-family:var(--font-display);font-size:.96rem;color:var(--ink);font-weight:800;letter-spacing:-.01em;}
+  #page-jobs .jc-link{display:none;}
+  #page-jobs .job-card .badge-hot{position:absolute;top:0;left:4px;border-radius:0;z-index:2;}
 
   /* flat, editorial tags for the board (modal keeps the global rounded pills) */
-  #page-jobs .tag{font-size:.74rem;font-weight:600;letter-spacing:.01em;padding:5px 9px;border-radius:0;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);}
+  #page-jobs .tag{font-size:.7rem;font-weight:600;letter-spacing:.01em;padding:4px 8px;border-radius:0;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);}
   #page-jobs .tag--jp-none{background:var(--pos-bg);border-color:transparent;color:var(--pos-fg);font-weight:700;}
   #page-jobs .tag--jp-mid{background:var(--surface);border-color:var(--line-strong);color:var(--sky-deep);}
   #page-jobs .tag--jp-high{background:var(--surface);border-color:var(--line-strong);color:var(--warn-fg);}
@@ -135,33 +125,90 @@
   #page-jobs .tag--tech{background:transparent;border-color:var(--line-strong);color:var(--slate);}
 
   /* already-applied role: a static "Applied" pill (no checkbox), row muted */
-  #page-jobs .jc-applied{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:700;color:var(--pos-fg);background:var(--pos-bg);border-radius:0;padding:6px 11px;white-space:nowrap;}
-  #page-jobs .job-card.applied{opacity:.7;}
-  #page-jobs .job-card.applied:hover{opacity:1;}
+  #page-jobs .jc-applied{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;color:var(--pos-fg);background:var(--pos-bg);border-radius:0;padding:5px 9px;white-space:nowrap;text-align:center;}
+  #page-jobs .job-card.applied .jc-open{opacity:.72;}
+  #page-jobs .job-card.applied:hover .jc-open{opacity:1;}
 
-  /* banner once all applications are used ("one and done") */
-  #page-jobs .apply-notice{display:flex;align-items:center;gap:12px;background:var(--pos-bg);color:var(--pos-fg);border:1px solid var(--pos-fg);border-radius:0;padding:14px 18px;margin-bottom:18px;font-weight:600;line-height:1.4;}
-  #page-jobs .apply-notice .an-ic{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--pos-fg);color:#fff;font-weight:800;font-size:.82rem;}
+  /* banner once all applications are used ("one and done") — top of the list column */
+  #page-jobs .apply-notice{display:flex;align-items:center;gap:12px;background:var(--pos-bg);color:var(--pos-fg);border-bottom:1px solid var(--pos-fg);border-radius:0;padding:12px 16px;font-weight:600;line-height:1.4;font-size:.92rem;}
+  #page-jobs .apply-notice .an-ic{flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--pos-fg);color:#fff;font-weight:800;font-size:.78rem;}
   #page-jobs .apply-notice[hidden]{display:none;}
 
-  /* sticky batch-apply bar — appears when ≥1 role is selected */
-  #page-jobs .select-bar{position:sticky;bottom:16px;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--navy);color:#fff;padding:16px 20px;border-radius:0;box-shadow:0 18px 40px -16px rgba(6,19,46,.6);margin-top:24px;}
+  /* sticky batch-apply bar — appears when ≥1 role is ticked; sticks to the list column's floor */
+  #page-jobs .select-bar{position:sticky;bottom:0;z-index:20;margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--navy);color:#fff;padding:14px 18px;border-radius:0;box-shadow:0 -14px 30px -18px rgba(6,19,46,.7);}
   #page-jobs .select-bar[hidden]{display:none;}
-  #page-jobs .select-bar .sb-count{font-weight:700;}
+  #page-jobs .select-bar .sb-count{font-weight:700;font-size:.92rem;}
   #page-jobs .select-bar .sb-flash{animation:sbFlash .6s ease;}
   @keyframes sbFlash{0%,100%{color:#fff;}40%{color:var(--gold);}}
   #page-jobs .select-bar .sb-actions{display:flex;gap:10px;}
-  #page-jobs .select-bar .btn{border-radius:0;}
+  #page-jobs .select-bar .btn{border-radius:0;padding:10px 16px;font-size:.92rem;}
   #page-jobs .select-bar .btn--ghost{color:#fff;background:transparent;border-color:rgba(255,255,255,.55);}
   #page-jobs .select-bar .btn--ghost:hover{background:rgba(255,255,255,.12);border-color:#fff;color:#fff;}
 
+  /* ====================================================================== */
+  /* ===================== RIGHT: INLINE JD DETAIL ======================== */
+  /* ====================================================================== */
+  #page-jobs #selected-detail{min-height:100%;}
+  #page-jobs .jdx{display:flex;flex-direction:column;min-height:100%;}
+
+  /* nothing-to-show state (0 results, or before first paint) */
+  #page-jobs .jdx-empty{display:grid;place-items:center;min-height:100%;padding:48px 32px;text-align:center;color:var(--slate);font-size:1.02rem;line-height:1.6;}
+
+  /* sticky identity + actions so Save/Apply stay in reach while the JD scrolls */
+  #page-jobs .jdx-top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding:24px clamp(20px,2.6vw,34px) 18px;}
+  #page-jobs .jdx-back{display:none;align-items:center;gap:6px;background:transparent;border:0;color:var(--navy);font-weight:700;font-size:.92rem;padding:0 0 12px;cursor:pointer;}
+  #page-jobs .jdx-back:hover{color:var(--sky-deep);}
+  #page-jobs .jdx-head{display:flex;align-items:flex-start;gap:14px;}
+  #page-jobs .jdx-logo .avatar{width:54px;height:54px;border-radius:0;font-size:1.1rem;}
+  #page-jobs .jdx-id{min-width:0;flex:1 1 auto;}
+  #page-jobs .jdx-role{font-family:var(--font-display);font-weight:800;font-size:clamp(1.4rem,2.4vw,1.86rem);line-height:1.14;letter-spacing:-.02em;color:var(--ink);overflow-wrap:break-word;}
+  #page-jobs .jdx-role-detail{margin:3px 0 0;color:var(--slate);font-size:.92rem;line-height:1.4;overflow-wrap:break-word;}
+  #page-jobs .jdx-co{margin:5px 0 0;color:var(--slate);font-size:1rem;overflow-wrap:break-word;}
+  #page-jobs .jdx-dot{color:var(--line-strong);}
+  #page-jobs .jdx-salary{font-family:var(--font-display);font-weight:800;font-size:1.3rem;letter-spacing:-.01em;color:var(--ink);margin:16px 0 4px;}
+  #page-jobs .jdx-salary span{display:block;font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate);margin-bottom:2px;}
+  #page-jobs .jdx-tags{margin:12px 0 2px;}
+  #page-jobs .jdx-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
+  #page-jobs .jdx-actions .btn{border-radius:0;}
+  #page-jobs .jdx-actions .jdx-apply[disabled]{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+  #page-jobs .jdx-save.is-saved{border-color:var(--save);color:var(--save-deep);background:var(--save-wash);}
+  #page-jobs .jdx-save.is-saved .jdx-save-ic{color:var(--save);}
+  #page-jobs .jdx-save-ic{color:var(--line-strong);}
+
+  /* the JD body: mirror the modal's .m-body typography (those rules are .modal-scoped) */
+  #page-jobs .jdx-body{padding:22px clamp(20px,2.6vw,34px) 40px;max-width:860px;}
+  #page-jobs .jdx-body h4.m-sub{font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin:0 0 8px;color:var(--ink);}
+  #page-jobs .jdx-body .m-body + h4.m-sub{border-top:1px solid var(--line);padding-top:20px;margin-top:24px;}
+  #page-jobs .jdx-body .m-body{font-size:1.02rem;line-height:1.72;color:var(--ink-soft);overflow-wrap:anywhere;}
+  #page-jobs .jdx-body .m-body p{margin:.6em 0;}
+  #page-jobs .jdx-body .m-body>:first-child{margin-top:0;}
+  #page-jobs .jdx-body .m-body>:last-child{margin-bottom:0;}
+  #page-jobs .jdx-body .m-body ul.jd-ul{margin:.7em 0;padding-left:1.15em;list-style:disc;}
+  #page-jobs .jdx-body .m-body .jd-ul li{margin:.42em 0;}
+  #page-jobs .jdx-body .m-body .jd-ul>li::marker{color:var(--line-strong);}
+  #page-jobs .jdx-body .m-body .jd-ul>li.jd-li-num{list-style:none;}
+  #page-jobs .jdx-body .m-body h5.jd-h{font-size:1.02rem;font-weight:700;color:var(--ink);margin:1.3em 0 .3em;}
+  #page-jobs .jdx-body .m-body h5.jd-h + p,#page-jobs .jdx-body .m-body h5.jd-h + ul.jd-ul{margin-top:.15em;}
+  #page-jobs .jdx-body .m-body hr.jd-hr{border:0;border-top:1px solid var(--line);margin:1.1em 0;}
+  #page-jobs .jdx-body h4.m-sub + .m-tags{margin:12px 0;}
+
   /* ---------- responsive ---------- */
-  @media (max-width:900px){
-    #page-jobs .jobs-layout{grid-template-columns:1fr;gap:24px;}
-    #page-jobs .filters-side{position:static;top:auto;}
+  /* medium: narrow the search, let facets wrap onto a second row */
+  @media (max-width:1100px){
+    #page-jobs .split-jobs{grid-template-columns:minmax(320px,44%) minmax(0,1fr);}
   }
-  @media (max-width:640px){
-    #page-jobs .jc-open{flex-wrap:wrap;gap:12px 16px;padding:16px;}
-    #page-jobs .jc-end{width:100%;flex-direction:row;justify-content:space-between;align-items:center;margin-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:10px;}
-    #page-jobs .jc-corner{padding:0 14px;}
+  /* mobile: ONE column. Selecting a role swaps the list for the detail (mockup .detail-open). */
+  @media (max-width:760px){
+    #page-jobs{--hdr-h:77px;}
+    #page-jobs .jobs-board{height:calc(100dvh - var(--hdr-h));}
+    #page-jobs .jobs-filterbar{gap:8px 10px;padding:10px 16px;}
+    #page-jobs .fb-search{flex:1 1 100%;max-width:none;}
+    #page-jobs .fb-facet{flex:1 1 44%;min-width:0;}
+    #page-jobs .result-count{order:5;}
+    #page-jobs .split-jobs{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);}
+    #page-jobs .job-scroll,#page-jobs .detail-column{grid-area:1/1;border-right:0;}
+    #page-jobs .detail-column{display:none;}
+    #page-jobs .split-jobs.detail-open .job-scroll{display:none;}
+    #page-jobs .split-jobs.detail-open .detail-column{display:block;}
+    #page-jobs .jdx-back{display:inline-flex;}
   }

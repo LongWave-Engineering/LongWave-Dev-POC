@@ -4,21 +4,28 @@
    lives in modals.html, outside the page div) so those selectors stay unscoped,
    kept visually consistent with the page. */
 
-  /* ---------- page intro (eyebrow + big display heading + sub) ---------- */
-  #page-articles .art-intro{max-width:46rem;margin-bottom:38px;}
+  /* ---------- page intro (eyebrow + big display heading + sub) ----------
+     Mockup rhythm: a tight eyebrow→title→sub stack that sits close to the grid
+     (the mockup drops its chips/featured in that gap; we go straight to the grid,
+     so the intro is pulled in to kill the empty band under the headline). */
+  #page-articles .art-intro{max-width:46rem;margin-bottom:30px;}
   #page-articles .art-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
   #page-articles .art-h1{font-family:var(--font-display);font-weight:800;line-height:1.02;letter-spacing:-.045em;font-size:clamp(40px,5.4vw,76px);margin:0;color:var(--ink);}
-  #page-articles .art-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:22px 0 0;max-width:34em;text-wrap:balance;}
+  #page-articles .art-sub{color:var(--slate);font-size:1.12rem;line-height:1.5;margin:16px 0 0;max-width:34em;text-wrap:balance;}
 
-  /* ---------- article card grid ---------- */
-  #page-articles .art-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;}
+  /* ---------- article card grid ----------
+     Matches the mockup's three-up card grid, but flat: square corners, a 1px
+     --line hairline and a lift-on-hover instead of the mockup's rounded,
+     drop-shadowed panels. Big display titles carry the editorial weight. */
+  #page-articles .art-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}
   #page-articles .art{
-    position:relative;display:flex;flex-direction:column;gap:12px;
+    position:relative;display:flex;flex-direction:column;gap:10px;
     padding:24px;cursor:pointer;color:inherit;min-width:0;
     background:var(--surface);border:1px solid var(--line);border-radius:0;
     transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;
   }
   #page-articles .art:hover{border-color:var(--line-strong);box-shadow:var(--shadow);transform:translateY(-3px);}
+  #page-articles .art:focus-visible{outline:3px solid var(--sky-deep);outline-offset:3px;}
 
   /* editor-chosen hero image — flat, fixed ratio so a mixed library stays even */
   #page-articles .art .art-img{display:block;width:100%;height:172px;object-fit:cover;border:1px solid var(--line);border-radius:0;margin:0 0 4px;background:var(--paper);}
@@ -26,8 +33,10 @@
   /* category eyebrow; JS may set an inline colour for a managed category, which
      overrides the default slate — leave the cascade room for it */
   #page-articles .art .cat{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);}
-  #page-articles .art h4{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.3rem;line-height:1.18;color:var(--ink);margin:0;}
-  #page-articles .art .art-dek{color:var(--slate);font-size:.94rem;line-height:1.55;margin:0;}
+  /* big, punchy display title — the mockup card's defining mark, kept in the
+     site's self-hosted display face */
+  #page-articles .art h4{font-family:var(--font-display);font-weight:800;letter-spacing:-.025em;font-size:clamp(1.34rem,1.7vw,1.5rem);line-height:1.13;color:var(--ink);margin:2px 0 0;}
+  #page-articles .art .art-dek{color:var(--slate);font-size:.9rem;line-height:1.55;margin:0;}
   #page-articles .art .art-by{display:block;color:var(--slate);font-size:.78rem;font-weight:600;}
   #page-articles .art .art-tags{display:flex;flex-wrap:wrap;gap:6px;}
   #page-articles .art .art-tag{font-size:.68rem;font-weight:700;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:0;padding:3px 9px;}

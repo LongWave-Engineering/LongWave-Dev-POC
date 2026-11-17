@@ -4,16 +4,16 @@
    reads big, the attribution row sits at the card foot. These cards render only on the
    Post-a-job page (#hrGrid / #revGrid), built by testimonials.js. */
 
-  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
   .rev{
-    display:flex;flex-direction:column;gap:18px;
-    padding:30px;
+    display:flex;flex-direction:column;gap:16px;
+    padding:26px 26px 28px;
     background:var(--surface);
     border:1px solid var(--line);
   }
   /* short gold rule — the editorial accent in place of the old wave motif / tint */
   .rev::before{content:"";flex:none;width:34px;height:3px;background:var(--gold);}
-  .rev .quote{font-size:1.14rem;line-height:1.55;color:var(--ink);font-weight:500;letter-spacing:-.005em;}
+  .rev .quote{font-size:1.1rem;line-height:1.5;color:var(--ink);font-weight:500;letter-spacing:-.005em;}
   .rev .who{display:flex;align-items:center;gap:13px;margin-top:auto;}
   .rev .who .avatar.sm{border-radius:0;}   /* square the monogram chip for the flat look */
   .rev .who .nm{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:-.01em;color:var(--ink);}

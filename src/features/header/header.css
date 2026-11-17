@@ -40,9 +40,9 @@
 
   /* ---------- right cluster: ENG/JPN + CTA + menu ---------- */
   .nav-right{margin-left:auto;display:flex;align-items:center;gap:14px;}
-  /* "Sign up" and 登録する differ in width; nav-right is right-anchored, so pin a min-width
+  /* "Get matched" and マッチング differ in width; nav-right is right-anchored, so pin a min-width
      that fits both and nothing in the header moves when you toggle language. */
-  .nav-right [data-signup]{min-width:120px;}
+  .nav-right [data-signup]{min-width:140px;}
   /* flat segmented control (mirrors the home page's flat level-selector idiom) */
   .lang{display:inline-flex;border:1px solid rgba(143,205,235,.34);}
   .lang button{border:0;background:transparent;padding:8px 14px;font-weight:700;font-size:.82rem;color:rgba(255,255,255,.72);letter-spacing:.04em;cursor:pointer;transition:background .15s ease, color .15s ease;}

@@ -34,24 +34,12 @@
       : '<span style="color:var(--slate)">'+esc(t(jdPending ? "jd_loading" : "jd_na"))+'</span>';
     return '<h4 class="m-sub">'+esc(t(labelKey))+'</h4><div class="m-body">'+body+'</div>';
   }
-  /* Fill the JD modal body from a job. Split out of openJob so a language toggle while the
-     modal is open (repaintOpenModal) fully re-renders it — role, company, salary, tags and
-     every section — instead of leaving it half-translated. */
-  function fillJobModal(job){
-    jdPending = !!job._jdLoading;
-    var c=COMPANIES[job.co];
-    /* use the crisp curated mark (same as the job cards), not the low-res HRMOS favicon */
-    var _av=$("#mAvatar"); var _logo=(typeof bestLogo==="function")?bestLogo(c):c.logo;
-    if(_logo){ _av.innerHTML='<img src="'+ esc(_logo) +'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
-    $("#mRole").textContent=softBreak(roleL(job));
-    /* the posting's own title, when the headline above is a canonical label */
-    var _rd=$("#mRoleDetail"); if(_rd){ _rd.textContent=roleDetailL(job); _rd.hidden=!roleDetailL(job); }
-    /* guard EACH separator: every company currently ships an empty sector, which
-       rendered "mico ·  · Osaka" (a doubled dot around the blank). Show a " · " only
-       before a part that actually has text. */
-    var _sec=(c.sector&&c.sector[lang])||"";
-    $("#mCo").textContent=c.name+(_sec?" · "+_sec:"")+(job.loc?" · "+locL(job):"");
-    $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe")));
+  /* ---- SHARED JD builders (used by BOTH the job modal AND the inline board detail) ----
+     The JD body is where EN⇄JA translation used to break, so it is built ONCE here, through
+     jf()/t(), and reused verbatim by the inline pane (jobs.js renderSelectedDetail) — so a
+     language toggle re-renders both identically. Pure string builders: no DOM writes. */
+  /* the header pill row: Japanese level + work style + any perks + the tech stack */
+  function jobHeadTagsHTML(job){
     var tags=jpTag(job.jp)+'<span class="tag tag--meta">'+esc(remoteLabel(job.remote))+'</span>';
     if(job.flexHours) tags+='<span class="tag tag--meta">'+esc(t("jd_flex"))+'</span>';
     if(job.fixedOvertime) tags+='<span class="tag tag--meta">'+esc(t("jd_ot"))+'</span>';
@@ -59,8 +47,11 @@
     if(job.abroad) tags+='<span class="tag tag--meta">'+esc(t("lbl_abroad"))+'</span>';
     if(job.visa) tags+='<span class="tag tag--meta">'+esc(t("lbl_visa"))+'</span>';
     (job.stack||[]).forEach(function(s){ tags+='<span class="tag tag--tech">'+esc(s)+'</span>'; });
-    $("#mTags").innerHTML=tags;
-    /* every detail field is language-aware (jf): English base / Japanese `_ja` override */
+    return tags;
+  }
+  /* the full labelled JD body (every field language-aware via jf): this is the inner HTML of
+     the modal's #mDetail and the board's .jdx-body, so both read and translate the same. */
+  function jobDetailSectionsHTML(job){
     var scopeTxt = jf(job,"scope") || bodyL(job) || "";
     var pts = pointsL(job);
     var reqText = jf(job,"required") || (pts && pts.length ? "・"+pts.join("\n・") : "");
@@ -84,7 +75,30 @@
     /* the selection flow is client-internal and is NOT shown on the public board;
        prose sections naming it are dropped upstream by jdBlocks (JD_PROCESS_HEADING) */
     H+=jdSec("jd_notes", jf(job,"notes"), false);
-    $("#mDetail").innerHTML=H;
+    return H;
+  }
+  /* Fill the JD modal body from a job. Split out of openJob so a language toggle while the
+     modal is open (repaintOpenModal) fully re-renders it — role, company, salary, tags and
+     every section — instead of leaving it half-translated. */
+  function fillJobModal(job){
+    jdPending = !!job._jdLoading;
+    var c=COMPANIES[job.co];
+    /* use the crisp curated mark (same as the job cards), not the low-res HRMOS favicon */
+    var _av=$("#mAvatar"); var _logo=(typeof bestLogo==="function")?bestLogo(c):c.logo;
+    if(_logo){ _av.innerHTML='<img src="'+ esc(_logo) +'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
+    $("#mRole").textContent=softBreak(roleL(job));
+    /* the posting's own title, when the headline above is a canonical label */
+    var _rd=$("#mRoleDetail"); if(_rd){ _rd.textContent=roleDetailL(job); _rd.hidden=!roleDetailL(job); }
+    /* guard EACH separator: every company currently ships an empty sector, which
+       rendered "mico ·  · Osaka" (a doubled dot around the blank). Show a " · " only
+       before a part that actually has text. */
+    var _sec=(c.sector&&c.sector[lang])||"";
+    $("#mCo").textContent=c.name+(_sec?" · "+_sec:"")+(job.loc?" · "+locL(job):"");
+    $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe")));
+    $("#mTags").innerHTML=jobHeadTagsHTML(job);
+    /* every detail field is language-aware (jf): English base / Japanese `_ja` override.
+       The exact same builder fills the inline board detail, so both translate identically. */
+    $("#mDetail").innerHTML=jobDetailSectionsHTML(job);
     /* only link out to http(s) — never assign a javascript:/data: URL to href, even from
        admin/live company data (defence-in-depth against a poisoned COMPANIES.site). */
     var comp=$("#mCompany"); var site=(c.site && /^https?:\/\//i.test(c.site)) ? c.site : ""; if(site){ comp.href=site; comp.style.display=""; } else { comp.style.display="none"; }
@@ -108,6 +122,9 @@
     var settle = function(){
       job._jdLoading = false;
       if(currentJob===job && jobOverlay && !jobOverlay.hidden) fillJobModal(job);
+      /* the jobs board renders this same job INLINE (no modal) — repaint that pane too so
+         its JD prose lands the instant the fetch settles, exactly like the modal does. */
+      if(typeof repaintSelectedDetailIf==="function") repaintSelectedDetailIf(job);
     };
     fetch("/api/jobs/"+encodeURIComponent(job.id))
       .then(function(r){ return r.ok ? r.json() : null; })

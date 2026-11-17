@@ -4,9 +4,30 @@
       <div class="co-intro reveal">
         <span class="co-eyebrow" data-i18n="comp_eyebrow">Meet your next team</span>
         <h1 data-i18n="comp_h1">Companies we work with</h1>
-        <p class="co-sub" data-i18n="comp_sub">The teams hiring through Tokyo Samurai Dev. (Live roles are shown for TechTouch; other partners are placeholders to confirm.)</p>
+        <p class="co-sub" data-i18n="comp_sub">Companies in our network, including teams hiring with us and companies where we've placed engineers. No role listed yet? Ask us; we often have unlisted positions.</p>
       </div>
-      <div class="co-grid reveal stagger" id="coGrid"></div>
+
+      <!-- filter/search bar over the card grid (mockup: a filter row above a 3-col grid).
+           Wired to REAL roster data: the search matches company name + industry text, and the
+           Sector select is built from the companies' OWN industry labels. Flat / square /
+           hairline, the same idiom as the jobs board's top filter bar (see jobs.css). The
+           mockup's language/visa/size selects are NOT ported — no company-level data backs
+           them in this build (see the task handoffs). -->
+      <form class="co-filters reveal" id="coFilters" aria-label="Filter companies" data-i18n-aria="comp_filter_aria" onsubmit="return false">
+        <div class="co-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input type="search" id="coSearch" placeholder="Search companies or sectors" data-i18n-ph="comp_search_ph" aria-label="Search companies" data-i18n-aria="comp_search_aria">
+        </div>
+        <div class="co-facet">
+          <label class="sr-only" id="lbl-coSector" for="coSector" data-i18n="comp_sector_label">Sector</label>
+          <select class="co-select" id="coSector" aria-labelledby="lbl-coSector"></select>
+        </div>
+        <button type="button" class="co-clear" id="coClear" data-i18n="filter_clear">Clear filters</button>
+        <span class="co-count" id="coCount" role="status" aria-live="polite"></span>
+      </form>
+
+      <div class="co-grid reveal" id="coGrid"></div>
+      <p class="co-empty" id="coEmpty" hidden data-i18n="comp_none">No companies match your search.</p>
     </div>
   </section>
 </div>

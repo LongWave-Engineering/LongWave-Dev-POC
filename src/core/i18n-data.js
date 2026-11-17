@@ -17,7 +17,15 @@
       post_rep_bars:"Most-viewed roles",
       post_rep_note:"All figures here are fictional examples. We send a real report once a role passes 50 views.",
       skip_main:"Skip to main content",
-      nav_jobs:"Jobs", nav_companies:"Companies", nav_articles:"Articles", nav_post:"Post a job", nav_signup:"Sign up",
+      /* poc faithful port: companies filter, employer promise band, footer alerts */
+      comp_search_ph:"Search companies or sectors", comp_search_aria:"Search companies", comp_filter_aria:"Filter companies",
+      comp_sector_label:"Sector", comp_sector_all:"All sectors",
+      comp_count:"{n} of {total} companies", comp_none:"No companies match your search.",
+      post_promise1_v:"¥0", post_promise1_l:"To list your open roles",
+      post_promise2_v:"Only on hire", post_promise2_l:"A fee only when someone we introduce is hired",
+      post_promise3_v:"7:00 daily", post_promise3_l:"We re-check live roles against your own careers page",
+      foot_alerts:"Get matching jobs by email, once a week",
+      nav_jobs:"Find jobs", nav_companies:"Companies", nav_articles:"Articles", nav_post:"For employers", nav_signup:"Get matched",
       partners_lab:"Hiring with us",
       partners_post_h:"Teams we're helping hire",
       partners_post_sub:"A few of the product companies building their bilingual teams with us right now.",
@@ -89,7 +97,7 @@
       jobs_h1:"Open roles",
       jobs_sub:"Hand-picked software roles at Japan's product companies. Salary and Japanese level shown on every listing.",
       f_grp_search:"Search", f_grp_jp:"Japanese level", f_grp_rem:"Work style", f_grp_spec:"Specialty", f_grp_stack:"Tech stack", f_grp_loc:"Location",
-      filter_search_ph:"",
+      filter_search_ph:"Search roles, companies, tech…",
       filter_jp_all:"Any level", filter_jp_none:"No Japanese required", filter_jp_conv:"Conversational", filter_jp_biz:"Business",
       filter_rem_all:"Any work style", filter_rem_full:"Full remote", filter_rem_part:"Hybrid", filter_rem_no:"On-site",
       filter_spec_all:"All specialties", filter_stack_all:"Any tech", filter_loc_all:"Any location", filter_clear:"Clear filters",
@@ -144,7 +152,8 @@
       sel_pick:"Select this role", sel_selected:"{n} selected", sel_left:"{r} of {n} applications left", sel_apply:"Apply to selected", sel_clear:"Clear", apply_title:"Apply to {n} role(s)", apply_success:"Application sent for {n} role(s). We'll be in touch shortly.",
       applied_badge:"Applied", m_applied:"✓ Applied", m_apply_limit:"Application limit reached", apply_limit_hit:"You've applied to your {n} roles. That's the limit, so no more applications can be sent.",
       sv_save:"Save", sv_saved:"Saved", sv_aria:"Save this role for later", sv_view:"Saved ({n})", sv_view_all:"Show all roles",
-      sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later."
+      sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later.",
+      aria_results:"Matching roles", aria_detail:"Role details", jd_back:"Back to roles", jd_pick:"Select a role on the left to see the full job description."
     },
     ja:{
       /* redesign v3 (h-hero) — page eyebrows + post sample-report card */
@@ -160,7 +169,15 @@
       post_rep_bars:"閲覧の多い職種",
       post_rep_note:"数値はすべて架空の例です。実際のレポートは、閲覧が月50件を超えた求人からお送りします。",
       skip_main:"本文へスキップ",
-      nav_jobs:"求人", nav_companies:"企業", nav_articles:"記事", nav_post:"求人掲載", nav_signup:"登録",
+      /* poc faithful port: companies filter, employer promise band, footer alerts */
+      comp_search_ph:"企業名・業種で検索", comp_search_aria:"企業を検索", comp_filter_aria:"企業を絞り込む",
+      comp_sector_label:"業種", comp_sector_all:"すべての業種",
+      comp_count:"{total}社中 {n}社", comp_none:"条件に一致する企業はありません。",
+      post_promise1_v:"0円", post_promise1_l:"掲載にかかる費用",
+      post_promise2_v:"採用時のみ", post_promise2_l:"紹介手数料は、ご紹介した方の採用が決まったときだけ",
+      post_promise3_v:"毎朝 7:00", post_promise3_l:"公開求人を元の採用ページと照らし合わせて確認",
+      foot_alerts:"毎週1回、条件に合う求人をメールで",
+      nav_jobs:"求人を探す", nav_companies:"企業", nav_articles:"記事", nav_post:"採用担当の方へ", nav_signup:"マッチング",
       partners_lab:"採用パートナー",
       partners_post_h:"ともに採用を進めるチーム",
       partners_post_sub:"いま私たちとバイリンガルチームを築いている、プロダクト企業の一部をご紹介します",
@@ -232,7 +249,7 @@
       jobs_h1:"求人一覧",
       jobs_sub:"日本のプロダクト企業から厳選したソフトウェア求人。すべてに給与と日本語レベルを明記",
       f_grp_search:"検索", f_grp_jp:"日本語レベル", f_grp_rem:"働き方", f_grp_spec:"職種", f_grp_stack:"技術スタック", f_grp_loc:"勤務地",
-      filter_search_ph:"",
+      filter_search_ph:"職種・企業・技術で検索…",
       filter_jp_all:"すべて", filter_jp_none:"日本語不問", filter_jp_conv:"日常会話", filter_jp_biz:"ビジネス",
       filter_rem_all:"すべて", filter_rem_full:"フルリモート", filter_rem_part:"ハイブリッド", filter_rem_no:"出社",
       filter_spec_all:"すべての職種", filter_stack_all:"すべての技術", filter_loc_all:"すべての勤務地", filter_clear:"条件をクリア",
@@ -287,7 +304,8 @@
       sel_pick:"この求人を選択", sel_selected:"{n}件選択中", sel_left:"応募枠 残り{r}/{n}件", sel_apply:"選択した求人に応募", sel_clear:"クリア", apply_title:"{n}件の求人に応募", apply_success:"{n}件の求人に応募しました。すぐにご連絡します。",
       applied_badge:"応募済み", m_applied:"✓ 応募済み", m_apply_limit:"応募上限に達しました", apply_limit_hit:"応募上限の{n}件に達しました。これ以上は応募できません。",
       sv_save:"保存", sv_saved:"保存済み", sv_aria:"この求人をあとで見るために保存", sv_view:"保存した求人 ({n})", sv_view_all:"すべての求人を表示",
-      sv_heading:"保存した求人", sv_none:"まだ保存した求人はありません。求人の「保存」をタップすると、ここに表示されます。"
+      sv_heading:"保存した求人", sv_none:"まだ保存した求人はありません。求人の「保存」をタップすると、ここに表示されます。",
+      aria_results:"条件に合う求人", aria_detail:"求人の詳細", jd_back:"求人一覧に戻る", jd_pick:"左の一覧から求人を選ぶと、詳細がここに表示されます。"
     }
   };
 

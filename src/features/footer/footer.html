@@ -1,32 +1,43 @@
 </main><!-- /#main (opened in header.html) -->
 
+<!-- ============ FOOTER ============ -->
+<!-- Redesign v3 "h-hero": flat light footer ported from the mockup. The mockup's rhythm is a
+     full-width brand block on top (wordmark + bilingual blurb + a soft weekly-match CTA), then
+     a three-column link grid, then a legal / social bottom bar. All links route in-app via
+     data-go; the match CTAs ride the shared data-signup hook; #linkedinBtn/#longwaveBtn are
+     wired in app.js. -->
 <footer class="site">
   <div class="wrap">
-    <div class="foot-top">
-      <div class="foot-brand">
-        <span class="brand"><span class="logo" role="img" aria-label="Tokyo Samurai Dev"></span><span class="brand-word">Tokyo Samurai <b>Dev</b></span></span>
-        <p data-i18n="foot_about">Bilingual Jobs in Japan<br>Curated by the team at LongWave<br>We talk tech, so you don't have to</p>
-        <p class="foot-addr" data-i18n="foot_addr">THE GATE HANZOMON<br>1-8-1 Kojimachi, Chiyoda-ku, Tokyo 102-0083</p>
+    <!-- brand block (full-width, on top) -->
+    <div class="foot-brand">
+      <span class="brand"><span class="logo" role="img" aria-label="Tokyo Samurai Dev"></span><span class="brand-word">Tokyo Samurai <b>Dev</b></span></span>
+      <p class="foot-tag" data-i18n="foot_about">Bilingual Jobs in Japan<br>Curated by the team at LongWave<br>We talk tech, so you don't have to</p>
+      <p class="foot-addr" data-i18n="foot_addr">THE GATE HANZOMON<br>1-8-1 Kojimachi, Chiyoda-ku, Tokyo 102-0083</p>
+      <!-- soft weekly-match CTA (mockup's "footer-alerts") on the shared signup hook -->
+      <p class="foot-alerts"><button type="button" data-signup><span data-i18n="foot_alerts">Get matching jobs by email, once a week</span> →</button></p>
+    </div>
+
+    <!-- three link columns -->
+    <div class="foot-links">
+      <div class="foot-col">
+        <h5 data-i18n="foot_explore">Explore</h5>
+        <a href="#/jobs" data-go="jobs" data-i18n="foot_jobs">Jobs</a>
+        <a href="#/companies" data-go="companies" data-i18n="foot_companies">Companies</a>
+        <a href="#/articles" data-go="articles" data-i18n="foot_articles">Articles</a>
       </div>
-      <div class="foot-links">
-        <div class="foot-col">
-          <h5 data-i18n="foot_explore">Explore</h5>
-          <a href="#/jobs" data-go="jobs" data-i18n="foot_jobs">Jobs</a>
-          <a href="#/companies" data-go="companies" data-i18n="foot_companies">Companies</a>
-          <a href="#/articles" data-go="articles" data-i18n="foot_articles">Articles</a>
-        </div>
-        <div class="foot-col">
-          <h5 data-i18n="foot_candidates">For candidates</h5>
-          <button type="button" data-signup data-i18n="foot_signup">Sign up</button>
-          <a href="#/cv" data-go="cv" data-i18n="foot_resume">Resume builder</a>
-        </div>
-        <div class="foot-col">
-          <h5 data-i18n="foot_employers">For employers</h5>
-          <a href="#/post" data-go="post"><span data-i18n="foot_post">Post a job</span></a>
-          <button type="button" data-contact data-i18n="foot_contact">Contact us</button>
-        </div>
+      <div class="foot-col">
+        <h5 data-i18n="foot_candidates">For candidates</h5>
+        <button type="button" data-signup data-i18n="foot_signup">Sign up</button>
+        <a href="#/cv" data-go="cv" data-i18n="foot_resume">Resume builder</a>
+      </div>
+      <div class="foot-col">
+        <h5 data-i18n="foot_employers">For employers</h5>
+        <a href="#/post" data-go="post"><span data-i18n="foot_post">Post a job</span></a>
+        <button type="button" data-contact data-i18n="foot_contact">Contact us</button>
       </div>
     </div>
+
+    <!-- bottom bar: legal + privacy, and the LinkedIn / LongWave links -->
     <div class="foot-bottom">
       <span class="foot-legal"><span data-i18n="foot_legal">© 2026 Tokyo Samurai Dev · Maintained by LongWave</span> · <a href="#/privacy" data-go="privacy" data-i18n="foot_privacy">Privacy</a></span>
       <div class="foot-actions">

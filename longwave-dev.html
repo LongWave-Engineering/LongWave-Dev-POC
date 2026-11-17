@@ -282,9 +282,9 @@
 
   /* ---------- right cluster: ENG/JPN + CTA + menu ---------- */
   .nav-right{margin-left:auto;display:flex;align-items:center;gap:14px;}
-  /* "Sign up" and 登録する differ in width; nav-right is right-anchored, so pin a min-width
+  /* "Get matched" and マッチング differ in width; nav-right is right-anchored, so pin a min-width
      that fits both and nothing in the header moves when you toggle language. */
-  .nav-right [data-signup]{min-width:120px;}
+  .nav-right [data-signup]{min-width:140px;}
   /* flat segmented control (mirrors the home page's flat level-selector idiom) */
   .lang{display:inline-flex;border:1px solid rgba(143,205,235,.34);}
   .lang button{border:0;background:transparent;padding:8px 14px;font-weight:700;font-size:.82rem;color:rgba(255,255,255,.72);letter-spacing:.04em;cursor:pointer;transition:background .15s ease, color .15s ease;}
@@ -365,7 +365,7 @@
    Résumé band lives in home-cta.css. */
 
   /* ---------- hero ---------- */
-  #page-home .h-hero{padding-block:34px 56px;}
+  #page-home .h-hero{padding-block:28px 36px;}
   #page-home .h-hero-grid{display:grid;grid-template-columns:1.25fr .75fr;gap:40px;align-items:center;}
   #page-home .h-h1{font-family:var(--font-display);font-weight:800;line-height:1.02;letter-spacing:-.045em;font-size:clamp(44px,6.4vw,88px);margin:0;color:var(--ink);}
   #page-home .h-h1 span{display:block;}
@@ -373,7 +373,7 @@
   #page-home .h-sub{color:var(--slate);font-size:1.12rem;margin:18px 0 26px;max-width:30em;}
 
   /* quick-filter card */
-  #page-home .h-search{background:var(--paper);border:1px solid var(--line);padding:22px;}
+  #page-home .h-search{background:var(--paper);border:1px solid var(--line);padding:20px;}
   #page-home .h-levels-field{border:0;padding:0;margin:0;}
   #page-home .h-levels-field legend{font-size:.56rem;letter-spacing:.14em;font-weight:700;color:var(--slate);text-transform:uppercase;padding:0;}
   #page-home .h-levels{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0 16px;}
@@ -391,17 +391,17 @@
   #page-home .h-hero-art{min-height:360px;background:var(--mascot-hero) center/contain no-repeat;}
 
   /* ---------- logo wall ---------- */
-  #page-home .h-logostrip{display:flex;align-items:center;gap:34px;border-top:1px solid var(--line);padding-block:22px;margin-top:6px;}
+  #page-home .h-logostrip{display:flex;align-items:center;gap:34px;border-top:1px solid var(--line);padding-block:20px;margin-top:0;}
   #page-home .h-ls-label{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);flex:none;}
   #page-home .h-logostrip .partner-wall{flex:1;min-width:0;}
 
   /* ---------- section heads ---------- */
-  #page-home .h-section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:28px;}
-  #page-home .h-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:12px;}
+  #page-home .h-section-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:22px;}
+  #page-home .h-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:10px;}
   #page-home .h-section-head h2,#page-home .h-employers h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;font-size:clamp(30px,3.6vw,48px);margin:0;color:var(--ink);line-height:1.05;}
 
   /* ---------- opportunities ---------- */
-  #page-home .h-jobs{padding-block:20px 10px;}
+  #page-home .h-jobs{padding-block:28px 8px;}
   #page-home .h-joblist{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;}
   #page-home .h-job{display:flex;flex-direction:column;gap:12px;padding:24px;background:var(--surface);border:1px solid var(--line);text-align:left;min-width:0;color:inherit;transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;}
   #page-home .h-job:hover{border-color:var(--line-strong);box-shadow:var(--shadow);transform:translateY(-3px);}
@@ -417,21 +417,29 @@
   #page-home .h-job .h-src{font-size:.72rem;color:var(--slate);margin-top:auto;}
 
   /* ---------- field notes ---------- */
-  #page-home .h-resources{padding-block:40px;}
+  #page-home .h-resources{padding-block:36px 4px;}
   #page-home .h-resource-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;}
-  #page-home .h-resource-grid a{display:block;padding:24px 0;border-top:1px solid var(--line);color:inherit;}
-  #page-home .h-rn-ic{display:grid;place-items:center;width:46px;height:46px;background:var(--paper);border:1px solid var(--line);color:var(--navy);margin-bottom:18px;}
+  #page-home .h-resource-grid a{display:block;padding:22px 0;border-top:1px solid var(--line);color:inherit;}
+  #page-home .h-rn-ic{display:grid;place-items:center;width:46px;height:46px;background:var(--paper);border:1px solid var(--line);color:var(--navy);margin-bottom:16px;}
   #page-home .h-rn-ic svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
   #page-home .h-resource-grid small{font-size:.58rem;letter-spacing:.12em;font-weight:700;color:var(--slate);text-transform:uppercase;}
-  #page-home .h-resource-grid h3{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.5rem;margin:20px 0;color:var(--ink);line-height:1.12;}
-  #page-home .h-resource-grid p{font-size:.92rem;color:var(--slate);margin:0 0 16px;}
+  #page-home .h-resource-grid h3{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.5rem;margin:16px 0 12px;color:var(--ink);line-height:1.12;}
+  #page-home .h-resource-grid p{font-size:.92rem;color:var(--slate);margin:0 0 14px;}
   #page-home .h-read{font-size:.82rem;font-weight:700;color:var(--accent-deep);}
 
   /* ---------- employers ---------- */
-  #page-home .h-employers{background:var(--paper);padding:54px;margin-block:30px 50px;}
-  #page-home .h-employers h2{margin:14px 0 22px;max-width:16em;}
-/* features/jobs/jobs.css — redesign v3 "h-hero": flat, editorial jobs board.
-   Deep navy + amber gold, 1px hairlines, square corners, --paper panels.
+  /* horizontal composition like the mockup: copy left, action right, no stacked deadspace */
+  #page-home .h-employers{background:var(--paper);border:1px solid var(--line);padding:38px 44px;margin-block:40px 48px;display:grid;grid-template-columns:1fr auto;gap:10px 32px;align-items:center;}
+  #page-home .h-employers .h-eyebrow{grid-column:1;margin-bottom:0;}
+  #page-home .h-employers h2{grid-column:1;margin:0;max-width:18em;}
+  #page-home .h-employers .more{grid-column:2;grid-row:1/3;align-self:center;justify-self:end;}
+  @media (max-width:680px){
+    #page-home .h-employers{grid-template-columns:1fr;gap:12px;padding:30px 24px;}
+    #page-home .h-employers .more{grid-column:1;grid-row:auto;justify-self:start;}
+  }
+/* features/jobs/jobs.css — redesign v3 "h-hero": flat, editorial jobs board, rebuilt as a
+   LinkedIn-style TWO-PANE workspace. A sticky top filter bar + a full-height split: a
+   scrollable role list (left) and the selected role's JD rendered INLINE (right).
    The shared tag/badge primitives below stay GLOBAL (the JD modal reuses them);
    everything else is scoped under #page-jobs so it can't collide with other pages. */
 
@@ -449,47 +457,32 @@
   /* ============================ JOBS BOARD ============================== */
   /* ====================================================================== */
 
-  /* a touch wider than the site default so the full-width role list has room to breathe */
-  #page-jobs .wrap{max-width:1320px;padding-left:clamp(24px,3.4vw,56px);padding-right:clamp(24px,3.4vw,56px);}
-  #page-jobs .section{padding-block:40px 72px;}
+  /* header height the sticky site bar occupies; the board fills exactly the rest of the
+     viewport so the two panes scroll independently and there is no deadspace. */
+  #page-jobs{--hdr-h:77px;}
+  #page-jobs .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;}
 
-  /* ---------- page head: eyebrow · title · sub, with the Saved toggle at the right ---------- */
-  #page-jobs .jobs-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:34px;padding-bottom:26px;border-bottom:1px solid var(--line);}
-  #page-jobs .jobs-head-text{max-width:46rem;}
-  #page-jobs .jobs-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:12px;}
-  #page-jobs .jobs-head h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;line-height:1.02;font-size:clamp(34px,4.6vw,58px);color:var(--ink);}
-  #page-jobs .jobs-head .sub{color:var(--slate);font-size:1.1rem;line-height:1.5;margin-top:14px;max-width:40em;text-wrap:balance;}
-  #page-jobs .jobs-saved-toggle{flex:none;gap:9px;border-radius:0;align-self:center;}
-  #page-jobs .jobs-saved-toggle .jst-heart{font-size:1.08em;line-height:1;color:var(--line-strong);transition:color .15s ease;}
-  #page-jobs .jobs-saved-toggle:hover .jst-heart{color:var(--save);}
-  #page-jobs .jobs-saved-toggle.active{background:var(--save-wash);border-color:var(--save);color:var(--save-deep);}
-  #page-jobs .jobs-saved-toggle.active .jst-heart{color:var(--save);}
+  /* the whole board is one viewport-tall column: filter bar (auto) + split (fills the rest) */
+  #page-jobs .jobs-board{height:calc(100dvh - var(--hdr-h));display:flex;flex-direction:column;background:var(--surface);}
 
-  /* ---------- two-column workspace: filter rail + results ---------- */
-  #page-jobs .jobs-layout{display:grid;grid-template-columns:280px 1fr;gap:40px;align-items:start;}
-
-  /* ---------- filter rail: flat --paper panel ---------- */
-  #page-jobs .filters-side{position:sticky;top:96px;background:var(--paper);border:1px solid var(--line);border-radius:0;padding:24px 22px;}
-  #page-jobs .filters-title{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.12rem;color:var(--ink);margin:0 0 20px;padding-bottom:16px;border-bottom:1px solid var(--line);}
-  #page-jobs .filters-side .fgroup{margin-bottom:20px;}
-  #page-jobs .filters-side .fgroup:last-child{margin-bottom:0;}
-  /* labels become editorial micro-caps, matching the home quick-filter fields */
-  #page-jobs .filters-side label.glab{display:block;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--slate);margin-bottom:8px;}
-  #page-jobs .filters-side .search{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:0;padding:0 12px;transition:border-color .14s ease;}
-  #page-jobs .filters-side .search:focus-within{border-color:var(--sky-deep);}
-  #page-jobs .filters-side .search input{border:0;outline:0;background:transparent;padding:12px 0;font-size:.98rem;width:100%;color:var(--ink);}
-  #page-jobs .filters-side .search svg{width:17px;height:17px;color:var(--slate);flex:none;}
+  /* ---------- top filter bar: compact, horizontal, wraps when tight ---------- */
+  #page-jobs .jobs-filterbar{flex:none;display:flex;align-items:center;flex-wrap:wrap;gap:10px 12px;padding:12px clamp(16px,2.4vw,28px);background:var(--surface);border-bottom:1px solid var(--line);}
+  #page-jobs .fb-search{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line-strong);border-radius:0;padding:0 12px;flex:1 1 220px;min-width:180px;max-width:360px;transition:border-color .14s ease;}
+  #page-jobs .fb-search:focus-within{border-color:var(--sky-deep);}
+  #page-jobs .fb-search input{border:0;outline:0;background:transparent;padding:10px 0;font-size:.96rem;width:100%;color:var(--ink);}
+  #page-jobs .fb-search svg{width:16px;height:16px;color:var(--slate);flex:none;}
+  #page-jobs .fb-facet{flex:0 1 auto;min-width:150px;}
 
   /* ---- multi-select facet widget (summary button + ARIA listbox popover) ---- */
   #page-jobs .msel{position:relative;}
-  #page-jobs .msel-btn{display:flex;align-items:center;gap:8px;width:100%;background:var(--surface);border:1px solid var(--line);border-radius:0;padding:12px;font-size:.96rem;color:var(--slate);font-family:inherit;font-weight:600;cursor:pointer;text-align:left;transition:border-color .14s ease,color .14s ease;}
-  #page-jobs .msel-btn:hover{border-color:var(--line-strong);}
+  #page-jobs .msel-btn{display:flex;align-items:center;gap:8px;width:100%;background:var(--surface);border:1px solid var(--line-strong);border-radius:0;padding:9px 11px;font-size:.92rem;color:var(--slate);font-family:inherit;font-weight:600;cursor:pointer;text-align:left;transition:border-color .14s ease,color .14s ease;}
+  #page-jobs .msel-btn:hover{border-color:var(--navy);}
   #page-jobs .msel-btn.has-sel{border-color:var(--navy);color:var(--ink);box-shadow:inset 3px 0 0 var(--navy);}
   #page-jobs .msel-btn[aria-expanded="true"]{border-color:var(--sky-deep);}
   #page-jobs .msel-label{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   #page-jobs .msel-chev{width:15px;height:15px;flex:none;color:var(--slate);transition:transform .15s ease;}
   #page-jobs .msel-btn[aria-expanded="true"] .msel-chev{transform:rotate(180deg);}
-  #page-jobs .msel-pop{position:absolute;z-index:40;left:0;right:0;top:calc(100% - 1px);background:var(--surface);border:1px solid var(--navy);border-radius:0;box-shadow:var(--shadow);padding:5px;max-height:272px;overflow-y:auto;outline:none;}
+  #page-jobs .msel-pop{position:absolute;z-index:40;left:0;min-width:100%;top:calc(100% - 1px);background:var(--surface);border:1px solid var(--navy);border-radius:0;box-shadow:var(--shadow);padding:5px;max-height:272px;overflow-y:auto;outline:none;white-space:nowrap;}
   #page-jobs .msel-opt{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:0;font-size:.95rem;font-weight:600;color:var(--ink-soft);cursor:pointer;}
   #page-jobs .msel-opt:hover{background:var(--sky-wash);color:var(--ink);}
   #page-jobs .msel-opt:focus-visible{outline:2px solid var(--sky-deep);outline-offset:-2px;background:var(--sky-wash);color:var(--ink);}
@@ -501,65 +494,69 @@
   #page-jobs .msel-opt[aria-selected="true"]{color:var(--ink);}
   #page-jobs .msel-opt-label{flex:1 1 auto;min-width:0;}
 
-  #page-jobs .fclear{background:transparent;border:0;color:var(--navy);font-weight:700;font-size:.92rem;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+  #page-jobs .fclear{background:transparent;border:0;color:var(--navy);font-weight:700;font-size:.88rem;padding:4px 2px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;}
   #page-jobs .fclear:hover{color:var(--sky-deep);}
 
-  /* ---------- results column ---------- */
-  #page-jobs .result-count{font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:var(--slate);margin-bottom:18px;font-weight:700;}
-  /* Full-width list: every role is ONE row spanning the whole column, title always fully visible */
+  /* live "N of M roles" count + the Saved toggle pinned to the right of the bar */
+  #page-jobs .result-count{font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--slate);font-weight:700;margin-left:auto;white-space:nowrap;}
+  #page-jobs .jobs-saved-toggle{flex:none;gap:8px;border-radius:0;padding:9px 15px;font-size:.9rem;}
+  #page-jobs .jobs-saved-toggle .jst-heart{font-size:1.04em;line-height:1;color:var(--line-strong);transition:color .15s ease;}
+  #page-jobs .jobs-saved-toggle:hover .jst-heart{color:var(--save);}
+  #page-jobs .jobs-saved-toggle.active{background:var(--save-wash);border-color:var(--save);color:var(--save-deep);}
+  #page-jobs .jobs-saved-toggle.active .jst-heart{color:var(--save);}
+
+  /* ---------- the split: scrollable list (left) + inline detail (right) ---------- */
+  #page-jobs .split-jobs{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:minmax(340px,40%) minmax(0,1fr);background:var(--surface);}
+  #page-jobs .job-scroll{height:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain;border-right:1px solid var(--line);display:flex;flex-direction:column;}
+  #page-jobs .detail-column{height:100%;min-height:0;overflow-y:auto;overscroll-behavior:contain;background:var(--paper);}
+
+  /* ---------- left: the role list ---------- */
   #page-jobs .job-grid{display:flex;flex-direction:column;gap:0;}
 
-  /* pick-a-filter gate */
-  #page-jobs .jobs-prompt{text-align:center;background:var(--paper);border:1px solid var(--line);border-radius:0;padding:64px 30px;}
-  #page-jobs .jobs-prompt .jp-ic{font-size:2.2rem;line-height:1;margin-bottom:14px;}
-  #page-jobs .jobs-prompt h3{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.6rem;margin-bottom:12px;color:var(--ink);}
-  #page-jobs .jobs-prompt p{color:var(--slate);font-size:1.04rem;line-height:1.55;max-width:34em;margin:0 auto 24px;}
-  #page-jobs .jobs-prompt .btn{border-radius:0;}
-
-  /* card = full-width row: [.jc-open clickable content] + [.jc-corner controls], hairline-stacked.
-     Rows share a single top/bottom hairline so the list reads as an editorial register, not boxes. */
-  #page-jobs .job-card{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:0;position:relative;transition:background .14s ease,box-shadow .16s ease;margin-top:-1px;}
-  #page-jobs .job-card:first-child{margin-top:0;}
-  #page-jobs .job-card:hover,#page-jobs .job-card:focus-within{background:var(--paper);z-index:2;box-shadow:inset 3px 0 0 var(--sky-deep);}
-  #page-jobs .jc-open{flex:1 1 auto;min-width:0;display:flex;flex-direction:row;align-items:center;gap:20px;padding:20px 22px;text-align:left;background:transparent;border:0;border-radius:0;color:inherit;font:inherit;cursor:pointer;}
+  /* row = [.jc-open clickable content] + [.jc-corner save/checkbox], hairline-stacked */
+  #page-jobs .job-card{display:flex;align-items:stretch;background:var(--surface);border-bottom:1px solid var(--line);border-left:4px solid transparent;border-radius:0;position:relative;transition:background .12s ease;}
+  #page-jobs .job-card:hover,#page-jobs .job-card:focus-within{background:var(--paper);}
+  #page-jobs .jc-open{flex:1 1 auto;min-width:0;display:flex;flex-direction:row;align-items:flex-start;gap:14px;padding:16px 10px 16px 16px;text-align:left;background:transparent;border:0;border-radius:0;color:inherit;font:inherit;cursor:pointer;}
   #page-jobs .jc-logo{flex:0 0 auto;display:flex;}
-  #page-jobs .jc-logo .avatar{width:48px;height:48px;border-radius:0;font-size:1rem;}
-  #page-jobs .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:6px;}
-  #page-jobs .jc-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:4px;text-align:right;margin-left:auto;padding-left:14px;}
+  #page-jobs .jc-logo .avatar{width:44px;height:44px;border-radius:0;font-size:.95rem;}
+  #page-jobs .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:5px;}
+  #page-jobs .jc-end{flex:0 0 auto;display:flex;flex-direction:column;align-items:flex-start;gap:2px;margin-top:2px;}
 
   /* save heart + selection checkbox cluster at the row's right edge */
-  #page-jobs .jc-corner{flex:0 0 auto;z-index:3;display:flex;align-items:center;gap:12px;padding:0 20px;}
+  #page-jobs .jc-corner{flex:0 0 auto;z-index:3;display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 12px 0 6px;}
   #page-jobs .jc-select{display:flex;align-items:center;line-height:0;}
-  #page-jobs .jc-select input{width:20px;height:20px;margin:0;cursor:pointer;accent-color:var(--navy);border-radius:0;}
+  #page-jobs .jc-select input{width:19px;height:19px;margin:0;cursor:pointer;accent-color:var(--navy);border-radius:0;}
   #page-jobs .jc-select input:disabled{cursor:not-allowed;opacity:.45;}
   #page-jobs .jc-save{width:30px;height:30px;padding:0;display:grid;place-items:center;border:0;background:transparent;border-radius:0;color:var(--line-strong);cursor:pointer;transition:color .15s ease,transform .15s ease;}
-  #page-jobs .jc-save svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;}
+  #page-jobs .jc-save svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;}
   #page-jobs .jc-save:hover{color:var(--save);transform:translateY(-1px);}
   #page-jobs .jc-save.is-saved{color:var(--save);}
   #page-jobs .jc-save.is-saved svg{fill:var(--save);stroke:var(--save);}
 
-  /* selected role: navy left rule + sky wash */
-  #page-jobs .job-card.sel{background:var(--sky-wash);box-shadow:inset 4px 0 0 var(--navy);z-index:2;}
-  #page-jobs .job-card.sel:hover{background:var(--sky-wash);box-shadow:inset 4px 0 0 var(--navy);}
+  /* the row being VIEWED in the right pane (navy left rule + sky wash) */
+  #page-jobs .job-card.current{background:var(--sky-wash);border-left-color:var(--navy);}
+  #page-jobs .job-card.current:hover{background:var(--sky-wash);}
+  /* a row ticked for batch-apply (independent of what's being viewed) */
+  #page-jobs .job-card.sel .jc-select input{outline:2px solid var(--navy);outline-offset:1px;}
 
   /* entrance: gentle up-fade, staggered inline per-card in jobs.js */
-  @keyframes jcReveal{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
-  #page-jobs .job-card.jc-reveal{animation:jcReveal .5s cubic-bezier(.16,1,.3,1) both;will-change:opacity,transform;}
-  #page-jobs .jobs-empty{animation:jcReveal .5s cubic-bezier(.16,1,.3,1) both;text-align:center;padding:40px 0 34px;}
-  #page-jobs .jobs-more{align-self:center;margin-top:20px;border-radius:0;}
+  @keyframes jcReveal{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:none;}}
+  #page-jobs .job-card.jc-reveal{animation:jcReveal .45s cubic-bezier(.16,1,.3,1) both;will-change:opacity,transform;}
+  #page-jobs .jobs-empty{animation:jcReveal .45s cubic-bezier(.16,1,.3,1) both;text-align:center;padding:48px 24px;}
+  #page-jobs .jobs-more{align-self:center;margin:18px auto;border-radius:0;}
 
   /* the whole role title is shown — wraps to a second line if long, never clipped */
-  #page-jobs .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.22rem;line-height:1.24;letter-spacing:-.02em;color:var(--ink);overflow-wrap:break-word;}
-  #page-jobs .jc-role-detail{display:block;margin-top:2px;color:var(--slate);font-size:.84rem;line-height:1.35;overflow-wrap:break-word;}
-  #page-jobs .jc-co{font-size:.92rem;color:var(--slate);overflow-wrap:break-word;}
+  #page-jobs .jc-role{font-family:var(--font-display);font-weight:800;font-size:1.06rem;line-height:1.22;letter-spacing:-.015em;color:var(--navy);overflow-wrap:break-word;}
+  #page-jobs .jc-role-detail{display:block;margin-top:1px;color:var(--slate);font-size:.78rem;line-height:1.35;overflow-wrap:break-word;}
+  #page-jobs .jc-co{font-size:.86rem;color:var(--slate);overflow-wrap:break-word;}
   #page-jobs .jc-dot{color:var(--line-strong);margin:0 3px;}
-  #page-jobs .jc-main .tags{margin-top:4px;}
-  #page-jobs .jc-salary{font-family:var(--font-display);font-size:1.14rem;color:var(--ink);font-weight:800;letter-spacing:-.01em;white-space:nowrap;}
-  #page-jobs .jc-link{font-size:.82rem;font-weight:700;letter-spacing:.02em;color:var(--sky-deep);white-space:nowrap;}
-  #page-jobs .job-card .badge-hot{position:absolute;top:-1px;left:0;border-radius:0;}
+  #page-jobs .jc-main .tags{margin-top:3px;}
+  #page-jobs .jc-salary{font-family:var(--font-display);font-size:.96rem;color:var(--ink);font-weight:800;letter-spacing:-.01em;}
+  #page-jobs .jc-link{display:none;}
+  #page-jobs .job-card .badge-hot{position:absolute;top:0;left:4px;border-radius:0;z-index:2;}
 
   /* flat, editorial tags for the board (modal keeps the global rounded pills) */
-  #page-jobs .tag{font-size:.74rem;font-weight:600;letter-spacing:.01em;padding:5px 9px;border-radius:0;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);}
+  #page-jobs .tag{font-size:.7rem;font-weight:600;letter-spacing:.01em;padding:4px 8px;border-radius:0;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);}
   #page-jobs .tag--jp-none{background:var(--pos-bg);border-color:transparent;color:var(--pos-fg);font-weight:700;}
   #page-jobs .tag--jp-mid{background:var(--surface);border-color:var(--line-strong);color:var(--sky-deep);}
   #page-jobs .tag--jp-high{background:var(--surface);border-color:var(--line-strong);color:var(--warn-fg);}
@@ -567,56 +564,151 @@
   #page-jobs .tag--tech{background:transparent;border-color:var(--line-strong);color:var(--slate);}
 
   /* already-applied role: a static "Applied" pill (no checkbox), row muted */
-  #page-jobs .jc-applied{display:inline-flex;align-items:center;gap:5px;font-size:.74rem;font-weight:700;color:var(--pos-fg);background:var(--pos-bg);border-radius:0;padding:6px 11px;white-space:nowrap;}
-  #page-jobs .job-card.applied{opacity:.7;}
-  #page-jobs .job-card.applied:hover{opacity:1;}
+  #page-jobs .jc-applied{display:inline-flex;align-items:center;gap:5px;font-size:.68rem;font-weight:700;color:var(--pos-fg);background:var(--pos-bg);border-radius:0;padding:5px 9px;white-space:nowrap;text-align:center;}
+  #page-jobs .job-card.applied .jc-open{opacity:.72;}
+  #page-jobs .job-card.applied:hover .jc-open{opacity:1;}
 
-  /* banner once all applications are used ("one and done") */
-  #page-jobs .apply-notice{display:flex;align-items:center;gap:12px;background:var(--pos-bg);color:var(--pos-fg);border:1px solid var(--pos-fg);border-radius:0;padding:14px 18px;margin-bottom:18px;font-weight:600;line-height:1.4;}
-  #page-jobs .apply-notice .an-ic{flex:none;display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--pos-fg);color:#fff;font-weight:800;font-size:.82rem;}
+  /* banner once all applications are used ("one and done") — top of the list column */
+  #page-jobs .apply-notice{display:flex;align-items:center;gap:12px;background:var(--pos-bg);color:var(--pos-fg);border-bottom:1px solid var(--pos-fg);border-radius:0;padding:12px 16px;font-weight:600;line-height:1.4;font-size:.92rem;}
+  #page-jobs .apply-notice .an-ic{flex:none;display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--pos-fg);color:#fff;font-weight:800;font-size:.78rem;}
   #page-jobs .apply-notice[hidden]{display:none;}
 
-  /* sticky batch-apply bar — appears when ≥1 role is selected */
-  #page-jobs .select-bar{position:sticky;bottom:16px;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--navy);color:#fff;padding:16px 20px;border-radius:0;box-shadow:0 18px 40px -16px rgba(6,19,46,.6);margin-top:24px;}
+  /* sticky batch-apply bar — appears when ≥1 role is ticked; sticks to the list column's floor */
+  #page-jobs .select-bar{position:sticky;bottom:0;z-index:20;margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--navy);color:#fff;padding:14px 18px;border-radius:0;box-shadow:0 -14px 30px -18px rgba(6,19,46,.7);}
   #page-jobs .select-bar[hidden]{display:none;}
-  #page-jobs .select-bar .sb-count{font-weight:700;}
+  #page-jobs .select-bar .sb-count{font-weight:700;font-size:.92rem;}
   #page-jobs .select-bar .sb-flash{animation:sbFlash .6s ease;}
   @keyframes sbFlash{0%,100%{color:#fff;}40%{color:var(--gold);}}
   #page-jobs .select-bar .sb-actions{display:flex;gap:10px;}
-  #page-jobs .select-bar .btn{border-radius:0;}
+  #page-jobs .select-bar .btn{border-radius:0;padding:10px 16px;font-size:.92rem;}
   #page-jobs .select-bar .btn--ghost{color:#fff;background:transparent;border-color:rgba(255,255,255,.55);}
   #page-jobs .select-bar .btn--ghost:hover{background:rgba(255,255,255,.12);border-color:#fff;color:#fff;}
 
+  /* ====================================================================== */
+  /* ===================== RIGHT: INLINE JD DETAIL ======================== */
+  /* ====================================================================== */
+  #page-jobs #selected-detail{min-height:100%;}
+  #page-jobs .jdx{display:flex;flex-direction:column;min-height:100%;}
+
+  /* nothing-to-show state (0 results, or before first paint) */
+  #page-jobs .jdx-empty{display:grid;place-items:center;min-height:100%;padding:48px 32px;text-align:center;color:var(--slate);font-size:1.02rem;line-height:1.6;}
+
+  /* sticky identity + actions so Save/Apply stay in reach while the JD scrolls */
+  #page-jobs .jdx-top{position:sticky;top:0;z-index:5;background:var(--surface);border-bottom:1px solid var(--line);padding:24px clamp(20px,2.6vw,34px) 18px;}
+  #page-jobs .jdx-back{display:none;align-items:center;gap:6px;background:transparent;border:0;color:var(--navy);font-weight:700;font-size:.92rem;padding:0 0 12px;cursor:pointer;}
+  #page-jobs .jdx-back:hover{color:var(--sky-deep);}
+  #page-jobs .jdx-head{display:flex;align-items:flex-start;gap:14px;}
+  #page-jobs .jdx-logo .avatar{width:54px;height:54px;border-radius:0;font-size:1.1rem;}
+  #page-jobs .jdx-id{min-width:0;flex:1 1 auto;}
+  #page-jobs .jdx-role{font-family:var(--font-display);font-weight:800;font-size:clamp(1.4rem,2.4vw,1.86rem);line-height:1.14;letter-spacing:-.02em;color:var(--ink);overflow-wrap:break-word;}
+  #page-jobs .jdx-role-detail{margin:3px 0 0;color:var(--slate);font-size:.92rem;line-height:1.4;overflow-wrap:break-word;}
+  #page-jobs .jdx-co{margin:5px 0 0;color:var(--slate);font-size:1rem;overflow-wrap:break-word;}
+  #page-jobs .jdx-dot{color:var(--line-strong);}
+  #page-jobs .jdx-salary{font-family:var(--font-display);font-weight:800;font-size:1.3rem;letter-spacing:-.01em;color:var(--ink);margin:16px 0 4px;}
+  #page-jobs .jdx-salary span{display:block;font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate);margin-bottom:2px;}
+  #page-jobs .jdx-tags{margin:12px 0 2px;}
+  #page-jobs .jdx-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;}
+  #page-jobs .jdx-actions .btn{border-radius:0;}
+  #page-jobs .jdx-actions .jdx-apply[disabled]{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none;}
+  #page-jobs .jdx-save.is-saved{border-color:var(--save);color:var(--save-deep);background:var(--save-wash);}
+  #page-jobs .jdx-save.is-saved .jdx-save-ic{color:var(--save);}
+  #page-jobs .jdx-save-ic{color:var(--line-strong);}
+
+  /* the JD body: mirror the modal's .m-body typography (those rules are .modal-scoped) */
+  #page-jobs .jdx-body{padding:22px clamp(20px,2.6vw,34px) 40px;max-width:860px;}
+  #page-jobs .jdx-body h4.m-sub{font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin:0 0 8px;color:var(--ink);}
+  #page-jobs .jdx-body .m-body + h4.m-sub{border-top:1px solid var(--line);padding-top:20px;margin-top:24px;}
+  #page-jobs .jdx-body .m-body{font-size:1.02rem;line-height:1.72;color:var(--ink-soft);overflow-wrap:anywhere;}
+  #page-jobs .jdx-body .m-body p{margin:.6em 0;}
+  #page-jobs .jdx-body .m-body>:first-child{margin-top:0;}
+  #page-jobs .jdx-body .m-body>:last-child{margin-bottom:0;}
+  #page-jobs .jdx-body .m-body ul.jd-ul{margin:.7em 0;padding-left:1.15em;list-style:disc;}
+  #page-jobs .jdx-body .m-body .jd-ul li{margin:.42em 0;}
+  #page-jobs .jdx-body .m-body .jd-ul>li::marker{color:var(--line-strong);}
+  #page-jobs .jdx-body .m-body .jd-ul>li.jd-li-num{list-style:none;}
+  #page-jobs .jdx-body .m-body h5.jd-h{font-size:1.02rem;font-weight:700;color:var(--ink);margin:1.3em 0 .3em;}
+  #page-jobs .jdx-body .m-body h5.jd-h + p,#page-jobs .jdx-body .m-body h5.jd-h + ul.jd-ul{margin-top:.15em;}
+  #page-jobs .jdx-body .m-body hr.jd-hr{border:0;border-top:1px solid var(--line);margin:1.1em 0;}
+  #page-jobs .jdx-body h4.m-sub + .m-tags{margin:12px 0;}
+
   /* ---------- responsive ---------- */
-  @media (max-width:900px){
-    #page-jobs .jobs-layout{grid-template-columns:1fr;gap:24px;}
-    #page-jobs .filters-side{position:static;top:auto;}
+  /* medium: narrow the search, let facets wrap onto a second row */
+  @media (max-width:1100px){
+    #page-jobs .split-jobs{grid-template-columns:minmax(320px,44%) minmax(0,1fr);}
   }
-  @media (max-width:640px){
-    #page-jobs .jc-open{flex-wrap:wrap;gap:12px 16px;padding:16px;}
-    #page-jobs .jc-end{width:100%;flex-direction:row;justify-content:space-between;align-items:center;margin-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:10px;}
-    #page-jobs .jc-corner{padding:0 14px;}
+  /* mobile: ONE column. Selecting a role swaps the list for the detail (mockup .detail-open). */
+  @media (max-width:760px){
+    #page-jobs{--hdr-h:77px;}
+    #page-jobs .jobs-board{height:calc(100dvh - var(--hdr-h));}
+    #page-jobs .jobs-filterbar{gap:8px 10px;padding:10px 16px;}
+    #page-jobs .fb-search{flex:1 1 100%;max-width:none;}
+    #page-jobs .fb-facet{flex:1 1 44%;min-width:0;}
+    #page-jobs .result-count{order:5;}
+    #page-jobs .split-jobs{display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);}
+    #page-jobs .job-scroll,#page-jobs .detail-column{grid-area:1/1;border-right:0;}
+    #page-jobs .detail-column{display:none;}
+    #page-jobs .split-jobs.detail-open .job-scroll{display:none;}
+    #page-jobs .split-jobs.detail-open .detail-column{display:block;}
+    #page-jobs .jdx-back{display:inline-flex;}
   }
-/* features/companies/companies.css — redesign v3 "h-hero": the companies grid, flat &
-   editorial. Deep navy + amber gold, 1px --line hairlines, square panels, big display
-   names — the same idiom as the home page (see src/features/home/home.css). Everything is
-   scoped under #page-companies so it can't reach another page; the ONE exception is the
+/* features/companies/companies.css — redesign v3 "h-hero": the companies page, flat &
+   editorial. A search/sector filter bar over the roster card grid. Deep navy + amber gold,
+   1px --line hairlines, square panels, big display names — the same idiom as the home page
+   and the jobs board (see src/features/home/home.css, src/features/jobs/jobs.css). Everything
+   is scoped under #page-companies so it can't reach another page; the ONE exception is the
    grid column count (see the grid note below). Palette is strictly the core/base.css tokens. */
 
+  /* tighten the page's vertical rhythm so the intro + filter bar + grid read dense but
+     breathable (no oversized top gap under the sticky header). */
+  #page-companies .section{padding:44px 0 60px;}
+
+  /* visually-hidden label (the Sector <select> is self-describing via its "All sectors"
+     option; the label stays for assistive tech). */
+  #page-companies .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;}
+
   /* ---------- intro (eyebrow · big display title · sub) ---------- */
-  #page-companies .co-intro{max-width:46rem;margin-bottom:38px;}
+  #page-companies .co-intro{max-width:46rem;margin-bottom:26px;}
   #page-companies .co-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
   #page-companies .co-intro h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(34px,5vw,60px);margin:0;color:var(--ink);}
-  #page-companies .co-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:18px 0 0;max-width:40em;text-wrap:balance;}
+  #page-companies .co-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:16px 0 0;max-width:40em;text-wrap:balance;}
+
+  /* ---------- filter bar: search + sector select + clear + live count ----------
+     Flat, square, hairline — the jobs board's top-bar idiom, as a normal (not full-height)
+     page bar. Wired to real roster data in companies.js. */
+  #page-companies .co-filters{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:22px;}
+
+  #page-companies .co-search{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line-strong);border-radius:0;padding:0 12px;flex:1 1 260px;min-width:200px;max-width:420px;transition:border-color .14s ease;}
+  #page-companies .co-search:focus-within{border-color:var(--sky-deep);}
+  #page-companies .co-search svg{width:16px;height:16px;color:var(--slate);flex:none;}
+  #page-companies .co-search input{border:0;outline:0;background:transparent;padding:11px 0;font-size:.96rem;width:100%;color:var(--ink);font-family:inherit;}
+
+  #page-companies .co-facet{flex:0 1 auto;min-width:170px;}
+  #page-companies .co-select{
+    width:100%;-webkit-appearance:none;-moz-appearance:none;appearance:none;
+    background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2366748a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 11px center/15px 15px;
+    border:1px solid var(--line-strong);border-radius:0;padding:11px 34px 11px 12px;
+    font-size:.92rem;font-weight:600;color:var(--slate);font-family:inherit;cursor:pointer;
+    transition:border-color .14s ease,color .14s ease;
+  }
+  #page-companies .co-select:hover{border-color:var(--navy);}
+  #page-companies .co-select:focus-visible{outline:none;border-color:var(--sky-deep);box-shadow:0 0 0 3px var(--sky-soft);}
+
+  #page-companies .co-clear{background:transparent;border:0;color:var(--navy);font-weight:700;font-size:.88rem;padding:4px 2px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;}
+  #page-companies .co-clear:hover{color:var(--sky-deep);}
+
+  #page-companies .co-count{font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--slate);font-weight:700;margin-left:auto;white-space:nowrap;}
 
   /* ---------- grid ----------
-     The 3 → 2 → 1 column count is owned by core/responsive.css via the bare .co-grid
-     class, which loads AFTER this file. So the base column-count must stay an UNSCOPED
-     .co-grid rule (same specificity as the responsive overrides) — scoping it under
-     #page-companies would out-specify the breakpoints and break the collapse. Only the
-     column count lives here unscoped; display + gap are safely scoped. */
+     The 3 → 2 → 1 column count is owned by core/responsive.css via the bare .co-grid class,
+     which loads AFTER this file. So the base column-count must stay an UNSCOPED .co-grid rule
+     (same specificity as the responsive overrides) — scoping it under #page-companies would
+     out-specify the breakpoints and break the collapse. Only the column count lives here
+     unscoped; display + gap are safely scoped. */
   .co-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
   #page-companies .co-grid{display:grid;gap:18px;}
+
+  /* no-results line (search/sector matched nothing) */
+  #page-companies .co-empty{margin:4px 0 0;padding:34px 6px;color:var(--slate);font-size:1.05rem;line-height:1.5;}
 
   /* ---------- card: a flat white panel, 1px hairline, square corners ---------- */
   #page-companies .co-card{
@@ -656,6 +748,14 @@
   #page-companies .co-card--click:hover{border-color:var(--line-strong);box-shadow:var(--shadow);transform:translateY(-3px);}
   #page-companies .co-card--click:hover .co-arrow{transform:translateX(5px);}
   #page-companies .co-card--click:focus-visible{outline:3px solid var(--sky-deep);outline-offset:3px;}
+
+  /* ---------- responsive: stack the filter bar on narrow screens ---------- */
+  @media (max-width:620px){
+    #page-companies .co-filters{gap:10px;}
+    #page-companies .co-search{flex:1 1 100%;max-width:none;}
+    #page-companies .co-facet{flex:1 1 100%;min-width:0;}
+    #page-companies .co-count{margin-left:0;order:5;flex:1 1 100%;}
+  }
 
   @media (prefers-reduced-motion:reduce){
     #page-companies .co-card--click,#page-companies .co-arrow{transition:none;}
@@ -722,16 +822,16 @@
    reads big, the attribution row sits at the card foot. These cards render only on the
    Post-a-job page (#hrGrid / #revGrid), built by testimonials.js. */
 
-  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}
   .rev{
-    display:flex;flex-direction:column;gap:18px;
-    padding:30px;
+    display:flex;flex-direction:column;gap:16px;
+    padding:26px 26px 28px;
     background:var(--surface);
     border:1px solid var(--line);
   }
   /* short gold rule — the editorial accent in place of the old wave motif / tint */
   .rev::before{content:"";flex:none;width:34px;height:3px;background:var(--gold);}
-  .rev .quote{font-size:1.14rem;line-height:1.55;color:var(--ink);font-weight:500;letter-spacing:-.005em;}
+  .rev .quote{font-size:1.1rem;line-height:1.5;color:var(--ink);font-weight:500;letter-spacing:-.005em;}
   .rev .who{display:flex;align-items:center;gap:13px;margin-top:auto;}
   .rev .who .avatar.sm{border-radius:0;}   /* square the monogram chip for the flat look */
   .rev .who .nm{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:-.01em;color:var(--ink);}
@@ -742,21 +842,28 @@
    lives in modals.html, outside the page div) so those selectors stay unscoped,
    kept visually consistent with the page. */
 
-  /* ---------- page intro (eyebrow + big display heading + sub) ---------- */
-  #page-articles .art-intro{max-width:46rem;margin-bottom:38px;}
+  /* ---------- page intro (eyebrow + big display heading + sub) ----------
+     Mockup rhythm: a tight eyebrow→title→sub stack that sits close to the grid
+     (the mockup drops its chips/featured in that gap; we go straight to the grid,
+     so the intro is pulled in to kill the empty band under the headline). */
+  #page-articles .art-intro{max-width:46rem;margin-bottom:30px;}
   #page-articles .art-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
   #page-articles .art-h1{font-family:var(--font-display);font-weight:800;line-height:1.02;letter-spacing:-.045em;font-size:clamp(40px,5.4vw,76px);margin:0;color:var(--ink);}
-  #page-articles .art-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:22px 0 0;max-width:34em;text-wrap:balance;}
+  #page-articles .art-sub{color:var(--slate);font-size:1.12rem;line-height:1.5;margin:16px 0 0;max-width:34em;text-wrap:balance;}
 
-  /* ---------- article card grid ---------- */
-  #page-articles .art-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;}
+  /* ---------- article card grid ----------
+     Matches the mockup's three-up card grid, but flat: square corners, a 1px
+     --line hairline and a lift-on-hover instead of the mockup's rounded,
+     drop-shadowed panels. Big display titles carry the editorial weight. */
+  #page-articles .art-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}
   #page-articles .art{
-    position:relative;display:flex;flex-direction:column;gap:12px;
+    position:relative;display:flex;flex-direction:column;gap:10px;
     padding:24px;cursor:pointer;color:inherit;min-width:0;
     background:var(--surface);border:1px solid var(--line);border-radius:0;
     transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;
   }
   #page-articles .art:hover{border-color:var(--line-strong);box-shadow:var(--shadow);transform:translateY(-3px);}
+  #page-articles .art:focus-visible{outline:3px solid var(--sky-deep);outline-offset:3px;}
 
   /* editor-chosen hero image — flat, fixed ratio so a mixed library stays even */
   #page-articles .art .art-img{display:block;width:100%;height:172px;object-fit:cover;border:1px solid var(--line);border-radius:0;margin:0 0 4px;background:var(--paper);}
@@ -764,8 +871,10 @@
   /* category eyebrow; JS may set an inline colour for a managed category, which
      overrides the default slate — leave the cascade room for it */
   #page-articles .art .cat{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);}
-  #page-articles .art h4{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.3rem;line-height:1.18;color:var(--ink);margin:0;}
-  #page-articles .art .art-dek{color:var(--slate);font-size:.94rem;line-height:1.55;margin:0;}
+  /* big, punchy display title — the mockup card's defining mark, kept in the
+     site's self-hosted display face */
+  #page-articles .art h4{font-family:var(--font-display);font-weight:800;letter-spacing:-.025em;font-size:clamp(1.34rem,1.7vw,1.5rem);line-height:1.13;color:var(--ink);margin:2px 0 0;}
+  #page-articles .art .art-dek{color:var(--slate);font-size:.9rem;line-height:1.55;margin:0;}
   #page-articles .art .art-by{display:block;color:var(--slate);font-size:.78rem;font-weight:600;}
   #page-articles .art .art-tags{display:flex;flex-wrap:wrap;gap:6px;}
   #page-articles .art .art-tag{font-size:.68rem;font-weight:700;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:0;padding:3px 9px;}
@@ -804,60 +913,77 @@
     #page-articles .art-intro{margin-bottom:28px;}
   }
 /* features/home/home-cta.css — redesign v3: "Send your résumé. Get matched." band */
-  #page-home .h-resume{display:grid;grid-template-columns:1.05fr .95fr;gap:0;background:var(--navy);color:#fff;overflow:hidden;margin-block:16px;}
-  #page-home .h-rc-copy{padding:54px 50px;position:relative;}
+  #page-home .h-resume{display:grid;grid-template-columns:1.05fr .95fr;gap:0;background:var(--navy);color:#fff;overflow:hidden;margin-block:36px;}
+  #page-home .h-rc-copy{padding:40px 44px;position:relative;}
   #page-home .h-rc-copy::before{content:"";position:absolute;inset:0;background:radial-gradient(640px 240px at 12% -20%,rgba(242,183,5,.22),transparent 60%),radial-gradient(560px 220px at 96% 120%,rgba(143,205,235,.20),transparent 60%);pointer-events:none;}
   #page-home .h-rc-copy>*{position:relative;}
   #page-home .h-rc-copy h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;font-size:clamp(30px,3.4vw,46px);line-height:1.05;margin:0;color:#fff;}
-  #page-home .h-rc-copy>p{color:#c2cedb;font-size:1.02rem;max-width:32em;margin:16px 0 26px;}
-  #page-home .h-rc-steps{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:16px;}
+  #page-home .h-rc-copy>p{color:#c2cedb;font-size:1.02rem;max-width:32em;margin:14px 0 22px;}
+  #page-home .h-rc-steps{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:13px;}
   #page-home .h-rc-steps li{display:flex;gap:16px;align-items:baseline;}
   #page-home .h-rc-steps b{font-family:var(--font-display);font-weight:800;color:var(--gold);font-size:1.1rem;flex:none;}
   #page-home .h-rc-steps strong{display:block;font-weight:700;color:#fff;font-size:.98rem;}
   #page-home .h-rc-steps small{display:block;color:#aab9c8;font-size:.84rem;margin-top:2px;}
-  #page-home .h-rc-person{display:flex;align-items:center;gap:12px;border-top:1px solid rgba(255,255,255,.14);padding-top:22px;}
+  #page-home .h-rc-person{display:flex;align-items:center;gap:12px;border-top:1px solid rgba(255,255,255,.14);padding-top:18px;}
   #page-home .h-rc-person .h-rc-face{width:48px;height:48px;border-radius:50%;background:var(--neo-avatar) center/cover no-repeat;flex:none;}
   #page-home .h-rc-person b{display:block;color:#fff;font-size:.9rem;}
   #page-home .h-rc-person span{display:block;color:#aab9c8;font-size:.8rem;}
 
-  #page-home .h-rc-cta{background:var(--surface);color:var(--ink);padding:40px 40px 34px;display:flex;flex-direction:column;justify-content:center;gap:16px;}
-  #page-home .h-rc-drop{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:30px 20px;border:2px dashed var(--line-strong);background:var(--paper);color:var(--ink);transition:border-color .15s ease,background .15s ease;}
+  #page-home .h-rc-cta{background:var(--surface);color:var(--ink);padding:36px 40px;display:flex;flex-direction:column;justify-content:center;gap:16px;}
+  #page-home .h-rc-drop{display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;padding:26px 20px;border:2px dashed var(--line-strong);background:var(--paper);color:var(--ink);transition:border-color .15s ease,background .15s ease;}
   #page-home .h-rc-drop:hover{border-color:var(--sky-deep);background:var(--sky-wash);}
   #page-home .h-rc-ic{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fff;font-size:1.1rem;margin-bottom:6px;}
   #page-home .h-rc-drop b{font-size:1rem;}
   #page-home .h-rc-drop small{color:var(--slate);font-size:.82rem;}
   #page-home .h-rc-btn{width:100%;}
   #page-home .h-rc-legal{font-size:.78rem;color:var(--slate);margin:0;text-align:center;}
-/* features/footer/footer.css — redesign v3 "h-hero": the flat, light, multi-column footer.
-   GLOBAL chrome. A quiet paper panel closed off by a single hairline — the editorial
-   counterweight to the deep-navy header. This file loads AFTER header.css, so its
-   .foot-brand .brand rules (higher specificity) re-colour the shared brand for light. */
-  /* ---------- footer ---------- */
-  footer.site{background:var(--paper);color:var(--slate);border-top:1px solid var(--line);padding:64px 0 40px;}
-  .foot-top{display:flex;justify-content:space-between;gap:48px;flex-wrap:wrap;margin-bottom:44px;align-items:flex-start;}
+/* features/footer/footer.css: redesign v3 "h-hero". The flat, light footer ported from the
+   h-hero mockup. GLOBAL chrome. A quiet paper panel closed off by a hairline: the editorial
+   counterweight to the deep-navy header. The mockup rhythm is a full-width brand block on top
+   (wordmark + bilingual blurb + a soft weekly-match CTA), a three-column link grid, then a
+   legal / social bottom bar. Rendered with the site's OWN tokens (navy/slate/line) + square
+   corners + 1px hairlines, never the mockup's rounded cards or drop-shadows. This file loads
+   AFTER header.css, so its .foot-brand .brand rules (higher specificity) re-colour the shared
+   brand for the light panel. Deadspace is kept tight: one breath between blocks, no oversized
+   gaps. */
+  /* ---------- footer shell ---------- */
+  footer.site{background:var(--paper);color:var(--slate);border-top:1px solid var(--line);padding:48px 0 32px;}
 
-  /* brand: dark ink on the light panel (overrides header.css .brand{color:#fff}); the
-     footer mascot sits still — no idle bob down here. */
-  .foot-brand .brand{color:var(--ink);margin-bottom:16px;}
+  /* ---------- brand block (full-width, on top) ---------- */
+  /* brand: dark ink on the light panel (overrides header.css .brand{color:#fff}); the footer
+     mascot sits still (no idle bob down here). */
+  .foot-brand{margin-bottom:30px;}
+  .foot-brand .brand{color:var(--ink);margin-bottom:14px;}
   .foot-brand .brand .logo{width:42px;height:42px;border-radius:50%;background:var(--surface) var(--tsd-logo) center/cover no-repeat;box-shadow:0 0 0 1px var(--line);animation:none;}
-  .foot-brand p{max-width:26em;color:var(--slate);font-size:.95rem;line-height:1.7;}
+  .foot-tag{margin:0;max-width:30em;color:var(--slate);font-size:.95rem;line-height:1.7;}
   /* office address: quieter than the blurb, separated by a breath of space */
-  .foot-brand .foot-addr{margin-top:14px;font-size:.88rem;color:var(--slate);}
+  .foot-addr{margin:12px 0 0;font-size:.88rem;color:var(--slate);}
+  /* soft weekly-match CTA (mockup's "footer-alerts"): a text-button on the shared data-signup
+     hook, so it opens the same matching flow as every other CTA. */
+  .foot-alerts{margin:16px 0 0;}
+  .foot-alerts button{display:inline-flex;align-items:center;gap:7px;background:transparent;border:0;padding:0;font-family:inherit;font-size:.95rem;font-weight:700;color:var(--navy);cursor:pointer;transition:color .15s ease;}
+  .foot-alerts button:hover{color:var(--navy-deep);text-decoration:underline;}
 
-  /* ---------- link columns ---------- */
-  .foot-links{display:flex;gap:56px;flex-wrap:wrap;}
-  .foot-col h5{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin:0 0 14px;font-weight:700;}
-  .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:var(--ink-soft);padding:6px 0;font-size:.98rem;background:transparent;border:0;font-family:inherit;cursor:pointer;text-align:left;transition:color .15s ease;}
+  /* ---------- three link columns ---------- */
+  .foot-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;margin-bottom:30px;}
+  .foot-col h5{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin:0 0 13px;font-weight:700;}
+  .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:var(--ink-soft);padding:5px 0;font-size:.98rem;background:transparent;border:0;font-family:inherit;cursor:pointer;text-align:left;transition:color .15s ease;}
   .foot-col a:hover,.foot-col button:hover{color:var(--navy);}
 
-  /* ---------- bottom row ---------- */
-  .foot-bottom{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center;color:var(--slate);font-size:.92rem;}
+  /* ---------- bottom bar: legal + privacy, LinkedIn / LongWave ---------- */
+  .foot-bottom{border-top:1px solid var(--line);padding-top:22px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;color:var(--slate);font-size:.92rem;}
   .foot-bottom a:not(.btn){color:var(--ink-soft);text-decoration:none;}
   .foot-bottom a:not(.btn):hover{color:var(--navy);text-decoration:underline;}
   .foot-actions{display:flex;gap:12px;flex-wrap:wrap;}
   .foot-actions .btn{padding:10px 18px;font-size:.92rem;}
   .foot-actions .btn svg{width:18px;height:18px;}
   .foot-actions .ext{font-weight:700;}
+
+  /* ---------- footer responsive ----------
+     core/responsive.css owns .foot-links{gap} + .foot-bottom at ≤760 but never sets the column
+     count, so collapse the grid here (no property conflict with that file). */
+  @media (max-width:760px){.foot-links{grid-template-columns:1fr 1fr;}}
+  @media (max-width:480px){.foot-links{grid-template-columns:minmax(0,1fr);}}
 /* features/modals/modals.css — job-detail + signup modals, overlay */
   /* ---------- modals ---------- */
   /* Overlays fade in AND out via transitions. display:none can't animate, so we keep the
@@ -1247,13 +1373,7 @@
   @media (max-width:1000px){
     .boxes,.co-grid,.rev-grid,.art-grid{grid-template-columns:repeat(2,1fr);}
     .teaser-grid{grid-template-columns:repeat(2,1fr);}
-    .jobs-layout{grid-template-columns:1fr;}
-    /* Once the filters sit above the grid (no sidebar), reflow them from a tall stack
-       into a compact bar that wraps + scales: search spans the full width, the rest
-       flow into as many columns as fit and shrink down to 1 on a narrow window. */
-    .filters-side{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 18px;align-items:end;}
-    .filters-side .fgroup{margin-bottom:0;}
-    .filters-side .fgroup:first-child{grid-column:1/-1;}
+    /* the jobs board owns its own full-height two-pane responsive rules (jobs.css). */
   }
   @media (max-width:760px){
     body{font-size:16.5px;}
@@ -1365,10 +1485,10 @@
     <nav class="nav" aria-label="Primary" data-i18n-aria="aria_nav">
       <a class="brand" href="#/" data-go="home" aria-label="Tokyo Samurai Dev home"><span class="logo-wrap"><span class="logo" role="img" aria-label="Tokyo Samurai Dev"></span><span class="fx" aria-hidden="true"><span class="katana"><svg viewBox="0 0 48 48" width="46" height="46" aria-hidden="true"><path d="M16 41 L39 11 L41.5 13 L19 43 Z" fill="#eef3f9" stroke="#7f8fa0" stroke-width="1" stroke-linejoin="round"/><path d="M18.5 40.5 L37.5 13.5" stroke="#fff" stroke-width="1" opacity=".75"/><path d="M13 37 L21 43" stroke="#cf9530" stroke-width="3" stroke-linecap="round"/><path d="M17 40 L12 46" stroke="#12314f" stroke-width="4.5" stroke-linecap="round"/></svg></span><i class="slash s1"></i><i class="slash s2"></i><i class="slash s3"></i><i class="slash s4"></i></span></span><span class="brand-word">Tokyo Samurai <b>Dev</b></span></a>
       <div class="nav-links" id="navLinks">
-        <a href="#/jobs" data-go="jobs" data-i18n="nav_jobs">Jobs</a>
+        <a href="#/jobs" data-go="jobs" data-i18n="nav_jobs">Find jobs</a>
         <a href="#/companies" data-go="companies" data-i18n="nav_companies">Companies</a>
         <a href="#/articles" data-go="articles" data-i18n="nav_articles">Articles</a>
-        <a href="#/post" data-go="post"><span data-i18n="nav_post">Post a job</span></a>
+        <a href="#/post" data-go="post"><span data-i18n="nav_post">For employers</span></a>
       </div>
       <div class="nav-right">
         <!-- radiogroup: the two language choices are mutually exclusive. The visible ENG/JPN
@@ -1377,7 +1497,7 @@
           <button type="button" data-lang="en" class="active" role="radio" aria-checked="true">ENG</button>
           <button type="button" data-lang="ja" role="radio" aria-checked="false">JPN</button>
         </div>
-        <button class="btn btn--banana" data-signup data-i18n="nav_signup">Sign up</button>
+        <button class="btn btn--banana" data-signup><span data-i18n="nav_signup">Get matched</span> →</button>
         <button class="menu-toggle" id="menuToggle" aria-label="Menu" data-i18n-aria="aria_menu" aria-expanded="false">☰</button>
       </div>
     </nav>
@@ -1484,67 +1604,64 @@
 <!-- ============ PAGE: JOBS ============ -->
 <!-- ====================================================== -->
 <div class="page" id="page-jobs">
-  <section class="section">
-    <div class="wrap">
-      <div class="jobs-head reveal">
-        <div class="jobs-head-text">
-          <span class="jobs-eyebrow" data-i18n="jobs_eyebrow">The job board</span>
-          <h1 data-i18n="jobs_h1">Open roles</h1>
-          <p class="sub" data-i18n="jobs_sub">Hand-picked software roles at Japan's product companies. Salary and Japanese level shown on every listing.</p>
-        </div>
-        <button class="btn btn--ghost jobs-saved-toggle" id="savedToggle" type="button" aria-pressed="false">
-          <span class="jst-heart" aria-hidden="true">♥</span><span id="savedToggleLabel">Saved (0)</span>
-        </button>
+  <!-- LinkedIn-style two-pane board: a sticky top filter bar + a full-height split of a
+       scrollable role list (left) and the selected role's JD rendered INLINE (right).
+       No modal on this page — selecting a row renders its full detail in #selected-detail
+       via the SAME JD builder the job modal uses (see modal-job.js / jobs.js). -->
+  <div class="jobs-board">
+    <!-- the page still carries a real H1 for a11y / SEO; it is visually hidden so the board
+         is dense and full-height with no deadspace (matches the mockup's listing-title). -->
+    <h1 class="sr-only" data-i18n="jobs_h1">Open roles</h1>
+
+    <form class="jobs-filterbar" id="jobsFilters" aria-label="Filters" data-i18n-aria="aria_filters" onsubmit="return false">
+      <div class="fb-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input type="text" id="filterSearch" data-i18n-ph="filter_search_ph" placeholder="" aria-label="Search roles" data-i18n-aria="aria_search" />
       </div>
-      <div class="jobs-layout">
-        <aside class="filters-side reveal" aria-label="Filters" data-i18n-aria="aria_filters">
-          <p class="filters-title" data-i18n="filters_title">Filter roles</p>
-          <div class="fgroup">
-            <label class="glab" data-i18n="f_grp_search">Search</label>
-            <div class="search">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-              <input type="text" id="filterSearch" data-i18n-ph="filter_search_ph" placeholder="" aria-label="Search roles" data-i18n-aria="aria_search" />
-            </div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterSpec" data-i18n="f_grp_spec">Specialty</label>
-            <div class="msel" id="filterSpec"></div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterStack" data-i18n="f_grp_stack">Tech stack</label>
-            <div class="msel" id="filterStack"></div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterJp" data-i18n="f_grp_jp">Japanese level</label>
-            <div class="msel" id="filterJp"></div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterRemote" data-i18n="f_grp_rem">Work style</label>
-            <div class="msel" id="filterRemote"></div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterLoc" data-i18n="f_grp_loc">Location</label>
-            <div class="msel" id="filterLoc"></div>
-          </div>
-          <div class="fgroup">
-            <button class="fclear" id="filterClear" data-i18n="filter_clear">Clear filters</button>
-          </div>
-        </aside>
-        <div class="jobs-main">
-          <p class="result-count reveal" id="resultCount" role="status" aria-live="polite"></p>
-          <div class="apply-notice" id="applyNotice" role="status" aria-live="polite" hidden></div>
-          <div class="job-grid reveal" id="jobGrid"></div>
-          <div class="select-bar" id="selectBar" hidden role="region" aria-label="Selected roles" data-i18n-aria="aria_selected">
-            <span class="sb-count" id="selCount"></span>
-            <span class="sb-actions">
-              <button class="btn btn--ghost" id="selClear" type="button" data-i18n="sel_clear">Clear</button>
-              <button class="btn btn--banana" id="selApply" type="button">Apply to selected</button>
-            </span>
-          </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterSpec" data-i18n="f_grp_spec">Specialty</span>
+        <div class="msel" id="filterSpec"></div>
+      </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterStack" data-i18n="f_grp_stack">Tech stack</span>
+        <div class="msel" id="filterStack"></div>
+      </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterJp" data-i18n="f_grp_jp">Japanese level</span>
+        <div class="msel" id="filterJp"></div>
+      </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterRemote" data-i18n="f_grp_rem">Work style</span>
+        <div class="msel" id="filterRemote"></div>
+      </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterLoc" data-i18n="f_grp_loc">Location</span>
+        <div class="msel" id="filterLoc"></div>
+      </div>
+      <button class="fclear" id="filterClear" type="button" data-i18n="filter_clear">Clear filters</button>
+      <span class="result-count" id="resultCount" role="status" aria-live="polite"></span>
+      <button class="btn btn--ghost jobs-saved-toggle" id="savedToggle" type="button" aria-pressed="false">
+        <span class="jst-heart" aria-hidden="true">♥</span><span id="savedToggleLabel">Saved (0)</span>
+      </button>
+    </form>
+
+    <div class="split-jobs" id="splitJobs">
+      <div class="job-scroll" aria-label="Matching roles" data-i18n-aria="aria_results">
+        <div class="apply-notice" id="applyNotice" role="status" aria-live="polite" hidden></div>
+        <div class="job-grid" id="jobGrid"></div>
+        <div class="select-bar" id="selectBar" hidden role="region" aria-label="Selected roles" data-i18n-aria="aria_selected">
+          <span class="sb-count" id="selCount"></span>
+          <span class="sb-actions">
+            <button class="btn btn--ghost" id="selClear" type="button" data-i18n="sel_clear">Clear</button>
+            <button class="btn btn--banana" id="selApply" type="button">Apply to selected</button>
+          </span>
         </div>
+      </div>
+      <div class="detail-column" aria-label="Role details" data-i18n-aria="aria_detail">
+        <section id="selected-detail" aria-live="polite"></section>
       </div>
     </div>
-  </section>
+  </div>
 </div>
 
 <!-- ====================================================== -->
@@ -1556,9 +1673,30 @@
       <div class="co-intro reveal">
         <span class="co-eyebrow" data-i18n="comp_eyebrow">Meet your next team</span>
         <h1 data-i18n="comp_h1">Companies we work with</h1>
-        <p class="co-sub" data-i18n="comp_sub">The teams hiring through Tokyo Samurai Dev. (Live roles are shown for TechTouch; other partners are placeholders to confirm.)</p>
+        <p class="co-sub" data-i18n="comp_sub">Companies in our network, including teams hiring with us and companies where we've placed engineers. No role listed yet? Ask us; we often have unlisted positions.</p>
       </div>
-      <div class="co-grid reveal stagger" id="coGrid"></div>
+
+      <!-- filter/search bar over the card grid (mockup: a filter row above a 3-col grid).
+           Wired to REAL roster data: the search matches company name + industry text, and the
+           Sector select is built from the companies' OWN industry labels. Flat / square /
+           hairline, the same idiom as the jobs board's top filter bar (see jobs.css). The
+           mockup's language/visa/size selects are NOT ported — no company-level data backs
+           them in this build (see the task handoffs). -->
+      <form class="co-filters reveal" id="coFilters" aria-label="Filter companies" data-i18n-aria="comp_filter_aria" onsubmit="return false">
+        <div class="co-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+          <input type="search" id="coSearch" placeholder="Search companies or sectors" data-i18n-ph="comp_search_ph" aria-label="Search companies" data-i18n-aria="comp_search_aria">
+        </div>
+        <div class="co-facet">
+          <label class="sr-only" id="lbl-coSector" for="coSector" data-i18n="comp_sector_label">Sector</label>
+          <select class="co-select" id="coSector" aria-labelledby="lbl-coSector"></select>
+        </div>
+        <button type="button" class="co-clear" id="coClear" data-i18n="filter_clear">Clear filters</button>
+        <span class="co-count" id="coCount" role="status" aria-live="polite"></span>
+      </form>
+
+      <div class="co-grid reveal" id="coGrid"></div>
+      <p class="co-empty" id="coEmpty" hidden data-i18n="comp_none">No companies match your search.</p>
     </div>
   </section>
 </div>
@@ -1584,20 +1722,21 @@
 <!-- ====================================================== -->
 <!-- features/post/post.html — "Post a job" / for-employers page (redesign v3 "h-hero").
      Flat, editorial: deep navy + amber gold, 1px hairlines, zero radius. Mirrors the
-     for-employers mockup (employer hero + sample viewing report, partner wall, HR voices
-     + engineers quote grids). Page CSS is scoped under #page-post in the <style> below so
-     it can't collide with other pages; the .rev quote cards are styled in
-     features/testimonials/testimonials.css. Behaviour is unchanged: the CTAs still fire
-     the shared post-job / contact modals (data-postjob / data-contact), the partner wall
-     still builds from [data-partner-feature], and #hrGrid / #revGrid are still filled by
-     testimonials.js. -->
+     for-employers mockup (employer hero + sample viewing report + the "promise" stat band),
+     then keeps this site's own partner wall, HR voices and engineer-quote grids. Page CSS is
+     scoped under #page-post in the <style> below so it can't collide with other pages; the
+     .rev quote cards are styled in features/testimonials/testimonials.css. Behaviour is
+     unchanged: the CTAs still fire the shared post-job / contact modals (data-postjob /
+     data-contact), the partner wall still builds from [data-partner-feature], and
+     #hrGrid / #revGrid are still filled by testimonials.js. Spacing follows the home/jobs
+     section rhythm (tight, hairline-separated) so the sections no longer leave big gaps. -->
 <style id="page-post-styles">
   /* ---------- hero ---------- */
-  #page-post .p-hero{padding-block:40px 18px;}
+  #page-post .p-hero{padding-block:38px 40px;}
   #page-post .p-hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(32px,4vw,56px);align-items:center;}
-  #page-post .p-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:16px;}
+  #page-post .p-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:12px;}
   #page-post .p-h1{font-family:var(--font-display);font-weight:800;line-height:1.02;letter-spacing:-.045em;font-size:clamp(40px,5.4vw,74px);margin:0;color:var(--ink);}
-  #page-post .p-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:20px 0 28px;max-width:34em;}
+  #page-post .p-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:18px 0 26px;max-width:34em;}
   #page-post .p-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
 
   /* sample "viewing report" card — the mockup's signature hero art, flat */
@@ -1619,12 +1758,20 @@
   #page-post .p-bar>span:last-child{flex:none;width:32px;text-align:right;color:var(--slate);font-weight:600;font-size:.74rem;}
   #page-post .p-note{font-size:.72rem;color:var(--slate);line-height:1.5;margin:14px 0 0;}
 
-  /* ---------- sections + heads (left-aligned, flat, hairline rhythm) ---------- */
-  #page-post .p-sec{padding-block:clamp(52px,6.5vw,88px);}
+  /* ---------- promise band (mockup .promise): three dense, hairline-framed stats carrying
+       the "free to list / fee on hire / checked daily" message right under the hero ---------- */
+  #page-post .p-promise{border-bottom:1px solid var(--line);}
+  #page-post .p-promise-in{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,44px);padding-block:30px 32px;}
+  #page-post .p-promise-item{border-top:2px solid var(--gold);padding-top:14px;}
+  #page-post .p-promise-item strong{display:block;font-family:var(--font-display);font-weight:800;font-size:clamp(26px,3vw,36px);letter-spacing:-.03em;color:var(--ink);line-height:1.02;}
+  #page-post .p-promise-item span{display:block;margin-top:8px;font-size:.9rem;color:var(--slate);line-height:1.45;}
+
+  /* ---------- sections + heads (left-aligned, flat, hairline rhythm; tight like home/jobs) ---------- */
+  #page-post .p-sec{padding-block:clamp(42px,5vw,60px);}
   #page-post .p-sec--tint{background:var(--paper);}
-  #page-post .p-head{max-width:40rem;margin-bottom:34px;}
+  #page-post .p-head{max-width:40rem;margin-bottom:28px;}
   #page-post .p-head h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;font-size:clamp(30px,3.6vw,48px);margin:0;color:var(--ink);line-height:1.05;}
-  #page-post .p-head .p-subh{color:var(--slate);font-size:1.08rem;line-height:1.5;margin:16px 0 0;}
+  #page-post .p-head .p-subh{color:var(--slate);font-size:1.08rem;line-height:1.5;margin:14px 0 0;}
 
   /* ---------- partner wall: flatten the rounded, shadowed .pf-card ---------- */
   #page-post .pf-card{background:var(--surface);border:1px solid var(--line);border-radius:0;box-shadow:none;}
@@ -1634,6 +1781,9 @@
   /* ---------- responsive ---------- */
   @media (max-width:860px){
     #page-post .p-hero-grid{grid-template-columns:1fr;gap:34px;}
+  }
+  @media (max-width:560px){
+    #page-post .p-promise-in{grid-template-columns:1fr;gap:18px;padding-block:24px;}
   }
   @media (max-width:480px){
     #page-post .p-kpis{grid-template-columns:1fr;gap:14px;}
@@ -1677,6 +1827,24 @@
           <div class="p-bar"><span>Mobile</span><i style="width:48%"></i><span>214</span></div>
         </div>
         <p class="p-note" data-i18n="post_rep_note">All figures here are fictional examples. We send a real report once a role passes 50 views.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMISE BAND: free to list · fee only on hire · re-checked daily (mockup .promise) -->
+  <section class="p-promise">
+    <div class="wrap p-promise-in">
+      <div class="p-promise-item">
+        <strong data-i18n="post_promise1_v">¥0</strong>
+        <span data-i18n="post_promise1_l">To list your open roles</span>
+      </div>
+      <div class="p-promise-item">
+        <strong data-i18n="post_promise2_v">Only on hire</strong>
+        <span data-i18n="post_promise2_l">A fee only when someone we introduce is hired</span>
+      </div>
+      <div class="p-promise-item">
+        <strong data-i18n="post_promise3_v">7:00 daily</strong>
+        <span data-i18n="post_promise3_l">We re-check live roles against your own careers page</span>
       </div>
     </div>
   </section>
@@ -1844,33 +2012,44 @@
 </div>
 </main><!-- /#main (opened in header.html) -->
 
+<!-- ============ FOOTER ============ -->
+<!-- Redesign v3 "h-hero": flat light footer ported from the mockup. The mockup's rhythm is a
+     full-width brand block on top (wordmark + bilingual blurb + a soft weekly-match CTA), then
+     a three-column link grid, then a legal / social bottom bar. All links route in-app via
+     data-go; the match CTAs ride the shared data-signup hook; #linkedinBtn/#longwaveBtn are
+     wired in app.js. -->
 <footer class="site">
   <div class="wrap">
-    <div class="foot-top">
-      <div class="foot-brand">
-        <span class="brand"><span class="logo" role="img" aria-label="Tokyo Samurai Dev"></span><span class="brand-word">Tokyo Samurai <b>Dev</b></span></span>
-        <p data-i18n="foot_about">Bilingual Jobs in Japan<br>Curated by the team at LongWave<br>We talk tech, so you don't have to</p>
-        <p class="foot-addr" data-i18n="foot_addr">THE GATE HANZOMON<br>1-8-1 Kojimachi, Chiyoda-ku, Tokyo 102-0083</p>
+    <!-- brand block (full-width, on top) -->
+    <div class="foot-brand">
+      <span class="brand"><span class="logo" role="img" aria-label="Tokyo Samurai Dev"></span><span class="brand-word">Tokyo Samurai <b>Dev</b></span></span>
+      <p class="foot-tag" data-i18n="foot_about">Bilingual Jobs in Japan<br>Curated by the team at LongWave<br>We talk tech, so you don't have to</p>
+      <p class="foot-addr" data-i18n="foot_addr">THE GATE HANZOMON<br>1-8-1 Kojimachi, Chiyoda-ku, Tokyo 102-0083</p>
+      <!-- soft weekly-match CTA (mockup's "footer-alerts") on the shared signup hook -->
+      <p class="foot-alerts"><button type="button" data-signup><span data-i18n="foot_alerts">Get matching jobs by email, once a week</span> →</button></p>
+    </div>
+
+    <!-- three link columns -->
+    <div class="foot-links">
+      <div class="foot-col">
+        <h5 data-i18n="foot_explore">Explore</h5>
+        <a href="#/jobs" data-go="jobs" data-i18n="foot_jobs">Jobs</a>
+        <a href="#/companies" data-go="companies" data-i18n="foot_companies">Companies</a>
+        <a href="#/articles" data-go="articles" data-i18n="foot_articles">Articles</a>
       </div>
-      <div class="foot-links">
-        <div class="foot-col">
-          <h5 data-i18n="foot_explore">Explore</h5>
-          <a href="#/jobs" data-go="jobs" data-i18n="foot_jobs">Jobs</a>
-          <a href="#/companies" data-go="companies" data-i18n="foot_companies">Companies</a>
-          <a href="#/articles" data-go="articles" data-i18n="foot_articles">Articles</a>
-        </div>
-        <div class="foot-col">
-          <h5 data-i18n="foot_candidates">For candidates</h5>
-          <button type="button" data-signup data-i18n="foot_signup">Sign up</button>
-          <a href="#/cv" data-go="cv" data-i18n="foot_resume">Resume builder</a>
-        </div>
-        <div class="foot-col">
-          <h5 data-i18n="foot_employers">For employers</h5>
-          <a href="#/post" data-go="post"><span data-i18n="foot_post">Post a job</span></a>
-          <button type="button" data-contact data-i18n="foot_contact">Contact us</button>
-        </div>
+      <div class="foot-col">
+        <h5 data-i18n="foot_candidates">For candidates</h5>
+        <button type="button" data-signup data-i18n="foot_signup">Sign up</button>
+        <a href="#/cv" data-go="cv" data-i18n="foot_resume">Resume builder</a>
+      </div>
+      <div class="foot-col">
+        <h5 data-i18n="foot_employers">For employers</h5>
+        <a href="#/post" data-go="post"><span data-i18n="foot_post">Post a job</span></a>
+        <button type="button" data-contact data-i18n="foot_contact">Contact us</button>
       </div>
     </div>
+
+    <!-- bottom bar: legal + privacy, and the LinkedIn / LongWave links -->
     <div class="foot-bottom">
       <span class="foot-legal"><span data-i18n="foot_legal">© 2026 Tokyo Samurai Dev · Maintained by LongWave</span> · <a href="#/privacy" data-go="privacy" data-i18n="foot_privacy">Privacy</a></span>
       <div class="foot-actions">
@@ -2773,7 +2952,15 @@
       post_rep_bars:"Most-viewed roles",
       post_rep_note:"All figures here are fictional examples. We send a real report once a role passes 50 views.",
       skip_main:"Skip to main content",
-      nav_jobs:"Jobs", nav_companies:"Companies", nav_articles:"Articles", nav_post:"Post a job", nav_signup:"Sign up",
+      /* poc faithful port: companies filter, employer promise band, footer alerts */
+      comp_search_ph:"Search companies or sectors", comp_search_aria:"Search companies", comp_filter_aria:"Filter companies",
+      comp_sector_label:"Sector", comp_sector_all:"All sectors",
+      comp_count:"{n} of {total} companies", comp_none:"No companies match your search.",
+      post_promise1_v:"¥0", post_promise1_l:"To list your open roles",
+      post_promise2_v:"Only on hire", post_promise2_l:"A fee only when someone we introduce is hired",
+      post_promise3_v:"7:00 daily", post_promise3_l:"We re-check live roles against your own careers page",
+      foot_alerts:"Get matching jobs by email, once a week",
+      nav_jobs:"Find jobs", nav_companies:"Companies", nav_articles:"Articles", nav_post:"For employers", nav_signup:"Get matched",
       partners_lab:"Hiring with us",
       partners_post_h:"Teams we're helping hire",
       partners_post_sub:"A few of the product companies building their bilingual teams with us right now.",
@@ -2845,7 +3032,7 @@
       jobs_h1:"Open roles",
       jobs_sub:"Hand-picked software roles at Japan's product companies. Salary and Japanese level shown on every listing.",
       f_grp_search:"Search", f_grp_jp:"Japanese level", f_grp_rem:"Work style", f_grp_spec:"Specialty", f_grp_stack:"Tech stack", f_grp_loc:"Location",
-      filter_search_ph:"",
+      filter_search_ph:"Search roles, companies, tech…",
       filter_jp_all:"Any level", filter_jp_none:"No Japanese required", filter_jp_conv:"Conversational", filter_jp_biz:"Business",
       filter_rem_all:"Any work style", filter_rem_full:"Full remote", filter_rem_part:"Hybrid", filter_rem_no:"On-site",
       filter_spec_all:"All specialties", filter_stack_all:"Any tech", filter_loc_all:"Any location", filter_clear:"Clear filters",
@@ -2900,7 +3087,8 @@
       sel_pick:"Select this role", sel_selected:"{n} selected", sel_left:"{r} of {n} applications left", sel_apply:"Apply to selected", sel_clear:"Clear", apply_title:"Apply to {n} role(s)", apply_success:"Application sent for {n} role(s). We'll be in touch shortly.",
       applied_badge:"Applied", m_applied:"✓ Applied", m_apply_limit:"Application limit reached", apply_limit_hit:"You've applied to your {n} roles. That's the limit, so no more applications can be sent.",
       sv_save:"Save", sv_saved:"Saved", sv_aria:"Save this role for later", sv_view:"Saved ({n})", sv_view_all:"Show all roles",
-      sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later."
+      sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later.",
+      aria_results:"Matching roles", aria_detail:"Role details", jd_back:"Back to roles", jd_pick:"Select a role on the left to see the full job description."
     },
     ja:{
       /* redesign v3 (h-hero) — page eyebrows + post sample-report card */
@@ -2916,7 +3104,15 @@
       post_rep_bars:"閲覧の多い職種",
       post_rep_note:"数値はすべて架空の例です。実際のレポートは、閲覧が月50件を超えた求人からお送りします。",
       skip_main:"本文へスキップ",
-      nav_jobs:"求人", nav_companies:"企業", nav_articles:"記事", nav_post:"求人掲載", nav_signup:"登録",
+      /* poc faithful port: companies filter, employer promise band, footer alerts */
+      comp_search_ph:"企業名・業種で検索", comp_search_aria:"企業を検索", comp_filter_aria:"企業を絞り込む",
+      comp_sector_label:"業種", comp_sector_all:"すべての業種",
+      comp_count:"{total}社中 {n}社", comp_none:"条件に一致する企業はありません。",
+      post_promise1_v:"0円", post_promise1_l:"掲載にかかる費用",
+      post_promise2_v:"採用時のみ", post_promise2_l:"紹介手数料は、ご紹介した方の採用が決まったときだけ",
+      post_promise3_v:"毎朝 7:00", post_promise3_l:"公開求人を元の採用ページと照らし合わせて確認",
+      foot_alerts:"毎週1回、条件に合う求人をメールで",
+      nav_jobs:"求人を探す", nav_companies:"企業", nav_articles:"記事", nav_post:"採用担当の方へ", nav_signup:"マッチング",
       partners_lab:"採用パートナー",
       partners_post_h:"ともに採用を進めるチーム",
       partners_post_sub:"いま私たちとバイリンガルチームを築いている、プロダクト企業の一部をご紹介します",
@@ -2988,7 +3184,7 @@
       jobs_h1:"求人一覧",
       jobs_sub:"日本のプロダクト企業から厳選したソフトウェア求人。すべてに給与と日本語レベルを明記",
       f_grp_search:"検索", f_grp_jp:"日本語レベル", f_grp_rem:"働き方", f_grp_spec:"職種", f_grp_stack:"技術スタック", f_grp_loc:"勤務地",
-      filter_search_ph:"",
+      filter_search_ph:"職種・企業・技術で検索…",
       filter_jp_all:"すべて", filter_jp_none:"日本語不問", filter_jp_conv:"日常会話", filter_jp_biz:"ビジネス",
       filter_rem_all:"すべて", filter_rem_full:"フルリモート", filter_rem_part:"ハイブリッド", filter_rem_no:"出社",
       filter_spec_all:"すべての職種", filter_stack_all:"すべての技術", filter_loc_all:"すべての勤務地", filter_clear:"条件をクリア",
@@ -3043,7 +3239,8 @@
       sel_pick:"この求人を選択", sel_selected:"{n}件選択中", sel_left:"応募枠 残り{r}/{n}件", sel_apply:"選択した求人に応募", sel_clear:"クリア", apply_title:"{n}件の求人に応募", apply_success:"{n}件の求人に応募しました。すぐにご連絡します。",
       applied_badge:"応募済み", m_applied:"✓ 応募済み", m_apply_limit:"応募上限に達しました", apply_limit_hit:"応募上限の{n}件に達しました。これ以上は応募できません。",
       sv_save:"保存", sv_saved:"保存済み", sv_aria:"この求人をあとで見るために保存", sv_view:"保存した求人 ({n})", sv_view_all:"すべての求人を表示",
-      sv_heading:"保存した求人", sv_none:"まだ保存した求人はありません。求人の「保存」をタップすると、ここに表示されます。"
+      sv_heading:"保存した求人", sv_none:"まだ保存した求人はありません。求人の「保存」をタップすると、ここに表示されます。",
+      aria_results:"条件に合う求人", aria_detail:"求人の詳細", jd_back:"求人一覧に戻る", jd_pick:"左の一覧から求人を選ぶと、詳細がここに表示されます。"
     }
   };
 
@@ -3207,6 +3404,10 @@
   /* ---------------- jobs (full grid) ---------------- */
   var jobGrid=$("#jobGrid"), resultCount=$("#resultCount");
   var showAllJobs=false;
+  /* the role whose full JD is rendered INLINE in the right pane (#selected-detail). Holds a
+     JOBS object reference so it survives re-filtering AND language toggles (renderJobs
+     re-renders the pane from it, so EN⇄JA switches headings and body together). */
+  var selectedJob=null;
   /* progressive rendering: paint the grid in batches so a 700+ role result never stalls
      the main thread. jobShown = current filtered list; jobRendered = rows painted so far;
      a "Show more" button appends the next JOB_BATCH on demand. */
@@ -3342,7 +3543,11 @@
   function buildCard(job,i,animate){
     var idx=job._i;
     var applied=isApplied(job);
-    var card=el("div","job-card"+(animate?" jc-reveal":"")+(isSelected(job)?" sel":"")+(applied?" applied":""));
+    var viewing=(selectedJob===job);
+    var card=el("div","job-card"+(animate?" jc-reveal":"")+(isSelected(job)?" sel":"")+(applied?" applied":"")+(viewing?" current":""));
+    /* stable key so highlightSelectedRow() can find this row after a re-render */
+    card.setAttribute("data-rowkey", jobKey(job));
+    if(viewing){ card.setAttribute("aria-current","true"); }
     if(animate) card.style.animationDelay=(Math.min(i,12)*0.045)+"s";
     var corner=el("div","jc-corner");
     var save=el("button","jc-save"+(isSaved(job)?" is-saved":""));
@@ -3372,8 +3577,10 @@
       corner.appendChild(sel);
     }
     var open=el("button","jc-open",cardHTML(job));
+    open._job=job;   /* arrow-key nav reads the job straight off the focused row */
     open.setAttribute("aria-label", t("aria_open_role").replace("{role}", roleL(job)).replace("{co}", COMPANIES[job.co].name));
-    open.addEventListener("click", function(){ openJob(idx); });
+    /* NO modal on the jobs page: selecting a row renders its full JD inline in #selected-detail */
+    open.addEventListener("click", function(){ selectJob(job, {user:true}); });
     /* content first (fills the row), then the save/select cluster at the right edge — matches
        the CSS design intent and keeps the HOT badge (top-left, over the logo) clear of it */
     card.appendChild(open); card.appendChild(corner);
@@ -3397,48 +3604,110 @@
   }
   function renderJobs(animate){
     var f=getFilters();
-    var doAnimate=animate===true;   /* only play the card entrance on a fresh view (Show all / Saved), not on every filter keystroke */
+    var doAnimate=animate===true;   /* only play the card entrance on a fresh view (Saved / toggle), not on every filter keystroke */
     updateApplyNotice();   /* keep the "you've used all 10" banner in sync on every render */
-    /* Saved view: show only bookmarked roles (still honouring any active filters),
-       skipping the pick-a-filter gate. */
-    if(savedOnly){
-      var savedList=LW.filterJobs(JOBS.filter(isSaved), f);
-      jobGrid.innerHTML="";
-      jobShown=savedList; jobRendered=0;
-      if(savedList.length===0){
-        jobGrid.appendChild(el("div","jobs-empty",'<span class="tsd-mascot tsd-mascot--search" role="img" aria-label="Tokyo Samurai Dev"></span><p style="color:var(--slate);padding:4px 0 0;font-size:1.1rem;">'+ esc(t("sv_none")) +'</p>'));
-      } else {
-        appendJobBatch(doAnimate);
-      }
-      updateSelBar(); updateSavedToggle();
-      resultCount.textContent = t("sv_heading") + " · " + t("result").replace("{n}",savedList.length).replace("{total}",JOBS.length);
-      return;
-    }
-    /* Carsensor-style: don't dump every role. Wait until the user picks a
-       filter (or explicitly asks to browse all) before showing results. */
-    if(!LW.hasActiveFilter(f) && !showAllJobs){
-      jobGrid.innerHTML="";
-      var prompt=el("div","jobs-prompt",
-        '<div class="jp-ic">🔍</div>'+
-        '<h3>'+ esc(t("prompt_title")) +'</h3>'+
-        '<p>'+ esc(t("prompt_sub").replace("{total}",JOBS.length)) +'</p>'+
-        '<button class="btn btn--ghost" id="showAllJobs" type="button">'+ esc(t("prompt_all").replace("{total}",JOBS.length)) +'</button>');
-      jobGrid.appendChild(prompt);
-      var sa=$("#showAllJobs"); if(sa) sa.addEventListener("click", function(){ showAllJobs=true; renderJobs(true); });
-      resultCount.textContent = t("result_pick");
-      updateSavedToggle();
-      return;
-    }
-    var shown=LW.filterJobs(JOBS, f);
+    /* LinkedIn-style board: NO "pick a filter first" gate — results show immediately, dense.
+       Saved view shows only bookmarked roles (still honouring any active filters). */
+    var shown = savedOnly ? LW.filterJobs(JOBS.filter(isSaved), f) : LW.filterJobs(JOBS, f);
     jobGrid.innerHTML="";
     jobShown=shown; jobRendered=0;
     if(shown.length===0){
-      jobGrid.appendChild(el("div","jobs-empty",'<span class="tsd-mascot tsd-mascot--search" role="img" aria-label="Tokyo Samurai Dev"></span><p style="color:var(--slate);padding:4px 0 0;font-size:1.1rem;">'+ esc(t("jobs_empty")) +'</p>'));
+      jobGrid.appendChild(el("div","jobs-empty",'<span class="tsd-mascot tsd-mascot--search" role="img" aria-label="Tokyo Samurai Dev"></span><p style="color:var(--slate);padding:4px 0 0;font-size:1.1rem;">'+ esc(t(savedOnly ? "sv_none" : "jobs_empty")) +'</p>'));
     } else {
       appendJobBatch(doAnimate);
     }
     updateSelBar(); updateSavedToggle();
-    resultCount.textContent = t("result").replace("{n}",shown.length).replace("{total}",JOBS.length);
+    resultCount.textContent = savedOnly
+      ? (t("sv_heading") + " · " + t("result").replace("{n}",shown.length).replace("{total}",JOBS.length))
+      : t("result").replace("{n}",shown.length).replace("{total}",JOBS.length);
+    /* keep the inline detail pane in sync with the list + the active language */
+    syncSelection(shown);
+  }
+  /* ---------------- inline JD detail (right pane, #selected-detail) ----------------
+     The jobs page shows the selected role's full description inline (no modal). syncSelection
+     holds the current pick when it's still in the filtered set, else falls to the first row,
+     then renders its JD via the SHARED builders in modal-job.js so the modal and this pane
+     read and translate identically. */
+  function isMobileJobs(){ return window.matchMedia && window.matchMedia("(max-width:760px)").matches; }
+  function syncSelection(shown){
+    var sp=$("#splitJobs");
+    if(!shown || !shown.length){ selectedJob=null; renderDetailEmpty(); if(sp) sp.classList.remove("detail-open"); return; }
+    if(!(selectedJob && shown.indexOf(selectedJob)>-1)) selectedJob=shown[0];
+    highlightSelectedRow();
+    renderSelectedDetail(selectedJob);
+    if(typeof hydrateJob==="function") hydrateJob(selectedJob);   /* pull the prose (served mode); no-op offline */
+  }
+  /* select a role: highlight its row, render its JD inline, and (on a user tap on mobile)
+     swap the single column from the list to the detail (mockup .detail-open pattern). */
+  function selectJob(job, opts){
+    opts=opts||{};
+    selectedJob=job;
+    highlightSelectedRow();
+    renderSelectedDetail(job);
+    if(typeof hydrateJob==="function") hydrateJob(job);
+    if(opts.user && isMobileJobs()){
+      var sp=$("#splitJobs"); if(sp) sp.classList.add("detail-open");
+      var dc=document.querySelector("#page-jobs .detail-column"); if(dc) dc.scrollTop=0;
+    }
+  }
+  /* mark the viewed row (aria-current + .current) on whichever rows are currently painted */
+  function highlightSelectedRow(){
+    var key = selectedJob ? jobKey(selectedJob) : null;
+    document.querySelectorAll("#jobGrid .job-card").forEach(function(card){
+      var on = !!key && card.getAttribute("data-rowkey")===key;
+      card.classList.toggle("current", on);
+      if(on) card.setAttribute("aria-current","true"); else card.removeAttribute("aria-current");
+    });
+  }
+  /* repaint the inline pane only if THIS job is the one on screen (hydrateJob settle hook) */
+  function repaintSelectedDetailIf(job){ if(selectedJob && selectedJob===job) renderSelectedDetail(job); }
+  function renderDetailEmpty(){
+    var pane=$("#selected-detail"); if(!pane) return;
+    pane.innerHTML='<div class="jdx-empty">'+ esc(t("jd_pick")) +'</div>';
+  }
+  /* build the whole right pane: identity + salary + tags + Save/Apply + the full JD body.
+     Everything is routed through t()/jf()/the shared helpers, so a language toggle re-renders
+     it fully (headings AND body) when applyLang() calls renderJobs(). */
+  function renderSelectedDetail(job){
+    var pane=$("#selected-detail"); if(!pane) return;
+    if(!job){ renderDetailEmpty(); return; }
+    var c=COMPANIES[job.co]; if(!c){ pane.innerHTML=""; return; }
+    /* mirror the modal (modal-job.js): tell jdSec whether prose is still in flight, so the
+       always-on sections show "Loading…" during the /api/jobs/:id fetch instead of flashing "Not listed". */
+    jdPending = !!job._jdLoading;
+    var sec=(c.sector && c.sector[lang]) || "";
+    var coLine = esc(c.name)
+      + (sec ? ' <span class="jdx-dot">·</span> '+esc(sec) : "")
+      + (job.loc ? ' <span class="jdx-dot">·</span> '+esc(locL(job)) : "");
+    /* only ever link out to http(s) — never a javascript:/data: URL from admin/live data */
+    var site=(c.site && /^https?:\/\//i.test(c.site)) ? c.site : "";
+    var applied = (typeof isApplied==="function") && isApplied(job);
+    var limit   = (typeof atApplyLimit==="function") && atApplyLimit();
+    var applyLabel = applied ? t("m_applied") : (limit ? t("m_apply_limit").replace("{n}",MAX_APPLY) : t("m_apply"));
+    var saved = (typeof isSaved==="function") && isSaved(job);
+    var rd = roleDetailL(job);
+    pane.innerHTML =
+      '<article class="jdx">'+
+        '<div class="jdx-top">'+
+          '<button type="button" class="jdx-back" data-jdx="back">← '+ esc(t("jd_back")) +'</button>'+
+          '<div class="jdx-head">'+
+            '<span class="jdx-logo">'+ avatarHTML(c) +'</span>'+
+            '<div class="jdx-id">'+
+              '<h2 class="jdx-role">'+ softBreak(esc(roleL(job))) +'</h2>'+
+              (rd ? '<p class="jdx-role-detail">'+ esc(rd) +'</p>' : '')+
+              '<p class="jdx-co">'+ coLine +'</p>'+
+            '</div>'+
+          '</div>'+
+          '<div class="jdx-salary"><span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe"))) +'</div>'+
+          '<div class="jdx-tags tags">'+ jobHeadTagsHTML(job) +'</div>'+
+          '<div class="jdx-actions">'+
+            '<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?' disabled':'')+'>'+ esc(applyLabel) +'</button>'+
+            '<button type="button" class="btn btn--ghost jdx-save'+(saved?' is-saved':'')+'" data-jdx="save" aria-pressed="'+(saved?'true':'false')+'"><span class="jdx-save-ic" aria-hidden="true">♥</span> <span class="jdx-save-label">'+ esc(saved?t("sv_saved"):t("sv_save")) +'</span></button>'+
+            (site ? '<a class="btn btn--ghost jdx-company" href="'+ esc(site) +'" target="_blank" rel="noopener">'+ esc(t("m_company")) +'</a>' : '')+
+          '</div>'+
+        '</div>'+
+        '<div class="jdx-body">'+ jobDetailSectionsHTML(job) +'</div>'+
+      '</article>';
   }
   /* ---------------- multi-select facet widget ----------------
      Each facet is a summary button + an ARIA listbox popover (role=listbox,
@@ -3572,6 +3841,36 @@
     var st=$("#savedToggle"); if(st) st.addEventListener("click", function(){ savedOnly=!savedOnly; if(savedOnly) showAllJobs=false; renderJobs(true); });
   })();
 
+  /* keyboard: ↑/↓ walk the role list and live-render each role inline (LinkedIn feel).
+     Enter/Space on a focused row fires its native click → selectJob, so no key handling here. */
+  if(jobGrid){
+    jobGrid.addEventListener("keydown", function(e){
+      if(e.key!=="ArrowDown" && e.key!=="ArrowUp") return;
+      var opens=[].slice.call(jobGrid.querySelectorAll(".jc-open"));
+      if(!opens.length) return;
+      var cur=(document.activeElement && document.activeElement.closest) ? document.activeElement.closest(".jc-open") : null;
+      var i=opens.indexOf(cur);
+      e.preventDefault();
+      var ni = i<0 ? 0 : (e.key==="ArrowDown" ? Math.min(opens.length-1, i+1) : Math.max(0, i-1));
+      var target=opens[ni]; if(!target) return;
+      target.focus();
+      if(target._job) selectJob(target._job, {});   /* desktop keyboard: render inline, no mobile swap */
+    });
+  }
+
+  /* inline detail actions — Save / Apply / Back — wired to the SAME store + cap logic as the
+     modal (toggleSaved, openSignup, atApplyLimit). Delegated so it survives every re-render. */
+  (function(){
+    var pane=$("#selected-detail"); if(!pane) return;
+    pane.addEventListener("click", function(e){
+      var b=e.target.closest("[data-jdx]"); if(!b) return;
+      var act=b.getAttribute("data-jdx");
+      if(act==="save"){ if(selectedJob){ var j=selectedJob; toggleSaved(j); if(!savedOnly) renderSelectedDetail(j); } }
+      else if(act==="apply"){ if(b.disabled) return; if(selectedJob) openSignup("job", [selectedJob]); }
+      else if(act==="back"){ var sp=$("#splitJobs"); if(sp) sp.classList.remove("detail-open"); }
+    });
+  })();
+
 
 
 /* features/home/home.js — redesign v3: opportunities cards + hero quick-filter.
@@ -3606,56 +3905,134 @@
       hs.addEventListener("submit", function(e){ e.preventDefault(); location.hash="#/jobs"; });
     }
   }
-/* features/companies/companies.js — companies page render (flat editorial restyle).
-   Roster-driven: every client in PARTNERS gets a card showing its logo, name and a one-line
-   industry tag. The whole card is a button — clicking it (or Enter / Space while focused)
-   opens the company inquiry modal, wired in features/modals/lead-forms.js via [data-company].
-   Order: live open roles first, then placement clients, then roster order. */
+/* features/companies/companies.js — companies page render + live filter (flat editorial).
+   Roster-driven: every client in PARTNERS gets a card (dynamic logo, name, one-line industry).
+   The WHOLE card is a button — clicking it (or Enter / Space while focused) opens the company
+   inquiry modal, wired in features/modals/lead-forms.js via [data-company].
+   Order: live open roles first, then placement clients, then roster order.
+
+   Filter bar (mockup: a search/filter row above the grid) wired to REAL company data:
+     • search  — matches company name + industry text (so typing "SaaS", "Fintech", "AI" … narrows by sector too)
+     • sector  — built from the companies' OWN industry labels: the lead term before a · / & /
+                 separator, case-folded for grouping. Only sectors with >=2 companies become
+                 options (the long tail stays reachable via search). No invented attributes.
+   The mockup's language / visa / size selects are NOT ported: there is no company-level
+   language/visa/size data in this build (jobs carry jp/visa, but only one partner has public
+   roles). See the task handoffs for what fields would be needed to add them. */
+
+  var CO_SORTED = null;   /* the ordered roster (live → placement → roster order), cached between paints */
+
+  /* use the real i18n key, else a built-in English fallback — so JS-built strings read
+     correctly before the new comp_* keys are merged into i18n-data.js (t() echoes the key). */
+  function coT(k, fb){ var v=t(k); return v===k ? fb : v; }
+  function coIndustry(p){ return (p.industry && (p.industry[lang]||p.industry.en)) || ""; }
+  /* language-independent sector KEY (lead term of the ENGLISH label, case-folded) so a picked
+     sector survives a language toggle; the option TEXT is localized separately below. */
+  function coSectorKey(p){ var en=(p.industry&&p.industry.en)||""; return en.split(/\s*[·\/&]\s*/)[0].trim().toLowerCase(); }
+  function coSectorLabel(p){ return coIndustry(p).split(/\s*[·\/&]\s*/)[0].trim(); }
 
   function renderCompanies(){
     var grid=$("#coGrid"); if(!grid) return;
-    grid.innerHTML="";
-    if(typeof PARTNERS==="undefined" || !PARTNERS.length) return;
+    if(typeof PARTNERS==="undefined" || !PARTNERS.length){ CO_SORTED=[]; buildCoSectors(); paintCompanies(); return; }
 
-    var countByName={};   /* live job counts — used only to order the grid + pick the status */
+    var countByName={};   /* live job counts — used only to order the grid + pick the public status */
     JOBS.forEach(function(j){ var c=COMPANIES[j.co]; var nm=(c&&c.name)||j.co; if(nm) countByName[nm]=(countByName[nm]||0)+1; });
-    var rich={};          /* sector fallback for the few companies in COMPANY_LIST */
+    var rich={};          /* sector fallback for the few companies also in COMPANY_LIST */
     (typeof COMPANY_LIST!=="undefined"?COMPANY_LIST:[]).forEach(function(co){ rich[co.name]=co; });
 
-    PARTNERS.map(function(p,i){ return {p:p, i:i, n:countByName[p.name]||0}; })
+    CO_SORTED = PARTNERS.map(function(p,i){ return {p:p, i:i, n:countByName[p.name]||0}; })
       .sort(function(a,b){
         if(b.n!==a.n) return b.n-a.n;
         var pa=a.p.placement?1:0, pb=b.p.placement?1:0;
         if(pb!==pa) return pb-pa;
         return a.i-b.i;
       })
-      .forEach(function(it){
-        var p=it.p, r=rich[p.name];
-        var industry = (p.industry && p.industry[lang]) || (r && r.sector && r.sector[lang]) || "";
+      /* keep only what the card needs. live keys off open roles ONLY (it.n>0); p.placement is
+         never carried through here, so the confidential placement relationship never leaks. */
+      .map(function(it){ return {p:it.p, live:it.n>0, rich:rich[it.p.name]}; });
 
-        /* public status keys off live open roles only (it.n>0 vs partner); p.placement is
-           never read here, so the confidential placement relationship never leaks. */
-        var live     = it.n > 0;
-        var badgeCls = live ? "co-badge--live" : "co-badge--partner";
-        var badgeTxt = live ? t("comp_badge_live") : t("comp_badge_partner");
-        /* strip the baked-in trailing arrow so our own arrow can slide independently */
-        var ctaTxt   = t("comp_view_co").replace(/\s*→\s*$/, "");
-
-        var card=el("div","co-card co-card--click");
-        card.setAttribute("data-company", p.name);
-        card.setAttribute("role","button");
-        card.setAttribute("tabindex","0");
-        card.setAttribute("aria-label", p.name + ", " + t("comp_view_co_a11y"));
-        card.innerHTML=
-          '<span class="co-badge '+ badgeCls +'"><span class="co-dot" aria-hidden="true"></span>'+ esc(badgeTxt) +'</span>'+
-          '<div class="co-head">'+ avatarHTML({logo:(typeof PARTNER_LOGOS!=="undefined"?PARTNER_LOGOS[p.name]:null), color:p.color, mono:p.mono}) +
-            '<div class="co-id"><div class="co-name">'+ esc(p.name) +'</div>'+
-            (industry?'<div class="co-sector">'+ esc(industry) +'</div>':'')+'</div>'+
-          '</div>'+
-          '<div class="co-cta">'+ esc(ctaTxt) +'<span class="co-arrow" aria-hidden="true">→</span></div>';
-        grid.appendChild(card);
-      });
+    buildCoSectors();
+    paintCompanies();
   }
+
+  /* (re)build the Sector <select> from the roster; preserve the current pick if still valid.
+     Called on first render AND on every language toggle (option TEXT is re-localized, but the
+     option VALUE is the stable English-derived key, so the selection carries across). */
+  function buildCoSectors(){
+    var sel=$("#coSector"); if(!sel) return;
+    var prev=sel.value, map={};
+    (CO_SORTED||[]).forEach(function(it){
+      var k=coSectorKey(it.p); if(!k) return;
+      if(!map[k]) map[k]={label:coSectorLabel(it.p), n:0};
+      map[k].n++;
+    });
+    var keys=Object.keys(map).filter(function(k){ return map[k].n>=2; })
+      .sort(function(a,b){ return map[b].n-map[a].n || map[a].label.localeCompare(map[b].label); });
+    var html='<option value="">'+ esc(coT("comp_sector_all","All sectors")) +'</option>';
+    keys.forEach(function(k){ html+='<option value="'+ esc(k) +'">'+ esc(map[k].label)+' ('+map[k].n+')</option>'; });
+    sel.innerHTML=html;
+    sel.value = (prev && map[prev] && map[prev].n>=2) ? prev : "";
+  }
+
+  function coMatches(it, q, sec){
+    if(q && (it.p.name+" "+coIndustry(it.p)).toLowerCase().indexOf(q)===-1) return false;
+    if(sec && coSectorKey(it.p)!==sec) return false;
+    return true;
+  }
+
+  /* paint the grid from the current filter values; keep the live count + empty state in sync */
+  function paintCompanies(){
+    var grid=$("#coGrid"); if(!grid) return;
+    var q=(($("#coSearch")&&$("#coSearch").value)||"").trim().toLowerCase();
+    var sec=($("#coSector")&&$("#coSector").value)||"";
+    var all=CO_SORTED||[];
+    var shown=all.filter(function(it){ return coMatches(it,q,sec); });
+    grid.innerHTML="";
+    shown.forEach(function(it){ grid.appendChild(buildCoCard(it)); });
+    var empty=$("#coEmpty"); if(empty) empty.hidden = (shown.length>0 || all.length===0);
+    var cnt=$("#coCount");
+    if(cnt) cnt.textContent = coT("comp_count","{n} of {total} companies").replace("{n}",shown.length).replace("{total}",all.length);
+  }
+
+  /* one roster card: flat panel, dynamic logo, live-only status badge. The WHOLE card is a
+     button that opens the company inquiry modal — every id / attr / hook preserved exactly
+     (data-company + role=button + tabindex + aria-label drive modals/lead-forms.js). */
+  function buildCoCard(it){
+    var p=it.p, r=it.rich;
+    var industry = (p.industry && p.industry[lang]) || (r && r.sector && r.sector[lang]) || "";
+
+    /* public status keys off live open roles only (it.live) — "Open roles" vs "Partner" — so
+       the confidential placement relationship never reaches the page. */
+    var badgeCls = it.live ? "co-badge--live" : "co-badge--partner";
+    var badgeTxt = it.live ? t("comp_badge_live") : t("comp_badge_partner");
+    /* strip the baked-in trailing arrow so our own arrow can slide independently */
+    var ctaTxt   = t("comp_view_co").replace(/\s*→\s*$/, "");
+
+    var card=el("div","co-card co-card--click");
+    card.setAttribute("data-company", p.name);
+    card.setAttribute("role","button");
+    card.setAttribute("tabindex","0");
+    card.setAttribute("aria-label", p.name + ", " + t("comp_view_co_a11y"));
+    card.innerHTML=
+      '<span class="co-badge '+ badgeCls +'"><span class="co-dot" aria-hidden="true"></span>'+ esc(badgeTxt) +'</span>'+
+      '<div class="co-head">'+ avatarHTML({logo:(typeof PARTNER_LOGOS!=="undefined"?PARTNER_LOGOS[p.name]:null), color:p.color, mono:p.mono}) +
+        '<div class="co-id"><div class="co-name">'+ esc(p.name) +'</div>'+
+        (industry?'<div class="co-sector">'+ esc(industry) +'</div>':'')+'</div>'+
+      '</div>'+
+      '<div class="co-cta">'+ esc(ctaTxt) +'<span class="co-arrow" aria-hidden="true">→</span></div>';
+    return card;
+  }
+
+  /* wire the filter controls once. This script runs at the end of <body>, so the markup
+     (#coSearch / #coSector / #coClear) already exists; these elements are never re-created by
+     renderCompanies (only #coGrid is), so the handlers survive language toggles + hydration. */
+  (function(){
+    var s=$("#coSearch"); if(s) s.addEventListener("input", paintCompanies);
+    var sec=$("#coSector"); if(sec) sec.addEventListener("change", paintCompanies);
+    var clr=$("#coClear"); if(clr) clr.addEventListener("click", function(){
+      if(s) s.value=""; if(sec) sec.value=""; paintCompanies(); if(s) s.focus();
+    });
+  })();
 /* features/partners/partners-logos.js — GENERATED, do not hand-edit.
    PARTNERS: curated client roster shown on the partner wall / companies page / jobs strip.
    Each entry: name + brand colour + monogram (logo fallback), optional placement flag, and
@@ -5466,24 +5843,12 @@
       : '<span style="color:var(--slate)">'+esc(t(jdPending ? "jd_loading" : "jd_na"))+'</span>';
     return '<h4 class="m-sub">'+esc(t(labelKey))+'</h4><div class="m-body">'+body+'</div>';
   }
-  /* Fill the JD modal body from a job. Split out of openJob so a language toggle while the
-     modal is open (repaintOpenModal) fully re-renders it — role, company, salary, tags and
-     every section — instead of leaving it half-translated. */
-  function fillJobModal(job){
-    jdPending = !!job._jdLoading;
-    var c=COMPANIES[job.co];
-    /* use the crisp curated mark (same as the job cards), not the low-res HRMOS favicon */
-    var _av=$("#mAvatar"); var _logo=(typeof bestLogo==="function")?bestLogo(c):c.logo;
-    if(_logo){ _av.innerHTML='<img src="'+ esc(_logo) +'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
-    $("#mRole").textContent=softBreak(roleL(job));
-    /* the posting's own title, when the headline above is a canonical label */
-    var _rd=$("#mRoleDetail"); if(_rd){ _rd.textContent=roleDetailL(job); _rd.hidden=!roleDetailL(job); }
-    /* guard EACH separator: every company currently ships an empty sector, which
-       rendered "mico ·  · Osaka" (a doubled dot around the blank). Show a " · " only
-       before a part that actually has text. */
-    var _sec=(c.sector&&c.sector[lang])||"";
-    $("#mCo").textContent=c.name+(_sec?" · "+_sec:"")+(job.loc?" · "+locL(job):"");
-    $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe")));
+  /* ---- SHARED JD builders (used by BOTH the job modal AND the inline board detail) ----
+     The JD body is where EN⇄JA translation used to break, so it is built ONCE here, through
+     jf()/t(), and reused verbatim by the inline pane (jobs.js renderSelectedDetail) — so a
+     language toggle re-renders both identically. Pure string builders: no DOM writes. */
+  /* the header pill row: Japanese level + work style + any perks + the tech stack */
+  function jobHeadTagsHTML(job){
     var tags=jpTag(job.jp)+'<span class="tag tag--meta">'+esc(remoteLabel(job.remote))+'</span>';
     if(job.flexHours) tags+='<span class="tag tag--meta">'+esc(t("jd_flex"))+'</span>';
     if(job.fixedOvertime) tags+='<span class="tag tag--meta">'+esc(t("jd_ot"))+'</span>';
@@ -5491,8 +5856,11 @@
     if(job.abroad) tags+='<span class="tag tag--meta">'+esc(t("lbl_abroad"))+'</span>';
     if(job.visa) tags+='<span class="tag tag--meta">'+esc(t("lbl_visa"))+'</span>';
     (job.stack||[]).forEach(function(s){ tags+='<span class="tag tag--tech">'+esc(s)+'</span>'; });
-    $("#mTags").innerHTML=tags;
-    /* every detail field is language-aware (jf): English base / Japanese `_ja` override */
+    return tags;
+  }
+  /* the full labelled JD body (every field language-aware via jf): this is the inner HTML of
+     the modal's #mDetail and the board's .jdx-body, so both read and translate the same. */
+  function jobDetailSectionsHTML(job){
     var scopeTxt = jf(job,"scope") || bodyL(job) || "";
     var pts = pointsL(job);
     var reqText = jf(job,"required") || (pts && pts.length ? "・"+pts.join("\n・") : "");
@@ -5516,7 +5884,30 @@
     /* the selection flow is client-internal and is NOT shown on the public board;
        prose sections naming it are dropped upstream by jdBlocks (JD_PROCESS_HEADING) */
     H+=jdSec("jd_notes", jf(job,"notes"), false);
-    $("#mDetail").innerHTML=H;
+    return H;
+  }
+  /* Fill the JD modal body from a job. Split out of openJob so a language toggle while the
+     modal is open (repaintOpenModal) fully re-renders it — role, company, salary, tags and
+     every section — instead of leaving it half-translated. */
+  function fillJobModal(job){
+    jdPending = !!job._jdLoading;
+    var c=COMPANIES[job.co];
+    /* use the crisp curated mark (same as the job cards), not the low-res HRMOS favicon */
+    var _av=$("#mAvatar"); var _logo=(typeof bestLogo==="function")?bestLogo(c):c.logo;
+    if(_logo){ _av.innerHTML='<img src="'+ esc(_logo) +'" alt="">'; _av.style.background="#fff"; } else { _av.innerHTML=""; _av.textContent=c.mono; _av.style.background=c.color; }
+    $("#mRole").textContent=softBreak(roleL(job));
+    /* the posting's own title, when the headline above is a canonical label */
+    var _rd=$("#mRoleDetail"); if(_rd){ _rd.textContent=roleDetailL(job); _rd.hidden=!roleDetailL(job); }
+    /* guard EACH separator: every company currently ships an empty sector, which
+       rendered "mico ·  · Osaka" (a doubled dot around the blank). Show a " · " only
+       before a part that actually has text. */
+    var _sec=(c.sector&&c.sector[lang])||"";
+    $("#mCo").textContent=c.name+(_sec?" · "+_sec:"")+(job.loc?" · "+locL(job):"");
+    $("#mSalary").innerHTML='<span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe")));
+    $("#mTags").innerHTML=jobHeadTagsHTML(job);
+    /* every detail field is language-aware (jf): English base / Japanese `_ja` override.
+       The exact same builder fills the inline board detail, so both translate identically. */
+    $("#mDetail").innerHTML=jobDetailSectionsHTML(job);
     /* only link out to http(s) — never assign a javascript:/data: URL to href, even from
        admin/live company data (defence-in-depth against a poisoned COMPANIES.site). */
     var comp=$("#mCompany"); var site=(c.site && /^https?:\/\//i.test(c.site)) ? c.site : ""; if(site){ comp.href=site; comp.style.display=""; } else { comp.style.display="none"; }
@@ -5540,6 +5931,9 @@
     var settle = function(){
       job._jdLoading = false;
       if(currentJob===job && jobOverlay && !jobOverlay.hidden) fillJobModal(job);
+      /* the jobs board renders this same job INLINE (no modal) — repaint that pane too so
+         its JD prose lands the instant the fetch settles, exactly like the modal does. */
+      if(typeof repaintSelectedDetailIf==="function") repaintSelectedDetailIf(job);
     };
     fetch("/api/jobs/"+encodeURIComponent(job.id))
       .then(function(r){ return r.ok ? r.json() : null; })
@@ -6266,7 +6660,8 @@
       if(!jobs.length) return;
       JOBS=jobs;
       enrichJobs();
-      selected={};   /* selection is keyed by the old _i indices — reset it for the new dataset */
+      selected={};   /* checkbox selection is keyed by the old _i indices — reset for the new dataset */
+      selectedJob=null;   /* the inline-detail pick pointed into the old JOBS array — drop it */
       applyLang();   /* re-render everything (cards, selects, counts) from live data */
     });
     /* Partner roster hydrates INDEPENDENTLY of jobs/companies: the admin can edit the home

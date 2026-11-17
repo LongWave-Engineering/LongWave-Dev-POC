@@ -1,23 +1,61 @@
-/* features/companies/companies.css — redesign v3 "h-hero": the companies grid, flat &
-   editorial. Deep navy + amber gold, 1px --line hairlines, square panels, big display
-   names — the same idiom as the home page (see src/features/home/home.css). Everything is
-   scoped under #page-companies so it can't reach another page; the ONE exception is the
+/* features/companies/companies.css — redesign v3 "h-hero": the companies page, flat &
+   editorial. A search/sector filter bar over the roster card grid. Deep navy + amber gold,
+   1px --line hairlines, square panels, big display names — the same idiom as the home page
+   and the jobs board (see src/features/home/home.css, src/features/jobs/jobs.css). Everything
+   is scoped under #page-companies so it can't reach another page; the ONE exception is the
    grid column count (see the grid note below). Palette is strictly the core/base.css tokens. */
 
+  /* tighten the page's vertical rhythm so the intro + filter bar + grid read dense but
+     breathable (no oversized top gap under the sticky header). */
+  #page-companies .section{padding:44px 0 60px;}
+
+  /* visually-hidden label (the Sector <select> is self-describing via its "All sectors"
+     option; the label stays for assistive tech). */
+  #page-companies .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;}
+
   /* ---------- intro (eyebrow · big display title · sub) ---------- */
-  #page-companies .co-intro{max-width:46rem;margin-bottom:38px;}
+  #page-companies .co-intro{max-width:46rem;margin-bottom:26px;}
   #page-companies .co-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
   #page-companies .co-intro h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(34px,5vw,60px);margin:0;color:var(--ink);}
-  #page-companies .co-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:18px 0 0;max-width:40em;text-wrap:balance;}
+  #page-companies .co-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:16px 0 0;max-width:40em;text-wrap:balance;}
+
+  /* ---------- filter bar: search + sector select + clear + live count ----------
+     Flat, square, hairline — the jobs board's top-bar idiom, as a normal (not full-height)
+     page bar. Wired to real roster data in companies.js. */
+  #page-companies .co-filters{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:22px;}
+
+  #page-companies .co-search{display:flex;align-items:center;gap:9px;background:var(--surface);border:1px solid var(--line-strong);border-radius:0;padding:0 12px;flex:1 1 260px;min-width:200px;max-width:420px;transition:border-color .14s ease;}
+  #page-companies .co-search:focus-within{border-color:var(--sky-deep);}
+  #page-companies .co-search svg{width:16px;height:16px;color:var(--slate);flex:none;}
+  #page-companies .co-search input{border:0;outline:0;background:transparent;padding:11px 0;font-size:.96rem;width:100%;color:var(--ink);font-family:inherit;}
+
+  #page-companies .co-facet{flex:0 1 auto;min-width:170px;}
+  #page-companies .co-select{
+    width:100%;-webkit-appearance:none;-moz-appearance:none;appearance:none;
+    background:var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2366748a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 11px center/15px 15px;
+    border:1px solid var(--line-strong);border-radius:0;padding:11px 34px 11px 12px;
+    font-size:.92rem;font-weight:600;color:var(--slate);font-family:inherit;cursor:pointer;
+    transition:border-color .14s ease,color .14s ease;
+  }
+  #page-companies .co-select:hover{border-color:var(--navy);}
+  #page-companies .co-select:focus-visible{outline:none;border-color:var(--sky-deep);box-shadow:0 0 0 3px var(--sky-soft);}
+
+  #page-companies .co-clear{background:transparent;border:0;color:var(--navy);font-weight:700;font-size:.88rem;padding:4px 2px;cursor:pointer;text-decoration:underline;text-underline-offset:3px;white-space:nowrap;}
+  #page-companies .co-clear:hover{color:var(--sky-deep);}
+
+  #page-companies .co-count{font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--slate);font-weight:700;margin-left:auto;white-space:nowrap;}
 
   /* ---------- grid ----------
-     The 3 → 2 → 1 column count is owned by core/responsive.css via the bare .co-grid
-     class, which loads AFTER this file. So the base column-count must stay an UNSCOPED
-     .co-grid rule (same specificity as the responsive overrides) — scoping it under
-     #page-companies would out-specify the breakpoints and break the collapse. Only the
-     column count lives here unscoped; display + gap are safely scoped. */
+     The 3 → 2 → 1 column count is owned by core/responsive.css via the bare .co-grid class,
+     which loads AFTER this file. So the base column-count must stay an UNSCOPED .co-grid rule
+     (same specificity as the responsive overrides) — scoping it under #page-companies would
+     out-specify the breakpoints and break the collapse. Only the column count lives here
+     unscoped; display + gap are safely scoped. */
   .co-grid{grid-template-columns:repeat(3,minmax(0,1fr));}
   #page-companies .co-grid{display:grid;gap:18px;}
+
+  /* no-results line (search/sector matched nothing) */
+  #page-companies .co-empty{margin:4px 0 0;padding:34px 6px;color:var(--slate);font-size:1.05rem;line-height:1.5;}
 
   /* ---------- card: a flat white panel, 1px hairline, square corners ---------- */
   #page-companies .co-card{
@@ -57,6 +95,14 @@
   #page-companies .co-card--click:hover{border-color:var(--line-strong);box-shadow:var(--shadow);transform:translateY(-3px);}
   #page-companies .co-card--click:hover .co-arrow{transform:translateX(5px);}
   #page-companies .co-card--click:focus-visible{outline:3px solid var(--sky-deep);outline-offset:3px;}
+
+  /* ---------- responsive: stack the filter bar on narrow screens ---------- */
+  @media (max-width:620px){
+    #page-companies .co-filters{gap:10px;}
+    #page-companies .co-search{flex:1 1 100%;max-width:none;}
+    #page-companies .co-facet{flex:1 1 100%;min-width:0;}
+    #page-companies .co-count{margin-left:0;order:5;flex:1 1 100%;}
+  }
 
   @media (prefers-reduced-motion:reduce){
     #page-companies .co-card--click,#page-companies .co-arrow{transition:none;}

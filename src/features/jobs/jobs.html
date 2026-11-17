@@ -1,65 +1,62 @@
 <div class="page" id="page-jobs">
-  <section class="section">
-    <div class="wrap">
-      <div class="jobs-head reveal">
-        <div class="jobs-head-text">
-          <span class="jobs-eyebrow" data-i18n="jobs_eyebrow">The job board</span>
-          <h1 data-i18n="jobs_h1">Open roles</h1>
-          <p class="sub" data-i18n="jobs_sub">Hand-picked software roles at Japan's product companies. Salary and Japanese level shown on every listing.</p>
-        </div>
-        <button class="btn btn--ghost jobs-saved-toggle" id="savedToggle" type="button" aria-pressed="false">
-          <span class="jst-heart" aria-hidden="true">♥</span><span id="savedToggleLabel">Saved (0)</span>
-        </button>
+  <!-- LinkedIn-style two-pane board: a sticky top filter bar + a full-height split of a
+       scrollable role list (left) and the selected role's JD rendered INLINE (right).
+       No modal on this page — selecting a row renders its full detail in #selected-detail
+       via the SAME JD builder the job modal uses (see modal-job.js / jobs.js). -->
+  <div class="jobs-board">
+    <!-- the page still carries a real H1 for a11y / SEO; it is visually hidden so the board
+         is dense and full-height with no deadspace (matches the mockup's listing-title). -->
+    <h1 class="sr-only" data-i18n="jobs_h1">Open roles</h1>
+
+    <form class="jobs-filterbar" id="jobsFilters" aria-label="Filters" data-i18n-aria="aria_filters" onsubmit="return false">
+      <div class="fb-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
+        <input type="text" id="filterSearch" data-i18n-ph="filter_search_ph" placeholder="" aria-label="Search roles" data-i18n-aria="aria_search" />
       </div>
-      <div class="jobs-layout">
-        <aside class="filters-side reveal" aria-label="Filters" data-i18n-aria="aria_filters">
-          <p class="filters-title" data-i18n="filters_title">Filter roles</p>
-          <div class="fgroup">
-            <label class="glab" data-i18n="f_grp_search">Search</label>
-            <div class="search">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>
-              <input type="text" id="filterSearch" data-i18n-ph="filter_search_ph" placeholder="" aria-label="Search roles" data-i18n-aria="aria_search" />
-            </div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterSpec" data-i18n="f_grp_spec">Specialty</label>
-            <div class="msel" id="filterSpec"></div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterStack" data-i18n="f_grp_stack">Tech stack</label>
-            <div class="msel" id="filterStack"></div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterJp" data-i18n="f_grp_jp">Japanese level</label>
-            <div class="msel" id="filterJp"></div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterRemote" data-i18n="f_grp_rem">Work style</label>
-            <div class="msel" id="filterRemote"></div>
-          </div>
-          <div class="fgroup">
-            <label class="glab" id="lbl-filterLoc" data-i18n="f_grp_loc">Location</label>
-            <div class="msel" id="filterLoc"></div>
-          </div>
-          <div class="fgroup">
-            <button class="fclear" id="filterClear" data-i18n="filter_clear">Clear filters</button>
-          </div>
-        </aside>
-        <div class="jobs-main">
-          <p class="result-count reveal" id="resultCount" role="status" aria-live="polite"></p>
-          <div class="apply-notice" id="applyNotice" role="status" aria-live="polite" hidden></div>
-          <div class="job-grid reveal" id="jobGrid"></div>
-          <div class="select-bar" id="selectBar" hidden role="region" aria-label="Selected roles" data-i18n-aria="aria_selected">
-            <span class="sb-count" id="selCount"></span>
-            <span class="sb-actions">
-              <button class="btn btn--ghost" id="selClear" type="button" data-i18n="sel_clear">Clear</button>
-              <button class="btn btn--banana" id="selApply" type="button">Apply to selected</button>
-            </span>
-          </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterSpec" data-i18n="f_grp_spec">Specialty</span>
+        <div class="msel" id="filterSpec"></div>
+      </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterStack" data-i18n="f_grp_stack">Tech stack</span>
+        <div class="msel" id="filterStack"></div>
+      </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterJp" data-i18n="f_grp_jp">Japanese level</span>
+        <div class="msel" id="filterJp"></div>
+      </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterRemote" data-i18n="f_grp_rem">Work style</span>
+        <div class="msel" id="filterRemote"></div>
+      </div>
+      <div class="fb-facet">
+        <span class="sr-only glab" id="lbl-filterLoc" data-i18n="f_grp_loc">Location</span>
+        <div class="msel" id="filterLoc"></div>
+      </div>
+      <button class="fclear" id="filterClear" type="button" data-i18n="filter_clear">Clear filters</button>
+      <span class="result-count" id="resultCount" role="status" aria-live="polite"></span>
+      <button class="btn btn--ghost jobs-saved-toggle" id="savedToggle" type="button" aria-pressed="false">
+        <span class="jst-heart" aria-hidden="true">♥</span><span id="savedToggleLabel">Saved (0)</span>
+      </button>
+    </form>
+
+    <div class="split-jobs" id="splitJobs">
+      <div class="job-scroll" aria-label="Matching roles" data-i18n-aria="aria_results">
+        <div class="apply-notice" id="applyNotice" role="status" aria-live="polite" hidden></div>
+        <div class="job-grid" id="jobGrid"></div>
+        <div class="select-bar" id="selectBar" hidden role="region" aria-label="Selected roles" data-i18n-aria="aria_selected">
+          <span class="sb-count" id="selCount"></span>
+          <span class="sb-actions">
+            <button class="btn btn--ghost" id="selClear" type="button" data-i18n="sel_clear">Clear</button>
+            <button class="btn btn--banana" id="selApply" type="button">Apply to selected</button>
+          </span>
         </div>
+      </div>
+      <div class="detail-column" aria-label="Role details" data-i18n-aria="aria_detail">
+        <section id="selected-detail" aria-live="polite"></section>
       </div>
     </div>
-  </section>
+  </div>
 </div>
 
 <!-- ====================================================== -->

@@ -1,30 +1,47 @@
-/* features/footer/footer.css — redesign v3 "h-hero": the flat, light, multi-column footer.
-   GLOBAL chrome. A quiet paper panel closed off by a single hairline — the editorial
-   counterweight to the deep-navy header. This file loads AFTER header.css, so its
-   .foot-brand .brand rules (higher specificity) re-colour the shared brand for light. */
-  /* ---------- footer ---------- */
-  footer.site{background:var(--paper);color:var(--slate);border-top:1px solid var(--line);padding:64px 0 40px;}
-  .foot-top{display:flex;justify-content:space-between;gap:48px;flex-wrap:wrap;margin-bottom:44px;align-items:flex-start;}
+/* features/footer/footer.css: redesign v3 "h-hero". The flat, light footer ported from the
+   h-hero mockup. GLOBAL chrome. A quiet paper panel closed off by a hairline: the editorial
+   counterweight to the deep-navy header. The mockup rhythm is a full-width brand block on top
+   (wordmark + bilingual blurb + a soft weekly-match CTA), a three-column link grid, then a
+   legal / social bottom bar. Rendered with the site's OWN tokens (navy/slate/line) + square
+   corners + 1px hairlines, never the mockup's rounded cards or drop-shadows. This file loads
+   AFTER header.css, so its .foot-brand .brand rules (higher specificity) re-colour the shared
+   brand for the light panel. Deadspace is kept tight: one breath between blocks, no oversized
+   gaps. */
+  /* ---------- footer shell ---------- */
+  footer.site{background:var(--paper);color:var(--slate);border-top:1px solid var(--line);padding:48px 0 32px;}
 
-  /* brand: dark ink on the light panel (overrides header.css .brand{color:#fff}); the
-     footer mascot sits still — no idle bob down here. */
-  .foot-brand .brand{color:var(--ink);margin-bottom:16px;}
+  /* ---------- brand block (full-width, on top) ---------- */
+  /* brand: dark ink on the light panel (overrides header.css .brand{color:#fff}); the footer
+     mascot sits still (no idle bob down here). */
+  .foot-brand{margin-bottom:30px;}
+  .foot-brand .brand{color:var(--ink);margin-bottom:14px;}
   .foot-brand .brand .logo{width:42px;height:42px;border-radius:50%;background:var(--surface) var(--tsd-logo) center/cover no-repeat;box-shadow:0 0 0 1px var(--line);animation:none;}
-  .foot-brand p{max-width:26em;color:var(--slate);font-size:.95rem;line-height:1.7;}
+  .foot-tag{margin:0;max-width:30em;color:var(--slate);font-size:.95rem;line-height:1.7;}
   /* office address: quieter than the blurb, separated by a breath of space */
-  .foot-brand .foot-addr{margin-top:14px;font-size:.88rem;color:var(--slate);}
+  .foot-addr{margin:12px 0 0;font-size:.88rem;color:var(--slate);}
+  /* soft weekly-match CTA (mockup's "footer-alerts"): a text-button on the shared data-signup
+     hook, so it opens the same matching flow as every other CTA. */
+  .foot-alerts{margin:16px 0 0;}
+  .foot-alerts button{display:inline-flex;align-items:center;gap:7px;background:transparent;border:0;padding:0;font-family:inherit;font-size:.95rem;font-weight:700;color:var(--navy);cursor:pointer;transition:color .15s ease;}
+  .foot-alerts button:hover{color:var(--navy-deep);text-decoration:underline;}
 
-  /* ---------- link columns ---------- */
-  .foot-links{display:flex;gap:56px;flex-wrap:wrap;}
-  .foot-col h5{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin:0 0 14px;font-weight:700;}
-  .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:var(--ink-soft);padding:6px 0;font-size:.98rem;background:transparent;border:0;font-family:inherit;cursor:pointer;text-align:left;transition:color .15s ease;}
+  /* ---------- three link columns ---------- */
+  .foot-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:36px;margin-bottom:30px;}
+  .foot-col h5{font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin:0 0 13px;font-weight:700;}
+  .foot-col a,.foot-col button{display:flex;align-items:center;gap:5px;color:var(--ink-soft);padding:5px 0;font-size:.98rem;background:transparent;border:0;font-family:inherit;cursor:pointer;text-align:left;transition:color .15s ease;}
   .foot-col a:hover,.foot-col button:hover{color:var(--navy);}
 
-  /* ---------- bottom row ---------- */
-  .foot-bottom{border-top:1px solid var(--line);padding-top:24px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap;align-items:center;color:var(--slate);font-size:.92rem;}
+  /* ---------- bottom bar: legal + privacy, LinkedIn / LongWave ---------- */
+  .foot-bottom{border-top:1px solid var(--line);padding-top:22px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;color:var(--slate);font-size:.92rem;}
   .foot-bottom a:not(.btn){color:var(--ink-soft);text-decoration:none;}
   .foot-bottom a:not(.btn):hover{color:var(--navy);text-decoration:underline;}
   .foot-actions{display:flex;gap:12px;flex-wrap:wrap;}
   .foot-actions .btn{padding:10px 18px;font-size:.92rem;}
   .foot-actions .btn svg{width:18px;height:18px;}
   .foot-actions .ext{font-weight:700;}
+
+  /* ---------- footer responsive ----------
+     core/responsive.css owns .foot-links{gap} + .foot-bottom at ≤760 but never sets the column
+     count, so collapse the grid here (no property conflict with that file). */
+  @media (max-width:760px){.foot-links{grid-template-columns:1fr 1fr;}}
+  @media (max-width:480px){.foot-links{grid-template-columns:minmax(0,1fr);}}
