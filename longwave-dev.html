@@ -614,6 +614,13 @@
   #page-jobs .jdx-save.is-saved .jdx-save-ic{color:var(--save);}
   #page-jobs .jdx-save-ic{color:var(--line-strong);}
 
+  /* direct (non-client) roles: a distinct "Direct" marker, the apply-on-company-site link,
+     and the relationship disclaimer. Sky accent sets them apart from placeable client roles. */
+  #page-jobs .tag--direct{background:var(--sky-wash);border-color:var(--sky-deep);color:var(--sky-deep);font-weight:700;}
+  #page-jobs .jdx-direct{display:inline-block;margin-left:8px;padding:2px 9px;font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sky-deep);background:var(--sky-wash);border:1px solid var(--sky-deep);vertical-align:middle;}
+  #page-jobs .jdx-direct-note{margin:12px 0 0;padding:10px 14px;font-size:.84rem;line-height:1.5;color:var(--slate);background:var(--paper);border-left:3px solid var(--sky-deep);}
+  #page-jobs .jdx-apply-site{text-decoration:none;}
+
   /* the JD body: mirror the modal's .m-body typography (those rules are .modal-scoped) */
   #page-jobs .jdx-body{padding:22px clamp(20px,2.6vw,34px) 40px;max-width:860px;}
   #page-jobs .jdx-body h4.m-sub{font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin:0 0 8px;color:var(--ink);}
@@ -2960,6 +2967,8 @@
       post_promise2_v:"Only on hire", post_promise2_l:"A fee only when someone we introduce is hired",
       post_promise3_v:"7:00 daily", post_promise3_l:"We re-check live roles against your own careers page",
       foot_alerts:"Get matching jobs by email, once a week",
+      jd_direct_badge:"Direct", jd_apply_site:"Apply on company site",
+      jd_direct_note:"Listed directly from {co}. Tokyo Samurai Dev doesn't represent this employer.",
       nav_jobs:"Find jobs", nav_companies:"Companies", nav_articles:"Articles", nav_post:"For employers", nav_signup:"Get matched",
       partners_lab:"Hiring with us",
       partners_post_h:"Teams we're helping hire",
@@ -3112,6 +3121,8 @@
       post_promise2_v:"採用時のみ", post_promise2_l:"紹介手数料は、ご紹介した方の採用が決まったときだけ",
       post_promise3_v:"毎朝 7:00", post_promise3_l:"公開求人を元の採用ページと照らし合わせて確認",
       foot_alerts:"毎週1回、条件に合う求人をメールで",
+      jd_direct_badge:"直接応募", jd_apply_site:"企業サイトで応募",
+      jd_direct_note:"{co}の採用ページから直接掲載しています。Tokyo Samurai Devはこの企業を代理していません。",
       nav_jobs:"求人を探す", nav_companies:"企業", nav_articles:"記事", nav_post:"採用担当の方へ", nav_signup:"マッチング",
       partners_lab:"採用パートナー",
       partners_post_h:"ともに採用を進めるチーム",
@@ -3518,7 +3529,7 @@
      The title is never clamped, so the whole role name is always visible. */
   function cardHTML(job){
     var c=COMPANIES[job.co];
-    var tags = jpTag(job.jp) + '<span class="tag tag--meta">'+ esc(remoteLabel(job.remote)) +'</span>';
+    var tags = (job.direct ? '<span class="tag tag--direct">'+ esc(t("jd_direct_badge")) +'</span>' : '') + jpTag(job.jp) + '<span class="tag tag--meta">'+ esc(remoteLabel(job.remote)) +'</span>';
     if(job.abroad) tags += '<span class="tag tag--meta">'+ esc(t("lbl_abroad")) +'</span>';
     if(job.visa) tags += '<span class="tag tag--meta">'+ esc(t("lbl_visa")) +'</span>';
     (job.stack||[]).slice(0,3).forEach(function(s){ tags += '<span class="tag tag--tech">'+ esc(s) +'</span>'; });
@@ -3562,6 +3573,9 @@
     if(applied){
       /* already applied → a static "Applied" badge, no checkbox (can't re-apply / re-count) */
       corner.appendChild(el("span","jc-applied", '✓ '+esc(t("applied_badge"))));
+    } else if(job.direct){
+      /* direct (non-client) role: you apply on the company's own site, not through us, so
+         there is no select-for-apply checkbox and it never counts toward the 10-app cap */
     } else {
       var sel=el("label","jc-select");
       var cb=document.createElement("input"); cb.type="checkbox"; cb.checked=isSelected(job);
@@ -3686,8 +3700,21 @@
     var applyLabel = applied ? t("m_applied") : (limit ? t("m_apply_limit").replace("{n}",MAX_APPLY) : t("m_apply"));
     var saved = (typeof isSaved==="function") && isSaved(job);
     var rd = roleDetailL(job);
+    var saveBtn = '<button type="button" class="btn btn--ghost jdx-save'+(saved?" is-saved":"")+'" data-jdx="save" aria-pressed="'+(saved?"true":"false")+'"><span class="jdx-save-ic" aria-hidden="true">♥</span> <span class="jdx-save-label">'+ esc(saved?t("sv_saved"):t("sv_save")) +'</span></button>';
+    /* DIRECT (non-client) roles: we do NOT represent the employer, so the primary action links
+       OUT to their own careers page (no sign-up-to-apply-through-us), a Direct badge flags it,
+       and a disclaimer states the relationship. Placeable roles keep the sign-up apply flow. */
+    var directBadge="", actionsHTML="", noteHTML="";
+    if(job.direct){
+      var applyUrl=(job.apply && /^https?:\/\//i.test(job.apply)) ? job.apply : site;
+      directBadge='<span class="jdx-direct">'+ esc(t("jd_direct_badge")) +'</span>';
+      actionsHTML=(applyUrl ? '<a class="btn btn--primary jdx-apply-site" href="'+ esc(applyUrl) +'" target="_blank" rel="noopener">'+ esc(t("jd_apply_site")) +' ↗</a>' : '') + saveBtn;
+      noteHTML='<p class="jdx-direct-note">'+ esc(t("jd_direct_note").replace("{co}", c.name)) +'</p>';
+    } else {
+      actionsHTML='<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?" disabled":"")+'>'+ esc(applyLabel) +'</button>' + saveBtn + (site ? '<a class="btn btn--ghost jdx-company" href="'+ esc(site) +'" target="_blank" rel="noopener">'+ esc(t("m_company")) +'</a>' : "");
+    }
     pane.innerHTML =
-      '<article class="jdx">'+
+      '<article class="jdx'+(job.direct?" jdx--direct":"")+'">'+
         '<div class="jdx-top">'+
           '<button type="button" class="jdx-back" data-jdx="back">← '+ esc(t("jd_back")) +'</button>'+
           '<div class="jdx-head">'+
@@ -3695,16 +3722,13 @@
             '<div class="jdx-id">'+
               '<h2 class="jdx-role">'+ softBreak(esc(roleL(job))) +'</h2>'+
               (rd ? '<p class="jdx-role-detail">'+ esc(rd) +'</p>' : '')+
-              '<p class="jdx-co">'+ coLine +'</p>'+
+              '<p class="jdx-co">'+ coLine + (directBadge?' '+directBadge:"") +'</p>'+
             '</div>'+
           '</div>'+
           '<div class="jdx-salary"><span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe"))) +'</div>'+
           '<div class="jdx-tags tags">'+ jobHeadTagsHTML(job) +'</div>'+
-          '<div class="jdx-actions">'+
-            '<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?' disabled':'')+'>'+ esc(applyLabel) +'</button>'+
-            '<button type="button" class="btn btn--ghost jdx-save'+(saved?' is-saved':'')+'" data-jdx="save" aria-pressed="'+(saved?'true':'false')+'"><span class="jdx-save-ic" aria-hidden="true">♥</span> <span class="jdx-save-label">'+ esc(saved?t("sv_saved"):t("sv_save")) +'</span></button>'+
-            (site ? '<a class="btn btn--ghost jdx-company" href="'+ esc(site) +'" target="_blank" rel="noopener">'+ esc(t("m_company")) +'</a>' : '')+
-          '</div>'+
+          '<div class="jdx-actions">'+ actionsHTML +'</div>'+
+          noteHTML+
         '</div>'+
         '<div class="jdx-body">'+ jobDetailSectionsHTML(job) +'</div>'+
       '</article>';

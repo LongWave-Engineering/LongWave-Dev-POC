@@ -116,7 +116,7 @@
      The title is never clamped, so the whole role name is always visible. */
   function cardHTML(job){
     var c=COMPANIES[job.co];
-    var tags = jpTag(job.jp) + '<span class="tag tag--meta">'+ esc(remoteLabel(job.remote)) +'</span>';
+    var tags = (job.direct ? '<span class="tag tag--direct">'+ esc(t("jd_direct_badge")) +'</span>' : '') + jpTag(job.jp) + '<span class="tag tag--meta">'+ esc(remoteLabel(job.remote)) +'</span>';
     if(job.abroad) tags += '<span class="tag tag--meta">'+ esc(t("lbl_abroad")) +'</span>';
     if(job.visa) tags += '<span class="tag tag--meta">'+ esc(t("lbl_visa")) +'</span>';
     (job.stack||[]).slice(0,3).forEach(function(s){ tags += '<span class="tag tag--tech">'+ esc(s) +'</span>'; });
@@ -160,6 +160,9 @@
     if(applied){
       /* already applied → a static "Applied" badge, no checkbox (can't re-apply / re-count) */
       corner.appendChild(el("span","jc-applied", '✓ '+esc(t("applied_badge"))));
+    } else if(job.direct){
+      /* direct (non-client) role: you apply on the company's own site, not through us, so
+         there is no select-for-apply checkbox and it never counts toward the 10-app cap */
     } else {
       var sel=el("label","jc-select");
       var cb=document.createElement("input"); cb.type="checkbox"; cb.checked=isSelected(job);
@@ -284,8 +287,21 @@
     var applyLabel = applied ? t("m_applied") : (limit ? t("m_apply_limit").replace("{n}",MAX_APPLY) : t("m_apply"));
     var saved = (typeof isSaved==="function") && isSaved(job);
     var rd = roleDetailL(job);
+    var saveBtn = '<button type="button" class="btn btn--ghost jdx-save'+(saved?" is-saved":"")+'" data-jdx="save" aria-pressed="'+(saved?"true":"false")+'"><span class="jdx-save-ic" aria-hidden="true">♥</span> <span class="jdx-save-label">'+ esc(saved?t("sv_saved"):t("sv_save")) +'</span></button>';
+    /* DIRECT (non-client) roles: we do NOT represent the employer, so the primary action links
+       OUT to their own careers page (no sign-up-to-apply-through-us), a Direct badge flags it,
+       and a disclaimer states the relationship. Placeable roles keep the sign-up apply flow. */
+    var directBadge="", actionsHTML="", noteHTML="";
+    if(job.direct){
+      var applyUrl=(job.apply && /^https?:\/\//i.test(job.apply)) ? job.apply : site;
+      directBadge='<span class="jdx-direct">'+ esc(t("jd_direct_badge")) +'</span>';
+      actionsHTML=(applyUrl ? '<a class="btn btn--primary jdx-apply-site" href="'+ esc(applyUrl) +'" target="_blank" rel="noopener">'+ esc(t("jd_apply_site")) +' ↗</a>' : '') + saveBtn;
+      noteHTML='<p class="jdx-direct-note">'+ esc(t("jd_direct_note").replace("{co}", c.name)) +'</p>';
+    } else {
+      actionsHTML='<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?" disabled":"")+'>'+ esc(applyLabel) +'</button>' + saveBtn + (site ? '<a class="btn btn--ghost jdx-company" href="'+ esc(site) +'" target="_blank" rel="noopener">'+ esc(t("m_company")) +'</a>' : "");
+    }
     pane.innerHTML =
-      '<article class="jdx">'+
+      '<article class="jdx'+(job.direct?" jdx--direct":"")+'">'+
         '<div class="jdx-top">'+
           '<button type="button" class="jdx-back" data-jdx="back">← '+ esc(t("jd_back")) +'</button>'+
           '<div class="jdx-head">'+
@@ -293,16 +309,13 @@
             '<div class="jdx-id">'+
               '<h2 class="jdx-role">'+ softBreak(esc(roleL(job))) +'</h2>'+
               (rd ? '<p class="jdx-role-detail">'+ esc(rd) +'</p>' : '')+
-              '<p class="jdx-co">'+ coLine +'</p>'+
+              '<p class="jdx-co">'+ coLine + (directBadge?' '+directBadge:"") +'</p>'+
             '</div>'+
           '</div>'+
           '<div class="jdx-salary"><span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe"))) +'</div>'+
           '<div class="jdx-tags tags">'+ jobHeadTagsHTML(job) +'</div>'+
-          '<div class="jdx-actions">'+
-            '<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?' disabled':'')+'>'+ esc(applyLabel) +'</button>'+
-            '<button type="button" class="btn btn--ghost jdx-save'+(saved?' is-saved':'')+'" data-jdx="save" aria-pressed="'+(saved?'true':'false')+'"><span class="jdx-save-ic" aria-hidden="true">♥</span> <span class="jdx-save-label">'+ esc(saved?t("sv_saved"):t("sv_save")) +'</span></button>'+
-            (site ? '<a class="btn btn--ghost jdx-company" href="'+ esc(site) +'" target="_blank" rel="noopener">'+ esc(t("m_company")) +'</a>' : '')+
-          '</div>'+
+          '<div class="jdx-actions">'+ actionsHTML +'</div>'+
+          noteHTML+
         '</div>'+
         '<div class="jdx-body">'+ jobDetailSectionsHTML(job) +'</div>'+
       '</article>';
