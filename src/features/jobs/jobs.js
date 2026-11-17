@@ -2,6 +2,10 @@
   /* ---------------- jobs (full grid) ---------------- */
   var jobGrid=$("#jobGrid"), resultCount=$("#resultCount");
   var showAllJobs=false;
+  /* the role whose full JD is rendered INLINE in the right pane (#selected-detail). Holds a
+     JOBS object reference so it survives re-filtering AND language toggles (renderJobs
+     re-renders the pane from it, so EN⇄JA switches headings and body together). */
+  var selectedJob=null;
   /* progressive rendering: paint the grid in batches so a 700+ role result never stalls
      the main thread. jobShown = current filtered list; jobRendered = rows painted so far;
      a "Show more" button appends the next JOB_BATCH on demand. */
@@ -137,7 +141,11 @@
   function buildCard(job,i,animate){
     var idx=job._i;
     var applied=isApplied(job);
-    var card=el("div","job-card"+(animate?" jc-reveal":"")+(isSelected(job)?" sel":"")+(applied?" applied":""));
+    var viewing=(selectedJob===job);
+    var card=el("div","job-card"+(animate?" jc-reveal":"")+(isSelected(job)?" sel":"")+(applied?" applied":"")+(viewing?" current":""));
+    /* stable key so highlightSelectedRow() can find this row after a re-render */
+    card.setAttribute("data-rowkey", jobKey(job));
+    if(viewing){ card.setAttribute("aria-current","true"); }
     if(animate) card.style.animationDelay=(Math.min(i,12)*0.045)+"s";
     var corner=el("div","jc-corner");
     var save=el("button","jc-save"+(isSaved(job)?" is-saved":""));
@@ -167,8 +175,10 @@
       corner.appendChild(sel);
     }
     var open=el("button","jc-open",cardHTML(job));
+    open._job=job;   /* arrow-key nav reads the job straight off the focused row */
     open.setAttribute("aria-label", t("aria_open_role").replace("{role}", roleL(job)).replace("{co}", COMPANIES[job.co].name));
-    open.addEventListener("click", function(){ openJob(idx); });
+    /* NO modal on the jobs page: selecting a row renders its full JD inline in #selected-detail */
+    open.addEventListener("click", function(){ selectJob(job, {user:true}); });
     /* content first (fills the row), then the save/select cluster at the right edge — matches
        the CSS design intent and keeps the HOT badge (top-left, over the logo) clear of it */
     card.appendChild(open); card.appendChild(corner);
@@ -192,48 +202,110 @@
   }
   function renderJobs(animate){
     var f=getFilters();
-    var doAnimate=animate===true;   /* only play the card entrance on a fresh view (Show all / Saved), not on every filter keystroke */
+    var doAnimate=animate===true;   /* only play the card entrance on a fresh view (Saved / toggle), not on every filter keystroke */
     updateApplyNotice();   /* keep the "you've used all 10" banner in sync on every render */
-    /* Saved view: show only bookmarked roles (still honouring any active filters),
-       skipping the pick-a-filter gate. */
-    if(savedOnly){
-      var savedList=LW.filterJobs(JOBS.filter(isSaved), f);
-      jobGrid.innerHTML="";
-      jobShown=savedList; jobRendered=0;
-      if(savedList.length===0){
-        jobGrid.appendChild(el("div","jobs-empty",'<span class="tsd-mascot tsd-mascot--search" role="img" aria-label="Tokyo Samurai Dev"></span><p style="color:var(--slate);padding:4px 0 0;font-size:1.1rem;">'+ esc(t("sv_none")) +'</p>'));
-      } else {
-        appendJobBatch(doAnimate);
-      }
-      updateSelBar(); updateSavedToggle();
-      resultCount.textContent = t("sv_heading") + " · " + t("result").replace("{n}",savedList.length).replace("{total}",JOBS.length);
-      return;
-    }
-    /* Carsensor-style: don't dump every role. Wait until the user picks a
-       filter (or explicitly asks to browse all) before showing results. */
-    if(!LW.hasActiveFilter(f) && !showAllJobs){
-      jobGrid.innerHTML="";
-      var prompt=el("div","jobs-prompt",
-        '<div class="jp-ic">🔍</div>'+
-        '<h3>'+ esc(t("prompt_title")) +'</h3>'+
-        '<p>'+ esc(t("prompt_sub").replace("{total}",JOBS.length)) +'</p>'+
-        '<button class="btn btn--ghost" id="showAllJobs" type="button">'+ esc(t("prompt_all").replace("{total}",JOBS.length)) +'</button>');
-      jobGrid.appendChild(prompt);
-      var sa=$("#showAllJobs"); if(sa) sa.addEventListener("click", function(){ showAllJobs=true; renderJobs(true); });
-      resultCount.textContent = t("result_pick");
-      updateSavedToggle();
-      return;
-    }
-    var shown=LW.filterJobs(JOBS, f);
+    /* LinkedIn-style board: NO "pick a filter first" gate — results show immediately, dense.
+       Saved view shows only bookmarked roles (still honouring any active filters). */
+    var shown = savedOnly ? LW.filterJobs(JOBS.filter(isSaved), f) : LW.filterJobs(JOBS, f);
     jobGrid.innerHTML="";
     jobShown=shown; jobRendered=0;
     if(shown.length===0){
-      jobGrid.appendChild(el("div","jobs-empty",'<span class="tsd-mascot tsd-mascot--search" role="img" aria-label="Tokyo Samurai Dev"></span><p style="color:var(--slate);padding:4px 0 0;font-size:1.1rem;">'+ esc(t("jobs_empty")) +'</p>'));
+      jobGrid.appendChild(el("div","jobs-empty",'<span class="tsd-mascot tsd-mascot--search" role="img" aria-label="Tokyo Samurai Dev"></span><p style="color:var(--slate);padding:4px 0 0;font-size:1.1rem;">'+ esc(t(savedOnly ? "sv_none" : "jobs_empty")) +'</p>'));
     } else {
       appendJobBatch(doAnimate);
     }
     updateSelBar(); updateSavedToggle();
-    resultCount.textContent = t("result").replace("{n}",shown.length).replace("{total}",JOBS.length);
+    resultCount.textContent = savedOnly
+      ? (t("sv_heading") + " · " + t("result").replace("{n}",shown.length).replace("{total}",JOBS.length))
+      : t("result").replace("{n}",shown.length).replace("{total}",JOBS.length);
+    /* keep the inline detail pane in sync with the list + the active language */
+    syncSelection(shown);
+  }
+  /* ---------------- inline JD detail (right pane, #selected-detail) ----------------
+     The jobs page shows the selected role's full description inline (no modal). syncSelection
+     holds the current pick when it's still in the filtered set, else falls to the first row,
+     then renders its JD via the SHARED builders in modal-job.js so the modal and this pane
+     read and translate identically. */
+  function isMobileJobs(){ return window.matchMedia && window.matchMedia("(max-width:760px)").matches; }
+  function syncSelection(shown){
+    var sp=$("#splitJobs");
+    if(!shown || !shown.length){ selectedJob=null; renderDetailEmpty(); if(sp) sp.classList.remove("detail-open"); return; }
+    if(!(selectedJob && shown.indexOf(selectedJob)>-1)) selectedJob=shown[0];
+    highlightSelectedRow();
+    renderSelectedDetail(selectedJob);
+    if(typeof hydrateJob==="function") hydrateJob(selectedJob);   /* pull the prose (served mode); no-op offline */
+  }
+  /* select a role: highlight its row, render its JD inline, and (on a user tap on mobile)
+     swap the single column from the list to the detail (mockup .detail-open pattern). */
+  function selectJob(job, opts){
+    opts=opts||{};
+    selectedJob=job;
+    highlightSelectedRow();
+    renderSelectedDetail(job);
+    if(typeof hydrateJob==="function") hydrateJob(job);
+    if(opts.user && isMobileJobs()){
+      var sp=$("#splitJobs"); if(sp) sp.classList.add("detail-open");
+      var dc=document.querySelector("#page-jobs .detail-column"); if(dc) dc.scrollTop=0;
+    }
+  }
+  /* mark the viewed row (aria-current + .current) on whichever rows are currently painted */
+  function highlightSelectedRow(){
+    var key = selectedJob ? jobKey(selectedJob) : null;
+    document.querySelectorAll("#jobGrid .job-card").forEach(function(card){
+      var on = !!key && card.getAttribute("data-rowkey")===key;
+      card.classList.toggle("current", on);
+      if(on) card.setAttribute("aria-current","true"); else card.removeAttribute("aria-current");
+    });
+  }
+  /* repaint the inline pane only if THIS job is the one on screen (hydrateJob settle hook) */
+  function repaintSelectedDetailIf(job){ if(selectedJob && selectedJob===job) renderSelectedDetail(job); }
+  function renderDetailEmpty(){
+    var pane=$("#selected-detail"); if(!pane) return;
+    pane.innerHTML='<div class="jdx-empty">'+ esc(t("jd_pick")) +'</div>';
+  }
+  /* build the whole right pane: identity + salary + tags + Save/Apply + the full JD body.
+     Everything is routed through t()/jf()/the shared helpers, so a language toggle re-renders
+     it fully (headings AND body) when applyLang() calls renderJobs(). */
+  function renderSelectedDetail(job){
+    var pane=$("#selected-detail"); if(!pane) return;
+    if(!job){ renderDetailEmpty(); return; }
+    var c=COMPANIES[job.co]; if(!c){ pane.innerHTML=""; return; }
+    /* mirror the modal (modal-job.js): tell jdSec whether prose is still in flight, so the
+       always-on sections show "Loading…" during the /api/jobs/:id fetch instead of flashing "Not listed". */
+    jdPending = !!job._jdLoading;
+    var sec=(c.sector && c.sector[lang]) || "";
+    var coLine = esc(c.name)
+      + (sec ? ' <span class="jdx-dot">·</span> '+esc(sec) : "")
+      + (job.loc ? ' <span class="jdx-dot">·</span> '+esc(locL(job)) : "");
+    /* only ever link out to http(s) — never a javascript:/data: URL from admin/live data */
+    var site=(c.site && /^https?:\/\//i.test(c.site)) ? c.site : "";
+    var applied = (typeof isApplied==="function") && isApplied(job);
+    var limit   = (typeof atApplyLimit==="function") && atApplyLimit();
+    var applyLabel = applied ? t("m_applied") : (limit ? t("m_apply_limit").replace("{n}",MAX_APPLY) : t("m_apply"));
+    var saved = (typeof isSaved==="function") && isSaved(job);
+    var rd = roleDetailL(job);
+    pane.innerHTML =
+      '<article class="jdx">'+
+        '<div class="jdx-top">'+
+          '<button type="button" class="jdx-back" data-jdx="back">← '+ esc(t("jd_back")) +'</button>'+
+          '<div class="jdx-head">'+
+            '<span class="jdx-logo">'+ avatarHTML(c) +'</span>'+
+            '<div class="jdx-id">'+
+              '<h2 class="jdx-role">'+ softBreak(esc(roleL(job))) +'</h2>'+
+              (rd ? '<p class="jdx-role-detail">'+ esc(rd) +'</p>' : '')+
+              '<p class="jdx-co">'+ coLine +'</p>'+
+            '</div>'+
+          '</div>'+
+          '<div class="jdx-salary"><span>'+ esc(t("lbl_salary")) +'</span>'+ esc(salaryMax(job, t("salary_neg"), t("salary_doe"))) +'</div>'+
+          '<div class="jdx-tags tags">'+ jobHeadTagsHTML(job) +'</div>'+
+          '<div class="jdx-actions">'+
+            '<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?' disabled':'')+'>'+ esc(applyLabel) +'</button>'+
+            '<button type="button" class="btn btn--ghost jdx-save'+(saved?' is-saved':'')+'" data-jdx="save" aria-pressed="'+(saved?'true':'false')+'"><span class="jdx-save-ic" aria-hidden="true">♥</span> <span class="jdx-save-label">'+ esc(saved?t("sv_saved"):t("sv_save")) +'</span></button>'+
+            (site ? '<a class="btn btn--ghost jdx-company" href="'+ esc(site) +'" target="_blank" rel="noopener">'+ esc(t("m_company")) +'</a>' : '')+
+          '</div>'+
+        '</div>'+
+        '<div class="jdx-body">'+ jobDetailSectionsHTML(job) +'</div>'+
+      '</article>';
   }
   /* ---------------- multi-select facet widget ----------------
      Each facet is a summary button + an ARIA listbox popover (role=listbox,
@@ -365,6 +437,36 @@
     var clr=$("#selClear"); if(clr) clr.addEventListener("click", clearSelection);
     var ap=$("#selApply"); if(ap) ap.addEventListener("click", function(){ openSignup("job", selectedJobs()); });
     var st=$("#savedToggle"); if(st) st.addEventListener("click", function(){ savedOnly=!savedOnly; if(savedOnly) showAllJobs=false; renderJobs(true); });
+  })();
+
+  /* keyboard: ↑/↓ walk the role list and live-render each role inline (LinkedIn feel).
+     Enter/Space on a focused row fires its native click → selectJob, so no key handling here. */
+  if(jobGrid){
+    jobGrid.addEventListener("keydown", function(e){
+      if(e.key!=="ArrowDown" && e.key!=="ArrowUp") return;
+      var opens=[].slice.call(jobGrid.querySelectorAll(".jc-open"));
+      if(!opens.length) return;
+      var cur=(document.activeElement && document.activeElement.closest) ? document.activeElement.closest(".jc-open") : null;
+      var i=opens.indexOf(cur);
+      e.preventDefault();
+      var ni = i<0 ? 0 : (e.key==="ArrowDown" ? Math.min(opens.length-1, i+1) : Math.max(0, i-1));
+      var target=opens[ni]; if(!target) return;
+      target.focus();
+      if(target._job) selectJob(target._job, {});   /* desktop keyboard: render inline, no mobile swap */
+    });
+  }
+
+  /* inline detail actions — Save / Apply / Back — wired to the SAME store + cap logic as the
+     modal (toggleSaved, openSignup, atApplyLimit). Delegated so it survives every re-render. */
+  (function(){
+    var pane=$("#selected-detail"); if(!pane) return;
+    pane.addEventListener("click", function(e){
+      var b=e.target.closest("[data-jdx]"); if(!b) return;
+      var act=b.getAttribute("data-jdx");
+      if(act==="save"){ if(selectedJob){ var j=selectedJob; toggleSaved(j); if(!savedOnly) renderSelectedDetail(j); } }
+      else if(act==="apply"){ if(b.disabled) return; if(selectedJob) openSignup("job", [selectedJob]); }
+      else if(act==="back"){ var sp=$("#splitJobs"); if(sp) sp.classList.remove("detail-open"); }
+    });
   })();
 
 

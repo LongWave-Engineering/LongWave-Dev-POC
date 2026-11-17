@@ -89,7 +89,7 @@
       jobs_h1:"Open roles",
       jobs_sub:"Hand-picked software roles at Japan's product companies. Salary and Japanese level shown on every listing.",
       f_grp_search:"Search", f_grp_jp:"Japanese level", f_grp_rem:"Work style", f_grp_spec:"Specialty", f_grp_stack:"Tech stack", f_grp_loc:"Location",
-      filter_search_ph:"",
+      filter_search_ph:"Search roles, companies, tech…",
       filter_jp_all:"Any level", filter_jp_none:"No Japanese required", filter_jp_conv:"Conversational", filter_jp_biz:"Business",
       filter_rem_all:"Any work style", filter_rem_full:"Full remote", filter_rem_part:"Hybrid", filter_rem_no:"On-site",
       filter_spec_all:"All specialties", filter_stack_all:"Any tech", filter_loc_all:"Any location", filter_clear:"Clear filters",
@@ -144,7 +144,8 @@
       sel_pick:"Select this role", sel_selected:"{n} selected", sel_left:"{r} of {n} applications left", sel_apply:"Apply to selected", sel_clear:"Clear", apply_title:"Apply to {n} role(s)", apply_success:"Application sent for {n} role(s). We'll be in touch shortly.",
       applied_badge:"Applied", m_applied:"✓ Applied", m_apply_limit:"Application limit reached", apply_limit_hit:"You've applied to your {n} roles. That's the limit, so no more applications can be sent.",
       sv_save:"Save", sv_saved:"Saved", sv_aria:"Save this role for later", sv_view:"Saved ({n})", sv_view_all:"Show all roles",
-      sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later."
+      sv_heading:"Your saved roles", sv_none:"You haven't saved any roles yet. Tap “Save” on a role to keep it here for later.",
+      aria_results:"Matching roles", aria_detail:"Role details", jd_back:"Back to roles", jd_pick:"Select a role on the left to see the full job description."
     },
     ja:{
       /* redesign v3 (h-hero) — page eyebrows + post sample-report card */
@@ -232,7 +233,7 @@
       jobs_h1:"求人一覧",
       jobs_sub:"日本のプロダクト企業から厳選したソフトウェア求人。すべてに給与と日本語レベルを明記",
       f_grp_search:"検索", f_grp_jp:"日本語レベル", f_grp_rem:"働き方", f_grp_spec:"職種", f_grp_stack:"技術スタック", f_grp_loc:"勤務地",
-      filter_search_ph:"",
+      filter_search_ph:"職種・企業・技術で検索…",
       filter_jp_all:"すべて", filter_jp_none:"日本語不問", filter_jp_conv:"日常会話", filter_jp_biz:"ビジネス",
       filter_rem_all:"すべて", filter_rem_full:"フルリモート", filter_rem_part:"ハイブリッド", filter_rem_no:"出社",
       filter_spec_all:"すべての職種", filter_stack_all:"すべての技術", filter_loc_all:"すべての勤務地", filter_clear:"条件をクリア",
@@ -287,7 +288,8 @@
       sel_pick:"この求人を選択", sel_selected:"{n}件選択中", sel_left:"応募枠 残り{r}/{n}件", sel_apply:"選択した求人に応募", sel_clear:"クリア", apply_title:"{n}件の求人に応募", apply_success:"{n}件の求人に応募しました。すぐにご連絡します。",
       applied_badge:"応募済み", m_applied:"✓ 応募済み", m_apply_limit:"応募上限に達しました", apply_limit_hit:"応募上限の{n}件に達しました。これ以上は応募できません。",
       sv_save:"保存", sv_saved:"保存済み", sv_aria:"この求人をあとで見るために保存", sv_view:"保存した求人 ({n})", sv_view_all:"すべての求人を表示",
-      sv_heading:"保存した求人", sv_none:"まだ保存した求人はありません。求人の「保存」をタップすると、ここに表示されます。"
+      sv_heading:"保存した求人", sv_none:"まだ保存した求人はありません。求人の「保存」をタップすると、ここに表示されます。",
+      aria_results:"条件に合う求人", aria_detail:"求人の詳細", jd_back:"求人一覧に戻る", jd_pick:"左の一覧から求人を選ぶと、詳細がここに表示されます。"
     }
   };
 

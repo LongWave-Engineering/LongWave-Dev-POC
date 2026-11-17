@@ -228,7 +228,8 @@
       if(!jobs.length) return;
       JOBS=jobs;
       enrichJobs();
-      selected={};   /* selection is keyed by the old _i indices — reset it for the new dataset */
+      selected={};   /* checkbox selection is keyed by the old _i indices — reset for the new dataset */
+      selectedJob=null;   /* the inline-detail pick pointed into the old JOBS array — drop it */
       applyLang();   /* re-render everything (cards, selects, counts) from live data */
     });
     /* Partner roster hydrates INDEPENDENTLY of jobs/companies: the admin can edit the home

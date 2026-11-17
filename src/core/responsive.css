@@ -3,13 +3,7 @@
   @media (max-width:1000px){
     .boxes,.co-grid,.rev-grid,.art-grid{grid-template-columns:repeat(2,1fr);}
     .teaser-grid{grid-template-columns:repeat(2,1fr);}
-    .jobs-layout{grid-template-columns:1fr;}
-    /* Once the filters sit above the grid (no sidebar), reflow them from a tall stack
-       into a compact bar that wraps + scales: search spans the full width, the rest
-       flow into as many columns as fit and shrink down to 1 on a narrow window. */
-    .filters-side{position:static;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px 18px;align-items:end;}
-    .filters-side .fgroup{margin-bottom:0;}
-    .filters-side .fgroup:first-child{grid-column:1/-1;}
+    /* the jobs board owns its own full-height two-pane responsive rules (jobs.css). */
   }
   @media (max-width:760px){
     body{font-size:16.5px;}
