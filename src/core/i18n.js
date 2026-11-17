@@ -88,10 +88,11 @@
      avatarHTML is only ever called at render time, so the late reference is safe. */
   function bestLogo(c){
     if(!c) return null;
-    if(typeof PARTNER_LOGOS !== "undefined" && PARTNER_LOGOS){
-      var key = LOGO_ALIAS[c.name] || c.name;
-      if(key && PARTNER_LOGOS[key]) return PARTNER_LOGOS[key];
-    }
+    var key = LOGO_ALIAS[c.name] || c.name;
+    if(typeof PARTNER_LOGOS !== "undefined" && PARTNER_LOGOS && key && PARTNER_LOGOS[key]) return PARTNER_LOGOS[key];
+    /* inlined marks for the marquee NON-CLIENT companies: their real logo_urls are external
+       and the CSP (img-src 'self' data:) blocks them, so we ship data: URIs here instead. */
+    if(typeof MARQUEE_LOGOS !== "undefined" && MARQUEE_LOGOS && key && MARQUEE_LOGOS[key]) return MARQUEE_LOGOS[key];
     return c.logo || null;
   }
   /* company avatar: crisp curated mark → embedded logo → coloured monogram */

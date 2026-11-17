@@ -63,6 +63,7 @@ JS=(
   src/features/jobs/jobs.js
   src/features/home/home.js
   src/features/companies/companies.js
+  src/features/partners/marquee-logos.js
   src/features/partners/partners-logos.js
   src/features/partners/partners.js
   src/features/articles/articles.js
