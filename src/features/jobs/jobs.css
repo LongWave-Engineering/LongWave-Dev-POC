@@ -175,6 +175,13 @@
   #page-jobs .jdx-save.is-saved .jdx-save-ic{color:var(--save);}
   #page-jobs .jdx-save-ic{color:var(--line-strong);}
 
+  /* direct (non-client) roles: a distinct "Direct" marker, the apply-on-company-site link,
+     and the relationship disclaimer. Sky accent sets them apart from placeable client roles. */
+  #page-jobs .tag--direct{background:var(--sky-wash);border-color:var(--sky-deep);color:var(--sky-deep);font-weight:700;}
+  #page-jobs .jdx-direct{display:inline-block;margin-left:8px;padding:2px 9px;font-size:.64rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--sky-deep);background:var(--sky-wash);border:1px solid var(--sky-deep);vertical-align:middle;}
+  #page-jobs .jdx-direct-note{margin:12px 0 0;padding:10px 14px;font-size:.84rem;line-height:1.5;color:var(--slate);background:var(--paper);border-left:3px solid var(--sky-deep);}
+  #page-jobs .jdx-apply-site{text-decoration:none;}
+
   /* the JD body: mirror the modal's .m-body typography (those rules are .modal-scoped) */
   #page-jobs .jdx-body{padding:22px clamp(20px,2.6vw,34px) 40px;max-width:860px;}
   #page-jobs .jdx-body h4.m-sub{font-family:var(--font-display);font-size:1.1rem;font-weight:800;margin:0 0 8px;color:var(--ink);}
