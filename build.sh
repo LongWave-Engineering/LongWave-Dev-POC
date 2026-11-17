@@ -22,6 +22,7 @@ CSS=(
   src/core/buttons.css
   src/features/header/header.css
   src/core/layout.css
+  src/features/home/home-assets.css
   src/features/home/home.css
   src/features/jobs/jobs.css
   src/features/companies/companies.css

@@ -1,11 +1,29 @@
-/* features/privacy/privacy.css — long-form legal doc: a narrow, readable, CENTERED column */
-  /* Center the whole page block (title + intro + body) as one 48rem column so the heading
-     lines up with the body instead of the heading sitting flush-left over a centered doc. */
-  #page-privacy .head{max-width:48rem;margin-left:auto;margin-right:auto;}
-  .privacy-doc{max-width:48rem;margin:0 auto;}
-  .privacy-doc p{color:var(--ink-soft);font-size:1.05rem;line-height:1.7;margin:0 0 14px;}
-  .privacy-doc .pv-h{font-size:1.35rem;margin:32px 0 10px;}
-  .privacy-doc .pv-list{margin:0 0 14px;padding-left:22px;color:var(--ink-soft);font-size:1.05rem;line-height:1.7;}
-  .privacy-doc .pv-list li{margin:0 0 8px;}
-  .privacy-doc .pv-note{color:var(--slate);font-size:.92rem;margin-top:26px;}
-  .privacy-doc .pv-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;}
+/* features/privacy/privacy.css — long-form legal doc, redesign v3 "h-hero":
+   a narrow, left-aligned reading column in the flat editorial idiom — bold display
+   section heads separated by 1px hairline rules, generous measure, deep-navy ink.
+   The body is rendered into #privacyBody by privacy.js (.pv-h / .pv-list / .pv-note /
+   .pv-actions), re-rendered on the EN/JA toggle. All selectors scoped under #page-privacy. */
+
+  /* head + body share one left-aligned reading column so the title lines up with the text */
+  #page-privacy .head{max-width:46rem;}
+  #page-privacy .privacy-doc{max-width:46rem;}
+
+  /* intro paragraph (first, class-less) reads as a lede */
+  #page-privacy .privacy-doc > p:first-child{font-size:1.18rem;line-height:1.65;color:var(--ink-soft);margin:0 0 10px;}
+
+  /* body paragraphs */
+  #page-privacy .privacy-doc p{color:var(--ink-soft);font-size:1.05rem;line-height:1.75;margin:0 0 14px;}
+
+  /* section heading: a bold display head set off by a hairline rule above it */
+  #page-privacy .privacy-doc .pv-h{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.45rem;color:var(--ink);line-height:1.15;margin:44px 0 14px;padding-top:28px;border-top:1px solid var(--line);}
+
+  /* lists */
+  #page-privacy .privacy-doc .pv-list{margin:0 0 14px;padding-left:22px;color:var(--ink-soft);font-size:1.05rem;line-height:1.75;}
+  #page-privacy .privacy-doc .pv-list li{margin:0 0 9px;}
+  #page-privacy .privacy-doc .pv-list li::marker{color:var(--slate);}
+
+  /* closing precedence note: small, muted, set off with its own hairline */
+  #page-privacy .privacy-doc .pv-note{color:var(--slate);font-size:.92rem;line-height:1.6;margin-top:32px;padding-top:22px;border-top:1px solid var(--line);}
+
+  /* contact CTA row */
+  #page-privacy .privacy-doc .pv-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;}

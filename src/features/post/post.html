@@ -1,42 +1,133 @@
+<!-- features/post/post.html — "Post a job" / for-employers page (redesign v3 "h-hero").
+     Flat, editorial: deep navy + amber gold, 1px hairlines, zero radius. Mirrors the
+     for-employers mockup (employer hero + sample viewing report, partner wall, HR voices
+     + engineers quote grids). Page CSS is scoped under #page-post in the <style> below so
+     it can't collide with other pages; the .rev quote cards are styled in
+     features/testimonials/testimonials.css. Behaviour is unchanged: the CTAs still fire
+     the shared post-job / contact modals (data-postjob / data-contact), the partner wall
+     still builds from [data-partner-feature], and #hrGrid / #revGrid are still filled by
+     testimonials.js. -->
+<style id="page-post-styles">
+  /* ---------- hero ---------- */
+  #page-post .p-hero{padding-block:40px 18px;}
+  #page-post .p-hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:clamp(32px,4vw,56px);align-items:center;}
+  #page-post .p-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:16px;}
+  #page-post .p-h1{font-family:var(--font-display);font-weight:800;line-height:1.02;letter-spacing:-.045em;font-size:clamp(40px,5.4vw,74px);margin:0;color:var(--ink);}
+  #page-post .p-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:20px 0 28px;max-width:34em;}
+  #page-post .p-cta{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+
+  /* sample "viewing report" card — the mockup's signature hero art, flat */
+  #page-post .p-report{background:var(--surface);border:1px solid var(--line);padding:26px;}
+  #page-post .p-report-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;}
+  #page-post .p-report-head b{font-family:var(--font-display);font-weight:800;font-size:1.04rem;letter-spacing:-.01em;color:var(--ink);}
+  #page-post .p-tag{flex:none;font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);border:1px solid var(--line);padding:4px 8px;}
+  #page-post .p-kpis{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:22px;}
+  #page-post .p-kpi{border-top:2px solid var(--gold);padding-top:12px;}
+  #page-post .p-kpi small{display:block;font-size:.72rem;color:var(--slate);line-height:1.4;margin-bottom:10px;min-height:2.8em;}
+  #page-post .p-kpi strong{font-family:var(--font-display);font-weight:800;font-size:2rem;letter-spacing:-.03em;color:var(--ink);display:block;line-height:1;}
+  #page-post .p-kpi strong span{font-size:.7rem;font-weight:600;color:var(--slate);margin-left:7px;letter-spacing:0;}
+  #page-post .p-bars{border-top:1px solid var(--line);padding-top:16px;}
+  #page-post .p-bars-lab{font-size:.62rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0 0 12px;}
+  #page-post .p-bar{display:flex;align-items:center;gap:10px;margin-bottom:10px;font-size:.78rem;color:var(--ink);}
+  #page-post .p-bar>span:first-child{flex:none;width:78px;white-space:nowrap;}
+  #page-post .p-bar>i{flex:1;height:8px;background:var(--sky);}
+  #page-post .p-bar>i.lead{background:var(--gold);}
+  #page-post .p-bar>span:last-child{flex:none;width:32px;text-align:right;color:var(--slate);font-weight:600;font-size:.74rem;}
+  #page-post .p-note{font-size:.72rem;color:var(--slate);line-height:1.5;margin:14px 0 0;}
+
+  /* ---------- sections + heads (left-aligned, flat, hairline rhythm) ---------- */
+  #page-post .p-sec{padding-block:clamp(52px,6.5vw,88px);}
+  #page-post .p-sec--tint{background:var(--paper);}
+  #page-post .p-head{max-width:40rem;margin-bottom:34px;}
+  #page-post .p-head h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;font-size:clamp(30px,3.6vw,48px);margin:0;color:var(--ink);line-height:1.05;}
+  #page-post .p-head .p-subh{color:var(--slate);font-size:1.08rem;line-height:1.5;margin:16px 0 0;}
+
+  /* ---------- partner wall: flatten the rounded, shadowed .pf-card ---------- */
+  #page-post .pf-card{background:var(--surface);border:1px solid var(--line);border-radius:0;box-shadow:none;}
+  #page-post .pf-card:hover{transform:none;box-shadow:none;border-color:var(--line-strong);}
+  #page-post .pf-mono{border-radius:0;}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:860px){
+    #page-post .p-hero-grid{grid-template-columns:1fr;gap:34px;}
+  }
+  @media (max-width:480px){
+    #page-post .p-kpis{grid-template-columns:1fr;gap:14px;}
+    #page-post .p-report{padding:20px;}
+  }
+</style>
+
 <div class="page" id="page-post">
-  <section class="hero">
-    <div class="wrap">
-      <div class="hero-inner" style="padding-bottom:6px">
-        <h1 data-i18n="post_h1">Hire bilingual engineers in Japan</h1>
-        <p class="lede" data-i18n="post_sub">Post a role with us and a bilingual recruiter brings you matched candidates, pre-screened on stack and Japanese level. You only meet people who fit.</p>
-        <div class="hero-cta">
-          <button class="btn btn--primary btn--xl" type="button" data-postjob data-i18n="post_cta">Post a job</button>
+
+  <!-- EMPLOYER HERO: copy + sample viewing report -->
+  <section class="p-hero">
+    <div class="wrap p-hero-grid">
+      <div class="p-hero-copy">
+        <span class="p-eyebrow" data-i18n="emp_eyebrow">For employers</span>
+        <h1 class="p-h1" data-i18n="post_h1">Hire bilingual engineers in Japan</h1>
+        <p class="p-sub" data-i18n="post_sub">Post a role with us and a bilingual recruiter brings you matched candidates, pre-screened on stack and Japanese level. You only meet people who fit.</p>
+        <div class="p-cta">
+          <button class="btn btn--banana btn--xl" type="button" data-postjob data-i18n="post_cta">Post a job</button>
           <button class="btn btn--ghost btn--xl" type="button" data-contact="hire" data-i18n="post_cta2">Talk to us</button>
         </div>
+      </div>
+      <div class="p-report" aria-label="Example viewing report" data-i18n-aria="aria_post_report">
+        <div class="p-report-head">
+          <b data-i18n="post_rep_title">Your role's viewing report</b>
+          <span class="p-tag" data-i18n="post_rep_tag">Sample</span>
+        </div>
+        <div class="p-kpis">
+          <div class="p-kpi">
+            <small data-i18n="post_rep_k1">Engineers who viewed this role type</small>
+            <strong>1,240<span data-i18n="post_rep_k1u">last month</span></strong>
+          </div>
+          <div class="p-kpi">
+            <small data-i18n="post_rep_k2">Candidates who match</small>
+            <strong>38<span data-i18n="post_rep_k2u">in our pool</span></strong>
+          </div>
+        </div>
+        <div class="p-bars">
+          <p class="p-bars-lab" data-i18n="post_rep_bars">Most-viewed roles</p>
+          <div class="p-bar"><span>Backend</span><i class="lead" style="width:92%"></i><span>412</span></div>
+          <div class="p-bar"><span>QA / Test</span><i style="width:64%"></i><span>286</span></div>
+          <div class="p-bar"><span>Mobile</span><i style="width:48%"></i><span>214</span></div>
+        </div>
+        <p class="p-note" data-i18n="post_rep_note">All figures here are fictional examples. We send a real report once a role passes 50 views.</p>
       </div>
     </div>
   </section>
 
-  <section class="section">
+  <!-- PARTNER / FEATURE WALL -->
+  <section class="p-sec">
     <div class="wrap">
-      <div class="head center reveal">
+      <div class="p-head reveal">
+        <span class="p-eyebrow" data-i18n="partners_lab">Hiring with us</span>
         <h2 data-i18n="partners_post_h">Teams we're helping hire</h2>
-        <p class="sub" data-i18n="partners_post_sub">A few of the product companies building their bilingual teams with us right now.</p>
+        <p class="p-subh" data-i18n="partners_post_sub">A few of the product companies building their bilingual teams with us right now.</p>
       </div>
       <div class="partner-feature reveal" data-partner-feature="Money Forward,Luup,WeWork Japan,GO Inc.,Tier IV,M3" aria-label="Companies we're helping hire" data-i18n-aria="aria_partners_post"></div>
     </div>
   </section>
 
-  <section class="section tinted">
+  <!-- HR VOICES -->
+  <section class="p-sec p-sec--tint">
     <div class="wrap">
-      <div class="head center reveal">
+      <div class="p-head reveal">
+        <span class="p-eyebrow" data-i18n="hrv_eyebrow">From hiring teams</span>
         <h2 data-i18n="hrv_h2">HR voices</h2>
-        <p class="sub" data-i18n="hrv_sub">What hiring teams say about working with us. (Placeholder quotes to swap for your own.)</p>
+        <p class="p-subh" data-i18n="hrv_sub">What hiring teams say about working with us. (Placeholder quotes to swap for your own.)</p>
       </div>
       <div class="rev-grid reveal stagger" id="hrGrid"></div>
     </div>
   </section>
 
-  <section class="section">
+  <!-- ENGINEERS WE'VE HELPED -->
+  <section class="p-sec">
     <div class="wrap">
-      <div class="head center reveal">
+      <div class="p-head reveal">
+        <span class="p-eyebrow" data-i18n="rev_eyebrow">Success stories</span>
         <h2 data-i18n="rev_h2">Engineers we've helped</h2>
-        <p class="sub" data-i18n="rev_sub">Real people, real teams in Japan. (Photos and quotes are placeholders to swap for your own.)</p>
+        <p class="p-subh" data-i18n="rev_sub">Real people, real teams in Japan. (Photos and quotes are placeholders to swap for your own.)</p>
       </div>
       <div class="rev-grid reveal stagger" id="revGrid"></div>
     </div>

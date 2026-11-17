@@ -1,105 +1,167 @@
-/* features/cv/cv.css — CV builder UI + rirekisho/職務経歴書 document styles + shared form bits */
+/* features/cv/cv.css — 履歴書 (rirekisho) + 職務経歴書 (shokumukeirekisho) builder.
+   Redesign v3 "h-hero": flat, editorial chrome — segmented doc toggle, a --paper form
+   panel with square white fields, hairline section rules; deep navy + amber gold. The
+   PRINTED documents stay black-on-white and print-correct (cv.js generates the rk- and sk- markup).
+   All CHROME selectors are scoped under #page-cv so they can't collide with other pages.
+   The first block below is GLOBAL — those utilities are shared with the modals feature
+   (.form-note / .field / .cv-prompt are used in modals.html), so they stay unscoped. */
+
+  /* ---- global utilities (shared with modals.html — keep unscoped) ---- */
   .btn[disabled]{opacity:.45;cursor:not-allowed;transform:none;}
   .field input[type=file]{padding:11px 13px;border-style:dashed;background:#fafcfd;}
   .form-note{color:var(--slate);font-size:.95rem;margin-top:6px;}
   .form-note a{color:var(--accent-deep);font-weight:700;}
   .cv-prompt{margin-top:12px;padding-top:14px;border-top:1px solid var(--line);font-size:1rem;color:var(--ink-soft);}
   .cv-prompt a{color:var(--accent-deep);font-weight:700;}
+
+  /* ---- page head: eyebrow label above the H1 (home idiom) ---- */
+  #page-cv .cv-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:12px;}
+
   /* a wider canvas so the form's paired fields + the document both get room to breathe */
   #page-cv .wrap{max-width:1340px;}
-  .cv-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:46px;align-items:start;}
-  .cv-form{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:38px;box-shadow:var(--shadow);}
-  .cv-form h3{font-size:1.16rem;margin:34px 0 16px;padding-top:26px;border-top:1px solid var(--line);}
-  .cv-form h3:first-child{border-top:0;padding-top:0;margin-top:0;}
-  .cv-field{margin-bottom:20px;}
-  .cv-field label{display:block;font-weight:600;font-size:.97rem;margin-bottom:9px;}
-  .cv-field label .en{color:var(--slate);font-weight:500;}
-  .cv-field input,.cv-field select,.cv-field textarea{width:100%;border:2px solid var(--line-strong);border-radius:11px;padding:13px 15px;font-size:1rem;font-family:inherit;color:var(--ink);background:#fff;}
-  .cv-field textarea{min-height:92px;resize:vertical;line-height:1.5;}
-  .cv-two{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
-  .cv-row{display:grid;grid-template-columns:96px 76px 70px 1fr auto;gap:10px;align-items:center;margin-bottom:11px;}
-  .cv-row.lic{grid-template-columns:76px 70px 1fr auto;}
-  .cv-row.skill{grid-template-columns:1fr 1.6fr auto;}
-  .cv-row.lang{grid-template-columns:1.1fr 1fr 1fr auto;}
-  .cv-row input,.cv-row select{padding:11px 12px;border:2px solid var(--line-strong);border-radius:11px;font-family:inherit;font-size:.95rem;background:#fff;color:var(--ink);}
-  .cv-row .rm{border:0;background:var(--danger-bg);color:var(--danger-fg);border-radius:var(--radius-sm);width:36px;height:36px;font-size:1.1rem;cursor:pointer;}
-  .cv-add{background:var(--accent-wash);color:var(--accent-deep);border:0;border-radius:10px;padding:11px 18px;font-weight:700;font-size:.95rem;margin-top:8px;cursor:pointer;}
-  .cv-career{border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:16px;position:relative;background:#fcfdfe;}
-  .cv-career .cv-field:last-child{margin-bottom:0;}
-  .cv-career .rm{position:absolute;top:12px;right:12px;border:0;background:var(--danger-bg);color:var(--danger-fg);border-radius:var(--radius-sm);width:32px;height:32px;font-size:1rem;cursor:pointer;z-index:1;}
-  .cv-actions{display:flex;gap:14px;margin:8px 0 26px;flex-wrap:wrap;align-items:center;}
-  .cv-note{color:var(--slate);font-size:.96rem;}
-  .btn.cv-saved{background:var(--pos-bg);color:var(--pos-fg);border-color:var(--pos-fg);}
-  .cv-preview{position:sticky;top:96px;}
-  /* segmented page toggle (like the ENG/JPN switch): pick rirekisho vs shokumukeirekisho */
-  .cv-docpick{display:inline-flex;gap:5px;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:5px;margin-bottom:18px;}
-  .cv-doctab{flex:0 0 auto;display:flex;align-items:baseline;gap:7px;border:0;background:transparent;border-radius:9px;padding:11px 20px;font-family:var(--font-display);font-weight:800;font-size:1.02rem;color:var(--slate);cursor:pointer;transition:background .2s ease,color .2s ease,box-shadow .2s ease;}
-  .cv-doctab .en{font-family:var(--font-body);font-weight:600;font-size:.82rem;color:var(--slate);}
-  .cv-doctab.active{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);}
-  .cv-doctab.active .en{color:var(--accent-deep);}
-  #cvDocs{display:flex;flex-direction:column;gap:24px;}
-  #cvDocs[data-show="rk"] #shokumuOut{display:none;}
-  #cvDocs[data-show="sk"] #rirekishoOut{display:none;}
-  .doc{background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);padding:30px;color:#111;font-size:12.5px;line-height:1.55;}
-  .doc .doc-title{font-size:1.5rem;text-align:center;letter-spacing:.4em;margin-bottom:12px;font-family:var(--font-display);font-weight:800;}
-  .doc .doc-date{text-align:right;font-size:12px;color:#333;margin-bottom:10px;white-space:pre-line;}
-  .rk-table{width:100%;border-collapse:collapse;margin-bottom:10px;}
-  .rk-table td,.rk-table th{border:1px solid #444;padding:8px 10px;vertical-align:top;font-size:12px;}
-  .rk-table th{background:#f3f5f7;font-weight:700;}
-  .rk-photo{width:88px;height:114px;border:1px solid #444;display:grid;place-items:center;color:#aaa;font-size:11px;text-align:center;overflow:hidden;margin-left:auto;}
-  .rk-photo img{width:100%;height:100%;object-fit:cover;}
-  .sec-h{font-weight:700;border-left:4px solid var(--accent);padding-left:9px;margin:14px 0 7px;font-size:13px;}
+  #page-cv .cv-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start;}
+
+  /* ---- the form: a flat --paper panel with square white fields ---- */
+  #page-cv .cv-form{background:var(--paper);border:1px solid var(--line);border-radius:0;padding:34px;box-shadow:none;}
+  #page-cv .cv-form h3{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.28rem;color:var(--ink);margin:36px 0 18px;padding-top:26px;border-top:1px solid var(--line);}
+  #page-cv .cv-form h3:first-child{border-top:0;padding-top:0;margin-top:0;}
+  #page-cv .cv-form h3 .en{font-family:var(--font-body);font-weight:600;font-size:.86rem;color:var(--slate);letter-spacing:0;}
+  #page-cv .cv-field{margin-bottom:18px;}
+  #page-cv .cv-field label{display:block;font-weight:700;font-size:.82rem;letter-spacing:.01em;margin-bottom:8px;color:var(--ink);}
+  #page-cv .cv-field label .en{color:var(--slate);font-weight:500;}
+  #page-cv .cv-field input,#page-cv .cv-field select,#page-cv .cv-field textarea{width:100%;border:1px solid var(--line);border-radius:0;padding:12px 14px;font-size:1rem;font-family:inherit;color:var(--ink);background:var(--surface);transition:border-color .14s ease,box-shadow .14s ease;}
+  #page-cv .cv-field input:hover,#page-cv .cv-field select:hover,#page-cv .cv-field textarea:hover{border-color:var(--line-strong);}
+  #page-cv .cv-field input:focus,#page-cv .cv-field select:focus,#page-cv .cv-field textarea:focus{outline:none;border-color:var(--sky-deep);box-shadow:0 0 0 2px var(--sky-wash);}
+  #page-cv .cv-field textarea{min-height:92px;resize:vertical;line-height:1.5;}
+  #page-cv .cv-field input[type=file]{border-style:dashed;background:var(--paper);cursor:pointer;}
+  #page-cv .cv-two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+  /* repeatable rows: 学歴・職歴 / 免許・資格 / skills / languages */
+  #page-cv .cv-row{display:grid;grid-template-columns:96px 76px 70px 1fr auto;gap:9px;align-items:center;margin-bottom:9px;}
+  #page-cv .cv-row.lic{grid-template-columns:76px 70px 1fr auto;}
+  #page-cv .cv-row.skill{grid-template-columns:1fr 1.6fr auto;}
+  #page-cv .cv-row.lang{grid-template-columns:1.1fr 1fr 1fr auto;}
+  #page-cv .cv-row input,#page-cv .cv-row select{padding:10px 12px;border:1px solid var(--line);border-radius:0;font-family:inherit;font-size:.95rem;background:var(--surface);color:var(--ink);transition:border-color .14s ease,box-shadow .14s ease;}
+  #page-cv .cv-row input:focus,#page-cv .cv-row select:focus{outline:none;border-color:var(--sky-deep);box-shadow:0 0 0 2px var(--sky-wash);}
+
+  /* remove-row control: a small square button that turns danger on hover */
+  #page-cv .cv-row .rm,#page-cv .cv-career .rm{border:1px solid var(--line);background:var(--surface);color:var(--slate);border-radius:0;width:36px;height:36px;font-size:1.1rem;line-height:1;cursor:pointer;transition:background .14s ease,color .14s ease,border-color .14s ease;}
+  #page-cv .cv-row .rm:hover,#page-cv .cv-career .rm:hover{background:var(--danger-bg);color:var(--danger-fg);border-color:var(--danger-bg);}
+  #page-cv .cv-row .rm:focus-visible,#page-cv .cv-career .rm:focus-visible{outline:3px solid var(--sky-deep);outline-offset:2px;}
+  #page-cv .cv-career .rm{position:absolute;top:14px;right:14px;width:32px;height:32px;font-size:1rem;z-index:1;}
+
+  /* "+ add" buttons: flat, outlined */
+  #page-cv .cv-add{background:transparent;color:var(--ink);border:1px solid var(--line-strong);border-radius:0;padding:10px 18px;font-weight:700;font-size:.9rem;margin-top:10px;cursor:pointer;transition:background .14s ease,border-color .14s ease;}
+  #page-cv .cv-add:hover{background:var(--surface);border-color:var(--ink);}
+  #page-cv .cv-add:focus-visible{outline:3px solid var(--sky-deep);outline-offset:2px;}
+
+  /* experience / project / education blocks */
+  #page-cv .cv-career{border:1px solid var(--line);border-radius:0;padding:20px;margin-bottom:14px;position:relative;background:var(--surface);}
+  #page-cv .cv-career .cv-field:last-child{margin-bottom:0;}
+
+  /* action bar */
+  #page-cv .cv-actions{display:flex;gap:12px;margin:10px 0 26px;flex-wrap:wrap;align-items:center;}
+  #page-cv .cv-note{color:var(--slate);font-size:.92rem;}
+  #page-cv .btn.cv-saved{background:var(--pos-bg);color:var(--pos-fg);border-color:var(--pos-fg);}
+
+  /* ---- document-type toggle: a flat segmented control (履歴書 / 職務経歴書) ---- */
+  #page-cv .cv-docpick{display:inline-flex;border:1px solid var(--line);border-radius:0;background:var(--surface);margin-bottom:18px;overflow:hidden;}
+  #page-cv .cv-doctab{display:flex;align-items:baseline;gap:7px;border:0;background:transparent;border-radius:0;padding:12px 22px;font-family:var(--font-display);font-weight:800;font-size:1.02rem;color:var(--slate);cursor:pointer;transition:background .16s ease,color .16s ease;}
+  #page-cv .cv-doctab + .cv-doctab{border-left:1px solid var(--line);}
+  #page-cv .cv-doctab .en{font-family:var(--font-body);font-weight:600;font-size:.8rem;color:var(--slate);}
+  #page-cv .cv-doctab:hover{color:var(--ink);}
+  #page-cv .cv-doctab.active{background:var(--ink);color:#fff;}
+  #page-cv .cv-doctab.active .en{color:var(--sky);}
+  #page-cv .cv-doctab:focus-visible{outline:3px solid var(--sky-deep);outline-offset:-3px;}
+
+  /* ---- preview column ---- */
+  #page-cv .cv-preview{position:sticky;top:96px;}
+  #page-cv #cvDocs{display:flex;flex-direction:column;gap:22px;}
+  #page-cv #cvDocs[data-show="rk"] #shokumuOut{display:none;}
+  #page-cv #cvDocs[data-show="sk"] #rirekishoOut{display:none;}
+
+  /* ===================== printed documents (black-on-white, print-correct) ===================== */
+  #page-cv .doc{background:#fff;border:1px solid var(--line-strong);box-shadow:none;padding:30px;color:#111;font-size:12.5px;line-height:1.55;}
+  #page-cv .doc .doc-title{font-size:1.5rem;text-align:center;letter-spacing:.4em;margin-bottom:12px;font-family:var(--font-display);font-weight:800;}
+  #page-cv .doc .doc-date{text-align:right;font-size:12px;color:#333;margin-bottom:10px;white-space:pre-line;}
+  #page-cv .rk-table{width:100%;border-collapse:collapse;margin-bottom:10px;}
+  #page-cv .rk-table td,#page-cv .rk-table th{border:1px solid #444;padding:8px 10px;vertical-align:top;font-size:12px;}
+  #page-cv .rk-table th{background:#f3f5f7;font-weight:700;}
+  #page-cv .rk-photo{width:88px;height:114px;border:1px solid #444;display:grid;place-items:center;color:#aaa;font-size:11px;text-align:center;overflow:hidden;margin-left:auto;}
+  #page-cv .rk-photo img{width:100%;height:100%;object-fit:cover;}
+  #page-cv .sec-h{font-weight:700;border-left:4px solid var(--accent);padding-left:9px;margin:14px 0 7px;font-size:13px;}
 
   /* ---------- hover-tip ⓘ on form fields ---------- */
-  .cv-tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line-strong);color:var(--slate);font-family:var(--font-body);font-style:italic;font-weight:700;font-size:.72rem;line-height:1;margin-left:7px;cursor:help;position:relative;vertical-align:middle;user-select:none;}
-  .cv-tip:hover,.cv-tip:focus{border-color:var(--sky);color:var(--sky-deep);outline:none;}
-  .cv-tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%);width:max-content;max-width:250px;background:var(--ink);color:#fff;font-style:normal;font-weight:500;font-size:.82rem;line-height:1.45;text-align:left;padding:9px 12px;border-radius:10px;box-shadow:var(--shadow-lg);opacity:0;visibility:hidden;transition:opacity .15s ease;z-index:6;pointer-events:none;}
-  .cv-tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 3px);transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink);opacity:0;visibility:hidden;transition:opacity .15s ease;z-index:6;}
-  .cv-tip:hover::after,.cv-tip:focus::after,.cv-tip:hover::before,.cv-tip:focus::before{opacity:1;visibility:visible;}
+  #page-cv .cv-tip{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;border-radius:50%;border:1.5px solid var(--line-strong);color:var(--slate);font-family:var(--font-body);font-style:italic;font-weight:700;font-size:.72rem;line-height:1;margin-left:7px;cursor:help;position:relative;vertical-align:middle;user-select:none;}
+  #page-cv .cv-tip:hover,#page-cv .cv-tip:focus{border-color:var(--sky-deep);color:var(--sky-deep);outline:none;}
+  #page-cv .cv-tip::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 9px);transform:translateX(-50%);width:max-content;max-width:250px;background:var(--ink);color:#fff;font-style:normal;font-weight:500;font-size:.82rem;line-height:1.45;text-align:left;padding:9px 12px;border-radius:10px;box-shadow:var(--shadow-lg);opacity:0;visibility:hidden;transition:opacity .15s ease;z-index:6;pointer-events:none;}
+  #page-cv .cv-tip::before{content:"";position:absolute;left:50%;bottom:calc(100% + 3px);transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ink);opacity:0;visibility:hidden;transition:opacity .15s ease;z-index:6;}
+  #page-cv .cv-tip:hover::after,#page-cv .cv-tip:focus::after,#page-cv .cv-tip:hover::before,#page-cv .cv-tip:focus::before{opacity:1;visibility:visible;}
 
   /* ---------- rirekisho refinements ---------- */
-  .rk-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
-  .rk-top .doc-title{font-size:1.5rem;letter-spacing:.4em;margin:0;}
-  .rk-top .doc-date{font-size:12px;color:#333;margin:0;}
-  .rk-sub{font-size:10px;color:#555;}
-  .rk-id .rk-idmain{width:72%;}
-  .rk-furi{font-size:11px;}
-  .rk-namerow{margin:6px 0;}
-  .rk-name{font-size:18px;font-weight:700;margin:4px 0;}
-  .rk-dob{margin-top:8px;}
-  .rk-circ{display:inline-block;border:1px solid #111;border-radius:50%;padding:1px 6px;}
-  .rk-photocell{width:104px;}
-  .rk-addr .rk-al{width:70%;}
-  .rk-addr .rk-ar{width:30%;}
-  .rk-hint{font-size:9px;color:#888;}
+  #page-cv .rk-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
+  #page-cv .rk-top .doc-title{font-size:1.5rem;letter-spacing:.4em;margin:0;}
+  #page-cv .rk-top .doc-date{font-size:12px;color:#333;margin:0;}
+  #page-cv .rk-sub{font-size:10px;color:#555;}
+  #page-cv .rk-id .rk-idmain{width:72%;}
+  #page-cv .rk-furi{font-size:11px;}
+  #page-cv .rk-namerow{margin:6px 0;}
+  #page-cv .rk-name{font-size:18px;font-weight:700;margin:4px 0;}
+  #page-cv .rk-dob{margin-top:8px;}
+  #page-cv .rk-circ{display:inline-block;border:1px solid #111;border-radius:50%;padding:1px 6px;}
+  #page-cv .rk-photocell{width:104px;}
+  #page-cv .rk-addr .rk-al{width:70%;}
+  #page-cv .rk-addr .rk-ar{width:30%;}
+  #page-cv .rk-hint{font-size:9px;color:#888;}
 
   /* ---------- shokumukeirekisho (modern résumé) ---------- */
-  .doc.shokumu{font-size:12px;line-height:1.6;}
-  .sk-head{text-align:center;margin-bottom:14px;}
-  .sk-name{font-family:var(--font-display);font-weight:800;font-size:20px;}
-  .sk-furi{font-size:12px;font-weight:600;color:#555;margin-left:6px;}
-  .sk-title{font-weight:700;color:var(--navy);margin-top:3px;}
-  .sk-contact{font-size:10.5px;color:#444;margin-top:5px;word-break:break-word;}
-  .sk-sec{margin-top:13px;}
-  .sk-h{font-size:13px;font-weight:800;border-bottom:2px solid #222;padding-bottom:3px;margin:0 0 7px;}
-  .sk-body{font-size:11.5px;}
-  .sk-skills,.sk-langs{display:flex;flex-direction:column;gap:4px;}
-  .sk-skill,.sk-lang{display:flex;gap:10px;font-size:11.5px;}
-  .sk-skill-cat{flex:0 0 130px;font-weight:700;}
-  .sk-skill-val{flex:1;}
-  .sk-job{margin-bottom:9px;}
-  .sk-job-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
-  .sk-job-title{font-weight:700;font-size:12px;}
-  .sk-job-period{font-size:10.5px;color:#555;white-space:nowrap;}
-  .sk-job-co{font-size:11px;color:#444;margin:1px 0 3px;}
-  .sk-bullets{margin:3px 0 0;padding-left:18px;}
-  .sk-bullets li{font-size:11.5px;margin:2px 0;}
-  .sk-proj{margin-bottom:7px;}
-  .sk-proj-name{font-weight:700;font-size:11.5px;}
-  .sk-proj-desc{font-size:11.5px;color:#222;}
-  .sk-qual{font-size:11.5px;margin:2px 0;}
+  #page-cv .doc.shokumu{font-size:12px;line-height:1.6;}
+  #page-cv .sk-head{text-align:center;margin-bottom:14px;}
+  #page-cv .sk-name{font-family:var(--font-display);font-weight:800;font-size:20px;}
+  #page-cv .sk-furi{font-size:12px;font-weight:600;color:#555;margin-left:6px;}
+  #page-cv .sk-title{font-weight:700;color:var(--navy);margin-top:3px;}
+  #page-cv .sk-contact{font-size:10.5px;color:#444;margin-top:5px;word-break:break-word;}
+  #page-cv .sk-sec{margin-top:13px;}
+  #page-cv .sk-h{font-size:13px;font-weight:800;border-bottom:2px solid #222;padding-bottom:3px;margin:0 0 7px;}
+  #page-cv .sk-body{font-size:11.5px;}
+  #page-cv .sk-skills,#page-cv .sk-langs{display:flex;flex-direction:column;gap:4px;}
+  #page-cv .sk-skill,#page-cv .sk-lang{display:flex;gap:10px;font-size:11.5px;}
+  #page-cv .sk-skill-cat{flex:0 0 130px;font-weight:700;}
+  #page-cv .sk-skill-val{flex:1;}
+  #page-cv .sk-job{margin-bottom:9px;}
+  #page-cv .sk-job-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;}
+  #page-cv .sk-job-title{font-weight:700;font-size:12px;}
+  #page-cv .sk-job-period{font-size:10.5px;color:#555;white-space:nowrap;}
+  #page-cv .sk-job-co{font-size:11px;color:#444;margin:1px 0 3px;}
+  #page-cv .sk-bullets{margin:3px 0 0;padding-left:18px;}
+  #page-cv .sk-bullets li{font-size:11.5px;margin:2px 0;}
+  #page-cv .sk-proj{margin-bottom:7px;}
+  #page-cv .sk-proj-name{font-weight:700;font-size:11.5px;}
+  #page-cv .sk-proj-desc{font-size:11.5px;color:#222;}
+  #page-cv .sk-qual{font-size:11.5px;margin:2px 0;}
   /* faint placeholder shown for empty 職務経歴書 sections / header (on screen only) */
-  .sk-ph{color:#b7c0c9;font-style:italic;font-weight:500;}
+  #page-cv .sk-ph{color:#b7c0c9;font-style:italic;font-weight:500;}
 
-
-
+  /* ===================== responsive (scoped copies of the core cv overrides, so the
+     page's own flat rules don't out-specify the mobile layout) ===================== */
+  @media (max-width:1000px){
+    #page-cv .cv-layout{grid-template-columns:minmax(0,1fr);}
+    #page-cv .cv-preview{position:static;min-width:0;}
+  }
+  @media (max-width:760px){
+    #page-cv .cv-two{grid-template-columns:1fr;}
+    /* doc toggle goes full-width with equal halves on phones (drop the romaji subtitle) */
+    #page-cv .cv-docpick{display:flex;}
+    #page-cv .cv-doctab{flex:1;justify-content:center;padding:11px 8px;}
+    #page-cv .cv-doctab .en{display:none;}
+    /* form fits a phone: smaller padding; rows WRAP instead of forcing fixed pixel columns */
+    #page-cv .cv-form{padding:20px;}
+    #page-cv .cv-row,#page-cv .cv-row.lic,#page-cv .cv-row.skill,#page-cv .cv-row.lang{display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+    #page-cv .cv-row input,#page-cv .cv-row select{flex:1 1 40%;min-width:0;}
+    #page-cv .cv-row .rm{flex:0 0 auto;}
+    /* the fixed-proportion résumé preview scrolls inside its own box, not the page */
+    #page-cv .cv-preview{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    #page-cv .doc{padding:18px;font-size:11.5px;}
+    /* hover-tips don't work on touch and the tooltip would spill past a phone edge */
+    #page-cv .cv-tip{display:none;}
+  }

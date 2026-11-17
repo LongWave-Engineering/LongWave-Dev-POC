@@ -1,58 +1,67 @@
-/* features/articles/articles.css — article cards */
-  /* ---------- articles ---------- */
-  .art-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
-  .art{
-    position:relative;isolation:isolate;overflow:hidden;
-    display:flex;flex-direction:column;gap:12px;cursor:pointer;
-    padding:30px;
-    background-color:var(--surface);
-    background-image:linear-gradient(135deg,var(--art-tint,var(--sky-wash)) 0%,var(--surface) 58%);
-    border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
-    transition:transform .16s ease,box-shadow .16s ease,border-color .16s ease;
-  }
-  /* gentle per-card tint cycle (sky / cool-navy / banana), matching the companies + why-us wash */
-  .art:nth-child(3n+1){--art-tint:var(--sky-wash);}
-  .art:nth-child(3n+2){--art-tint:var(--neu-bg);}
-  .art:nth-child(3n+3){--art-tint:var(--banana-wash);}
-  .art::after{
-    content:"";position:absolute;top:-8px;right:-16px;width:150px;height:92px;z-index:-1;
-    background:var(--navy);opacity:.06;pointer-events:none;
-    -webkit-mask:var(--wave-motif) no-repeat right top / contain;
-            mask:var(--wave-motif) no-repeat right top / contain;
-    transition:opacity .2s ease;
-  }
-  .art:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--line-strong);}
-  .art:hover::after{opacity:.1;}
-  .art .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
-  .art h4{font-size:1.2rem;line-height:1.28;}
-  .art .art-dek{color:var(--slate);font-size:.98rem;line-height:1.5;}
-  .art .read{margin-top:auto;color:var(--accent-deep);font-weight:700;padding-top:8px;}
+/* features/articles/articles.css — redesign v3 "h-hero": the Field Notes page.
+   Flat + editorial, deep navy + amber gold. Card grid is scoped under
+   #page-articles; the reader modal (.art-read-*) is global chrome (its markup
+   lives in modals.html, outside the page div) so those selectors stay unscoped,
+   kept visually consistent with the page. */
 
-  /* ---------- article reading modal ---------- */
-  .art-read .cat{font-size:.9rem;font-weight:700;color:var(--accent-deep);text-transform:uppercase;letter-spacing:.04em;}
-  .art-read-title{font-size:1.7rem;line-height:1.2;margin:10px 0 0;}
+  /* ---------- page intro (eyebrow + big display heading + sub) ---------- */
+  #page-articles .art-intro{max-width:46rem;margin-bottom:38px;}
+  #page-articles .art-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
+  #page-articles .art-h1{font-family:var(--font-display);font-weight:800;line-height:1.02;letter-spacing:-.045em;font-size:clamp(40px,5.4vw,76px);margin:0;color:var(--ink);}
+  #page-articles .art-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:22px 0 0;max-width:34em;text-wrap:balance;}
+
+  /* ---------- article card grid ---------- */
+  #page-articles .art-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;}
+  #page-articles .art{
+    position:relative;display:flex;flex-direction:column;gap:12px;
+    padding:24px;cursor:pointer;color:inherit;min-width:0;
+    background:var(--surface);border:1px solid var(--line);border-radius:0;
+    transition:border-color .16s ease,box-shadow .16s ease,transform .16s ease;
+  }
+  #page-articles .art:hover{border-color:var(--line-strong);box-shadow:var(--shadow);transform:translateY(-3px);}
+
+  /* editor-chosen hero image — flat, fixed ratio so a mixed library stays even */
+  #page-articles .art .art-img{display:block;width:100%;height:172px;object-fit:cover;border:1px solid var(--line);border-radius:0;margin:0 0 4px;background:var(--paper);}
+
+  /* category eyebrow; JS may set an inline colour for a managed category, which
+     overrides the default slate — leave the cascade room for it */
+  #page-articles .art .cat{font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);}
+  #page-articles .art h4{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.3rem;line-height:1.18;color:var(--ink);margin:0;}
+  #page-articles .art .art-dek{color:var(--slate);font-size:.94rem;line-height:1.55;margin:0;}
+  #page-articles .art .art-by{display:block;color:var(--slate);font-size:.78rem;font-weight:600;}
+  #page-articles .art .art-tags{display:flex;flex-wrap:wrap;gap:6px;}
+  #page-articles .art .art-tag{font-size:.68rem;font-weight:700;color:var(--slate);background:var(--paper);border:1px solid var(--line);border-radius:0;padding:3px 9px;}
+  #page-articles .art .read{margin-top:auto;padding-top:8px;color:var(--accent-deep);font-weight:700;font-size:.82rem;}
+
+  /* ====================================================================== */
+  /* reader modal — global chrome (markup in modals.html, inside .modal.narrow).
+     Unscoped on purpose; restyled flat + editorial to match the page. */
+  /* ====================================================================== */
+  .art-read .cat{font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);}
+  .art-read-title{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;font-size:clamp(1.7rem,3.4vw,2.3rem);line-height:1.1;color:var(--ink);margin:10px 0 0;}
   .art-read-dek{color:var(--slate);font-size:1.1rem;line-height:1.5;margin:12px 0 0;}
-  /* editor-chosen hero image on the card; fixed ratio so a mixed library still
-     produces an even grid */
-  .art-img{display:block;width:100%;height:150px;object-fit:cover;border-radius:10px;margin:0 0 12px;background:var(--paper);}
-  .art-by{display:block;margin-top:10px;color:var(--slate);font-size:.86rem;font-weight:600;}
-  .art-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
-  .art-tag{font-size:.72rem;font-weight:700;color:var(--ink-soft);background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:2px 9px;}
-  .art-read-img{display:block;width:100%;max-height:300px;object-fit:cover;border-radius:12px;margin:0 0 16px;background:var(--paper);}
-  .art-read-by{margin:10px 0 0;color:var(--slate);font-size:.95rem;font-weight:600;}
+  /* flat hero image on the reader */
+  .art-read-img{display:block;width:100%;max-height:320px;object-fit:cover;border:1px solid var(--line);border-radius:0;margin:0 0 18px;background:var(--paper);}
+  .art-read-by{margin:12px 0 0;color:var(--slate);font-size:.95rem;font-weight:600;}
   /* direct-answer block: the quotable summary (admin's SEO panel scores its length) */
-  .art-read-answer{margin:16px 0 0;padding:14px 16px;border-left:3px solid var(--sky);background:var(--sky-wash);border-radius:0 10px 10px 0;color:var(--ink);font-size:1.05rem;line-height:1.6;}
+  .art-read-answer{margin:18px 0 0;padding:16px 18px;border-left:3px solid var(--sky-deep);background:var(--sky-wash);border-radius:0;color:var(--ink);font-size:1.05rem;line-height:1.6;}
   /* FAQ pairs — also emitted as FAQPage structured data */
-  .art-read-faq{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);}
-  .art-read-faq h3{margin:0 0 12px;font-size:1.1rem;}
+  .art-read-faq{margin-top:28px;padding-top:20px;border-top:1px solid var(--line);}
+  .art-read-faq h3{margin:0 0 14px;font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.2rem;color:var(--ink);}
   .art-read-faq dt{font-weight:700;color:var(--ink);margin-top:14px;}
   .art-read-faq dd{margin:5px 0 0;color:var(--ink-soft);line-height:1.65;}
   .art-read-body{margin-top:18px;}
-  .art-read-body p{color:var(--ink-soft);font-size:1.02rem;line-height:1.7;margin:0 0 14px;}
-  .art-read-cta{margin:22px 0 0;padding-top:18px;border-top:1px solid var(--line);color:var(--slate);font-size:1rem;line-height:1.5;}
+  .art-read-body p{color:var(--ink-soft);font-size:1.02rem;line-height:1.75;margin:0 0 14px;}
+  .art-read-cta{margin:24px 0 0;padding-top:18px;border-top:1px solid var(--line);color:var(--slate);font-size:1rem;line-height:1.55;}
   /* an inline text button that reads as a link (used inside sentence-flow CTAs) */
   .linklike{background:none;border:0;padding:0;font:inherit;color:var(--accent-deep);font-weight:700;cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
   .linklike:hover{color:var(--ink);}
 
-
-
+  /* ---------- responsive ---------- */
+  @media(max-width:900px){
+    #page-articles .art-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
+  }
+  @media(max-width:560px){
+    #page-articles .art-grid{grid-template-columns:1fr;}
+    #page-articles .art-intro{margin-bottom:28px;}
+  }

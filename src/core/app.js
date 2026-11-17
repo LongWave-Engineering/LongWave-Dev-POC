@@ -11,7 +11,7 @@
     document.querySelectorAll("[data-i18n-aria]").forEach(function(n){ var k=n.getAttribute("data-i18n-aria"); var v=I18N[lang][k]!=null?I18N[lang][k]:I18N.en[k]; if(v!=null) n.setAttribute("aria-label", v); });
     buildSpecSelect(); buildStackSelect(); buildJpSelect(); buildRemoteSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners(); renderPrivacy();
     var jc=$("#jobCount"); if(jc) jc.innerHTML = t("jobcount").replace("{n}","<b>"+JOBS.length+"</b>");
-    document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
+    document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-checked", on?"true":"false"); });
     /* an open JD modal's Save/Apply buttons hold runtime state the data-i18n sweep above
        just clobbered — repaint them in the new language */
     if(typeof repaintOpenModal==="function") repaintOpenModal();
@@ -32,7 +32,7 @@
   function setLang(l){
     if(l===lang) return;
     lang=l; try{ localStorage.setItem("lw_lang", l); }catch(e){}
-    document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-pressed", on?"true":"false"); });
+    document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-checked", on?"true":"false"); });
     var de=document.documentElement, main=document.getElementById("main");
     var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     cancelLangFade(main);   /* drop any fade still in flight (rapid re-toggle) */

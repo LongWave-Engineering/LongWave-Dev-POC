@@ -236,7 +236,10 @@
     resultCount.textContent = t("result").replace("{n}",shown.length).replace("{total}",JOBS.length);
   }
   /* ---------------- multi-select facet widget ----------------
-     Each facet is a summary button + a checkbox popover. Several picks in one facet
+     Each facet is a summary button + an ARIA listbox popover (role=listbox,
+     aria-multiselectable). Options are role=option with aria-selected, operated by
+     mouse OR keyboard: roving arrow-key focus inside the open list, Space/Enter to
+     toggle, Escape to close and return focus to the trigger. Several picks in one facet
      are OR'd (see LW.matchesFilter); facets AND together. State lives in MSEL[id].sel
      (an object used as a set); getFilters() reads it; it survives applyLang() rebuilds. */
   var MSEL = {};
@@ -248,30 +251,82 @@
     return ks.length===1 ? label(ks[0]) : label(ks[0])+" +"+(ks.length-1);
   }
   function mselSync(m){
-    var lbl=m.host.querySelector(".msel-label"); if(lbl) lbl.textContent=mselSummary(m);
-    var btn=m.host.querySelector(".msel-btn"); if(btn) btn.classList.toggle("has-sel", Object.keys(m.sel).length>0);
+    if(m.labelEl) m.labelEl.textContent=mselSummary(m);
+    if(m.btn) m.btn.classList.toggle("has-sel", Object.keys(m.sel).length>0);
   }
-  function closeAllMsel(){ Object.keys(MSEL).forEach(function(id){ var h=MSEL[id].host; var p=h.querySelector(".msel-pop"); if(p) p.hidden=true; var b=h.querySelector(".msel-btn"); if(b) b.setAttribute("aria-expanded","false"); }); }
-  function resetMultiSelects(){ Object.keys(MSEL).forEach(function(id){ var m=MSEL[id]; m.sel={}; m.host.querySelectorAll('input[type="checkbox"]').forEach(function(cb){ cb.checked=false; }); mselSync(m); }); }
+  function mselSetOpt(m, opt, on){
+    if(on) m.sel[opt._v]=1; else delete m.sel[opt._v];
+    opt.setAttribute("aria-selected", on?"true":"false");
+    opt.classList.toggle("is-sel", on);
+  }
+  function mselToggleOpt(m, opt){
+    mselSetOpt(m, opt, opt.getAttribute("aria-selected")!=="true");
+    mselSync(m); renderJobs();
+  }
+  /* roving focus: move DOM focus between options so a keyboard/SR user can walk the list */
+  function mselFocusOpt(m, i){
+    if(!m.opts.length) return;
+    i=Math.max(0, Math.min(m.opts.length-1, i));
+    m.active=i; m.opts[i].focus();
+  }
+  function mselOpen(m){
+    if(!m.pop.hidden) return;
+    closeAllMsel();
+    m.pop.hidden=false; m.btn.setAttribute("aria-expanded","true");
+    /* open focused on the first selected option, else the first option */
+    var start=0; for(var i=0;i<m.opts.length;i++){ if(m.opts[i].getAttribute("aria-selected")==="true"){ start=i; break; } }
+    mselFocusOpt(m, start);
+  }
+  function mselClose(m, focusBtn){
+    if(m.pop.hidden){ if(focusBtn && m.btn) m.btn.focus(); return; }
+    m.pop.hidden=true; m.btn.setAttribute("aria-expanded","false"); m.active=-1;
+    if(focusBtn && m.btn) m.btn.focus();
+  }
+  function mselKeydown(m, e){
+    switch(e.key){
+      case "Escape": e.preventDefault(); mselClose(m, true); break;
+      case "ArrowDown": e.preventDefault(); mselFocusOpt(m, (m.active<0?0:m.active+1)); break;
+      case "ArrowUp": e.preventDefault(); mselFocusOpt(m, (m.active<0?0:m.active-1)); break;
+      case "Home": e.preventDefault(); mselFocusOpt(m, 0); break;
+      case "End": e.preventDefault(); mselFocusOpt(m, m.opts.length-1); break;
+      case " ": case "Spacebar": case "Enter":
+        e.preventDefault(); if(m.active>=0) mselToggleOpt(m, m.opts[m.active]); break;
+      case "Tab": mselClose(m, false); break;  /* let Tab move on, but close the list */
+    }
+  }
+  function closeAllMsel(){ Object.keys(MSEL).forEach(function(id){ var m=MSEL[id]; if(m && m.pop && !m.pop.hidden){ m.pop.hidden=true; m.active=-1; if(m.btn) m.btn.setAttribute("aria-expanded","false"); } }); }
+  function resetMultiSelects(){ Object.keys(MSEL).forEach(function(id){ var m=MSEL[id]; m.sel={}; m.opts.forEach(function(o){ o.setAttribute("aria-selected","false"); o.classList.remove("is-sel"); }); mselSync(m); }); }
   function makeMultiSelect(id, allLabel, items){
     var host=$("#"+id); if(!host) return;
     /* preserve any still-valid selections across a rebuild (language switch / hydration) */
     var prev=MSEL[id]?MSEL[id].sel:{}, valid={}; items.forEach(function(it){ valid[it.v]=1; });
     var sel={}; Object.keys(prev).forEach(function(k){ if(valid[k]) sel[k]=1; });
-    var m={ host:host, allLabel:allLabel, items:items, sel:sel }; MSEL[id]=m;
+    var m={ host:host, allLabel:allLabel, items:items, sel:sel, opts:[], active:-1 }; MSEL[id]=m;
     host.innerHTML="";
+    var popId=id+"-pop";
     var btn=el("button","msel-btn"); btn.type="button";
-    btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false"); btn.setAttribute("aria-labelledby","lbl-"+id);
+    btn.setAttribute("aria-haspopup","listbox"); btn.setAttribute("aria-expanded","false");
+    btn.setAttribute("aria-controls",popId); btn.setAttribute("aria-labelledby","lbl-"+id);
     btn.innerHTML='<span class="msel-label"></span><svg class="msel-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
-    var pop=el("div","msel-pop"); pop.setAttribute("role","listbox"); pop.setAttribute("aria-multiselectable","true"); pop.hidden=true;
-    items.forEach(function(it){
-      var lab=el("label","msel-opt");
-      var cb=document.createElement("input"); cb.type="checkbox"; cb.value=it.v; cb.checked=!!sel[it.v];
-      cb.addEventListener("change", function(){ if(cb.checked) m.sel[it.v]=1; else delete m.sel[it.v]; mselSync(m); renderJobs(); });
-      lab.appendChild(cb); lab.appendChild(document.createTextNode(" "+it.label));
-      pop.appendChild(lab);
+    m.btn=btn; m.labelEl=btn.querySelector(".msel-label");
+    var pop=el("div","msel-pop"); pop.id=popId; pop.setAttribute("role","listbox"); pop.setAttribute("aria-multiselectable","true"); pop.setAttribute("aria-labelledby","lbl-"+id); pop.hidden=true;
+    m.pop=pop;
+    items.forEach(function(it, idx){
+      var opt=el("div","msel-opt"+(sel[it.v]?" is-sel":""));
+      opt.id=popId+"-opt-"+idx; opt.setAttribute("role","option"); opt.tabIndex=-1;
+      opt.setAttribute("aria-selected", sel[it.v]?"true":"false");
+      opt._v=it.v;
+      opt.innerHTML='<span class="msel-check" aria-hidden="true"></span><span class="msel-opt-label"></span>';
+      opt.querySelector(".msel-opt-label").textContent=it.label;
+      opt.addEventListener("click", function(e){ e.stopPropagation(); m.active=idx; mselToggleOpt(m, opt); opt.focus(); });
+      pop.appendChild(opt); m.opts.push(opt);
     });
-    btn.addEventListener("click", function(e){ e.stopPropagation(); var willOpen=pop.hidden; closeAllMsel(); pop.hidden=!willOpen; btn.setAttribute("aria-expanded", String(willOpen)); });
+    pop.addEventListener("keydown", function(e){ mselKeydown(m, e); });
+    btn.addEventListener("click", function(e){ e.stopPropagation(); if(pop.hidden) mselOpen(m); else mselClose(m, false); });
+    btn.addEventListener("keydown", function(e){
+      if(pop.hidden){ if(e.key==="ArrowDown"||e.key==="Enter"||e.key===" "||e.key==="Spacebar"){ e.preventDefault(); mselOpen(m); } }
+      else if(e.key==="Escape"){ e.preventDefault(); mselClose(m, true); }
+    });
     host.appendChild(btn); host.appendChild(pop);
     mselSync(m);
   }
