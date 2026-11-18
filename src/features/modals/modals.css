@@ -54,6 +54,11 @@
   #jobOverlay .m-body{-webkit-user-select:none;user-select:none;}
   @media print{ #jobOverlay .m-sub, #jobOverlay .m-body{display:none;} }
   .modal .m-actions{display:flex;gap:13px;margin-top:28px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap;}
+  /* .btn sets display:inline-flex, which beats the UA [hidden]{display:none}; make hidden
+     action buttons (e.g. #mApplySite on a represented role) actually disappear. */
+  .modal .m-actions [hidden]{display:none;}
+  .modal .m-direct-note{margin:12px 0 0;font-size:.86rem;line-height:1.5;color:var(--slate);}
+  .modal .m-direct-note[hidden]{display:none;}
   .modal h3.su-title{font-size:1.7rem;margin-bottom:6px;}
   .modal p.su-intro{color:var(--slate);margin-bottom:22px;font-size:1.06rem;}
   .field{margin-bottom:18px;}

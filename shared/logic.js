@@ -454,7 +454,7 @@
 
     /* Router mapping kept here (pure) so the route set lives in ONE place and the
        hash→route resolution is unit-testable without a DOM. */
-    var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", articles:"#/articles", tools:"#/tools", team:"#/team", cv:"#/cv", post:"#/post", privacy:"#/privacy" };
+    var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", company:"#/company", articles:"#/articles", tools:"#/tools", team:"#/team", join:"#/join", cv:"#/cv", post:"#/post", privacy:"#/privacy" };
     /* Resolve a hash to a page. Matching is ANCHORED on the first path segment:
        a substring scan would let an article deep link like
        #/articles/engineering-jobs-in-tokyo resolve to "jobs" (the slug is
@@ -463,7 +463,7 @@
     function routeFor(hash){
       var h = String(hash == null ? "" : hash).replace(/^#\/?/, "");
       var first = h.split(/[\/?]/)[0].toLowerCase();
-      var names = ["jobs", "companies", "articles", "tools", "team", "cv", "post", "privacy"];
+      var names = ["jobs", "companies", "company", "articles", "tools", "team", "join", "cv", "post", "privacy"];
       for(var i=0;i<names.length;i++){ if(first === names[i]) return names[i]; }
       return "home";
     }

@@ -1,0 +1,131 @@
+<!-- ====================================================== -->
+<!-- ============ PAGE: JOIN (Get matched) ============ -->
+<!-- Full standalone page ported 1:1 from the koga-san POC join.html (replaces the
+     signup modal as the primary "Get matched" destination). Left: a 3-step wizard
+     (profile -> Japanese & status -> preferences) that POSTs a lead through the shared
+     postLead/leadConfirm hook (honest offline fallback). Right: a "Meet Neo" panel and
+     a job-alerts box. Every label/legend/option routes through data-i18n (EN/JA parity);
+     the wizard + submit live in join.js. -->
+<!-- ====================================================== -->
+<div class="page" id="page-join">
+  <section class="section wrap">
+    <div class="join-intro reveal">
+      <span class="join-eyebrow" data-i18n="join_eyebrow">A human in your corner</span>
+      <h1 class="join-h1" data-i18n="join_h1">Get matched with a bilingual recruiter</h1>
+      <p class="join-sub" data-i18n="join_sub">Your skills. Your Japanese. Your next chapter. Start with a conversation.</p>
+    </div>
+
+    <div class="join-layout reveal">
+      <!-- ---- the wizard form ---- -->
+      <form id="joinForm" class="join-panel" novalidate>
+        <label class="join-field"><span data-i18n="join_email_l">Contact email</span>
+          <input type="email" id="joinEmail" name="email" required autocomplete="email" placeholder="you@example.com"></label>
+
+        <ol class="join-progress" aria-hidden="true">
+          <li class="active" data-step-label="0"><span data-i18n="join_step1">1. Your profile</span></li>
+          <li data-step-label="1"><span data-i18n="join_step2">2. Japanese &amp; status</span></li>
+          <li data-step-label="2"><span data-i18n="join_step3">3. Your next move</span></li>
+        </ol>
+
+        <fieldset class="join-step" data-step="0">
+          <legend data-i18n="join_s0_legend">Your story starts here.</legend>
+          <p class="join-step-p" data-i18n="join_s0_p">Add a LinkedIn URL or upload a résumé. One is enough.</p>
+          <label class="join-field"><span data-i18n="join_linkedin_l">LinkedIn URL</span>
+            <input type="url" id="joinLinkedin" name="linkedin" placeholder="https://www.linkedin.com/in/you"></label>
+          <label class="join-field"><span data-i18n="join_resume_l">Or upload résumé</span>
+            <input id="joinResume" name="resume" type="file" accept=".pdf,.doc,.docx"></label>
+          <small class="join-note" data-i18n="join_resume_note">PDF or Word. English is fine.</small>
+        </fieldset>
+
+        <fieldset class="join-step" data-step="1" hidden>
+          <legend data-i18n="join_s1_legend">Your Japanese, in your words.</legend>
+          <p class="join-step-p" data-i18n="join_s1_p">No JLPT certificate? Choose the description that feels closest.</p>
+          <div class="join-levels">
+            <label><input type="radio" name="japanese" value="0"><span><b data-i18n="join_jp0">No Japanese · comfortable working in English</b><small data-i18n="join_jp0_note">Recruiter introductions usually need some Japanese (around N3+). We'll send you roles you can apply to directly.</small></span></label>
+            <label><input type="radio" name="japanese" value="3"><span><b data-i18n="join_jp3">N3 · join familiar work conversations with support</b></span></label>
+            <label><input type="radio" name="japanese" value="4"><span><b data-i18n="join_jp4">N2 · discuss work topics and read routine documents</b></span></label>
+            <label><input type="radio" name="japanese" value="5"><span><b data-i18n="join_jp5">N1 · handle complex discussion and detailed writing</b></span></label>
+          </div>
+          <label class="join-field"><span data-i18n="join_live_l">Where do you live now?</span>
+            <select id="joinLive" name="live">
+              <option value="" data-i18n="join_select">Select</option>
+              <option value="japan" data-i18n="join_live_jp">In Japan</option>
+              <option value="abroad" data-i18n="join_live_ab">Outside Japan</option>
+            </select></label>
+          <small class="join-note" data-i18n="join_live_note">Company introductions are for engineers living in Japan. From abroad, we'll send you roles with visa sponsorship.</small>
+          <label class="join-field"><span data-i18n="join_res_l">Residence status</span>
+            <select id="joinResidence" name="residence">
+              <option value="" data-i18n="join_res_select">Select your status</option>
+              <option data-i18n="join_res_eng">Engineer / Specialist in Humanities</option>
+              <option data-i18n="join_res_hsp">HSP</option>
+              <option data-i18n="join_res_pr">Spouse / PR</option>
+              <option data-i18n="join_res_student">Student</option>
+              <option data-i18n="join_res_sponsor">Need sponsorship</option>
+              <option data-i18n="join_res_other">Other</option>
+            </select></label>
+        </fieldset>
+
+        <fieldset class="join-step" data-step="2" hidden>
+          <legend data-i18n="join_s2_legend">Your preferences</legend>
+          <label class="join-field"><span data-i18n="join_desired_l">Desired annual salary (¥)</span>
+            <input type="number" id="joinDesired" name="desired" min="0" step="100000" placeholder="8000000" inputmode="numeric"></label>
+          <label class="join-field"><span data-i18n="join_role_l">Desired role</span>
+            <select id="joinRole" name="desired-role">
+              <option data-i18n="join_role_qa">QA / Test</option>
+              <option data-i18n="join_role_be">Backend</option>
+              <option data-i18n="join_role_fe">Front-end</option>
+              <option data-i18n="join_role_mobile">Mobile</option>
+              <option data-i18n="join_role_sre">SRE</option>
+              <option data-i18n="join_role_em">Engineering Manager</option>
+            </select></label>
+          <label class="join-field"><span data-i18n="join_start_l">When to start</span>
+            <select id="joinStart" name="start">
+              <option data-i18n="join_start_asap">As soon as possible</option>
+              <option data-i18n="join_start_3">Within 3 months</option>
+              <option data-i18n="join_start_6">Within 6 months</option>
+              <option data-i18n="join_start_exploring">Just exploring</option>
+            </select></label>
+        </fieldset>
+
+        <p id="joinError" class="join-error" role="alert" hidden></p>
+
+        <div class="join-actions">
+          <button type="button" id="joinPrev" class="btn btn--ghost" hidden><span data-i18n="join_back">Back</span></button>
+          <button type="button" id="joinNext" class="btn btn--ink"><span data-i18n="join_continue">Continue</span> →</button>
+          <button type="submit" id="joinSubmit" class="btn btn--banana" hidden><span data-i18n="join_submit">Get matched via LongWave</span> →</button>
+        </div>
+
+        <div id="joinSuccess" class="join-success" role="status" tabindex="-1" hidden><span class="msg"></span></div>
+
+        <p class="join-legal" data-i18n="join_legal1">We use your information to introduce suitable jobs and to contact you. We share your profile with a company only after you agree.</p>
+        <p class="join-legal" data-i18n="join_legal2">LongWave Inc. · Licensed recruiting agency 13-ユ-314616</p>
+      </form>
+
+      <!-- ---- aside: Meet Neo + job alerts ---- -->
+      <aside class="join-aside">
+        <section class="join-card">
+          <h2 data-i18n="join_neo_h">Meet Neo.</h2>
+          <div class="join-recruiter"><span class="join-face" role="img" aria-label="Neo Nishino"></span>
+            <p><b>Neo Nishino（西野 稔央）</b><small data-i18n="join_neo_role">Global Talent Acquisition Lead, LongWave</small></p></div>
+          <p class="join-bio" data-i18n="join_neo_bio">Raised in Silicon Valley, bilingual in English and Japanese. Neo talks with engineers every day about building a career in Japan, in whichever language you prefer.</p>
+          <h3 data-i18n="join_next_h">What happens next</h3>
+          <ol class="join-steps">
+            <li data-i18n="join_next1">A short conversation about your plans.</li>
+            <li data-i18n="join_next2">A tailored shortlist, with context from your recruiter.</li>
+            <li data-i18n="join_next3">An introduction only when you agree.</li>
+          </ol>
+        </section>
+        <section class="join-alerts">
+          <h3 data-i18n="join_alerts_h">Just want job alerts?</h3>
+          <p data-i18n="join_alerts_p">Weekly picks, straight to your inbox.</p>
+          <form id="joinAlertsForm" class="join-alerts-form" novalidate>
+            <label class="join-field"><span data-i18n="join_alerts_email_l">Email</span>
+              <input type="email" id="joinAlertsEmail" required placeholder="you@example.com" autocomplete="email"></label>
+            <button type="submit" class="btn btn--ink"><span data-i18n="join_alerts_btn">Get job alerts</span> →</button>
+            <div id="joinAlertsStatus" class="join-success" role="status" tabindex="-1" hidden><span class="msg"></span></div>
+          </form>
+        </section>
+      </aside>
+    </div>
+  </section>
+</div>

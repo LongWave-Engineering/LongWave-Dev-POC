@@ -298,7 +298,9 @@
       actionsHTML=(applyUrl ? '<a class="btn btn--primary jdx-apply-site" href="'+ esc(applyUrl) +'" target="_blank" rel="noopener">'+ esc(t("jd_apply_site")) +' ↗</a>' : '') + saveBtn;
       noteHTML='<p class="jdx-direct-note">'+ esc(t("jd_direct_note").replace("{co}", c.name)) +'</p>';
     } else {
-      actionsHTML='<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?" disabled":"")+'>'+ esc(applyLabel) +'</button>' + saveBtn + (site ? '<a class="btn btn--ghost jdx-company" href="'+ esc(site) +'" target="_blank" rel="noopener">'+ esc(t("m_company")) +'</a>' : "");
+      /* represented role: apply THROUGH us + save. No company-website link — we keep the
+         visitor on our site (the only off-site link is a DIRECT role's own apply URL, above). */
+      actionsHTML='<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?" disabled":"")+'>'+ esc(applyLabel) +'</button>' + saveBtn;
     }
     pane.innerHTML =
       '<article class="jdx'+(job.direct?" jdx--direct":"")+'">'+
