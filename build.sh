@@ -35,6 +35,8 @@ CSS=(
   src/core/motion.css
   src/features/waves/waves.css
   src/features/cv/cv.css
+  src/features/tools/tools.css
+  src/features/team/team.css
   src/features/privacy/privacy.css
   src/core/responsive.css
 )
@@ -48,6 +50,8 @@ BODY=(
   src/features/articles/articles.html
   src/features/post/post.html
   src/features/cv/cv.html
+  src/features/tools/tools.html
+  src/features/team/team.html
   src/features/privacy/privacy.html
   src/features/footer/footer.html
   src/features/modals/modals.html
@@ -78,6 +82,7 @@ JS=(
   src/features/modals/overlay-wiring.js
   src/core/app.js
   src/features/cv/cv.js
+  src/features/tools/tools.js
   src/core/init.js
   src/core/outro.js
 )
