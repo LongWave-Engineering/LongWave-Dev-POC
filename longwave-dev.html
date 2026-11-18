@@ -1346,6 +1346,95 @@
     /* hover-tips don't work on touch and the tooltip would spill past a phone edge */
     #page-cv .cv-tip{display:none;}
   }
+/* features/tools/tools.css — the free toolkit page (v3 "h-hero" flat editorial).
+   Scoped under #page-tools: intro, a 3-card tool grid, and two inline calculator panels. */
+
+  #page-tools .section{padding-block:40px 72px;}
+  #page-tools .tools-intro{max-width:46rem;margin-bottom:40px;}
+  #page-tools .tools-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
+  #page-tools .tools-h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(34px,5vw,60px);margin:0;color:var(--ink);}
+  #page-tools .tools-intro .sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:18px 0 0;max-width:38em;text-wrap:balance;}
+
+  /* ---- tool cards ---- */
+  #page-tools .tools-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;}
+  #page-tools .tool-card{display:flex;flex-direction:column;gap:12px;padding:28px 26px;background:var(--surface);border:1px solid var(--line);border-radius:0;}
+  #page-tools .tool-ic{display:inline-grid;place-items:center;width:46px;height:46px;border:1px solid var(--line-strong);color:var(--navy);background:var(--paper);}
+  #page-tools .tool-ic svg{width:24px;height:24px;stroke-linecap:round;stroke-linejoin:round;}
+  #page-tools .tool-num{font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);}
+  #page-tools .tool-card h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.34rem;line-height:1.14;color:var(--ink);margin:0;}
+  #page-tools .tool-card p{color:var(--slate);font-size:.96rem;line-height:1.5;margin:0;}
+  #page-tools .tool-cta{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:7px;font-size:.92rem;font-weight:700;color:var(--accent-deep);background:none;border:0;padding:8px 0 0;cursor:pointer;font-family:inherit;}
+  #page-tools .tool-cta::after{content:"\2192";transition:transform .3s cubic-bezier(.16,1,.3,1);}
+  #page-tools .tool-card:hover .tool-cta::after{transform:translateX(4px);}
+
+  /* ---- calculator panels ---- */
+  #page-tools .tool-panel{margin-top:28px;background:var(--paper);border:1px solid var(--line);border-radius:0;padding:28px clamp(22px,3vw,34px);}
+  #page-tools .tool-panel[hidden]{display:none;}
+  #page-tools .tool-panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  #page-tools .tool-panel-head h3{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.5rem;color:var(--ink);margin:0;}
+  #page-tools .tool-close{flex:none;width:34px;height:34px;border:1px solid var(--line);background:var(--surface);color:var(--slate);font-size:1.2rem;line-height:1;cursor:pointer;border-radius:0;}
+  #page-tools .tool-close:hover{border-color:var(--line-strong);color:var(--ink);}
+  #page-tools .tool-note{color:var(--slate);font-size:.86rem;line-height:1.5;margin:10px 0 20px;max-width:46em;}
+
+  #page-tools .tool-form{display:flex;flex-wrap:wrap;gap:16px 20px;}
+  #page-tools .tool-form--grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+  #page-tools .tool-field{display:flex;flex-direction:column;gap:7px;font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);min-width:150px;flex:1 1 150px;}
+  #page-tools .tool-input{display:flex;align-items:center;background:var(--surface);border:1px solid var(--line);}
+  #page-tools .tool-input:focus-within{border-color:var(--sky-deep);}
+  #page-tools .tool-unit{padding:0 10px;color:var(--slate);font-weight:700;font-size:.95rem;border-right:1px solid var(--line);}
+  #page-tools .tool-field input,#page-tools .tool-field select{width:100%;border:0;background:var(--surface);padding:12px;font:inherit;font-size:1rem;color:var(--ink);text-transform:none;letter-spacing:normal;font-weight:500;}
+  #page-tools .tool-field select{border:1px solid var(--line);cursor:pointer;}
+  #page-tools .tool-field input{outline:0;}
+  #page-tools .tool-input input{border:0;}
+
+  /* ---- result ---- */
+  #page-tools .tool-result{margin-top:24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:center;}
+  #page-tools .tool-big{background:var(--navy);color:#fff;padding:24px 26px;border-radius:0;}
+  #page-tools .tool-big.ok{background:var(--pos-fg);}
+  #page-tools .tool-big-lab{display:block;font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);opacity:.95;}
+  #page-tools .tool-big.ok .tool-big-lab{color:#eafff3;}
+  #page-tools .tool-big strong{display:block;font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:clamp(30px,4.4vw,46px);line-height:1.05;margin:6px 0 4px;}
+  #page-tools .tool-big-sub{display:block;font-size:.9rem;line-height:1.4;color:#d8e6f4;}
+  #page-tools .tool-big.ok .tool-big-sub{color:#eafff3;}
+  #page-tools .tool-break{margin:0;}
+  #page-tools .tool-break>div{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);}
+  #page-tools .tool-break>div:last-child{border-bottom:0;}
+  #page-tools .tool-break dt{color:var(--slate);font-size:.92rem;margin:0;}
+  #page-tools .tool-break dd{margin:0;font-family:var(--font-display);font-weight:700;font-size:1.02rem;color:var(--ink);white-space:nowrap;}
+
+  @media (max-width:900px){ #page-tools .tools-grid{grid-template-columns:1fr;} #page-tools .tool-result{grid-template-columns:1fr;} }
+/* features/team/team.css — the "Our team" page (v3 "h-hero" flat editorial).
+   Scoped under #page-team: a page intro, a responsive member grid, and a closing CTA. */
+
+  #page-team .section{padding-block:40px 72px;}
+  #page-team .team-intro{max-width:46rem;margin-bottom:44px;}
+  #page-team .team-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
+  #page-team .team-h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(34px,5vw,60px);margin:0;color:var(--ink);}
+  #page-team .team-lead{color:var(--slate);font-size:1.12rem;line-height:1.6;margin:18px 0 0;max-width:40em;text-wrap:pretty;}
+
+  /* ---- member grid ---- */
+  #page-team .team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;}
+  #page-team .member{display:flex;gap:18px;padding:26px 24px;background:var(--surface);border:1px solid var(--line);border-radius:0;}
+  #page-team .member--lead{border-color:var(--line-strong);box-shadow:inset 3px 0 0 var(--accent);}
+  #page-team .member-face{flex:none;width:72px;height:72px;border-radius:50%;background:var(--neo-avatar) center/cover no-repeat;border:1px solid var(--line);}
+  #page-team .member-mono{flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:1.5rem;letter-spacing:.02em;}
+  #page-team .member-body{min-width:0;}
+  #page-team .member-body h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.3rem;line-height:1.14;color:var(--ink);margin:0 0 4px;}
+  #page-team .member-body h2 small{display:inline-block;font-family:var(--font-jp,inherit);font-weight:500;font-size:.86rem;color:var(--slate);letter-spacing:0;margin-left:6px;}
+  #page-team .member-role{color:var(--accent-deep);font-weight:700;font-size:.88rem;line-height:1.4;margin:0 0 10px;}
+  #page-team .member-body p{color:var(--slate);font-size:.96rem;line-height:1.55;margin:0;}
+  #page-team .member-tbd{margin-top:10px;font-size:.78rem;font-style:italic;color:var(--slate);opacity:.8;}
+
+  /* ---- closing CTA ---- */
+  #page-team .team-cta{margin-top:40px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:22px;padding:34px clamp(24px,4vw,44px);background:var(--navy);color:#fff;border-radius:0;}
+  #page-team .team-cta-copy{max-width:40em;}
+  #page-team .team-cta h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:clamp(24px,3vw,34px);margin:0 0 8px;color:#fff;}
+  #page-team .team-cta p{color:var(--sky);font-size:1rem;line-height:1.5;margin:0;}
+
+  @media (max-width:780px){
+    #page-team .team-grid{grid-template-columns:1fr;}
+    #page-team .team-cta{flex-direction:column;align-items:flex-start;}
+  }
 /* features/privacy/privacy.css — long-form legal doc, redesign v3 "h-hero":
    a narrow, left-aligned reading column in the flat editorial idiom — bold display
    section heads separated by 1px hairline rules, generous measure, deep-navy ink.
@@ -1495,6 +1584,7 @@
         <a href="#/jobs" data-go="jobs" data-i18n="nav_jobs">Find jobs</a>
         <a href="#/companies" data-go="companies" data-i18n="nav_companies">Companies</a>
         <a href="#/articles" data-go="articles" data-i18n="nav_articles">Articles</a>
+        <a href="#/tools" data-go="tools" data-i18n="nav_tools">Tools</a>
         <a href="#/post" data-go="post"><span data-i18n="nav_post">For employers</span></a>
       </div>
       <div class="nav-right">
@@ -2005,6 +2095,163 @@
 </div>
 
 <!-- ============ FOOTER ============ -->
+<div class="page" id="page-tools">
+  <section class="section">
+    <div class="wrap">
+      <div class="tools-intro reveal">
+        <span class="tools-eyebrow" data-i18n="tools_eyebrow">Your free toolkit</span>
+        <h1 class="tools-h1" data-i18n="tools_h1">A little clarity. A big next step.</h1>
+        <p class="sub" data-i18n="tools_sub">Simple tools for the practical side of moving forward in Japan.</p>
+      </div>
+
+      <div class="tools-grid reveal">
+        <article class="tool-card">
+          <span class="tool-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 16.5h6M9 9.5h2"/></svg></span>
+          <span class="tool-num" data-i18n="tools_t1_n">Tool / 01</span>
+          <h2 data-i18n="tools_t1_h">Japanese resume builder</h2>
+          <p data-i18n="tools_t1_p">Turn your experience into a clean 履歴書 and 職務経歴書, ready to print.</p>
+          <a class="tool-cta" href="#/cv" data-go="cv" data-i18n="tools_t1_cta">Open the builder</a>
+        </article>
+
+        <article class="tool-card">
+          <span class="tool-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 17h3"/><path d="M12 10.5c-1.3 0-2.2.7-2.2 1.7s.9 1.5 2.2 1.7 2.2.7 2.2 1.7-.9 1.7-2.2 1.7m0-6.8v6.8m0-6.8c1 0 1.8.4 2 1.1m-4 4.6c.2.7 1 1.1 2 1.1"/></svg></span>
+          <span class="tool-num" data-i18n="tools_t2_n">Tool / 02</span>
+          <h2 data-i18n="tools_t2_h">Take-home pay calculator</h2>
+          <p data-i18n="tools_t2_p">A rough estimate of what actually lands in your account each month.</p>
+          <button type="button" class="tool-cta" data-tool-open="takehome" aria-expanded="false" aria-controls="tool-takehome" data-i18n="tools_t2_cta">Estimate take-home</button>
+        </article>
+
+        <article class="tool-card">
+          <span class="tool-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l2.5 5 5.5.8-4 3.9 1 5.5L12 17l-4.9 2.6 1-5.5-4-3.9L9.5 8z"/></svg></span>
+          <span class="tool-num" data-i18n="tools_t3_n">Tool / 03</span>
+          <h2 data-i18n="tools_t3_h">HSP visa points calculator</h2>
+          <p data-i18n="tools_t3_p">Estimate your Highly Skilled Professional points toward the 70-point bar.</p>
+          <button type="button" class="tool-cta" data-tool-open="hsp" aria-expanded="false" aria-controls="tool-hsp" data-i18n="tools_t3_cta">Check your points</button>
+        </article>
+      </div>
+
+      <section class="tool-panel" id="tool-takehome" hidden>
+        <div class="tool-panel-head">
+          <h3 data-i18n="th_title">Take-home pay estimate</h3>
+          <button type="button" class="tool-close" data-tool-close aria-label="Close" data-i18n-aria="aria_close">×</button>
+        </div>
+        <p class="tool-note" data-i18n="th_note">A rough estimate for a single company employee in Tokyo (2024 rates). Not tax advice. Real deductions depend on dependents, city and company.</p>
+        <div class="tool-form">
+          <label class="tool-field"><span data-i18n="th_salary_l">Annual gross salary</span>
+            <div class="tool-input"><span class="tool-unit">¥</span><input type="number" id="thSalary" min="0" step="100000" value="6000000" inputmode="numeric"></div></label>
+          <label class="tool-field"><span data-i18n="th_age_l">Age</span>
+            <select id="thAge"><option value="u40" data-i18n="th_age_u40">Under 40</option><option value="o40" data-i18n="th_age_o40">40 or over</option></select></label>
+        </div>
+        <div class="tool-result" id="thResult" aria-live="polite"></div>
+      </section>
+
+      <section class="tool-panel" id="tool-hsp" hidden>
+        <div class="tool-panel-head">
+          <h3 data-i18n="hsp_title">HSP visa points estimate</h3>
+          <button type="button" class="tool-close" data-tool-close aria-label="Close" data-i18n-aria="aria_close">×</button>
+        </div>
+        <p class="tool-note" data-i18n="hsp_note">Advanced Specialized / Technical Activities (type ii). 70 points qualifies; 80 shortens the path to permanent residency. Indicative only. The Immigration Bureau makes the final call.</p>
+        <div class="tool-form tool-form--grid">
+          <label class="tool-field"><span data-i18n="hsp_edu_l">Highest degree</span>
+            <select id="hspEdu"><option value="30" data-i18n="hsp_edu_phd">Doctorate</option><option value="20" data-i18n="hsp_edu_ma">Master's / professional</option><option value="10" selected data-i18n="hsp_edu_ba">Bachelor's</option><option value="0" data-i18n="hsp_edu_none">None of these</option></select></label>
+          <label class="tool-field"><span data-i18n="hsp_career_l">Work experience</span>
+            <select id="hspCareer"><option value="20" data-i18n="hsp_career_10">10+ years</option><option value="15" data-i18n="hsp_career_7">7-9 years</option><option value="10" data-i18n="hsp_career_5">5-6 years</option><option value="5" selected data-i18n="hsp_career_3">3-4 years</option><option value="0" data-i18n="hsp_career_0">Under 3 years</option></select></label>
+          <label class="tool-field"><span data-i18n="hsp_salary_l">Annual salary</span>
+            <div class="tool-input"><span class="tool-unit">¥</span><input type="number" id="hspSalary" min="0" step="500000" value="8000000" inputmode="numeric"></div></label>
+          <label class="tool-field"><span data-i18n="hsp_age_l">Age</span>
+            <select id="hspAge"><option value="15" data-i18n="hsp_age_u30">Under 30</option><option value="10" selected data-i18n="hsp_age_30">30-34</option><option value="5" data-i18n="hsp_age_35">35-39</option><option value="0" data-i18n="hsp_age_40">40 or over</option></select></label>
+          <label class="tool-field"><span data-i18n="hsp_jp_l">Japanese level</span>
+            <select id="hspJp"><option value="15" data-i18n="hsp_jp_n1">N1 / native</option><option value="10" data-i18n="hsp_jp_n2">N2</option><option value="0" selected data-i18n="hsp_jp_none">Below N2</option></select></label>
+        </div>
+        <div class="tool-result" id="hspResult" aria-live="polite"></div>
+      </section>
+    </div>
+  </section>
+</div>
+<!-- ====================================================== -->
+<!-- ============ PAGE: TEAM (Our team) ============ -->
+<!-- Ported from the koga-san POC team.html. Names are proper nouns (same in both
+     languages, so plain text); roles + bios route through data-i18n. Neo reuses the
+     inlined --neo-avatar; the rest are coloured monograms (CSP-safe, no external imgs). -->
+<!-- ====================================================== -->
+<div class="page" id="page-team">
+  <section class="section wrap">
+    <div class="team-intro reveal">
+      <span class="team-eyebrow" data-i18n="team_eyebrow">Meet the team</span>
+      <h1 class="team-h1" data-i18n="team_h1">The people behind Tokyo Samurai Dev.</h1>
+      <p class="team-lead" data-i18n="team_intro">Tokyo Samurai Dev is built by LongWave, a licensed recruiting agency in Tokyo. We are a small bilingual team who talk to engineers every day, and we want your move to Japan to be a good one.</p>
+    </div>
+
+    <div class="team-grid reveal">
+      <article class="member member--lead">
+        <span class="member-face" role="img" aria-label="Neo Nishino"></span>
+        <div class="member-body">
+          <h2>Neo Nishino <small lang="ja">西野 稔央</small></h2>
+          <p class="member-role" data-i18n="tm_neo_role">Product owner, Tokyo Samurai Dev · Global Talent Acquisition Lead, LongWave</p>
+          <p data-i18n="tm_neo_bio">Born and raised in Silicon Valley and bilingual in English and Japanese. At LongWave, Neo specialises in QA and cybersecurity hiring in Japan, and talks with engineers every day about their careers, in both languages.</p>
+        </div>
+      </article>
+
+      <article class="member">
+        <span class="member-mono" style="background:#2f6f8f" aria-hidden="true">Y</span>
+        <div class="member-body">
+          <h2>Yusuke</h2>
+          <p class="member-role" data-i18n="tm_m2_role">Role to be confirmed</p>
+          <p data-i18n="tm_m2_bio">A short note on what Yusuke does for engineers on Tokyo Samurai Dev.</p>
+          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
+        </div>
+      </article>
+
+      <article class="member">
+        <span class="member-mono" style="background:#8a5a2b" aria-hidden="true">Y</span>
+        <div class="member-body">
+          <h2>Yocia</h2>
+          <p class="member-role" data-i18n="tm_m3_role">Role to be confirmed</p>
+          <p data-i18n="tm_m3_bio">A short note on what Yocia does for engineers on Tokyo Samurai Dev.</p>
+          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
+        </div>
+      </article>
+
+      <article class="member">
+        <span class="member-mono" style="background:#5a6b2f" aria-hidden="true">J</span>
+        <div class="member-body">
+          <h2>James</h2>
+          <p class="member-role" data-i18n="tm_m4_role">Role to be confirmed</p>
+          <p data-i18n="tm_m4_bio">A short note on what James does for engineers on Tokyo Samurai Dev.</p>
+          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
+        </div>
+      </article>
+
+      <article class="member">
+        <span class="member-mono" style="background:#6a4b8a" aria-hidden="true">L</span>
+        <div class="member-body">
+          <h2>Landon</h2>
+          <p class="member-role" data-i18n="tm_m5_role">Engineer</p>
+          <p data-i18n="tm_m5_bio">A short note on what Landon does for engineers on Tokyo Samurai Dev.</p>
+          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
+        </div>
+      </article>
+
+      <article class="member member--lead">
+        <span class="member-mono" style="background:#1f3a5f" aria-hidden="true">YK</span>
+        <div class="member-body">
+          <h2>Yuki Koga</h2>
+          <p class="member-role" data-i18n="tm_m6_role">CEO, LongWave</p>
+          <p data-i18n="tm_m6_bio">Why LongWave built Tokyo Samurai Dev, in one or two sentences.</p>
+          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
+        </div>
+      </article>
+    </div>
+
+    <section class="team-cta reveal">
+      <div class="team-cta-copy">
+        <h2 data-i18n="team_cta_h">Talk to us.</h2>
+        <p data-i18n="team_cta_p">Questions about jobs, visas or your Japanese level? Send your profile and one of us will reply by email.</p>
+      </div>
+      <button type="button" class="btn btn--banana btn--xl" data-signup><span data-i18n="team_cta_btn">Get matched</span> →</button>
+    </section>
+  </section>
+</div>
 <!-- ============ PAGE: PRIVACY POLICY ============ -->
 <div class="page" id="page-privacy">
   <section class="section">
@@ -2043,6 +2290,8 @@
         <a href="#/jobs" data-go="jobs" data-i18n="foot_jobs">Jobs</a>
         <a href="#/companies" data-go="companies" data-i18n="foot_companies">Companies</a>
         <a href="#/articles" data-go="articles" data-i18n="foot_articles">Articles</a>
+        <a href="#/tools" data-go="tools" data-i18n="nav_tools">Tools</a>
+        <a href="#/team" data-go="team" data-i18n="foot_team">Our team</a>
       </div>
       <div class="foot-col">
         <h5 data-i18n="foot_candidates">For candidates</h5>
@@ -2732,7 +2981,7 @@
 
     /* Router mapping kept here (pure) so the route set lives in ONE place and the
        hash→route resolution is unit-testable without a DOM. */
-    var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", articles:"#/articles", cv:"#/cv", post:"#/post", privacy:"#/privacy" };
+    var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", articles:"#/articles", tools:"#/tools", team:"#/team", cv:"#/cv", post:"#/post", privacy:"#/privacy" };
     /* Resolve a hash to a page. Matching is ANCHORED on the first path segment:
        a substring scan would let an article deep link like
        #/articles/engineering-jobs-in-tokyo resolve to "jobs" (the slug is
@@ -2741,7 +2990,7 @@
     function routeFor(hash){
       var h = String(hash == null ? "" : hash).replace(/^#\/?/, "");
       var first = h.split(/[\/?]/)[0].toLowerCase();
-      var names = ["jobs", "companies", "articles", "cv", "post", "privacy"];
+      var names = ["jobs", "companies", "articles", "tools", "team", "cv", "post", "privacy"];
       for(var i=0;i<names.length;i++){ if(first === names[i]) return names[i]; }
       return "home";
     }
@@ -2969,7 +3218,25 @@
       foot_alerts:"Get matching jobs by email, once a week",
       jd_direct_badge:"Direct", jd_apply_site:"Apply on company site",
       jd_direct_note:"Listed directly from {co}. Tokyo Samurai Dev doesn't represent this employer.",
-      nav_jobs:"Find jobs", nav_companies:"Companies", nav_articles:"Articles", nav_post:"For employers", nav_signup:"Get matched",
+      nav_jobs:"Find jobs", nav_companies:"Companies", nav_articles:"Articles", nav_tools:"Tools", nav_post:"For employers", nav_signup:"Get matched",
+      foot_team:"Our team",
+      /* ---- Tools page + calculators ---- */
+      tools_eyebrow:"Your free toolkit", tools_h1:"A little clarity. A big next step.", tools_sub:"Simple tools for the practical side of moving forward in Japan.",
+      tools_t1_n:"Tool / 01", tools_t1_h:"Japanese resume builder", tools_t1_p:"Turn your experience into a clean 履歴書 and 職務経歴書, ready to print.", tools_t1_cta:"Open the builder",
+      tools_t2_n:"Tool / 02", tools_t2_h:"Take-home pay calculator", tools_t2_p:"A rough estimate of what actually lands in your account each month.", tools_t2_cta:"Estimate take-home",
+      tools_t3_n:"Tool / 03", tools_t3_h:"HSP visa points calculator", tools_t3_p:"Estimate your Highly Skilled Professional points toward the 70-point bar.", tools_t3_cta:"Check your points",
+      th_title:"Take-home pay estimate", th_note:"A rough estimate for a single company employee in Tokyo (2024 rates). Not tax advice. Real deductions depend on dependents, city and company.", th_salary_l:"Annual gross salary", th_age_l:"Age", th_age_u40:"Under 40", th_age_o40:"40 or over", th_monthly:"Est. monthly take-home", th_annual:"About {n} a year, after tax and insurance.", th_gross:"Gross salary", th_social:"Social insurance", th_itax:"Income tax", th_resident:"Resident tax",
+      hsp_title:"HSP visa points estimate", hsp_note:"Advanced Specialized / Technical Activities (type ii). 70 points qualifies; 80 shortens the path to permanent residency. Indicative only. The Immigration Bureau makes the final call.", hsp_edu_l:"Highest degree", hsp_edu_phd:"Doctorate", hsp_edu_ma:"Master's / professional", hsp_edu_ba:"Bachelor's", hsp_edu_none:"None of these", hsp_career_l:"Work experience", hsp_career_10:"10+ years", hsp_career_7:"7 to 9 years", hsp_career_5:"5 to 6 years", hsp_career_3:"3 to 4 years", hsp_career_0:"Under 3 years", hsp_salary_l:"Annual salary", hsp_age_l:"Age", hsp_age_u30:"Under 30", hsp_age_30:"30 to 34", hsp_age_35:"35 to 39", hsp_age_40:"40 or over", hsp_jp_l:"Japanese level", hsp_jp_n1:"N1 / native", hsp_jp_n2:"N2", hsp_jp_none:"Below N2", hsp_total:"Your points", hsp_pts:"pts", hsp_fast:"80+. You may qualify for the fast track to permanent residency.", hsp_pass:"70+. You likely meet the Highly Skilled Professional bar.", hsp_short:"About {n} points short of the 70-point bar.",
+      /* ---- Team page ---- */
+      team_eyebrow:"Meet the team", team_h1:"The people behind Tokyo Samurai Dev.", team_intro:"Tokyo Samurai Dev is built by LongWave, a licensed recruiting agency in Tokyo. We are a small bilingual team who talk to engineers every day, and we want your move to Japan to be a good one.",
+      tm_neo_role:"Product owner, Tokyo Samurai Dev · Global Talent Acquisition Lead, LongWave", tm_neo_bio:"Born and raised in Silicon Valley and bilingual in English and Japanese. At LongWave, Neo specialises in QA and cybersecurity hiring in Japan, and talks with engineers every day about their careers, in both languages.",
+      tm_m2_role:"Role to be confirmed", tm_m2_bio:"A short note on what Yusuke does for engineers on Tokyo Samurai Dev.",
+      tm_m3_role:"Role to be confirmed", tm_m3_bio:"A short note on what Yocia does for engineers on Tokyo Samurai Dev.",
+      tm_m4_role:"Role to be confirmed", tm_m4_bio:"A short note on what James does for engineers on Tokyo Samurai Dev.",
+      tm_m5_role:"Engineer", tm_m5_bio:"A short note on what Landon does for engineers on Tokyo Samurai Dev.",
+      tm_m6_role:"CEO, LongWave", tm_m6_bio:"Why LongWave built Tokyo Samurai Dev, in one or two sentences.",
+      tm_tbd:"Profile, title and photo to be confirmed.",
+      team_cta_h:"Talk to us.", team_cta_p:"Questions about jobs, visas or your Japanese level? Send your profile and one of us will reply by email.", team_cta_btn:"Get matched",
       partners_lab:"Hiring with us",
       partners_post_h:"Teams we're helping hire",
       partners_post_sub:"A few of the product companies building their bilingual teams with us right now.",
@@ -3123,7 +3390,25 @@
       foot_alerts:"毎週1回、条件に合う求人をメールで",
       jd_direct_badge:"直接応募", jd_apply_site:"企業サイトで応募",
       jd_direct_note:"{co}の採用ページから直接掲載しています。Tokyo Samurai Devはこの企業を代理していません。",
-      nav_jobs:"求人を探す", nav_companies:"企業", nav_articles:"記事", nav_post:"採用担当の方へ", nav_signup:"マッチング",
+      nav_jobs:"求人を探す", nav_companies:"企業", nav_articles:"記事", nav_tools:"ツール", nav_post:"採用担当の方へ", nav_signup:"マッチング",
+      foot_team:"チーム紹介",
+      /* ---- Tools page + calculators ---- */
+      tools_eyebrow:"無料ツール", tools_h1:"小さな明確さが、大きな一歩に。", tools_sub:"日本でのキャリアを前に進めるための、実用的なツールをそろえました。",
+      tools_t1_n:"ツール / 01", tools_t1_h:"日本語履歴書ビルダー", tools_t1_p:"あなたの経歴を、印刷してそのまま使える履歴書・職務経歴書に整えます。", tools_t1_cta:"ビルダーを開く",
+      tools_t2_n:"ツール / 02", tools_t2_h:"手取り計算ツール", tools_t2_p:"毎月、実際に口座に入るおおよその金額の目安です。", tools_t2_cta:"手取りを計算する",
+      tools_t3_n:"ツール / 03", tools_t3_h:"高度人材ポイント計算ツール", tools_t3_p:"高度専門職（高度人材）の70点ラインに対するポイントを試算します。", tools_t3_cta:"ポイントを確認する",
+      th_title:"手取り額の目安", th_note:"東京で働く会社員（単身）の概算です（2024年の料率）。税務上の助言ではありません。実際の控除は扶養家族・自治体・会社により異なります。", th_salary_l:"年収（額面）", th_age_l:"年齢", th_age_u40:"40歳未満", th_age_o40:"40歳以上", th_monthly:"月の手取り（概算）", th_annual:"税・社会保険の後で、年間およそ{n}。", th_gross:"額面年収", th_social:"社会保険", th_itax:"所得税", th_resident:"住民税",
+      hsp_title:"高度人材ポイントの目安", hsp_note:"高度専門職（2号：技術・人文知識・国際業務）。70点で該当し、80点で永住までの期間が短縮されます。あくまで目安であり、最終的な判断は入国在留管理局が行います。", hsp_edu_l:"最終学歴", hsp_edu_phd:"博士", hsp_edu_ma:"修士・専門職学位", hsp_edu_ba:"学士", hsp_edu_none:"いずれでもない", hsp_career_l:"実務経験", hsp_career_10:"10年以上", hsp_career_7:"7〜9年", hsp_career_5:"5〜6年", hsp_career_3:"3〜4年", hsp_career_0:"3年未満", hsp_salary_l:"年収", hsp_age_l:"年齢", hsp_age_u30:"30歳未満", hsp_age_30:"30〜34歳", hsp_age_35:"35〜39歳", hsp_age_40:"40歳以上", hsp_jp_l:"日本語レベル", hsp_jp_n1:"N1・ネイティブ", hsp_jp_n2:"N2", hsp_jp_none:"N2未満", hsp_total:"合計ポイント", hsp_pts:"点", hsp_fast:"80点以上。永住への優遇（ファストトラック）の対象になる可能性があります。", hsp_pass:"70点以上。高度専門職の基準を満たす可能性が高いです。", hsp_short:"70点ラインまで、あと約{n}点です。",
+      /* ---- Team page ---- */
+      team_eyebrow:"チーム紹介", team_h1:"Tokyo Samurai Dev を支える人たち。", team_intro:"Tokyo Samurai Dev は、東京の有料職業紹介事業者である LongWave が運営しています。私たちは毎日エンジニアと話している少人数のバイリンガルチームで、あなたの日本での一歩が良いものになるよう願っています。",
+      tm_neo_role:"Tokyo Samurai Dev プロダクトオーナー／LongWave グローバル採用リード", tm_neo_bio:"シリコンバレーで生まれ育ち、英語と日本語のバイリンガル。LongWave では日本における QA・サイバーセキュリティ採用を専門とし、両言語で毎日エンジニアのキャリアについて話しています。",
+      tm_m2_role:"役割は調整中", tm_m2_bio:"Yusuke が Tokyo Samurai Dev でエンジニアのために担う役割の短い紹介文。",
+      tm_m3_role:"役割は調整中", tm_m3_bio:"Yocia が Tokyo Samurai Dev でエンジニアのために担う役割の短い紹介文。",
+      tm_m4_role:"役割は調整中", tm_m4_bio:"James が Tokyo Samurai Dev でエンジニアのために担う役割の短い紹介文。",
+      tm_m5_role:"エンジニア", tm_m5_bio:"Landon が Tokyo Samurai Dev でエンジニアのために担う役割の短い紹介文。",
+      tm_m6_role:"LongWave CEO", tm_m6_bio:"LongWave が Tokyo Samurai Dev を立ち上げた理由を、1〜2文で。",
+      tm_tbd:"プロフィール・役職・写真は調整中です。",
+      team_cta_h:"お気軽にご連絡ください。", team_cta_p:"仕事・ビザ・日本語レベルについてのご質問はありますか？プロフィールをお送りいただければ、担当者がメールでお返事します。", team_cta_btn:"マッチングを受ける",
       partners_lab:"採用パートナー",
       partners_post_h:"ともに採用を進めるチーム",
       partners_post_sub:"いま私たちとバイリンガルチームを築いている、プロダクト企業の一部をご紹介します",
@@ -6470,7 +6755,7 @@
     /* aria-labels must switch language with the page too — a JA screen-reader user was
        hearing "Close", "Menu", "Filters" in English while html lang said ja */
     document.querySelectorAll("[data-i18n-aria]").forEach(function(n){ var k=n.getAttribute("data-i18n-aria"); var v=I18N[lang][k]!=null?I18N[lang][k]:I18N.en[k]; if(v!=null) n.setAttribute("aria-label", v); });
-    buildSpecSelect(); buildStackSelect(); buildJpSelect(); buildRemoteSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners(); renderPrivacy();
+    buildSpecSelect(); buildStackSelect(); buildJpSelect(); buildRemoteSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners(); renderPrivacy(); renderTools();
     var jc=$("#jobCount"); if(jc) jc.innerHTML = t("jobcount").replace("{n}","<b>"+JOBS.length+"</b>");
     document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-checked", on?"true":"false"); });
     /* an open JD modal's Save/Apply buttons hold runtime state the data-i18n sweep above
@@ -6545,7 +6830,7 @@
     var de=document.documentElement, body=document.body;
     var prevHtml=de.style.scrollBehavior, prevBody=body.style.scrollBehavior;
     de.style.scrollBehavior="auto"; body.style.scrollBehavior="auto";   // force instant, beat html{scroll-behavior:smooth}
-    ["home","jobs","companies","articles","cv","post","privacy"].forEach(function(r){ var p=$("#page-"+r); if(p) p.classList.remove("active"); });
+    ["home","jobs","companies","articles","tools","team","cv","post","privacy"].forEach(function(r){ var p=$("#page-"+r); if(p) p.classList.remove("active"); });
     window.scrollTo(0,0);
     de.style.scrollBehavior=prevHtml; body.style.scrollBehavior=prevBody;
     next.classList.add("active");                       // fades in at the top via pageFade
@@ -7125,6 +7410,98 @@
       });
     });
     renderCV();
+  })();
+/* features/tools/tools.js — the free toolkit. The resume card links to the CV builder
+   (#/cv); the take-home and HSP tools are inline calculators. All labels route through
+   t()/data-i18n so a language toggle re-localizes everything (renderTools in applyLang). */
+
+  function toolYen(n){ return "¥" + Math.round(n||0).toLocaleString("en-US"); }
+  function toolRow(k,v){ return '<div><dt>'+ esc(k) +'</dt><dd>'+ esc(v) +'</dd></div>'; }
+
+  /* ---- take-home pay: single company employee in Tokyo, 2024 employee-share rates ---- */
+  function takeHomeCalc(gross, over40){
+    gross = Math.max(0, gross||0);
+    var health  = gross * (over40 ? 0.05985 : 0.04985);   /* 健康保険 (+介護 if 40+), employee share */
+    var pension = Math.min(gross, 7980000) * 0.0915;      /* 厚生年金, capped ~月65万 */
+    var employ  = gross * 0.006;                           /* 雇用保険 */
+    var social  = health + pension + employ;
+    var ded;                                               /* 給与所得控除 (2020+) */
+    if      (gross <= 1625000) ded = 550000;
+    else if (gross <= 1800000) ded = gross*0.4 - 100000;
+    else if (gross <= 3600000) ded = gross*0.3 + 80000;
+    else if (gross <= 6600000) ded = gross*0.2 + 440000;
+    else if (gross <= 8500000) ded = gross*0.1 + 1100000;
+    else                        ded = 1950000;
+    var taxable = Math.max(0, gross - social - ded - 480000);  /* basic deduction */
+    var br = [[0,0.05,0],[1950000,0.10,97500],[3300000,0.20,427500],[6950000,0.23,636000],[9000000,0.33,1536000],[18000000,0.40,2796000],[40000000,0.45,4796000]];
+    var row = br[0]; for (var i=0;i<br.length;i++) if (taxable >= br[i][0]) row = br[i];
+    var itax = Math.max(0, taxable*row[1] - row[2]) * 1.021;    /* + 復興特別所得税 */
+    var resident = Math.max(0, gross - social - ded - 430000) * 0.10 + 5000;  /* 住民税 approx */
+    var net = gross - social - itax - resident;
+    return { gross:gross, social:social, itax:itax, resident:resident, net:net, monthly:net/12 };
+  }
+  function renderTakeHome(){
+    var out = $("#thResult"); if (!out) return;
+    var r = takeHomeCalc(parseFloat(($("#thSalary")||{}).value), (($("#thAge")||{}).value)==="o40");
+    out.innerHTML =
+      '<div class="tool-big"><span class="tool-big-lab">'+ esc(t("th_monthly")) +'</span><strong>'+ esc(toolYen(r.monthly)) +'</strong>'+
+        '<span class="tool-big-sub">'+ esc(t("th_annual").replace("{n}", toolYen(r.net))) +'</span></div>'+
+      '<dl class="tool-break">'+
+        toolRow(t("th_gross"), toolYen(r.gross)) + toolRow(t("th_social"), "-"+toolYen(r.social)) +
+        toolRow(t("th_itax"), "-"+toolYen(r.itax)) + toolRow(t("th_resident"), "-"+toolYen(r.resident)) +
+      '</dl>';
+  }
+
+  /* ---- HSP points (Advanced Specialized / Technical, type ii) ---- */
+  function hspSalaryPoints(sal){
+    if (sal >= 10000000) return 40;
+    if (sal >=  9000000) return 35;
+    if (sal >=  8000000) return 30;
+    if (sal >=  7000000) return 25;
+    if (sal >=  6000000) return 20;
+    if (sal >=  5000000) return 15;
+    if (sal >=  4000000) return 10;
+    return 0;
+  }
+  function renderHsp(){
+    var out = $("#hspResult"); if (!out) return;
+    function pts(id){ return parseInt((($("#"+id))||{}).value, 10) || 0; }
+    var edu=pts("hspEdu"), career=pts("hspCareer"), age=pts("hspAge"), jp=pts("hspJp");
+    var sal = hspSalaryPoints(parseFloat(($("#hspSalary")||{}).value) || 0);
+    var total = edu + career + sal + age + jp;
+    var pass = total >= 70, fast = total >= 80;
+    out.innerHTML =
+      '<div class="tool-big'+(pass?" ok":"")+'"><span class="tool-big-lab">'+ esc(t("hsp_total")) +'</span><strong>'+ total +' '+ esc(t("hsp_pts")) +'</strong>'+
+        '<span class="tool-big-sub">'+ esc(fast ? t("hsp_fast") : (pass ? t("hsp_pass") : t("hsp_short").replace("{n}", (70-total)))) +'</span></div>'+
+      '<dl class="tool-break">'+
+        toolRow(t("hsp_edu_l"), "+"+edu) + toolRow(t("hsp_career_l"), "+"+career) + toolRow(t("hsp_salary_l"), "+"+sal) +
+        toolRow(t("hsp_age_l"), "+"+age) + toolRow(t("hsp_jp_l"), "+"+jp) +
+      '</dl>';
+  }
+
+  /* re-render results on language toggle (applyLang calls this) */
+  function renderTools(){ if ($("#page-tools")) { renderTakeHome(); renderHsp(); } }
+
+  (function(){
+    var page = $("#page-tools"); if (!page) return;
+    page.addEventListener("click", function(e){
+      var open = e.target.closest("[data-tool-open]");
+      if (open){
+        var id = "tool-" + open.getAttribute("data-tool-open"), p = document.getElementById(id), show = p && p.hidden;
+        document.querySelectorAll("#page-tools .tool-panel").forEach(function(x){ x.hidden = true; });
+        document.querySelectorAll("#page-tools [data-tool-open]").forEach(function(b){ b.setAttribute("aria-expanded","false"); });
+        if (p){ p.hidden = !show; open.setAttribute("aria-expanded", show?"true":"false");
+          if (show){ (id==="tool-takehome" ? renderTakeHome : renderHsp)(); p.scrollIntoView({behavior:"smooth", block:"start"}); } }
+        return;
+      }
+      var close = e.target.closest("[data-tool-close]");
+      if (close){ var panel = close.closest(".tool-panel"); if (panel){ panel.hidden = true;
+        var opener = document.querySelector('[data-tool-open="'+ panel.id.replace("tool-","") +'"]');
+        if (opener){ opener.setAttribute("aria-expanded","false"); opener.focus(); } } }
+    });
+    var recompute = function(e){ if (e.target.closest("#tool-takehome")) renderTakeHome(); else if (e.target.closest("#tool-hsp")) renderHsp(); };
+    page.addEventListener("input", recompute);
+    page.addEventListener("change", recompute);
   })();
 /* core/init.js — bootstrap: applyLang / router / initReveal */
   /* ---------------- init ---------------- */

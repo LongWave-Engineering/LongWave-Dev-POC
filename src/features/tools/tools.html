@@ -1,0 +1,73 @@
+<div class="page" id="page-tools">
+  <section class="section">
+    <div class="wrap">
+      <div class="tools-intro reveal">
+        <span class="tools-eyebrow" data-i18n="tools_eyebrow">Your free toolkit</span>
+        <h1 class="tools-h1" data-i18n="tools_h1">A little clarity. A big next step.</h1>
+        <p class="sub" data-i18n="tools_sub">Simple tools for the practical side of moving forward in Japan.</p>
+      </div>
+
+      <div class="tools-grid reveal">
+        <article class="tool-card">
+          <span class="tool-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 16.5h6M9 9.5h2"/></svg></span>
+          <span class="tool-num" data-i18n="tools_t1_n">Tool / 01</span>
+          <h2 data-i18n="tools_t1_h">Japanese resume builder</h2>
+          <p data-i18n="tools_t1_p">Turn your experience into a clean 履歴書 and 職務経歴書, ready to print.</p>
+          <a class="tool-cta" href="#/cv" data-go="cv" data-i18n="tools_t1_cta">Open the builder</a>
+        </article>
+
+        <article class="tool-card">
+          <span class="tool-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 17h3"/><path d="M12 10.5c-1.3 0-2.2.7-2.2 1.7s.9 1.5 2.2 1.7 2.2.7 2.2 1.7-.9 1.7-2.2 1.7m0-6.8v6.8m0-6.8c1 0 1.8.4 2 1.1m-4 4.6c.2.7 1 1.1 2 1.1"/></svg></span>
+          <span class="tool-num" data-i18n="tools_t2_n">Tool / 02</span>
+          <h2 data-i18n="tools_t2_h">Take-home pay calculator</h2>
+          <p data-i18n="tools_t2_p">A rough estimate of what actually lands in your account each month.</p>
+          <button type="button" class="tool-cta" data-tool-open="takehome" aria-expanded="false" aria-controls="tool-takehome" data-i18n="tools_t2_cta">Estimate take-home</button>
+        </article>
+
+        <article class="tool-card">
+          <span class="tool-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l2.5 5 5.5.8-4 3.9 1 5.5L12 17l-4.9 2.6 1-5.5-4-3.9L9.5 8z"/></svg></span>
+          <span class="tool-num" data-i18n="tools_t3_n">Tool / 03</span>
+          <h2 data-i18n="tools_t3_h">HSP visa points calculator</h2>
+          <p data-i18n="tools_t3_p">Estimate your Highly Skilled Professional points toward the 70-point bar.</p>
+          <button type="button" class="tool-cta" data-tool-open="hsp" aria-expanded="false" aria-controls="tool-hsp" data-i18n="tools_t3_cta">Check your points</button>
+        </article>
+      </div>
+
+      <section class="tool-panel" id="tool-takehome" hidden>
+        <div class="tool-panel-head">
+          <h3 data-i18n="th_title">Take-home pay estimate</h3>
+          <button type="button" class="tool-close" data-tool-close aria-label="Close" data-i18n-aria="aria_close">×</button>
+        </div>
+        <p class="tool-note" data-i18n="th_note">A rough estimate for a single company employee in Tokyo (2024 rates). Not tax advice. Real deductions depend on dependents, city and company.</p>
+        <div class="tool-form">
+          <label class="tool-field"><span data-i18n="th_salary_l">Annual gross salary</span>
+            <div class="tool-input"><span class="tool-unit">¥</span><input type="number" id="thSalary" min="0" step="100000" value="6000000" inputmode="numeric"></div></label>
+          <label class="tool-field"><span data-i18n="th_age_l">Age</span>
+            <select id="thAge"><option value="u40" data-i18n="th_age_u40">Under 40</option><option value="o40" data-i18n="th_age_o40">40 or over</option></select></label>
+        </div>
+        <div class="tool-result" id="thResult" aria-live="polite"></div>
+      </section>
+
+      <section class="tool-panel" id="tool-hsp" hidden>
+        <div class="tool-panel-head">
+          <h3 data-i18n="hsp_title">HSP visa points estimate</h3>
+          <button type="button" class="tool-close" data-tool-close aria-label="Close" data-i18n-aria="aria_close">×</button>
+        </div>
+        <p class="tool-note" data-i18n="hsp_note">Advanced Specialized / Technical Activities (type ii). 70 points qualifies; 80 shortens the path to permanent residency. Indicative only. The Immigration Bureau makes the final call.</p>
+        <div class="tool-form tool-form--grid">
+          <label class="tool-field"><span data-i18n="hsp_edu_l">Highest degree</span>
+            <select id="hspEdu"><option value="30" data-i18n="hsp_edu_phd">Doctorate</option><option value="20" data-i18n="hsp_edu_ma">Master's / professional</option><option value="10" selected data-i18n="hsp_edu_ba">Bachelor's</option><option value="0" data-i18n="hsp_edu_none">None of these</option></select></label>
+          <label class="tool-field"><span data-i18n="hsp_career_l">Work experience</span>
+            <select id="hspCareer"><option value="20" data-i18n="hsp_career_10">10+ years</option><option value="15" data-i18n="hsp_career_7">7-9 years</option><option value="10" data-i18n="hsp_career_5">5-6 years</option><option value="5" selected data-i18n="hsp_career_3">3-4 years</option><option value="0" data-i18n="hsp_career_0">Under 3 years</option></select></label>
+          <label class="tool-field"><span data-i18n="hsp_salary_l">Annual salary</span>
+            <div class="tool-input"><span class="tool-unit">¥</span><input type="number" id="hspSalary" min="0" step="500000" value="8000000" inputmode="numeric"></div></label>
+          <label class="tool-field"><span data-i18n="hsp_age_l">Age</span>
+            <select id="hspAge"><option value="15" data-i18n="hsp_age_u30">Under 30</option><option value="10" selected data-i18n="hsp_age_30">30-34</option><option value="5" data-i18n="hsp_age_35">35-39</option><option value="0" data-i18n="hsp_age_40">40 or over</option></select></label>
+          <label class="tool-field"><span data-i18n="hsp_jp_l">Japanese level</span>
+            <select id="hspJp"><option value="15" data-i18n="hsp_jp_n1">N1 / native</option><option value="10" data-i18n="hsp_jp_n2">N2</option><option value="0" selected data-i18n="hsp_jp_none">Below N2</option></select></label>
+        </div>
+        <div class="tool-result" id="hspResult" aria-live="polite"></div>
+      </section>
+    </div>
+  </section>
+</div>

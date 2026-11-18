@@ -1,0 +1,57 @@
+/* features/tools/tools.css — the free toolkit page (v3 "h-hero" flat editorial).
+   Scoped under #page-tools: intro, a 3-card tool grid, and two inline calculator panels. */
+
+  #page-tools .section{padding-block:40px 72px;}
+  #page-tools .tools-intro{max-width:46rem;margin-bottom:40px;}
+  #page-tools .tools-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
+  #page-tools .tools-h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(34px,5vw,60px);margin:0;color:var(--ink);}
+  #page-tools .tools-intro .sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:18px 0 0;max-width:38em;text-wrap:balance;}
+
+  /* ---- tool cards ---- */
+  #page-tools .tools-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;}
+  #page-tools .tool-card{display:flex;flex-direction:column;gap:12px;padding:28px 26px;background:var(--surface);border:1px solid var(--line);border-radius:0;}
+  #page-tools .tool-ic{display:inline-grid;place-items:center;width:46px;height:46px;border:1px solid var(--line-strong);color:var(--navy);background:var(--paper);}
+  #page-tools .tool-ic svg{width:24px;height:24px;stroke-linecap:round;stroke-linejoin:round;}
+  #page-tools .tool-num{font-size:.62rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);}
+  #page-tools .tool-card h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.34rem;line-height:1.14;color:var(--ink);margin:0;}
+  #page-tools .tool-card p{color:var(--slate);font-size:.96rem;line-height:1.5;margin:0;}
+  #page-tools .tool-cta{margin-top:auto;align-self:flex-start;display:inline-flex;align-items:center;gap:7px;font-size:.92rem;font-weight:700;color:var(--accent-deep);background:none;border:0;padding:8px 0 0;cursor:pointer;font-family:inherit;}
+  #page-tools .tool-cta::after{content:"\2192";transition:transform .3s cubic-bezier(.16,1,.3,1);}
+  #page-tools .tool-card:hover .tool-cta::after{transform:translateX(4px);}
+
+  /* ---- calculator panels ---- */
+  #page-tools .tool-panel{margin-top:28px;background:var(--paper);border:1px solid var(--line);border-radius:0;padding:28px clamp(22px,3vw,34px);}
+  #page-tools .tool-panel[hidden]{display:none;}
+  #page-tools .tool-panel-head{display:flex;align-items:center;justify-content:space-between;gap:16px;}
+  #page-tools .tool-panel-head h3{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.5rem;color:var(--ink);margin:0;}
+  #page-tools .tool-close{flex:none;width:34px;height:34px;border:1px solid var(--line);background:var(--surface);color:var(--slate);font-size:1.2rem;line-height:1;cursor:pointer;border-radius:0;}
+  #page-tools .tool-close:hover{border-color:var(--line-strong);color:var(--ink);}
+  #page-tools .tool-note{color:var(--slate);font-size:.86rem;line-height:1.5;margin:10px 0 20px;max-width:46em;}
+
+  #page-tools .tool-form{display:flex;flex-wrap:wrap;gap:16px 20px;}
+  #page-tools .tool-form--grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+  #page-tools .tool-field{display:flex;flex-direction:column;gap:7px;font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);min-width:150px;flex:1 1 150px;}
+  #page-tools .tool-input{display:flex;align-items:center;background:var(--surface);border:1px solid var(--line);}
+  #page-tools .tool-input:focus-within{border-color:var(--sky-deep);}
+  #page-tools .tool-unit{padding:0 10px;color:var(--slate);font-weight:700;font-size:.95rem;border-right:1px solid var(--line);}
+  #page-tools .tool-field input,#page-tools .tool-field select{width:100%;border:0;background:var(--surface);padding:12px;font:inherit;font-size:1rem;color:var(--ink);text-transform:none;letter-spacing:normal;font-weight:500;}
+  #page-tools .tool-field select{border:1px solid var(--line);cursor:pointer;}
+  #page-tools .tool-field input{outline:0;}
+  #page-tools .tool-input input{border:0;}
+
+  /* ---- result ---- */
+  #page-tools .tool-result{margin-top:24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;align-items:center;}
+  #page-tools .tool-big{background:var(--navy);color:#fff;padding:24px 26px;border-radius:0;}
+  #page-tools .tool-big.ok{background:var(--pos-fg);}
+  #page-tools .tool-big-lab{display:block;font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);opacity:.95;}
+  #page-tools .tool-big.ok .tool-big-lab{color:#eafff3;}
+  #page-tools .tool-big strong{display:block;font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:clamp(30px,4.4vw,46px);line-height:1.05;margin:6px 0 4px;}
+  #page-tools .tool-big-sub{display:block;font-size:.9rem;line-height:1.4;color:#d8e6f4;}
+  #page-tools .tool-big.ok .tool-big-sub{color:#eafff3;}
+  #page-tools .tool-break{margin:0;}
+  #page-tools .tool-break>div{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);}
+  #page-tools .tool-break>div:last-child{border-bottom:0;}
+  #page-tools .tool-break dt{color:var(--slate);font-size:.92rem;margin:0;}
+  #page-tools .tool-break dd{margin:0;font-family:var(--font-display);font-weight:700;font-size:1.02rem;color:var(--ink);white-space:nowrap;}
+
+  @media (max-width:900px){ #page-tools .tools-grid{grid-template-columns:1fr;} #page-tools .tool-result{grid-template-columns:1fr;} }
