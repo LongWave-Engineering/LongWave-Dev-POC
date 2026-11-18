@@ -7,18 +7,14 @@
   #page-team .team-h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(34px,5vw,60px);margin:0;color:var(--ink);}
   #page-team .team-lead{color:var(--slate);font-size:1.12rem;line-height:1.6;margin:18px 0 0;max-width:40em;text-wrap:pretty;}
 
-  /* ---- member grid ---- */
-  #page-team .team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;}
-  #page-team .member{display:flex;gap:18px;padding:26px 24px;background:var(--surface);border:1px solid var(--line);border-radius:0;}
-  #page-team .member--lead{border-color:var(--line-strong);box-shadow:inset 3px 0 0 var(--accent);}
-  #page-team .member-face{flex:none;width:72px;height:72px;border-radius:50%;background:var(--neo-avatar) center/cover no-repeat;border:1px solid var(--line);}
-  #page-team .member-mono{flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:1.5rem;letter-spacing:.02em;}
+  /* ---- featured member (single card for now) ---- */
+  #page-team .member--feature{display:flex;gap:28px;align-items:center;padding:32px clamp(24px,3vw,40px);background:var(--surface);border:1px solid var(--line-strong);border-radius:0;box-shadow:inset 4px 0 0 var(--accent);max-width:52rem;}
+  #page-team .member-face{flex:none;width:132px;height:132px;border-radius:50%;background:var(--neo-avatar) center/cover no-repeat;border:1px solid var(--line);}
   #page-team .member-body{min-width:0;}
-  #page-team .member-body h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.3rem;line-height:1.14;color:var(--ink);margin:0 0 4px;}
-  #page-team .member-body h2 small{display:inline-block;font-family:var(--font-jp,inherit);font-weight:500;font-size:.86rem;color:var(--slate);letter-spacing:0;margin-left:6px;}
-  #page-team .member-role{color:var(--accent-deep);font-weight:700;font-size:.88rem;line-height:1.4;margin:0 0 10px;}
-  #page-team .member-body p{color:var(--slate);font-size:.96rem;line-height:1.55;margin:0;}
-  #page-team .member-tbd{margin-top:10px;font-size:.78rem;font-style:italic;color:var(--slate);opacity:.8;}
+  #page-team .member-body h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.6rem;line-height:1.12;color:var(--ink);margin:0 0 5px;}
+  #page-team .member-body h2 small{display:inline-block;font-family:var(--font-jp,inherit);font-weight:500;font-size:.92rem;color:var(--slate);letter-spacing:0;margin-left:7px;}
+  #page-team .member-role{color:var(--accent-deep);font-weight:700;font-size:.92rem;line-height:1.4;margin:0 0 12px;}
+  #page-team .member-body p{color:var(--slate);font-size:1rem;line-height:1.6;margin:0;}
 
   /* ---- closing CTA ---- */
   #page-team .team-cta{margin-top:40px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:22px;padding:34px clamp(24px,4vw,44px);background:var(--navy);color:#fff;border-radius:0;}
@@ -27,6 +23,6 @@
   #page-team .team-cta p{color:var(--sky);font-size:1rem;line-height:1.5;margin:0;}
 
   @media (max-width:780px){
-    #page-team .team-grid{grid-template-columns:1fr;}
+    #page-team .member--feature{flex-direction:column;text-align:center;align-items:center;}
     #page-team .team-cta{flex-direction:column;align-items:flex-start;}
   }

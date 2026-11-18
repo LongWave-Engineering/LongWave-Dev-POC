@@ -1,0 +1,66 @@
+/* features/join/join.css — the Get matched page (v3 "h-hero" flat editorial).
+   Scoped under #page-join: a page intro, a two-column layout (wizard form + aside). */
+
+  #page-join .section{padding-block:40px 72px;}
+  #page-join .join-intro{max-width:46rem;margin-bottom:36px;}
+  #page-join .join-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
+  #page-join .join-h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.03;font-size:clamp(32px,4.4vw,54px);margin:0;color:var(--ink);}
+  #page-join .join-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:16px 0 0;max-width:38em;text-wrap:balance;}
+
+  #page-join .join-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;align-items:start;}
+
+  /* ---- wizard form ---- */
+  #page-join .join-panel{background:var(--surface);border:1px solid var(--line);border-radius:0;padding:30px clamp(22px,3vw,36px);}
+  #page-join .join-field{display:flex;flex-direction:column;gap:7px;font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin-bottom:16px;}
+  #page-join .join-field input,#page-join .join-field select{width:100%;border:1px solid var(--line);background:var(--paper);padding:12px;font:inherit;font-size:1rem;color:var(--ink);text-transform:none;letter-spacing:normal;font-weight:500;border-radius:0;}
+  #page-join .join-field input:focus,#page-join .join-field select:focus{outline:0;border-color:var(--sky-deep);}
+  #page-join .join-field input[type=file]{padding:9px;background:var(--surface);cursor:pointer;}
+
+  #page-join .join-progress{list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px;margin:4px 0 22px;padding:0;border-top:1px solid var(--line);padding-top:18px;}
+  #page-join .join-progress li{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate);opacity:.55;}
+  #page-join .join-progress li.active{color:var(--accent-deep);opacity:1;}
+
+  #page-join .join-step{border:0;margin:0;padding:0;}
+  #page-join .join-step[hidden]{display:none;}
+  #page-join .join-step legend{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.3rem;color:var(--ink);padding:0;margin-bottom:6px;}
+  #page-join .join-step-p{color:var(--slate);font-size:.95rem;line-height:1.5;margin:0 0 18px;}
+  #page-join .join-note{display:block;font-size:.8rem;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--slate);margin:-8px 0 16px;line-height:1.45;}
+
+  #page-join .join-levels{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+  #page-join .join-levels label{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);background:var(--paper);cursor:pointer;}
+  #page-join .join-levels label:hover{border-color:var(--line-strong);}
+  #page-join .join-levels input{margin-top:3px;accent-color:var(--accent-deep);flex:none;}
+  #page-join .join-levels span{display:flex;flex-direction:column;gap:3px;}
+  #page-join .join-levels b{font-weight:700;font-size:.96rem;color:var(--ink);}
+  #page-join .join-levels small{font-size:.82rem;color:var(--slate);line-height:1.45;}
+
+  #page-join .join-error{color:var(--neg-fg,#b42318);font-size:.9rem;font-weight:600;margin:0 0 14px;}
+  #page-join .join-error[hidden]{display:none;}
+  #page-join .join-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:6px;}
+  /* .btn's display beats the UA [hidden]{display:none}, so Back/Continue/Submit would all show
+     at once — force any hidden button on the page (wizard + alerts) to actually hide. */
+  #page-join .btn[hidden]{display:none;}
+  #page-join .join-actions .btn--ghost{margin-right:auto;}
+  #page-join .join-success{margin-top:18px;padding:16px 18px;background:var(--pos-bg,#eafff3);border:1px solid var(--pos-fg,#1a7f4b);color:var(--pos-fg,#1a7f4b);font-weight:600;line-height:1.5;border-radius:0;}
+  #page-join .join-success[hidden]{display:none;}
+  #page-join .join-legal{font-size:.78rem;color:var(--slate);line-height:1.5;margin:16px 0 0;}
+
+  /* ---- aside ---- */
+  #page-join .join-aside{display:flex;flex-direction:column;gap:20px;position:sticky;top:92px;}
+  #page-join .join-card,#page-join .join-alerts{background:var(--paper);border:1px solid var(--line);border-radius:0;padding:26px 24px;}
+  #page-join .join-card h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.4rem;color:var(--ink);margin:0 0 16px;}
+  #page-join .join-recruiter{display:flex;gap:14px;align-items:center;margin-bottom:14px;}
+  #page-join .join-face{flex:none;width:60px;height:60px;border-radius:50%;background:var(--neo-avatar) center/cover no-repeat;border:1px solid var(--line);}
+  #page-join .join-recruiter b{display:block;font-size:.98rem;color:var(--ink);}
+  #page-join .join-recruiter small{display:block;font-size:.82rem;color:var(--slate);margin-top:2px;}
+  #page-join .join-bio{color:var(--slate);font-size:.92rem;line-height:1.55;margin:0 0 18px;}
+  #page-join .join-card h3,#page-join .join-alerts h3{font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin:0 0 12px;}
+  #page-join .join-steps{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:9px;}
+  #page-join .join-steps li{color:var(--ink);font-size:.92rem;line-height:1.45;}
+  #page-join .join-alerts p{color:var(--slate);font-size:.92rem;line-height:1.5;margin:0 0 16px;}
+  #page-join .join-alerts-form .btn{width:100%;justify-content:center;}
+
+  @media (max-width:860px){
+    #page-join .join-layout{grid-template-columns:1fr;}
+    #page-join .join-aside{position:static;}
+  }

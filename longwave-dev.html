@@ -738,6 +738,15 @@
   #page-companies .co-badge--live{background:var(--pos-bg);border-color:transparent;color:var(--pos-fg);}
   #page-companies .co-badge--live .co-dot{background:var(--pos-fg);}
   #page-companies .co-badge--partner .co-dot{background:var(--sky-deep);}
+  /* DIRECT (marquee / non-client) — neutral, we don't represent them */
+  #page-companies .co-badge--direct{background:var(--paper);color:var(--slate);}
+  #page-companies .co-badge--direct .co-dot{background:var(--slate);}
+  /* a left accent bar sorts the grid into the two relationships at a glance: gold = we
+     represent this company, slate = direct listing. Pseudo-element so card hover's
+     box-shadow doesn't clobber it. */
+  #page-companies .co-card{text-decoration:none;}
+  #page-companies .co-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,#e8b53a);}
+  #page-companies .co-card--direct::before{background:var(--slate);}
 
   /* identity row: square logo chip + name + one-line industry */
   #page-companies .co-head{display:flex;align-items:center;gap:14px;}
@@ -1047,6 +1056,11 @@
   #jobOverlay .m-body{-webkit-user-select:none;user-select:none;}
   @media print{ #jobOverlay .m-sub, #jobOverlay .m-body{display:none;} }
   .modal .m-actions{display:flex;gap:13px;margin-top:28px;padding-top:24px;border-top:1px solid var(--line);flex-wrap:wrap;}
+  /* .btn sets display:inline-flex, which beats the UA [hidden]{display:none}; make hidden
+     action buttons (e.g. #mApplySite on a represented role) actually disappear. */
+  .modal .m-actions [hidden]{display:none;}
+  .modal .m-direct-note{margin:12px 0 0;font-size:.86rem;line-height:1.5;color:var(--slate);}
+  .modal .m-direct-note[hidden]{display:none;}
   .modal h3.su-title{font-size:1.7rem;margin-bottom:6px;}
   .modal p.su-intro{color:var(--slate);margin-bottom:22px;font-size:1.06rem;}
   .field{margin-bottom:18px;}
@@ -1412,18 +1426,14 @@
   #page-team .team-h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.02;font-size:clamp(34px,5vw,60px);margin:0;color:var(--ink);}
   #page-team .team-lead{color:var(--slate);font-size:1.12rem;line-height:1.6;margin:18px 0 0;max-width:40em;text-wrap:pretty;}
 
-  /* ---- member grid ---- */
-  #page-team .team-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;}
-  #page-team .member{display:flex;gap:18px;padding:26px 24px;background:var(--surface);border:1px solid var(--line);border-radius:0;}
-  #page-team .member--lead{border-color:var(--line-strong);box-shadow:inset 3px 0 0 var(--accent);}
-  #page-team .member-face{flex:none;width:72px;height:72px;border-radius:50%;background:var(--neo-avatar) center/cover no-repeat;border:1px solid var(--line);}
-  #page-team .member-mono{flex:none;width:72px;height:72px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:1.5rem;letter-spacing:.02em;}
+  /* ---- featured member (single card for now) ---- */
+  #page-team .member--feature{display:flex;gap:28px;align-items:center;padding:32px clamp(24px,3vw,40px);background:var(--surface);border:1px solid var(--line-strong);border-radius:0;box-shadow:inset 4px 0 0 var(--accent);max-width:52rem;}
+  #page-team .member-face{flex:none;width:132px;height:132px;border-radius:50%;background:var(--neo-avatar) center/cover no-repeat;border:1px solid var(--line);}
   #page-team .member-body{min-width:0;}
-  #page-team .member-body h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.3rem;line-height:1.14;color:var(--ink);margin:0 0 4px;}
-  #page-team .member-body h2 small{display:inline-block;font-family:var(--font-jp,inherit);font-weight:500;font-size:.86rem;color:var(--slate);letter-spacing:0;margin-left:6px;}
-  #page-team .member-role{color:var(--accent-deep);font-weight:700;font-size:.88rem;line-height:1.4;margin:0 0 10px;}
-  #page-team .member-body p{color:var(--slate);font-size:.96rem;line-height:1.55;margin:0;}
-  #page-team .member-tbd{margin-top:10px;font-size:.78rem;font-style:italic;color:var(--slate);opacity:.8;}
+  #page-team .member-body h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.6rem;line-height:1.12;color:var(--ink);margin:0 0 5px;}
+  #page-team .member-body h2 small{display:inline-block;font-family:var(--font-jp,inherit);font-weight:500;font-size:.92rem;color:var(--slate);letter-spacing:0;margin-left:7px;}
+  #page-team .member-role{color:var(--accent-deep);font-weight:700;font-size:.92rem;line-height:1.4;margin:0 0 12px;}
+  #page-team .member-body p{color:var(--slate);font-size:1rem;line-height:1.6;margin:0;}
 
   /* ---- closing CTA ---- */
   #page-team .team-cta{margin-top:40px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:22px;padding:34px clamp(24px,4vw,44px);background:var(--navy);color:#fff;border-radius:0;}
@@ -1432,8 +1442,158 @@
   #page-team .team-cta p{color:var(--sky);font-size:1rem;line-height:1.5;margin:0;}
 
   @media (max-width:780px){
-    #page-team .team-grid{grid-template-columns:1fr;}
+    #page-team .member--feature{flex-direction:column;text-align:center;align-items:center;}
     #page-team .team-cta{flex-direction:column;align-items:flex-start;}
+  }
+/* features/join/join.css — the Get matched page (v3 "h-hero" flat editorial).
+   Scoped under #page-join: a page intro, a two-column layout (wizard form + aside). */
+
+  #page-join .section{padding-block:40px 72px;}
+  #page-join .join-intro{max-width:46rem;margin-bottom:36px;}
+  #page-join .join-eyebrow{display:block;font-size:.64rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--slate);margin-bottom:14px;}
+  #page-join .join-h1{font-family:var(--font-display);font-weight:800;letter-spacing:-.035em;line-height:1.03;font-size:clamp(32px,4.4vw,54px);margin:0;color:var(--ink);}
+  #page-join .join-sub{color:var(--slate);font-size:1.12rem;line-height:1.55;margin:16px 0 0;max-width:38em;text-wrap:balance;}
+
+  #page-join .join-layout{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:24px;align-items:start;}
+
+  /* ---- wizard form ---- */
+  #page-join .join-panel{background:var(--surface);border:1px solid var(--line);border-radius:0;padding:30px clamp(22px,3vw,36px);}
+  #page-join .join-field{display:flex;flex-direction:column;gap:7px;font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin-bottom:16px;}
+  #page-join .join-field input,#page-join .join-field select{width:100%;border:1px solid var(--line);background:var(--paper);padding:12px;font:inherit;font-size:1rem;color:var(--ink);text-transform:none;letter-spacing:normal;font-weight:500;border-radius:0;}
+  #page-join .join-field input:focus,#page-join .join-field select:focus{outline:0;border-color:var(--sky-deep);}
+  #page-join .join-field input[type=file]{padding:9px;background:var(--surface);cursor:pointer;}
+
+  #page-join .join-progress{list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px;margin:4px 0 22px;padding:0;border-top:1px solid var(--line);padding-top:18px;}
+  #page-join .join-progress li{font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--slate);opacity:.55;}
+  #page-join .join-progress li.active{color:var(--accent-deep);opacity:1;}
+
+  #page-join .join-step{border:0;margin:0;padding:0;}
+  #page-join .join-step[hidden]{display:none;}
+  #page-join .join-step legend{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.3rem;color:var(--ink);padding:0;margin-bottom:6px;}
+  #page-join .join-step-p{color:var(--slate);font-size:.95rem;line-height:1.5;margin:0 0 18px;}
+  #page-join .join-note{display:block;font-size:.8rem;font-weight:500;letter-spacing:normal;text-transform:none;color:var(--slate);margin:-8px 0 16px;line-height:1.45;}
+
+  #page-join .join-levels{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+  #page-join .join-levels label{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);background:var(--paper);cursor:pointer;}
+  #page-join .join-levels label:hover{border-color:var(--line-strong);}
+  #page-join .join-levels input{margin-top:3px;accent-color:var(--accent-deep);flex:none;}
+  #page-join .join-levels span{display:flex;flex-direction:column;gap:3px;}
+  #page-join .join-levels b{font-weight:700;font-size:.96rem;color:var(--ink);}
+  #page-join .join-levels small{font-size:.82rem;color:var(--slate);line-height:1.45;}
+
+  #page-join .join-error{color:var(--neg-fg,#b42318);font-size:.9rem;font-weight:600;margin:0 0 14px;}
+  #page-join .join-error[hidden]{display:none;}
+  #page-join .join-actions{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:6px;}
+  /* .btn's display beats the UA [hidden]{display:none}, so Back/Continue/Submit would all show
+     at once — force any hidden button on the page (wizard + alerts) to actually hide. */
+  #page-join .btn[hidden]{display:none;}
+  #page-join .join-actions .btn--ghost{margin-right:auto;}
+  #page-join .join-success{margin-top:18px;padding:16px 18px;background:var(--pos-bg,#eafff3);border:1px solid var(--pos-fg,#1a7f4b);color:var(--pos-fg,#1a7f4b);font-weight:600;line-height:1.5;border-radius:0;}
+  #page-join .join-success[hidden]{display:none;}
+  #page-join .join-legal{font-size:.78rem;color:var(--slate);line-height:1.5;margin:16px 0 0;}
+
+  /* ---- aside ---- */
+  #page-join .join-aside{display:flex;flex-direction:column;gap:20px;position:sticky;top:92px;}
+  #page-join .join-card,#page-join .join-alerts{background:var(--paper);border:1px solid var(--line);border-radius:0;padding:26px 24px;}
+  #page-join .join-card h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.4rem;color:var(--ink);margin:0 0 16px;}
+  #page-join .join-recruiter{display:flex;gap:14px;align-items:center;margin-bottom:14px;}
+  #page-join .join-face{flex:none;width:60px;height:60px;border-radius:50%;background:var(--neo-avatar) center/cover no-repeat;border:1px solid var(--line);}
+  #page-join .join-recruiter b{display:block;font-size:.98rem;color:var(--ink);}
+  #page-join .join-recruiter small{display:block;font-size:.82rem;color:var(--slate);margin-top:2px;}
+  #page-join .join-bio{color:var(--slate);font-size:.92rem;line-height:1.55;margin:0 0 18px;}
+  #page-join .join-card h3,#page-join .join-alerts h3{font-size:.66rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--slate);margin:0 0 12px;}
+  #page-join .join-steps{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:9px;}
+  #page-join .join-steps li{color:var(--ink);font-size:.92rem;line-height:1.45;}
+  #page-join .join-alerts p{color:var(--slate);font-size:.92rem;line-height:1.5;margin:0 0 16px;}
+  #page-join .join-alerts-form .btn{width:100%;justify-content:center;}
+
+  @media (max-width:860px){
+    #page-join .join-layout{grid-template-columns:1fr;}
+    #page-join .join-aside{position:static;}
+  }
+/* features/company/company.css — per-company profile (japan-dev layout, our tokens).
+   Scoped under #page-company. CONTRACTED = gold accent (represented by LongWave);
+   DIRECT = neutral slate accent (marquee, we don't represent them). */
+
+  /* ---- hero: banner + overlapping logo + name ---- */
+  #page-company .cd-hero{position:relative;}
+  #page-company .cd-banner{height:200px;background:linear-gradient(120deg,var(--navy) 0%,#1b2f52 40%,var(--sky-deep,#3f6ea5) 100%);}
+  #page-company .cd-hero--direct .cd-banner{background:linear-gradient(120deg,#2a3340 0%,#3a4556 55%,#55657a 100%);}
+  #page-company .cd-head{display:flex;align-items:flex-end;gap:22px;margin-top:-56px;position:relative;padding-bottom:22px;}
+  #page-company .cd-logo{flex:none;width:112px;height:112px;background:#fff;border:1px solid var(--line);border-radius:14px;display:grid;place-items:center;overflow:hidden;box-shadow:0 10px 30px rgba(16,24,40,.12);}
+  #page-company .cd-logo .avatar{width:100%;height:100%;border-radius:12px;}
+  #page-company .cd-logo .avatar img{width:100%;height:100%;object-fit:contain;padding:14px;box-sizing:border-box;}
+  #page-company .cd-id{flex:1 1 auto;min-width:0;padding-bottom:4px;}
+  #page-company .cd-id-top{margin-bottom:8px;}
+  #page-company .cd-name{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;line-height:1.02;font-size:clamp(30px,4.2vw,48px);color:var(--ink);margin:0;}
+  #page-company .cd-industry{color:var(--slate);font-size:1rem;margin:6px 0 0;}
+  #page-company .cd-head-cta{flex:none;align-self:flex-end;padding-bottom:6px;}
+
+  /* contracted / direct badge */
+  #page-company .cd-badge{display:inline-flex;align-items:center;gap:7px;font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 11px;border-radius:999px;}
+  #page-company .cd-badge::before{content:"";width:7px;height:7px;border-radius:50%;}
+  #page-company .cd-badge--repr{background:var(--accent-soft,#fff5d6);color:var(--accent-deep);}
+  #page-company .cd-badge--repr::before{background:var(--accent,#e8b53a);}
+  #page-company .cd-badge--direct{background:var(--paper);color:var(--slate);border:1px solid var(--line);}
+  #page-company .cd-badge--direct::before{background:var(--slate);}
+
+  /* ---- tab nav ---- */
+  #page-company .cd-tabs{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;border-bottom:1px solid var(--line);padding-top:4px;position:sticky;top:64px;background:var(--surface);z-index:5;}
+  #page-company .cd-tab{appearance:none;border:0;background:none;font:inherit;font-size:.92rem;font-weight:600;color:var(--slate);padding:12px 12px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;text-decoration:none;}
+  #page-company .cd-tab:hover{color:var(--ink);}
+  #page-company .cd-tab--back{color:var(--accent-deep);margin-right:8px;}
+
+  /* ---- layout ---- */
+  #page-company .cd-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:start;padding-block:32px 72px;}
+  #page-company .cd-section{margin-bottom:36px;scroll-margin-top:120px;}
+  #page-company .cd-section h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.5rem;color:var(--ink);margin:0 0 18px;}
+
+  #page-company .cd-facts{display:flex;flex-wrap:wrap;gap:10px 14px;margin-bottom:20px;}
+  #page-company .cd-fact{display:flex;flex-direction:column;gap:3px;padding:12px 16px;background:var(--paper);border:1px solid var(--line);min-width:120px;}
+  #page-company .cd-fact dt{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0;}
+  #page-company .cd-fact dd{margin:0;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--ink);}
+  #page-company .cd-blurb{color:var(--slate);font-size:1.02rem;line-height:1.65;margin:0;max-width:60ch;text-wrap:pretty;}
+
+  /* role cards (reuse the jobs board .jc-* inner styles) */
+  #page-company .cd-roles-list{display:flex;flex-direction:column;gap:10px;}
+  #page-company .cd-role{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:0;padding:16px 18px;cursor:pointer;font:inherit;transition:border-color .2s,box-shadow .2s;}
+  #page-company .cd-role:hover{border-color:var(--line-strong);box-shadow:0 4px 16px rgba(16,24,40,.06);}
+  #page-company .cd-role .jc-logo{flex:none;}
+  #page-company .cd-role .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px;}
+  #page-company .cd-role .jc-end{flex:none;text-align:right;display:flex;flex-direction:column;gap:3px;align-items:flex-end;}
+  #page-company .cd-empty,#page-company .cd-note{color:var(--slate);font-size:.95rem;line-height:1.5;}
+  #page-company .cd-note{margin:14px 0 0;}
+
+  /* chips */
+  #page-company .cd-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  #page-company .cd-chip{display:inline-block;font-size:.84rem;font-weight:600;padding:6px 12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);}
+  #page-company .cd-chip--ws{border-color:var(--sky-deep,#3f6ea5);color:var(--accent-deep);}
+
+  /* ---- aside: relationship explainer + claim ---- */
+  #page-company .cd-aside{display:flex;flex-direction:column;gap:18px;position:sticky;top:120px;}
+  #page-company .cd-rel{padding:22px 20px;border-radius:0;}
+  #page-company .cd-rel b{display:block;font-family:var(--font-display);font-weight:800;font-size:1.05rem;margin-bottom:8px;}
+  #page-company .cd-rel p{font-size:.92rem;line-height:1.55;margin:0 0 16px;}
+  #page-company .cd-rel .btn{width:100%;justify-content:center;}
+  #page-company .cd-rel--repr{background:var(--accent-soft,#fff5d6);border:1px solid var(--accent,#e8b53a);}
+  #page-company .cd-rel--repr b{color:var(--accent-deep);}
+  #page-company .cd-rel--repr p{color:var(--ink);}
+  #page-company .cd-rel--direct{background:var(--paper);border:1px solid var(--line);}
+  #page-company .cd-rel--direct b{color:var(--ink);}
+  #page-company .cd-rel--direct p{color:var(--slate);margin-bottom:0;}
+  #page-company .cd-claim{padding:20px;border:1px solid var(--line);background:var(--surface);}
+  #page-company .cd-claim h3{font-size:.95rem;font-weight:700;color:var(--ink);margin:0 0 6px;}
+  #page-company .cd-claim p{font-size:.86rem;color:var(--slate);line-height:1.5;margin:0 0 12px;}
+  #page-company .cd-claim-link{font-size:.88rem;font-weight:700;color:var(--accent-deep);text-decoration:none;}
+
+  #page-company .cd-missing{padding:80px 0;text-align:center;}
+  #page-company .cd-missing p{color:var(--slate);font-size:1.1rem;margin:0 0 20px;}
+
+  @media (max-width:860px){
+    #page-company .cd-layout{grid-template-columns:1fr;}
+    #page-company .cd-aside{position:static;}
+    #page-company .cd-head{flex-wrap:wrap;}
+    #page-company .cd-head-cta{width:100%;}
   }
 /* features/privacy/privacy.css — long-form legal doc, redesign v3 "h-hero":
    a narrow, left-aligned reading column in the flat editorial idiom — bold display
@@ -1594,7 +1754,7 @@
           <button type="button" data-lang="en" class="active" role="radio" aria-checked="true">ENG</button>
           <button type="button" data-lang="ja" role="radio" aria-checked="false">JPN</button>
         </div>
-        <button class="btn btn--banana" data-signup><span data-i18n="nav_signup">Get matched</span> →</button>
+        <a class="btn btn--banana" href="#/join" data-go="join"><span data-i18n="nav_signup">Get matched</span> →</a>
         <button class="menu-toggle" id="menuToggle" aria-label="Menu" data-i18n-aria="aria_menu" aria-expanded="false">☰</button>
       </div>
     </nav>
@@ -2170,9 +2330,10 @@
 </div>
 <!-- ====================================================== -->
 <!-- ============ PAGE: TEAM (Our team) ============ -->
-<!-- Ported from the koga-san POC team.html. Names are proper nouns (same in both
-     languages, so plain text); roles + bios route through data-i18n. Neo reuses the
-     inlined --neo-avatar; the rest are coloured monograms (CSP-safe, no external imgs). -->
+<!-- Ported from the koga-san POC team.html. For now the page features Neo only
+     (user's call 2026-11-18: "just have my picture and my bio"); more members drop
+     in later behind the same grid. Name is a proper noun (plain text); role + bio
+     route through data-i18n with EN/JA parity. Neo reuses the inlined --neo-avatar. -->
 <!-- ====================================================== -->
 <div class="page" id="page-team">
   <section class="section wrap">
@@ -2182,75 +2343,167 @@
       <p class="team-lead" data-i18n="team_intro">Tokyo Samurai Dev is built by LongWave, a licensed recruiting agency in Tokyo. We are a small bilingual team who talk to engineers every day, and we want your move to Japan to be a good one.</p>
     </div>
 
-    <div class="team-grid reveal">
-      <article class="member member--lead">
-        <span class="member-face" role="img" aria-label="Neo Nishino"></span>
-        <div class="member-body">
-          <h2>Neo Nishino <small lang="ja">西野 稔央</small></h2>
-          <p class="member-role" data-i18n="tm_neo_role">Product owner, Tokyo Samurai Dev · Global Talent Acquisition Lead, LongWave</p>
-          <p data-i18n="tm_neo_bio">Born and raised in Silicon Valley and bilingual in English and Japanese. At LongWave, Neo specialises in QA and cybersecurity hiring in Japan, and talks with engineers every day about their careers, in both languages.</p>
-        </div>
-      </article>
-
-      <article class="member">
-        <span class="member-mono" style="background:#2f6f8f" aria-hidden="true">Y</span>
-        <div class="member-body">
-          <h2>Yusuke</h2>
-          <p class="member-role" data-i18n="tm_m2_role">Role to be confirmed</p>
-          <p data-i18n="tm_m2_bio">A short note on what Yusuke does for engineers on Tokyo Samurai Dev.</p>
-          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
-        </div>
-      </article>
-
-      <article class="member">
-        <span class="member-mono" style="background:#8a5a2b" aria-hidden="true">Y</span>
-        <div class="member-body">
-          <h2>Yocia</h2>
-          <p class="member-role" data-i18n="tm_m3_role">Role to be confirmed</p>
-          <p data-i18n="tm_m3_bio">A short note on what Yocia does for engineers on Tokyo Samurai Dev.</p>
-          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
-        </div>
-      </article>
-
-      <article class="member">
-        <span class="member-mono" style="background:#5a6b2f" aria-hidden="true">J</span>
-        <div class="member-body">
-          <h2>James</h2>
-          <p class="member-role" data-i18n="tm_m4_role">Role to be confirmed</p>
-          <p data-i18n="tm_m4_bio">A short note on what James does for engineers on Tokyo Samurai Dev.</p>
-          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
-        </div>
-      </article>
-
-      <article class="member">
-        <span class="member-mono" style="background:#6a4b8a" aria-hidden="true">L</span>
-        <div class="member-body">
-          <h2>Landon</h2>
-          <p class="member-role" data-i18n="tm_m5_role">Engineer</p>
-          <p data-i18n="tm_m5_bio">A short note on what Landon does for engineers on Tokyo Samurai Dev.</p>
-          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
-        </div>
-      </article>
-
-      <article class="member member--lead">
-        <span class="member-mono" style="background:#1f3a5f" aria-hidden="true">YK</span>
-        <div class="member-body">
-          <h2>Yuki Koga</h2>
-          <p class="member-role" data-i18n="tm_m6_role">CEO, LongWave</p>
-          <p data-i18n="tm_m6_bio">Why LongWave built Tokyo Samurai Dev, in one or two sentences.</p>
-          <p class="member-tbd" data-i18n="tm_tbd">Profile, title and photo to be confirmed.</p>
-        </div>
-      </article>
-    </div>
+    <article class="member member--feature reveal">
+      <span class="member-face" role="img" aria-label="Neo Nishino"></span>
+      <div class="member-body">
+        <h2>Neo Nishino <small lang="ja">西野 稔央</small></h2>
+        <p class="member-role" data-i18n="tm_neo_role">Product owner, Tokyo Samurai Dev · Global Talent Acquisition Lead, LongWave</p>
+        <p data-i18n="tm_neo_bio">Born and raised in Silicon Valley and bilingual in English and Japanese. At LongWave, Neo specialises in QA and cybersecurity hiring in Japan, and talks with engineers every day about their careers, in both languages.</p>
+      </div>
+    </article>
 
     <section class="team-cta reveal">
       <div class="team-cta-copy">
         <h2 data-i18n="team_cta_h">Talk to us.</h2>
         <p data-i18n="team_cta_p">Questions about jobs, visas or your Japanese level? Send your profile and one of us will reply by email.</p>
       </div>
-      <button type="button" class="btn btn--banana btn--xl" data-signup><span data-i18n="team_cta_btn">Get matched</span> →</button>
+      <a class="btn btn--banana btn--xl" href="#/join" data-go="join"><span data-i18n="team_cta_btn">Get matched</span> →</a>
     </section>
   </section>
+</div>
+<!-- ====================================================== -->
+<!-- ============ PAGE: JOIN (Get matched) ============ -->
+<!-- Full standalone page ported 1:1 from the koga-san POC join.html (replaces the
+     signup modal as the primary "Get matched" destination). Left: a 3-step wizard
+     (profile -> Japanese & status -> preferences) that POSTs a lead through the shared
+     postLead/leadConfirm hook (honest offline fallback). Right: a "Meet Neo" panel and
+     a job-alerts box. Every label/legend/option routes through data-i18n (EN/JA parity);
+     the wizard + submit live in join.js. -->
+<!-- ====================================================== -->
+<div class="page" id="page-join">
+  <section class="section wrap">
+    <div class="join-intro reveal">
+      <span class="join-eyebrow" data-i18n="join_eyebrow">A human in your corner</span>
+      <h1 class="join-h1" data-i18n="join_h1">Get matched with a bilingual recruiter</h1>
+      <p class="join-sub" data-i18n="join_sub">Your skills. Your Japanese. Your next chapter. Start with a conversation.</p>
+    </div>
+
+    <div class="join-layout reveal">
+      <!-- ---- the wizard form ---- -->
+      <form id="joinForm" class="join-panel" novalidate>
+        <label class="join-field"><span data-i18n="join_email_l">Contact email</span>
+          <input type="email" id="joinEmail" name="email" required autocomplete="email" placeholder="you@example.com"></label>
+
+        <ol class="join-progress" aria-hidden="true">
+          <li class="active" data-step-label="0"><span data-i18n="join_step1">1. Your profile</span></li>
+          <li data-step-label="1"><span data-i18n="join_step2">2. Japanese &amp; status</span></li>
+          <li data-step-label="2"><span data-i18n="join_step3">3. Your next move</span></li>
+        </ol>
+
+        <fieldset class="join-step" data-step="0">
+          <legend data-i18n="join_s0_legend">Your story starts here.</legend>
+          <p class="join-step-p" data-i18n="join_s0_p">Add a LinkedIn URL or upload a résumé. One is enough.</p>
+          <label class="join-field"><span data-i18n="join_linkedin_l">LinkedIn URL</span>
+            <input type="url" id="joinLinkedin" name="linkedin" placeholder="https://www.linkedin.com/in/you"></label>
+          <label class="join-field"><span data-i18n="join_resume_l">Or upload résumé</span>
+            <input id="joinResume" name="resume" type="file" accept=".pdf,.doc,.docx"></label>
+          <small class="join-note" data-i18n="join_resume_note">PDF or Word. English is fine.</small>
+        </fieldset>
+
+        <fieldset class="join-step" data-step="1" hidden>
+          <legend data-i18n="join_s1_legend">Your Japanese, in your words.</legend>
+          <p class="join-step-p" data-i18n="join_s1_p">No JLPT certificate? Choose the description that feels closest.</p>
+          <div class="join-levels">
+            <label><input type="radio" name="japanese" value="0"><span><b data-i18n="join_jp0">No Japanese · comfortable working in English</b><small data-i18n="join_jp0_note">Recruiter introductions usually need some Japanese (around N3+). We'll send you roles you can apply to directly.</small></span></label>
+            <label><input type="radio" name="japanese" value="3"><span><b data-i18n="join_jp3">N3 · join familiar work conversations with support</b></span></label>
+            <label><input type="radio" name="japanese" value="4"><span><b data-i18n="join_jp4">N2 · discuss work topics and read routine documents</b></span></label>
+            <label><input type="radio" name="japanese" value="5"><span><b data-i18n="join_jp5">N1 · handle complex discussion and detailed writing</b></span></label>
+          </div>
+          <label class="join-field"><span data-i18n="join_live_l">Where do you live now?</span>
+            <select id="joinLive" name="live">
+              <option value="" data-i18n="join_select">Select</option>
+              <option value="japan" data-i18n="join_live_jp">In Japan</option>
+              <option value="abroad" data-i18n="join_live_ab">Outside Japan</option>
+            </select></label>
+          <small class="join-note" data-i18n="join_live_note">Company introductions are for engineers living in Japan. From abroad, we'll send you roles with visa sponsorship.</small>
+          <label class="join-field"><span data-i18n="join_res_l">Residence status</span>
+            <select id="joinResidence" name="residence">
+              <option value="" data-i18n="join_res_select">Select your status</option>
+              <option data-i18n="join_res_eng">Engineer / Specialist in Humanities</option>
+              <option data-i18n="join_res_hsp">HSP</option>
+              <option data-i18n="join_res_pr">Spouse / PR</option>
+              <option data-i18n="join_res_student">Student</option>
+              <option data-i18n="join_res_sponsor">Need sponsorship</option>
+              <option data-i18n="join_res_other">Other</option>
+            </select></label>
+        </fieldset>
+
+        <fieldset class="join-step" data-step="2" hidden>
+          <legend data-i18n="join_s2_legend">Your preferences</legend>
+          <label class="join-field"><span data-i18n="join_desired_l">Desired annual salary (¥)</span>
+            <input type="number" id="joinDesired" name="desired" min="0" step="100000" placeholder="8000000" inputmode="numeric"></label>
+          <label class="join-field"><span data-i18n="join_role_l">Desired role</span>
+            <select id="joinRole" name="desired-role">
+              <option data-i18n="join_role_qa">QA / Test</option>
+              <option data-i18n="join_role_be">Backend</option>
+              <option data-i18n="join_role_fe">Front-end</option>
+              <option data-i18n="join_role_mobile">Mobile</option>
+              <option data-i18n="join_role_sre">SRE</option>
+              <option data-i18n="join_role_em">Engineering Manager</option>
+            </select></label>
+          <label class="join-field"><span data-i18n="join_start_l">When to start</span>
+            <select id="joinStart" name="start">
+              <option data-i18n="join_start_asap">As soon as possible</option>
+              <option data-i18n="join_start_3">Within 3 months</option>
+              <option data-i18n="join_start_6">Within 6 months</option>
+              <option data-i18n="join_start_exploring">Just exploring</option>
+            </select></label>
+        </fieldset>
+
+        <p id="joinError" class="join-error" role="alert" hidden></p>
+
+        <div class="join-actions">
+          <button type="button" id="joinPrev" class="btn btn--ghost" hidden><span data-i18n="join_back">Back</span></button>
+          <button type="button" id="joinNext" class="btn btn--ink"><span data-i18n="join_continue">Continue</span> →</button>
+          <button type="submit" id="joinSubmit" class="btn btn--banana" hidden><span data-i18n="join_submit">Get matched via LongWave</span> →</button>
+        </div>
+
+        <div id="joinSuccess" class="join-success" role="status" tabindex="-1" hidden><span class="msg"></span></div>
+
+        <p class="join-legal" data-i18n="join_legal1">We use your information to introduce suitable jobs and to contact you. We share your profile with a company only after you agree.</p>
+        <p class="join-legal" data-i18n="join_legal2">LongWave Inc. · Licensed recruiting agency 13-ユ-314616</p>
+      </form>
+
+      <!-- ---- aside: Meet Neo + job alerts ---- -->
+      <aside class="join-aside">
+        <section class="join-card">
+          <h2 data-i18n="join_neo_h">Meet Neo.</h2>
+          <div class="join-recruiter"><span class="join-face" role="img" aria-label="Neo Nishino"></span>
+            <p><b>Neo Nishino（西野 稔央）</b><small data-i18n="join_neo_role">Global Talent Acquisition Lead, LongWave</small></p></div>
+          <p class="join-bio" data-i18n="join_neo_bio">Raised in Silicon Valley, bilingual in English and Japanese. Neo talks with engineers every day about building a career in Japan, in whichever language you prefer.</p>
+          <h3 data-i18n="join_next_h">What happens next</h3>
+          <ol class="join-steps">
+            <li data-i18n="join_next1">A short conversation about your plans.</li>
+            <li data-i18n="join_next2">A tailored shortlist, with context from your recruiter.</li>
+            <li data-i18n="join_next3">An introduction only when you agree.</li>
+          </ol>
+        </section>
+        <section class="join-alerts">
+          <h3 data-i18n="join_alerts_h">Just want job alerts?</h3>
+          <p data-i18n="join_alerts_p">Weekly picks, straight to your inbox.</p>
+          <form id="joinAlertsForm" class="join-alerts-form" novalidate>
+            <label class="join-field"><span data-i18n="join_alerts_email_l">Email</span>
+              <input type="email" id="joinAlertsEmail" required placeholder="you@example.com" autocomplete="email"></label>
+            <button type="submit" class="btn btn--ink"><span data-i18n="join_alerts_btn">Get job alerts</span> →</button>
+            <div id="joinAlertsStatus" class="join-success" role="status" tabindex="-1" hidden><span class="msg"></span></div>
+          </form>
+        </section>
+      </aside>
+    </div>
+  </section>
+</div>
+<!-- ====================================================== -->
+<!-- ============ PAGE: COMPANY detail ============ -->
+<!-- A per-company profile in the japan-dev layout (banner -> overlapping logo card ->
+     name + open-roles -> tab nav -> About / Roles / Work style / Tech), rendered in OUR
+     flat editorial system from REAL roster + job data. company.js fills #cdContent from
+     the hash slug (#/company/<slug>) and re-renders on the EN/JA toggle. Two treatments:
+     CONTRACTED (we represent -> apply through LongWave) vs DIRECT (marquee/non-client ->
+     apply on the company's own site, we don't represent them). No outbound company-website
+     link: the only off-site link is a direct role's own apply URL. -->
+<!-- ====================================================== -->
+<div class="page" id="page-company">
+  <div id="cdContent"></div>
 </div>
 <!-- ============ PAGE: PRIVACY POLICY ============ -->
 <div class="page" id="page-privacy">
@@ -2295,7 +2548,7 @@
       </div>
       <div class="foot-col">
         <h5 data-i18n="foot_candidates">For candidates</h5>
-        <button type="button" data-signup data-i18n="foot_signup">Sign up</button>
+        <a href="#/join" data-go="join" data-i18n="foot_signup">Sign up</a>
         <a href="#/cv" data-go="cv" data-i18n="foot_resume">Resume builder</a>
       </div>
       <div class="foot-col">
@@ -2333,10 +2586,14 @@
     <div class="m-tags tags" id="mTags"></div>
     <div class="m-detail" id="mDetail"></div>
     <div class="m-actions">
+      <!-- represented roles: apply THROUGH us. direct (non-client) roles: #mApply is hidden and
+           #mApplySite links OUT to the company's own apply page (the only off-site link). There is
+           deliberately NO generic "company website" link — we keep the visitor on our site. -->
       <button class="btn btn--primary" id="mApply" data-i18n="m_apply">Sign up to apply</button>
+      <a class="btn btn--primary" id="mApplySite" target="_blank" rel="noopener" hidden><span data-i18n="jd_apply_site">Apply on company site</span> ↗</a>
       <button class="btn btn--ghost" id="mSave" type="button" aria-pressed="false"><span class="m-save-ic" aria-hidden="true">♥</span> <span id="mSaveLabel" data-i18n="sv_save">Save</span></button>
-      <a class="btn btn--ghost" id="mCompany" target="_blank" rel="noopener" data-i18n="m_company">Company site ↗</a>
     </div>
+    <p class="m-direct-note" id="mDirectNote" hidden></p>
   </div>
 </div>
 
@@ -2981,7 +3238,7 @@
 
     /* Router mapping kept here (pure) so the route set lives in ONE place and the
        hash→route resolution is unit-testable without a DOM. */
-    var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", articles:"#/articles", tools:"#/tools", team:"#/team", cv:"#/cv", post:"#/post", privacy:"#/privacy" };
+    var ROUTES = { home:"#/", jobs:"#/jobs", companies:"#/companies", company:"#/company", articles:"#/articles", tools:"#/tools", team:"#/team", join:"#/join", cv:"#/cv", post:"#/post", privacy:"#/privacy" };
     /* Resolve a hash to a page. Matching is ANCHORED on the first path segment:
        a substring scan would let an article deep link like
        #/articles/engineering-jobs-in-tokyo resolve to "jobs" (the slug is
@@ -2990,7 +3247,7 @@
     function routeFor(hash){
       var h = String(hash == null ? "" : hash).replace(/^#\/?/, "");
       var first = h.split(/[\/?]/)[0].toLowerCase();
-      var names = ["jobs", "companies", "articles", "tools", "team", "cv", "post", "privacy"];
+      var names = ["jobs", "companies", "company", "articles", "tools", "team", "join", "cv", "post", "privacy"];
       for(var i=0;i<names.length;i++){ if(first === names[i]) return names[i]; }
       return "home";
     }
@@ -3230,13 +3487,33 @@
       /* ---- Team page ---- */
       team_eyebrow:"Meet the team", team_h1:"The people behind Tokyo Samurai Dev.", team_intro:"Tokyo Samurai Dev is built by LongWave, a licensed recruiting agency in Tokyo. We are a small bilingual team who talk to engineers every day, and we want your move to Japan to be a good one.",
       tm_neo_role:"Product owner, Tokyo Samurai Dev · Global Talent Acquisition Lead, LongWave", tm_neo_bio:"Born and raised in Silicon Valley and bilingual in English and Japanese. At LongWave, Neo specialises in QA and cybersecurity hiring in Japan, and talks with engineers every day about their careers, in both languages.",
-      tm_m2_role:"Role to be confirmed", tm_m2_bio:"A short note on what Yusuke does for engineers on Tokyo Samurai Dev.",
-      tm_m3_role:"Role to be confirmed", tm_m3_bio:"A short note on what Yocia does for engineers on Tokyo Samurai Dev.",
-      tm_m4_role:"Role to be confirmed", tm_m4_bio:"A short note on what James does for engineers on Tokyo Samurai Dev.",
-      tm_m5_role:"Engineer", tm_m5_bio:"A short note on what Landon does for engineers on Tokyo Samurai Dev.",
-      tm_m6_role:"CEO, LongWave", tm_m6_bio:"Why LongWave built Tokyo Samurai Dev, in one or two sentences.",
-      tm_tbd:"Profile, title and photo to be confirmed.",
       team_cta_h:"Talk to us.", team_cta_p:"Questions about jobs, visas or your Japanese level? Send your profile and one of us will reply by email.", team_cta_btn:"Get matched",
+      /* ---- Join (Get matched) page ---- */
+      join_eyebrow:"A human in your corner", join_h1:"Get matched with a bilingual recruiter", join_sub:"Your skills. Your Japanese. Your next chapter. Start with a conversation.",
+      join_email_l:"Contact email",
+      join_step1:"1. Your profile", join_step2:"2. Japanese & status", join_step3:"3. Your next move",
+      join_s0_legend:"Your story starts here.", join_s0_p:"Add a LinkedIn URL or upload a résumé. One is enough.", join_linkedin_l:"LinkedIn URL", join_resume_l:"Or upload résumé", join_resume_note:"PDF or Word. English is fine.",
+      join_s1_legend:"Your Japanese, in your words.", join_s1_p:"No JLPT certificate? Choose the description that feels closest.", join_jp0:"No Japanese · comfortable working in English", join_jp0_note:"Recruiter introductions usually need some Japanese (around N3+). We'll send you roles you can apply to directly.", join_jp3:"N3 · join familiar work conversations with support", join_jp4:"N2 · discuss work topics and read routine documents", join_jp5:"N1 · handle complex discussion and detailed writing",
+      join_live_l:"Where do you live now?", join_select:"Select", join_live_jp:"In Japan", join_live_ab:"Outside Japan", join_live_note:"Company introductions are for engineers living in Japan. From abroad, we'll send you roles with visa sponsorship.",
+      join_res_l:"Residence status", join_res_select:"Select your status", join_res_eng:"Engineer / Specialist in Humanities", join_res_hsp:"HSP", join_res_pr:"Spouse / PR", join_res_student:"Student", join_res_sponsor:"Need sponsorship", join_res_other:"Other",
+      join_s2_legend:"Your preferences", join_desired_l:"Desired annual salary (¥)", join_role_l:"Desired role", join_role_qa:"QA / Test", join_role_be:"Backend", join_role_fe:"Front-end", join_role_mobile:"Mobile", join_role_sre:"SRE", join_role_em:"Engineering Manager", join_start_l:"When to start", join_start_asap:"As soon as possible", join_start_3:"Within 3 months", join_start_6:"Within 6 months", join_start_exploring:"Just exploring",
+      join_back:"Back", join_continue:"Continue", join_submit:"Get matched via LongWave",
+      join_legal1:"We use your information to introduce suitable jobs and to contact you. We share your profile with a company only after you agree.", join_legal2:"LongWave Inc. · Licensed recruiting agency 13-ユ-314616",
+      join_neo_h:"Meet Neo.", join_neo_role:"Global Talent Acquisition Lead, LongWave", join_neo_bio:"Raised in Silicon Valley, bilingual in English and Japanese. Neo talks with engineers every day about building a career in Japan, in whichever language you prefer.",
+      join_next_h:"What happens next", join_next1:"A short conversation about your plans.", join_next2:"A tailored shortlist, with context from your recruiter.", join_next3:"An introduction only when you agree.",
+      join_alerts_h:"Just want job alerts?", join_alerts_p:"Weekly picks, straight to your inbox.", join_alerts_email_l:"Email", join_alerts_btn:"Get job alerts", join_alerts_ok:"You're on the list. Weekly picks are on the way.",
+      join_err_email:"Please enter a valid email so we can reach you.", join_err_profile:"Add a LinkedIn URL or a résumé so a recruiter can read your background.", join_err_jp:"Please choose your Japanese level.", join_err_live:"Please tell us where you live now.", join_err_res:"Please select your residence status.",
+      /* ---- Company profile page ---- */
+      comp_badge_direct:"Direct",
+      cd_open_roles:"{n} open roles", cd_tab_about:"About", cd_tab_jobs:"Roles ({n})", cd_tab_culture:"Work style", cd_tab_tags:"Tech",
+      cd_about_h:"About {co}", cd_jobs_h:"Roles at {co}", cd_culture_h:"Work style", cd_culture_note:"Signals drawn from this company's open roles, not a company statement.", cd_tags_h:"Tech & tools",
+      cd_contracted:"Represented by LongWave", cd_contracted_note:"We work directly with this company. Apply through us and a bilingual recruiter introduces you.", cd_cta_contracted:"Get introduced via LongWave",
+      cd_direct:"Direct listing", cd_direct_note:"Listed directly from {co}. Tokyo Samurai Dev doesn't represent this employer; you apply on their own site.",
+      cd_fact_loc:"Location", cd_fact_lang:"Working language", cd_fact_jp:"Japanese", cd_fact_salary:"Salary range", cd_fact_visa:"Visa", cd_fact_roles:"Open roles",
+      cd_lang_en:"English OK", cd_lang_ja:"Japanese", cd_visa_yes:"Sponsors", cd_visa_overseas:"Open to overseas",
+      cd_ws_remote:"Remote friendly", cd_ws_hybrid:"Hybrid", cd_ws_visa:"Visa sponsorship", cd_ws_overseas:"Hires from overseas", cd_ws_english:"English OK",
+      cd_no_roles:"No open roles right now.", cd_back:"All companies", cd_not_found:"We couldn't find that company.",
+      cd_claim_h:"Is this your company?", cd_claim_p:"Keep your profile accurate, or ask us to remove it. Listing is free.", cd_claim_link:"Request a correction",
       partners_lab:"Hiring with us",
       partners_post_h:"Teams we're helping hire",
       partners_post_sub:"A few of the product companies building their bilingual teams with us right now.",
@@ -3402,13 +3679,33 @@
       /* ---- Team page ---- */
       team_eyebrow:"チーム紹介", team_h1:"Tokyo Samurai Dev を支える人たち。", team_intro:"Tokyo Samurai Dev は、東京の有料職業紹介事業者である LongWave が運営しています。私たちは毎日エンジニアと話している少人数のバイリンガルチームで、あなたの日本での一歩が良いものになるよう願っています。",
       tm_neo_role:"Tokyo Samurai Dev プロダクトオーナー／LongWave グローバル採用リード", tm_neo_bio:"シリコンバレーで生まれ育ち、英語と日本語のバイリンガル。LongWave では日本における QA・サイバーセキュリティ採用を専門とし、両言語で毎日エンジニアのキャリアについて話しています。",
-      tm_m2_role:"役割は調整中", tm_m2_bio:"Yusuke が Tokyo Samurai Dev でエンジニアのために担う役割の短い紹介文。",
-      tm_m3_role:"役割は調整中", tm_m3_bio:"Yocia が Tokyo Samurai Dev でエンジニアのために担う役割の短い紹介文。",
-      tm_m4_role:"役割は調整中", tm_m4_bio:"James が Tokyo Samurai Dev でエンジニアのために担う役割の短い紹介文。",
-      tm_m5_role:"エンジニア", tm_m5_bio:"Landon が Tokyo Samurai Dev でエンジニアのために担う役割の短い紹介文。",
-      tm_m6_role:"LongWave CEO", tm_m6_bio:"LongWave が Tokyo Samurai Dev を立ち上げた理由を、1〜2文で。",
-      tm_tbd:"プロフィール・役職・写真は調整中です。",
       team_cta_h:"お気軽にご連絡ください。", team_cta_p:"仕事・ビザ・日本語レベルについてのご質問はありますか？プロフィールをお送りいただければ、担当者がメールでお返事します。", team_cta_btn:"マッチングを受ける",
+      /* ---- Join (Get matched) page ---- */
+      join_eyebrow:"あなたの味方が、ここに", join_h1:"バイリンガルリクルーターがマッチング", join_sub:"あなたのスキル、日本語、次の一歩。まずは会話から始めましょう。",
+      join_email_l:"連絡先メールアドレス",
+      join_step1:"1. プロフィール", join_step2:"2. 日本語・在留資格", join_step3:"3. 次の一歩",
+      join_s0_legend:"まずはここから。", join_s0_p:"LinkedIn の URL か履歴書のどちらか一方で十分です。", join_linkedin_l:"LinkedIn の URL", join_resume_l:"または履歴書をアップロード", join_resume_note:"PDF か Word。英語で構いません。",
+      join_s1_legend:"あなたの日本語を、言葉で。", join_s1_p:"JLPT の証明書がなくても大丈夫。いちばん近い説明をお選びください。", join_jp0:"日本語なし・英語で問題なく働ける", join_jp0_note:"企業へのご紹介は通常ある程度の日本語（N3程度以上）が必要です。直接応募できる求人をお送りします。", join_jp3:"N3・サポートがあれば日常的な業務会話に参加できる", join_jp4:"N2・業務上の話題を議論し、一般的な文書を読める", join_jp5:"N1・複雑な議論や詳細な文書作成ができる",
+      join_live_l:"現在のお住まいは？", join_select:"選択してください", join_live_jp:"日本国内", join_live_ab:"日本国外", join_live_note:"企業へのご紹介は日本在住のエンジニアが対象です。海外からの場合は、ビザサポートのある求人をお送りします。",
+      join_res_l:"在留資格", join_res_select:"在留資格を選択", join_res_eng:"技術・人文知識・国際業務", join_res_hsp:"高度専門職", join_res_pr:"配偶者・永住", join_res_student:"留学", join_res_sponsor:"ビザサポートが必要", join_res_other:"その他",
+      join_s2_legend:"ご希望", join_desired_l:"希望年収（¥）", join_role_l:"希望職種", join_role_qa:"QA・テスト", join_role_be:"バックエンド", join_role_fe:"フロントエンド", join_role_mobile:"モバイル", join_role_sre:"SRE", join_role_em:"エンジニアリングマネージャー", join_start_l:"入社希望時期", join_start_asap:"できるだけ早く", join_start_3:"3か月以内", join_start_6:"6か月以内", join_start_exploring:"情報収集中",
+      join_back:"戻る", join_continue:"次へ", join_submit:"LongWave 経由でマッチング",
+      join_legal1:"いただいた情報は、適した求人のご紹介とご連絡のために利用します。企業へのプロフィール共有は、あなたの同意を得てからのみ行います。", join_legal2:"LongWave株式会社 ・ 有料職業紹介事業 13-ユ-314616",
+      join_neo_h:"Neo のご紹介。", join_neo_role:"LongWave グローバル採用リード", join_neo_bio:"シリコンバレー育ちで、英語と日本語のバイリンガル。Neo は日本でのキャリアづくりについて、あなたの選んだ言語で毎日エンジニアと話しています。",
+      join_next_h:"この後の流れ", join_next1:"ご予定についての短い面談。", join_next2:"リクルーターの補足つきで、あなたに合わせた求人リスト。", join_next3:"ご紹介はあなたの同意があってから。",
+      join_alerts_h:"求人アラートだけ欲しい方へ", join_alerts_p:"毎週のおすすめを、メールでお届けします。", join_alerts_email_l:"メールアドレス", join_alerts_btn:"求人アラートを受け取る", join_alerts_ok:"登録しました。毎週のおすすめをお送りします。",
+      join_err_email:"ご連絡できるよう、有効なメールアドレスをご入力ください。", join_err_profile:"経歴を拝見できるよう、LinkedIn の URL か履歴書を追加してください。", join_err_jp:"日本語レベルをお選びください。", join_err_live:"現在のお住まいをお知らせください。", join_err_res:"在留資格をお選びください。",
+      /* ---- Company profile page ---- */
+      comp_badge_direct:"直接掲載",
+      cd_open_roles:"募集中 {n} 件", cd_tab_about:"会社について", cd_tab_jobs:"求人（{n}）", cd_tab_culture:"働き方", cd_tab_tags:"技術",
+      cd_about_h:"{co} について", cd_jobs_h:"{co} の求人", cd_culture_h:"働き方", cd_culture_note:"この会社の公開求人から読み取れる傾向であり、会社の公式見解ではありません。", cd_tags_h:"技術・ツール",
+      cd_contracted:"LongWave が窓口", cd_contracted_note:"この会社とは直接お取引があります。当社経由でご応募いただくと、バイリンガルリクルーターがご紹介します。", cd_cta_contracted:"LongWave 経由で紹介を受ける",
+      cd_direct:"直接掲載", cd_direct_note:"{co} の情報を直接掲載しています。Tokyo Samurai Dev はこの企業を代理しておらず、ご応募は企業の自社サイトで行います。",
+      cd_fact_loc:"所在地", cd_fact_lang:"業務言語", cd_fact_jp:"日本語", cd_fact_salary:"給与レンジ", cd_fact_visa:"ビザ", cd_fact_roles:"募集中の求人",
+      cd_lang_en:"英語OK", cd_lang_ja:"日本語", cd_visa_yes:"サポートあり", cd_visa_overseas:"海外から応募可",
+      cd_ws_remote:"リモート可", cd_ws_hybrid:"ハイブリッド", cd_ws_visa:"ビザサポート", cd_ws_overseas:"海外採用あり", cd_ws_english:"英語OK",
+      cd_no_roles:"現在、公開中の求人はありません。", cd_back:"企業一覧", cd_not_found:"その企業が見つかりませんでした。",
+      cd_claim_h:"この会社の関係者の方へ", cd_claim_p:"情報の修正や掲載停止を承ります。掲載は無料です。", cd_claim_link:"修正を依頼する",
       partners_lab:"採用パートナー",
       partners_post_h:"ともに採用を進めるチーム",
       partners_post_sub:"いま私たちとバイリンガルチームを築いている、プロダクト企業の一部をご紹介します",
@@ -3997,7 +4294,9 @@
       actionsHTML=(applyUrl ? '<a class="btn btn--primary jdx-apply-site" href="'+ esc(applyUrl) +'" target="_blank" rel="noopener">'+ esc(t("jd_apply_site")) +' ↗</a>' : '') + saveBtn;
       noteHTML='<p class="jdx-direct-note">'+ esc(t("jd_direct_note").replace("{co}", c.name)) +'</p>';
     } else {
-      actionsHTML='<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?" disabled":"")+'>'+ esc(applyLabel) +'</button>' + saveBtn + (site ? '<a class="btn btn--ghost jdx-company" href="'+ esc(site) +'" target="_blank" rel="noopener">'+ esc(t("m_company")) +'</a>' : "");
+      /* represented role: apply THROUGH us + save. No company-website link — we keep the
+         visitor on our site (the only off-site link is a DIRECT role's own apply URL, above). */
+      actionsHTML='<button type="button" class="btn btn--primary jdx-apply" data-jdx="apply"'+((applied||limit)?" disabled":"")+'>'+ esc(applyLabel) +'</button>' + saveBtn;
     }
     pane.innerHTML =
       '<article class="jdx'+(job.direct?" jdx--direct":"")+'">'+
@@ -4245,21 +4544,36 @@
     var grid=$("#coGrid"); if(!grid) return;
     if(typeof PARTNERS==="undefined" || !PARTNERS.length){ CO_SORTED=[]; buildCoSectors(); paintCompanies(); return; }
 
-    var countByName={};   /* live job counts — used only to order the grid + pick the public status */
-    JOBS.forEach(function(j){ var c=COMPANIES[j.co]; var nm=(c&&c.name)||j.co; if(nm) countByName[nm]=(countByName[nm]||0)+1; });
+    var countByName={};       /* live job counts — used only to order the grid + pick the public status */
+    var hasDirect={}, hasNonDirect={};   /* per-company role mix → the contracted-vs-not split */
+    JOBS.forEach(function(j){ var c=COMPANIES[j.co]; var nm=(c&&c.name)||j.co; if(nm){ countByName[nm]=(countByName[nm]||0)+1; if(j.direct) hasDirect[nm]=true; else hasNonDirect[nm]=true; } });
     var rich={};          /* sector fallback for the few companies also in COMPANY_LIST */
     (typeof COMPANY_LIST!=="undefined"?COMPANY_LIST:[]).forEach(function(co){ rich[co.name]=co; });
 
-    CO_SORTED = PARTNERS.map(function(p,i){ return {p:p, i:i, n:countByName[p.name]||0}; })
+    /* the curated roster = companies we REPRESENT / partner with (marquee non-client cos are NOT
+       in it). Every roster entry gets the represented treatment; direct:false. p.placement is
+       never carried through, so the confidential placement relationship never leaks. */
+    var inRoster={};
+    var roster = PARTNERS.map(function(p,i){ return {p:p, i:i, n:countByName[p.name]||0}; })
       .sort(function(a,b){
         if(b.n!==a.n) return b.n-a.n;
         var pa=a.p.placement?1:0, pb=b.p.placement?1:0;
         if(pb!==pa) return pb-pa;
         return a.i-b.i;
       })
-      /* keep only what the card needs. live keys off open roles ONLY (it.n>0); p.placement is
-         never carried through here, so the confidential placement relationship never leaks. */
-      .map(function(it){ return {p:it.p, live:it.n>0, rich:rich[it.p.name]}; });
+      .map(function(it){ inRoster[it.p.name]=true; return {p:it.p, live:it.n>0, direct:false, rich:rich[it.p.name]}; });
+
+    /* append DIRECT (marquee / non-client) companies so the contracted-vs-not difference is
+       actually visible on the list: a company in the hydrated map with live roles that are ALL
+       direct and that is NOT in the curated roster. Labelled "Direct" — never implies we
+       represent them. */
+    var direct=[], seen={};
+    for(var k in COMPANIES){ var c=COMPANIES[k]; if(!c||!c.name||inRoster[c.name]||seen[c.name]) continue; seen[c.name]=true;
+      if(hasDirect[c.name] && !hasNonDirect[c.name]) direct.push({ p:{ name:c.name, color:c.color, mono:c.mono, industry:c.sector||c.industry }, live:true, direct:true });
+    }
+    direct.sort(function(a,b){ return (countByName[b.p.name]||0)-(countByName[a.p.name]||0) || a.p.name.localeCompare(b.p.name); });
+
+    CO_SORTED = roster.concat(direct);
 
     buildCoSectors();
     paintCompanies();
@@ -4307,21 +4621,27 @@
   /* one roster card: flat panel, dynamic logo, live-only status badge. The WHOLE card is a
      button that opens the company inquiry modal — every id / attr / hook preserved exactly
      (data-company + role=button + tabindex + aria-label drive modals/lead-forms.js). */
+  function coSlug(name){ var s=String(name||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); return s || encodeURIComponent(String(name||"")); }
+
   function buildCoCard(it){
     var p=it.p, r=it.rich;
     var industry = (p.industry && p.industry[lang]) || (r && r.sector && r.sector[lang]) || "";
 
-    /* public status keys off live open roles only (it.live) — "Open roles" vs "Partner" — so
-       the confidential placement relationship never reaches the page. */
-    var badgeCls = it.live ? "co-badge--live" : "co-badge--partner";
-    var badgeTxt = it.live ? t("comp_badge_live") : t("comp_badge_partner");
+    /* CONTRACTED vs DIRECT is the primary status now (user ask 2026-11-18): a marquee /
+       non-client company (its roles are `direct`) is a neutral "Direct listing" we don't
+       represent; everything else is a company we represent — "Open roles" when it has live
+       postings, else "Partner". The confidential placement flag still never reaches here. */
+    var badgeCls, badgeTxt;
+    if(it.direct){ badgeCls="co-badge--direct"; badgeTxt=t("comp_badge_direct"); }
+    else if(it.live){ badgeCls="co-badge--live"; badgeTxt=t("comp_badge_live"); }
+    else { badgeCls="co-badge--partner"; badgeTxt=t("comp_badge_partner"); }
     /* strip the baked-in trailing arrow so our own arrow can slide independently */
     var ctaTxt   = t("comp_view_co").replace(/\s*→\s*$/, "");
 
-    var card=el("div","co-card co-card--click");
-    card.setAttribute("data-company", p.name);
-    card.setAttribute("role","button");
-    card.setAttribute("tabindex","0");
+    /* the WHOLE card is a link to the company's profile page (#/company/<slug>) — the hash
+       router fades it in; no modal, no off-site link. */
+    var card=el("a","co-card co-card--click"+(it.direct?" co-card--direct":""));
+    card.setAttribute("href", "#/company/"+coSlug(p.name));
     card.setAttribute("aria-label", p.name + ", " + t("comp_view_co_a11y"));
     card.innerHTML=
       '<span class="co-badge '+ badgeCls +'"><span class="co-dot" aria-hidden="true"></span>'+ esc(badgeTxt) +'</span>'+
@@ -6222,9 +6542,22 @@
     /* every detail field is language-aware (jf): English base / Japanese `_ja` override.
        The exact same builder fills the inline board detail, so both translate identically. */
     $("#mDetail").innerHTML=jobDetailSectionsHTML(job);
-    /* only link out to http(s) — never assign a javascript:/data: URL to href, even from
-       admin/live company data (defence-in-depth against a poisoned COMPANIES.site). */
-    var comp=$("#mCompany"); var site=(c.site && /^https?:\/\//i.test(c.site)) ? c.site : ""; if(site){ comp.href=site; comp.style.display=""; } else { comp.style.display="none"; }
+    /* DIRECT (non-client) role: apply OUT on the company's own page (the one off-site link we
+       allow), hide the apply-through-us button, and state we don't represent them — mirrors the
+       jobs-board inline detail (jobs.js renderSelectedDetail). REPRESENTED roles keep the sign-up
+       apply flow and show NO company-website link, so the visitor stays on our site. Only ever
+       link out to http(s) — never a javascript:/data: URL, even from admin/live data. */
+    var apl=$("#mApply"), aplSite=$("#mApplySite"), dnote=$("#mDirectNote");
+    if(job.direct){
+      var applyUrl=(job.apply && /^https?:\/\//i.test(job.apply)) ? job.apply : ((c.site && /^https?:\/\//i.test(c.site)) ? c.site : "");
+      if(apl) apl.style.display="none";
+      if(aplSite){ if(applyUrl){ aplSite.href=applyUrl; aplSite.hidden=false; } else { aplSite.hidden=true; } }
+      if(dnote){ dnote.textContent=t("jd_direct_note").replace("{co}", c.name); dnote.hidden=false; }
+    } else {
+      if(apl) apl.style.display="";
+      if(aplSite) aplSite.hidden=true;
+      if(dnote) dnote.hidden=true;
+    }
     paintModalSave(); paintModalApply();
   }
   /* The list payload ships CARD fields only — the JD prose (scope/body/required/
@@ -6755,7 +7088,7 @@
     /* aria-labels must switch language with the page too — a JA screen-reader user was
        hearing "Close", "Menu", "Filters" in English while html lang said ja */
     document.querySelectorAll("[data-i18n-aria]").forEach(function(n){ var k=n.getAttribute("data-i18n-aria"); var v=I18N[lang][k]!=null?I18N[lang][k]:I18N.en[k]; if(v!=null) n.setAttribute("aria-label", v); });
-    buildSpecSelect(); buildStackSelect(); buildJpSelect(); buildRemoteSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners(); renderPrivacy(); renderTools();
+    buildSpecSelect(); buildStackSelect(); buildJpSelect(); buildRemoteSelect(); buildLocSelect(); renderJobs(); renderTeaser(); renderCompanies(); renderArticles(); renderReviews(); renderHRVoices(); renderCV(); renderPartners(); renderPrivacy(); renderTools(); renderCompanyDetail();
     var jc=$("#jobCount"); if(jc) jc.innerHTML = t("jobcount").replace("{n}","<b>"+JOBS.length+"</b>");
     document.querySelectorAll(".lang button").forEach(function(b){ var on=b.getAttribute("data-lang")===lang; b.classList.toggle("active", on); b.setAttribute("aria-checked", on?"true":"false"); });
     /* an open JD modal's Save/Apply buttons hold runtime state the data-i18n sweep above
@@ -6827,10 +7160,13 @@
      the only motion is the new page fading into its top. */
   function showRoute(route){
     var next=$("#page-"+route); if(!next) return;
+    /* the company profile is hash-slug driven (#/company/<slug>) — paint it from the slug
+       before it fades in, so the content is there on first reveal, not a frame late */
+    if(route==="company" && typeof renderCompanyDetail==="function") renderCompanyDetail();
     var de=document.documentElement, body=document.body;
     var prevHtml=de.style.scrollBehavior, prevBody=body.style.scrollBehavior;
     de.style.scrollBehavior="auto"; body.style.scrollBehavior="auto";   // force instant, beat html{scroll-behavior:smooth}
-    ["home","jobs","companies","articles","tools","team","cv","post","privacy"].forEach(function(r){ var p=$("#page-"+r); if(p) p.classList.remove("active"); });
+    ["home","jobs","companies","company","articles","tools","team","join","cv","post","privacy"].forEach(function(r){ var p=$("#page-"+r); if(p) p.classList.remove("active"); });
     window.scrollTo(0,0);
     de.style.scrollBehavior=prevHtml; body.style.scrollBehavior=prevBody;
     next.classList.add("active");                       // fades in at the top via pageFade
@@ -7007,6 +7343,7 @@
         document.querySelectorAll("[data-partner-feature]").forEach(function(b){ delete b.dataset.pfBuilt; });
         renderPartners();
         renderCompanies();   /* the companies page is roster-driven too — repaint it now, not on the next lang toggle */
+        renderCompanyDetail();   /* and an open company profile is roster-driven (cdFindCompany reads PARTNERS) — repaint it too */
       }catch(e){ if(window.console&&console.error) console.error("[partners hydrate]", e); }
     });
     /* Testimonials hydrate the same way (independent, silent on failure): one payload
@@ -7502,6 +7839,355 @@
     var recompute = function(e){ if (e.target.closest("#tool-takehome")) renderTakeHome(); else if (e.target.closest("#tool-hsp")) renderHsp(); };
     page.addEventListener("input", recompute);
     page.addEventListener("change", recompute);
+  })();
+/* features/join/join.js — the Get matched page wizard (3 steps) + lead submit.
+   Runs inside the shared IIFE, so it reuses $, t, apiReady, and the honest lead hooks
+   postLead()/leadConfirm() from overlay-core.js. No new network surface: the final
+   submit and the job-alerts box both POST a lead through postLead (captured server-side,
+   honest "preview can't submit" message when no /api is present). */
+
+  (function(){
+    var form=$("#joinForm"); if(!form) return;
+    var steps=[].slice.call(form.querySelectorAll(".join-step"));
+    var prog=[].slice.call(form.querySelectorAll(".join-progress li"));
+    var prev=$("#joinPrev"), next=$("#joinNext"), submit=$("#joinSubmit"), errEl=$("#joinError");
+    var cur=0;
+
+    function showStep(n){
+      cur=Math.max(0, Math.min(steps.length-1, n));
+      steps.forEach(function(s,i){ s.hidden = i!==cur; });
+      prog.forEach(function(li,i){ li.classList.toggle("active", i<=cur); });
+      if(prev) prev.hidden = cur===0;
+      var last = cur===steps.length-1;
+      if(next) next.hidden = last;
+      if(submit) submit.hidden = !last;
+      if(errEl){ errEl.hidden=true; errEl.textContent=""; }
+    }
+    function fail(msg){ if(errEl){ errEl.textContent=msg; errEl.hidden=false; } return false; }
+
+    /* email is validated on step 0 (it sits above the steps and gates everything) */
+    function validate(n){
+      if(n===0){
+        var em=$("#joinEmail");
+        if(!em || !em.value || !/.+@.+\..+/.test(em.value)) return fail(t("join_err_email"));
+        var li=$("#joinLinkedin"), rf=$("#joinResume");
+        var f=rf && rf.files && rf.files[0];
+        /* a present-but-unreadable file must NOT count as a satisfied profile: readJoinResume
+           only encodes pdf/doc/docx, so an .rtf/.txt/oversized pick would otherwise submit a
+           profile-less lead silently (the exact drop lead-forms.js guards against). */
+        if(f){ var prob=joinResumeProblem(f); if(prob) return fail(prob); }
+        var hasLi=li && li.value.trim();
+        if(!hasLi && !f) return fail(t("join_err_profile"));
+        return true;
+      }
+      if(n===1){
+        if(!form.querySelector('input[name="japanese"]:checked')) return fail(t("join_err_jp"));
+        if(!$("#joinLive") || !$("#joinLive").value) return fail(t("join_err_live"));
+        if(!$("#joinResidence") || !$("#joinResidence").value) return fail(t("join_err_res"));
+        return true;
+      }
+      return true;
+    }
+
+    if(next) next.addEventListener("click", function(){ if(validate(cur)) showStep(cur+1); });
+    if(prev) prev.addEventListener("click", function(){ showStep(cur-1); });
+
+    /* ---- résumé -> base64 (self-contained; no load-order coupling) ---- */
+    var R_TYPES={ pdf:"application/pdf", doc:"application/msword", docx:"application/vnd.openxmlformats-officedocument.wordprocessingml.document" };
+    var R_MAX=5*1024*1024;   /* mirror lead-forms.js's 5 MB cap */
+    function joinResumeProblem(f){
+      if(!f) return "";
+      var ext=((/\.([a-z0-9]+)$/i.exec(f.name||"")||[])[1]||"").toLowerCase();
+      if(!R_TYPES[ext]) return t("su_resume_type");
+      if(f.size>R_MAX) return t("su_resume_big");
+      return "";
+    }
+    /* surface the problem the moment a file is chosen, not only on Continue */
+    var _ri=$("#joinResume"); if(_ri) _ri.addEventListener("change", function(){
+      var f=_ri.files && _ri.files[0], prob=joinResumeProblem(f);
+      if(errEl){ if(prob){ errEl.textContent=prob; errEl.hidden=false; } else { errEl.hidden=true; errEl.textContent=""; } }
+    });
+    function readJoinResume(){
+      var inp=$("#joinResume"), f=inp && inp.files && inp.files[0];
+      var ext=f ? ((/\.([a-z0-9]+)$/i.exec(f.name||"")||[])[1]||"").toLowerCase() : "";
+      if(!f || !R_TYPES[ext]) return Promise.resolve(null);
+      return new Promise(function(resolve){
+        var fr=new FileReader();
+        fr.onload=function(){ var s=String(fr.result), i=s.indexOf(","); resolve(i<0?null:{ content_type:R_TYPES[ext], data_base64:s.slice(i+1) }); };
+        fr.onerror=function(){ resolve(null); };
+        fr.readAsDataURL(f);
+      });
+    }
+
+    function v(id){ var n=$(id); return (n && n.value!=="") ? n.value : undefined; }
+    function jpLabel(){ var c=form.querySelector('input[name="japanese"]:checked'); return c?({0:"None",3:"N3",4:"N2",5:"N1"}[c.value]||c.value):undefined; }
+    function selText(id){ var n=$(id); return (n && n.selectedIndex>=0 && n.value!=="") ? (n.options[n.selectedIndex].textContent||"").trim() : undefined; }
+
+    function collect(resumeFile){
+      /* fold the structured answers into one human-readable recruiter line, same shape as
+         the modal signup's lead (collectSignup): kind + email + linkedin + jp_level + message */
+      var parts=[];
+      var live=selText("#joinLive"); if(live) parts.push("Based: "+live);
+      var res=selText("#joinResidence"); if(res) parts.push("Status: "+res);
+      var desired=v("#joinDesired"); if(desired) parts.push("Target: ¥"+Number(desired).toLocaleString("en-US"));
+      var role=selText("#joinRole"); if(role) parts.push("Role: "+role);
+      var start=selText("#joinStart"); if(start) parts.push("Start: "+start);
+      return {
+        kind:"job",
+        email:v("#joinEmail"),
+        linkedin:v("#joinLinkedin"),
+        jp_level:jpLabel(),
+        message:parts.length?parts.join(" · "):undefined,
+        resume_file:resumeFile||undefined,
+        source_channel:"join"
+      };
+    }
+
+    function finish(statusEl){
+      if(!statusEl) return;
+      var m=statusEl.querySelector(".msg")||statusEl;
+      m.textContent = apiReady ? t("su_success") : t("lead_offline");
+      statusEl.hidden=false; statusEl.setAttribute("tabindex","-1"); statusEl.focus();
+    }
+
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      if(!validate(0) || !validate(1)) return;   /* guard against a direct submit */
+      if(submit) submit.disabled=true;
+      readJoinResume().then(function(rf){
+        var succ=$("#joinSuccess");
+        leadConfirm(postLead(collect(rf)), succ);   /* honest: downgrades if delivery fails */
+        finish(succ);
+        form.querySelectorAll(".join-step, .join-actions, .join-progress").forEach(function(n){ n.hidden=true; });
+      });
+    });
+
+    /* ---- the job-alerts mini form (aside) ---- */
+    var af=$("#joinAlertsForm");
+    if(af) af.addEventListener("submit", function(e){
+      e.preventDefault();
+      var em=$("#joinAlertsEmail"); if(!em || !/.+@.+\..+/.test(em.value)) return;
+      var st=$("#joinAlertsStatus");
+      leadConfirm(postLead({ kind:"alerts", email:em.value, source_channel:"join_alerts" }), st);
+      if(st){ var m=st.querySelector(".msg")||st; m.textContent = apiReady ? t("join_alerts_ok") : t("lead_offline"); st.hidden=false; }
+      af.querySelector("label").hidden=true; af.querySelector("button").hidden=true;
+    });
+
+    showStep(0);
+  })();
+/* features/company/company.js — the per-company profile page (japan-dev layout, OUR data).
+   renderCompanyDetail() reads the hash slug (#/company/<slug>), finds the roster company,
+   derives its facts from REAL jobs, and paints a banner / logo / name / tabs / About /
+   Roles / Work style / Tech layout. Re-rendered by applyLang (EN/JA) and by showRoute.
+
+   CONTRACTED vs DIRECT is the key distinction (user ask 2026-11-18): a company we represent
+   (its roles are not `direct`) gets the gold "represented by LongWave" treatment and roles
+   that apply THROUGH us; a marquee/non-client company (roles `direct`) gets a neutral
+   "direct listing — we don't represent this employer" treatment and roles apply on the
+   company's own site (the one unavoidable off-site link — there is NO company-website link). */
+
+  /* name -> url slug; exposed so companies.js can build the card href identically */
+  function companySlug(name){ var s=String(name||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); return s || encodeURIComponent(String(name||"")); }
+  if (typeof window !== "undefined") window.companySlug = companySlug;
+
+  /* the hash segment is matched RAW against companySlug() output (which is already URL-safe —
+     [a-z0-9-], or encodeURIComponent for a non-ASCII name), so we never decode here: no
+     decodeURIComponent means no URIError crash on a malformed "#/company/%" (review finding). */
+  function cdSlugFromHash(){
+    var h=String(location.hash||"").replace(/^#\/?/,"");          /* "company/money-forward" */
+    var parts=h.split("/"); return parts[0]==="company" ? (parts[1]||"") : "";
+  }
+  function cdFindCompany(slug){
+    if(!slug) return null;
+    /* rich roster entry first (carries industry + blurb). _roster=true marks a company we
+       curate — the authoritative "we represent / partner" signal (marquee non-client cos are
+       NOT in the roster). Return a shallow copy so the tag never mutates the shared roster. */
+    if(typeof PARTNERS!=="undefined" && PARTNERS.length){
+      for(var i=0;i<PARTNERS.length;i++){ var e=PARTNERS[i];
+        if(companySlug(e.name)===slug) return { name:e.name, color:e.color, mono:e.mono, industry:e.industry, blurb:e.blurb, _roster:true }; }
+    }
+    /* fall back to the hydrated company map (covers marquee/direct companies that aren't in
+       the curated roster): synthesize a minimal entry — industry from its sector, no blurb. */
+    if(typeof COMPANIES!=="undefined"){
+      for(var k in COMPANIES){ var c=COMPANIES[k];
+        if(c && companySlug(c.name)===slug) return { name:c.name, color:c.color, mono:c.mono, industry:c.sector||c.industry, _roster:false }; }
+    }
+    return null;
+  }
+  function cdJobsFor(p){
+    if(typeof JOBS==="undefined") return [];
+    return JOBS.filter(function(j){ var c=COMPANIES[j.co]; return c && companySlug(c.name)===companySlug(p.name); });
+  }
+
+  /* ---- fact derivation from real roles (never fabricated) ---- */
+  function cdSalaryRange(jobs){
+    var nums=[];
+    jobs.forEach(function(j){ var s=String(j.salary||""); var m, re=/([\d.]+)\s*M/gi; while((m=re.exec(s))) nums.push(parseFloat(m[1])); });
+    if(!nums.length) return "";
+    var lo=Math.min.apply(null,nums), hi=Math.max.apply(null,nums);
+    var f=function(n){ return "¥"+(n%1?n.toFixed(1):n)+"M"; };
+    return lo===hi ? f(lo) : f(lo)+" – "+f(hi);
+  }
+  var CD_JP_RANK={ none:0, conversational:1, daily:1, business:2, fluent:3, native:4 };
+  function cdJpRange(jobs){
+    var seen={}, has=false;
+    jobs.forEach(function(j){ if(j.jp!=null){ seen[j.jp]=true; has=true; } });
+    if(!has) return "";
+    var keys=Object.keys(seen).sort(function(a,b){ return (CD_JP_RANK[a]||0)-(CD_JP_RANK[b]||0); });
+    var lo=t("lbl_jp_"+keys[0]), hi=t("lbl_jp_"+keys[keys.length-1]);
+    return keys.length===1 ? lo : lo+" → "+hi;
+  }
+  function cdWorkingLang(jobs){
+    if(!jobs.length) return "";
+    var needsNone=jobs.some(function(j){ return j.jp==="none"; });
+    return needsNone ? t("cd_lang_en") : t("cd_lang_ja");
+  }
+  function cdVisa(jobs){
+    if(jobs.some(function(j){ return j.visa; })) return t("cd_visa_yes");
+    if(jobs.some(function(j){ return j.abroad; })) return t("cd_visa_overseas");
+    return "";
+  }
+  function cdLocation(p, jobs){
+    var c=null; for(var k in COMPANIES){ if(COMPANIES[k] && companySlug(COMPANIES[k].name)===companySlug(p.name)){ c=COMPANIES[k]; break; } }
+    if(c && c.loc) return c.loc;
+    var locs={}; jobs.forEach(function(j){ if(j.loc) locs[j.loc]=(locs[j.loc]||0)+1; });
+    var best="", n=0; for(var L in locs){ if(locs[L]>n){ n=locs[L]; best=L; } }
+    return best;
+  }
+  function cdTechTags(jobs){
+    var seen={}, out=[];
+    jobs.forEach(function(j){ (j.stack||[]).forEach(function(s){ var k=String(s).trim(); if(k && !seen[k.toLowerCase()]){ seen[k.toLowerCase()]=1; out.push(k); } }); });
+    return out.slice(0,14);
+  }
+  function cdWorkStyleTags(jobs){
+    var tags=[];
+    if(jobs.some(function(j){ return j.remote==="full"||j.remote==="remote"; })) tags.push(t("cd_ws_remote"));
+    if(jobs.some(function(j){ return j.remote==="partial"||j.remote==="hybrid"; })) tags.push(t("cd_ws_hybrid"));
+    if(jobs.some(function(j){ return j.visa; })) tags.push(t("cd_ws_visa"));
+    if(jobs.some(function(j){ return j.abroad; })) tags.push(t("cd_ws_overseas"));
+    if(jobs.some(function(j){ return j.jp==="none"; })) tags.push(t("cd_ws_english"));
+    return tags;
+  }
+
+  function cdFactRow(label, value){ return value ? '<div class="cd-fact"><dt>'+esc(label)+'</dt><dd>'+esc(value)+'</dd></div>' : ""; }
+  function cdTag(txt, cls){ return '<span class="cd-chip'+(cls?" "+cls:"")+'">'+esc(txt)+'</span>'; }
+
+  function renderCompanyDetail(){
+    var root=$("#cdContent"); if(!root) return;
+    /* applyLang() calls this on every language toggle; only paint when we're actually on the
+       company route (checked off the hash, not the .active class, which isn't set yet when
+       showRoute calls us pre-reveal — that timing gap used to blank the page). */
+    var onRoute = String(location.hash||"").replace(/^#\/?/,"").split("/")[0]==="company";
+    if(!onRoute) return;
+    var slug=cdSlugFromHash();
+    var p=cdFindCompany(slug);
+
+    if(!p){
+      root.innerHTML='<div class="wrap cd-missing"><p>'+esc(t("cd_not_found"))+'</p>'+
+        '<a class="btn btn--ink" href="#/companies" data-go="companies">'+esc(t("cd_back"))+'</a></div>';
+      return;
+    }
+
+    var jobs=cdJobsFor(p);
+    /* CONTRACTED vs DIRECT, honestly: a company is REPRESENTED when it is in our curated roster
+       (_roster) OR carries at least one non-direct (placeable) role. It is DIRECT (marquee /
+       non-client) only when it is positively NOT ours — not in the roster AND every live role is
+       a direct listing. We never assert "Represented by LongWave" without that positive evidence,
+       so a stale/empty snapshot can't publish a false representation claim (review findings). */
+    var hasRepRole = jobs.some(function(j){ return !j.direct; });
+    var represented = !!p._roster || hasRepRole;
+    var isDirect = !represented && jobs.length>0 && jobs.every(function(j){ return j.direct; });
+    var industry=(p.industry && (p.industry[lang]||p.industry.en))||"";
+    var blurb=(p.blurb && (p.blurb[lang]||p.blurb.en))||"";
+    var logo=avatarHTML({ logo:(typeof PARTNER_LOGOS!=="undefined"?PARTNER_LOGOS[p.name]:null), color:p.color, mono:p.mono }, "cd-logo-img");
+
+    /* facts */
+    var loc=cdLocation(p,jobs), lang_=cdWorkingLang(jobs), jpr=cdJpRange(jobs), sal=cdSalaryRange(jobs), visa=cdVisa(jobs);
+    var tech=cdTechTags(jobs), ws=cdWorkStyleTags(jobs);
+    var rolesN=jobs.length;
+
+    /* ---- header: banner + logo card + name + open-roles (NO website link) ---- */
+    var badge = represented
+      ? '<span class="cd-badge cd-badge--repr">'+esc(t("cd_contracted"))+'</span>'
+      : (isDirect ? '<span class="cd-badge cd-badge--direct">'+esc(t("cd_direct"))+'</span>' : '');
+    var openRoles = rolesN
+      ? '<button type="button" class="btn '+(represented?"btn--banana":"btn--ink")+' cd-openbtn" data-cd-scroll="cd-roles">'+esc(t("cd_open_roles").replace("{n}",rolesN))+' ↓</button>'
+      : '';
+
+    var tabs=[['cd-about',t("cd_tab_about")],['cd-roles',t("cd_tab_jobs").replace("{n}",rolesN)]];
+    if(ws.length) tabs.push(['cd-culture',t("cd_tab_culture")]);
+    if(tech.length) tabs.push(['cd-tech',t("cd_tab_tags")]);
+    var tabNav=tabs.map(function(x){ return '<button type="button" class="cd-tab" data-cd-scroll="'+x[0]+'">'+esc(x[1])+'</button>'; }).join("");
+
+    /* ---- roles ---- */
+    var rolesHTML = rolesN
+      ? jobs.map(function(j){ return '<button type="button" class="cd-role" data-cd-open="'+j._i+'">'+cardHTML(j)+'</button>'; }).join("")
+      : '<p class="cd-empty">'+esc(t("cd_no_roles"))+'</p>';
+
+    /* ---- the represented/direct explainer + CTA ---- */
+    /* represented -> gold panel + "Get introduced via LongWave". direct -> neutral "we don't
+       represent them" note, NO apply-through-us CTA. unknown (positively neither) -> no panel,
+       so we never claim a relationship we can't stand behind. */
+    var relNote = represented
+      ? '<div class="cd-rel cd-rel--repr"><b>'+esc(t("cd_contracted"))+'</b><p>'+esc(t("cd_contracted_note"))+'</p>'+
+        '<a class="btn btn--banana" href="#/join" data-go="join">'+esc(t("cd_cta_contracted"))+' →</a></div>'
+      : (isDirect ? '<div class="cd-rel cd-rel--direct"><b>'+esc(t("cd_direct"))+'</b><p>'+esc(t("cd_direct_note").replace("{co}",p.name))+'</p></div>' : '');
+
+    root.innerHTML =
+      '<div class="cd-hero'+(isDirect?" cd-hero--direct":"")+'">'+
+        '<div class="cd-banner" aria-hidden="true"></div>'+
+        '<div class="wrap cd-head">'+
+          '<span class="cd-logo">'+logo+'</span>'+
+          '<div class="cd-id">'+
+            '<div class="cd-id-top">'+badge+'</div>'+
+            '<h1 class="cd-name">'+esc(p.name)+'</h1>'+
+            (industry?'<p class="cd-industry">'+esc(industry)+'</p>':'')+
+          '</div>'+
+          '<div class="cd-head-cta">'+openRoles+'</div>'+
+        '</div>'+
+      '</div>'+
+      '<nav class="cd-tabs wrap" aria-label="'+esc(p.name)+'">'+
+        '<a class="cd-tab cd-tab--back" href="#/companies" data-go="companies">← '+esc(t("cd_back"))+'</a>'+
+        tabNav+
+      '</nav>'+
+      '<div class="wrap cd-layout">'+
+        '<div class="cd-main">'+
+          '<section id="cd-about" class="cd-section">'+
+            '<h2>'+esc(t("cd_about_h").replace("{co}",p.name))+'</h2>'+
+            '<div class="cd-facts">'+
+              cdFactRow(t("cd_fact_loc"),loc)+cdFactRow(t("cd_fact_lang"),lang_)+
+              cdFactRow(t("cd_fact_jp"),jpr)+cdFactRow(t("cd_fact_salary"),sal)+
+              cdFactRow(t("cd_fact_visa"),visa)+cdFactRow(t("cd_fact_roles"),rolesN?String(rolesN):"")+
+            '</div>'+
+            (blurb?'<p class="cd-blurb">'+esc(blurb)+'</p>':'')+
+          '</section>'+
+          '<section id="cd-roles" class="cd-section">'+
+            '<h2>'+esc(t("cd_jobs_h").replace("{co}",p.name))+'</h2>'+
+            '<div class="cd-roles-list">'+rolesHTML+'</div>'+
+          '</section>'+
+          (ws.length?('<section id="cd-culture" class="cd-section"><h2>'+esc(t("cd_culture_h"))+'</h2>'+
+            '<div class="cd-chips">'+ws.map(function(w){ return cdTag(w,"cd-chip--ws"); }).join("")+'</div>'+
+            '<p class="cd-note">'+esc(t("cd_culture_note"))+'</p></section>'):'')+
+          (tech.length?('<section id="cd-tech" class="cd-section"><h2>'+esc(t("cd_tags_h"))+'</h2>'+
+            '<div class="cd-chips">'+tech.map(function(tg){ return cdTag(tg,"cd-chip--tech"); }).join("")+'</div></section>'):'')+
+        '</div>'+
+        '<aside class="cd-aside">'+relNote+
+          '<div class="cd-claim"><h3>'+esc(t("cd_claim_h"))+'</h3><p>'+esc(t("cd_claim_p"))+'</p>'+
+            '<a class="cd-claim-link" href="#/post" data-go="post">'+esc(t("cd_claim_link"))+' →</a></div>'+
+        '</aside>'+
+      '</div>';
+  }
+  if (typeof window !== "undefined") window.renderCompanyDetail = renderCompanyDetail;
+
+  /* delegated interactions (bound once; survives re-renders of #cdContent) */
+  (function(){
+    var page=$("#page-company"); if(!page) return;
+    page.addEventListener("click", function(e){
+      var open=e.target.closest("[data-cd-open]");
+      if(open && typeof openJob==="function"){ openJob(parseInt(open.getAttribute("data-cd-open"),10)); return; }
+      var scroll=e.target.closest("[data-cd-scroll]");
+      if(scroll){ var tgt=document.getElementById(scroll.getAttribute("data-cd-scroll")); if(tgt) tgt.scrollIntoView({behavior:"smooth",block:"start"}); }
+    });
   })();
 /* core/init.js — bootstrap: applyLang / router / initReveal */
   /* ---------------- init ---------------- */

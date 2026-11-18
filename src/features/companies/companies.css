@@ -78,6 +78,15 @@
   #page-companies .co-badge--live{background:var(--pos-bg);border-color:transparent;color:var(--pos-fg);}
   #page-companies .co-badge--live .co-dot{background:var(--pos-fg);}
   #page-companies .co-badge--partner .co-dot{background:var(--sky-deep);}
+  /* DIRECT (marquee / non-client) — neutral, we don't represent them */
+  #page-companies .co-badge--direct{background:var(--paper);color:var(--slate);}
+  #page-companies .co-badge--direct .co-dot{background:var(--slate);}
+  /* a left accent bar sorts the grid into the two relationships at a glance: gold = we
+     represent this company, slate = direct listing. Pseudo-element so card hover's
+     box-shadow doesn't clobber it. */
+  #page-companies .co-card{text-decoration:none;}
+  #page-companies .co-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,#e8b53a);}
+  #page-companies .co-card--direct::before{background:var(--slate);}
 
   /* identity row: square logo chip + name + one-line industry */
   #page-companies .co-head{display:flex;align-items:center;gap:14px;}

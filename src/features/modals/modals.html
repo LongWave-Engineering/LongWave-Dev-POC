@@ -11,10 +11,14 @@
     <div class="m-tags tags" id="mTags"></div>
     <div class="m-detail" id="mDetail"></div>
     <div class="m-actions">
+      <!-- represented roles: apply THROUGH us. direct (non-client) roles: #mApply is hidden and
+           #mApplySite links OUT to the company's own apply page (the only off-site link). There is
+           deliberately NO generic "company website" link — we keep the visitor on our site. -->
       <button class="btn btn--primary" id="mApply" data-i18n="m_apply">Sign up to apply</button>
+      <a class="btn btn--primary" id="mApplySite" target="_blank" rel="noopener" hidden><span data-i18n="jd_apply_site">Apply on company site</span> ↗</a>
       <button class="btn btn--ghost" id="mSave" type="button" aria-pressed="false"><span class="m-save-ic" aria-hidden="true">♥</span> <span id="mSaveLabel" data-i18n="sv_save">Save</span></button>
-      <a class="btn btn--ghost" id="mCompany" target="_blank" rel="noopener" data-i18n="m_company">Company site ↗</a>
     </div>
+    <p class="m-direct-note" id="mDirectNote" hidden></p>
   </div>
 </div>
 

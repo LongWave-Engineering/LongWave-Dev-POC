@@ -99,9 +99,22 @@
     /* every detail field is language-aware (jf): English base / Japanese `_ja` override.
        The exact same builder fills the inline board detail, so both translate identically. */
     $("#mDetail").innerHTML=jobDetailSectionsHTML(job);
-    /* only link out to http(s) — never assign a javascript:/data: URL to href, even from
-       admin/live company data (defence-in-depth against a poisoned COMPANIES.site). */
-    var comp=$("#mCompany"); var site=(c.site && /^https?:\/\//i.test(c.site)) ? c.site : ""; if(site){ comp.href=site; comp.style.display=""; } else { comp.style.display="none"; }
+    /* DIRECT (non-client) role: apply OUT on the company's own page (the one off-site link we
+       allow), hide the apply-through-us button, and state we don't represent them — mirrors the
+       jobs-board inline detail (jobs.js renderSelectedDetail). REPRESENTED roles keep the sign-up
+       apply flow and show NO company-website link, so the visitor stays on our site. Only ever
+       link out to http(s) — never a javascript:/data: URL, even from admin/live data. */
+    var apl=$("#mApply"), aplSite=$("#mApplySite"), dnote=$("#mDirectNote");
+    if(job.direct){
+      var applyUrl=(job.apply && /^https?:\/\//i.test(job.apply)) ? job.apply : ((c.site && /^https?:\/\//i.test(c.site)) ? c.site : "");
+      if(apl) apl.style.display="none";
+      if(aplSite){ if(applyUrl){ aplSite.href=applyUrl; aplSite.hidden=false; } else { aplSite.hidden=true; } }
+      if(dnote){ dnote.textContent=t("jd_direct_note").replace("{co}", c.name); dnote.hidden=false; }
+    } else {
+      if(apl) apl.style.display="";
+      if(aplSite) aplSite.hidden=true;
+      if(dnote) dnote.hidden=true;
+    }
     paintModalSave(); paintModalApply();
   }
   /* The list payload ships CARD fields only — the JD prose (scope/body/required/

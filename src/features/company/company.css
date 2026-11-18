@@ -1,0 +1,84 @@
+/* features/company/company.css — per-company profile (japan-dev layout, our tokens).
+   Scoped under #page-company. CONTRACTED = gold accent (represented by LongWave);
+   DIRECT = neutral slate accent (marquee, we don't represent them). */
+
+  /* ---- hero: banner + overlapping logo + name ---- */
+  #page-company .cd-hero{position:relative;}
+  #page-company .cd-banner{height:200px;background:linear-gradient(120deg,var(--navy) 0%,#1b2f52 40%,var(--sky-deep,#3f6ea5) 100%);}
+  #page-company .cd-hero--direct .cd-banner{background:linear-gradient(120deg,#2a3340 0%,#3a4556 55%,#55657a 100%);}
+  #page-company .cd-head{display:flex;align-items:flex-end;gap:22px;margin-top:-56px;position:relative;padding-bottom:22px;}
+  #page-company .cd-logo{flex:none;width:112px;height:112px;background:#fff;border:1px solid var(--line);border-radius:14px;display:grid;place-items:center;overflow:hidden;box-shadow:0 10px 30px rgba(16,24,40,.12);}
+  #page-company .cd-logo .avatar{width:100%;height:100%;border-radius:12px;}
+  #page-company .cd-logo .avatar img{width:100%;height:100%;object-fit:contain;padding:14px;box-sizing:border-box;}
+  #page-company .cd-id{flex:1 1 auto;min-width:0;padding-bottom:4px;}
+  #page-company .cd-id-top{margin-bottom:8px;}
+  #page-company .cd-name{font-family:var(--font-display);font-weight:800;letter-spacing:-.03em;line-height:1.02;font-size:clamp(30px,4.2vw,48px);color:var(--ink);margin:0;}
+  #page-company .cd-industry{color:var(--slate);font-size:1rem;margin:6px 0 0;}
+  #page-company .cd-head-cta{flex:none;align-self:flex-end;padding-bottom:6px;}
+
+  /* contracted / direct badge */
+  #page-company .cd-badge{display:inline-flex;align-items:center;gap:7px;font-size:.66rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:5px 11px;border-radius:999px;}
+  #page-company .cd-badge::before{content:"";width:7px;height:7px;border-radius:50%;}
+  #page-company .cd-badge--repr{background:var(--accent-soft,#fff5d6);color:var(--accent-deep);}
+  #page-company .cd-badge--repr::before{background:var(--accent,#e8b53a);}
+  #page-company .cd-badge--direct{background:var(--paper);color:var(--slate);border:1px solid var(--line);}
+  #page-company .cd-badge--direct::before{background:var(--slate);}
+
+  /* ---- tab nav ---- */
+  #page-company .cd-tabs{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;border-bottom:1px solid var(--line);padding-top:4px;position:sticky;top:64px;background:var(--surface);z-index:5;}
+  #page-company .cd-tab{appearance:none;border:0;background:none;font:inherit;font-size:.92rem;font-weight:600;color:var(--slate);padding:12px 12px;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;text-decoration:none;}
+  #page-company .cd-tab:hover{color:var(--ink);}
+  #page-company .cd-tab--back{color:var(--accent-deep);margin-right:8px;}
+
+  /* ---- layout ---- */
+  #page-company .cd-layout{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:start;padding-block:32px 72px;}
+  #page-company .cd-section{margin-bottom:36px;scroll-margin-top:120px;}
+  #page-company .cd-section h2{font-family:var(--font-display);font-weight:800;letter-spacing:-.02em;font-size:1.5rem;color:var(--ink);margin:0 0 18px;}
+
+  #page-company .cd-facts{display:flex;flex-wrap:wrap;gap:10px 14px;margin-bottom:20px;}
+  #page-company .cd-fact{display:flex;flex-direction:column;gap:3px;padding:12px 16px;background:var(--paper);border:1px solid var(--line);min-width:120px;}
+  #page-company .cd-fact dt{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin:0;}
+  #page-company .cd-fact dd{margin:0;font-family:var(--font-display);font-weight:700;font-size:1rem;color:var(--ink);}
+  #page-company .cd-blurb{color:var(--slate);font-size:1.02rem;line-height:1.65;margin:0;max-width:60ch;text-wrap:pretty;}
+
+  /* role cards (reuse the jobs board .jc-* inner styles) */
+  #page-company .cd-roles-list{display:flex;flex-direction:column;gap:10px;}
+  #page-company .cd-role{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:0;padding:16px 18px;cursor:pointer;font:inherit;transition:border-color .2s,box-shadow .2s;}
+  #page-company .cd-role:hover{border-color:var(--line-strong);box-shadow:0 4px 16px rgba(16,24,40,.06);}
+  #page-company .cd-role .jc-logo{flex:none;}
+  #page-company .cd-role .jc-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px;}
+  #page-company .cd-role .jc-end{flex:none;text-align:right;display:flex;flex-direction:column;gap:3px;align-items:flex-end;}
+  #page-company .cd-empty,#page-company .cd-note{color:var(--slate);font-size:.95rem;line-height:1.5;}
+  #page-company .cd-note{margin:14px 0 0;}
+
+  /* chips */
+  #page-company .cd-chips{display:flex;flex-wrap:wrap;gap:8px;}
+  #page-company .cd-chip{display:inline-block;font-size:.84rem;font-weight:600;padding:6px 12px;border:1px solid var(--line);background:var(--paper);color:var(--ink);}
+  #page-company .cd-chip--ws{border-color:var(--sky-deep,#3f6ea5);color:var(--accent-deep);}
+
+  /* ---- aside: relationship explainer + claim ---- */
+  #page-company .cd-aside{display:flex;flex-direction:column;gap:18px;position:sticky;top:120px;}
+  #page-company .cd-rel{padding:22px 20px;border-radius:0;}
+  #page-company .cd-rel b{display:block;font-family:var(--font-display);font-weight:800;font-size:1.05rem;margin-bottom:8px;}
+  #page-company .cd-rel p{font-size:.92rem;line-height:1.55;margin:0 0 16px;}
+  #page-company .cd-rel .btn{width:100%;justify-content:center;}
+  #page-company .cd-rel--repr{background:var(--accent-soft,#fff5d6);border:1px solid var(--accent,#e8b53a);}
+  #page-company .cd-rel--repr b{color:var(--accent-deep);}
+  #page-company .cd-rel--repr p{color:var(--ink);}
+  #page-company .cd-rel--direct{background:var(--paper);border:1px solid var(--line);}
+  #page-company .cd-rel--direct b{color:var(--ink);}
+  #page-company .cd-rel--direct p{color:var(--slate);margin-bottom:0;}
+  #page-company .cd-claim{padding:20px;border:1px solid var(--line);background:var(--surface);}
+  #page-company .cd-claim h3{font-size:.95rem;font-weight:700;color:var(--ink);margin:0 0 6px;}
+  #page-company .cd-claim p{font-size:.86rem;color:var(--slate);line-height:1.5;margin:0 0 12px;}
+  #page-company .cd-claim-link{font-size:.88rem;font-weight:700;color:var(--accent-deep);text-decoration:none;}
+
+  #page-company .cd-missing{padding:80px 0;text-align:center;}
+  #page-company .cd-missing p{color:var(--slate);font-size:1.1rem;margin:0 0 20px;}
+
+  @media (max-width:860px){
+    #page-company .cd-layout{grid-template-columns:1fr;}
+    #page-company .cd-aside{position:static;}
+    #page-company .cd-head{flex-wrap:wrap;}
+    #page-company .cd-head-cta{width:100%;}
+  }

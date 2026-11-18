@@ -28,21 +28,36 @@
     var grid=$("#coGrid"); if(!grid) return;
     if(typeof PARTNERS==="undefined" || !PARTNERS.length){ CO_SORTED=[]; buildCoSectors(); paintCompanies(); return; }
 
-    var countByName={};   /* live job counts — used only to order the grid + pick the public status */
-    JOBS.forEach(function(j){ var c=COMPANIES[j.co]; var nm=(c&&c.name)||j.co; if(nm) countByName[nm]=(countByName[nm]||0)+1; });
+    var countByName={};       /* live job counts — used only to order the grid + pick the public status */
+    var hasDirect={}, hasNonDirect={};   /* per-company role mix → the contracted-vs-not split */
+    JOBS.forEach(function(j){ var c=COMPANIES[j.co]; var nm=(c&&c.name)||j.co; if(nm){ countByName[nm]=(countByName[nm]||0)+1; if(j.direct) hasDirect[nm]=true; else hasNonDirect[nm]=true; } });
     var rich={};          /* sector fallback for the few companies also in COMPANY_LIST */
     (typeof COMPANY_LIST!=="undefined"?COMPANY_LIST:[]).forEach(function(co){ rich[co.name]=co; });
 
-    CO_SORTED = PARTNERS.map(function(p,i){ return {p:p, i:i, n:countByName[p.name]||0}; })
+    /* the curated roster = companies we REPRESENT / partner with (marquee non-client cos are NOT
+       in it). Every roster entry gets the represented treatment; direct:false. p.placement is
+       never carried through, so the confidential placement relationship never leaks. */
+    var inRoster={};
+    var roster = PARTNERS.map(function(p,i){ return {p:p, i:i, n:countByName[p.name]||0}; })
       .sort(function(a,b){
         if(b.n!==a.n) return b.n-a.n;
         var pa=a.p.placement?1:0, pb=b.p.placement?1:0;
         if(pb!==pa) return pb-pa;
         return a.i-b.i;
       })
-      /* keep only what the card needs. live keys off open roles ONLY (it.n>0); p.placement is
-         never carried through here, so the confidential placement relationship never leaks. */
-      .map(function(it){ return {p:it.p, live:it.n>0, rich:rich[it.p.name]}; });
+      .map(function(it){ inRoster[it.p.name]=true; return {p:it.p, live:it.n>0, direct:false, rich:rich[it.p.name]}; });
+
+    /* append DIRECT (marquee / non-client) companies so the contracted-vs-not difference is
+       actually visible on the list: a company in the hydrated map with live roles that are ALL
+       direct and that is NOT in the curated roster. Labelled "Direct" — never implies we
+       represent them. */
+    var direct=[], seen={};
+    for(var k in COMPANIES){ var c=COMPANIES[k]; if(!c||!c.name||inRoster[c.name]||seen[c.name]) continue; seen[c.name]=true;
+      if(hasDirect[c.name] && !hasNonDirect[c.name]) direct.push({ p:{ name:c.name, color:c.color, mono:c.mono, industry:c.sector||c.industry }, live:true, direct:true });
+    }
+    direct.sort(function(a,b){ return (countByName[b.p.name]||0)-(countByName[a.p.name]||0) || a.p.name.localeCompare(b.p.name); });
+
+    CO_SORTED = roster.concat(direct);
 
     buildCoSectors();
     paintCompanies();
@@ -90,21 +105,27 @@
   /* one roster card: flat panel, dynamic logo, live-only status badge. The WHOLE card is a
      button that opens the company inquiry modal — every id / attr / hook preserved exactly
      (data-company + role=button + tabindex + aria-label drive modals/lead-forms.js). */
+  function coSlug(name){ var s=String(name||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); return s || encodeURIComponent(String(name||"")); }
+
   function buildCoCard(it){
     var p=it.p, r=it.rich;
     var industry = (p.industry && p.industry[lang]) || (r && r.sector && r.sector[lang]) || "";
 
-    /* public status keys off live open roles only (it.live) — "Open roles" vs "Partner" — so
-       the confidential placement relationship never reaches the page. */
-    var badgeCls = it.live ? "co-badge--live" : "co-badge--partner";
-    var badgeTxt = it.live ? t("comp_badge_live") : t("comp_badge_partner");
+    /* CONTRACTED vs DIRECT is the primary status now (user ask 2026-11-18): a marquee /
+       non-client company (its roles are `direct`) is a neutral "Direct listing" we don't
+       represent; everything else is a company we represent — "Open roles" when it has live
+       postings, else "Partner". The confidential placement flag still never reaches here. */
+    var badgeCls, badgeTxt;
+    if(it.direct){ badgeCls="co-badge--direct"; badgeTxt=t("comp_badge_direct"); }
+    else if(it.live){ badgeCls="co-badge--live"; badgeTxt=t("comp_badge_live"); }
+    else { badgeCls="co-badge--partner"; badgeTxt=t("comp_badge_partner"); }
     /* strip the baked-in trailing arrow so our own arrow can slide independently */
     var ctaTxt   = t("comp_view_co").replace(/\s*→\s*$/, "");
 
-    var card=el("div","co-card co-card--click");
-    card.setAttribute("data-company", p.name);
-    card.setAttribute("role","button");
-    card.setAttribute("tabindex","0");
+    /* the WHOLE card is a link to the company's profile page (#/company/<slug>) — the hash
+       router fades it in; no modal, no off-site link. */
+    var card=el("a","co-card co-card--click"+(it.direct?" co-card--direct":""));
+    card.setAttribute("href", "#/company/"+coSlug(p.name));
     card.setAttribute("aria-label", p.name + ", " + t("comp_view_co_a11y"));
     card.innerHTML=
       '<span class="co-badge '+ badgeCls +'"><span class="co-dot" aria-hidden="true"></span>'+ esc(badgeTxt) +'</span>'+

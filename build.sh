@@ -37,6 +37,8 @@ CSS=(
   src/features/cv/cv.css
   src/features/tools/tools.css
   src/features/team/team.css
+  src/features/join/join.css
+  src/features/company/company.css
   src/features/privacy/privacy.css
   src/core/responsive.css
 )
@@ -52,6 +54,8 @@ BODY=(
   src/features/cv/cv.html
   src/features/tools/tools.html
   src/features/team/team.html
+  src/features/join/join.html
+  src/features/company/company.html
   src/features/privacy/privacy.html
   src/features/footer/footer.html
   src/features/modals/modals.html
@@ -83,6 +87,8 @@ JS=(
   src/core/app.js
   src/features/cv/cv.js
   src/features/tools/tools.js
+  src/features/join/join.js
+  src/features/company/company.js
   src/core/init.js
   src/core/outro.js
 )
